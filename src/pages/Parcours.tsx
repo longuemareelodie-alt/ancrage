@@ -119,10 +119,28 @@ const Parcours = () => {
               />
             </div>
           </div>
+
+          {/* Celebration message */}
+          <AnimatePresence>
+            {showCelebration && (
+              <motion.div
+                initial={{ opacity: 0, y: 20, scale: 0.9 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+                className="mx-auto mt-6 max-w-sm rounded-2xl bg-white/60 px-6 py-4 shadow-sm backdrop-blur"
+              >
+                <p className="text-lg font-bold">🎉 Bravo</p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Tu as terminé toutes les phases.<br />
+                  Tu avances, et c'est énorme.
+                </p>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </SectionBlock>
 
-      <SectionBlock>
         <div className="space-y-4">
           {phases.map((phase) => (
             <motion.div
