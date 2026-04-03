@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import SectionBlock from "@/components/SectionBlock";
 import CTAButton from "@/components/CTAButton";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, Check } from "lucide-react";
+import confetti from "canvas-confetti";
 
 interface Phase {
   id: number;
@@ -67,8 +68,25 @@ const phases: Phase[] = [
 const Parcours = () => {
   const [openPhase, setOpenPhase] = useState<number | null>(null);
   const [completed, setCompleted] = useState<Set<number>>(new Set());
+  const [showCelebration, setShowCelebration] = useState(false);
 
   const progress = Math.round((completed.size / phases.length) * 100);
+  const allDone = completed.size === phases.length;
+
+  useEffect(() => {
+    if (allDone) {
+      setShowCelebration(true);
+      // Fire confetti bursts
+      const fire = (opts: confetti.Options) =>
+        confetti({ ...opts, disableForReducedMotion: true });
+
+      fire({ particleCount: 80, spread: 70, origin: { x: 0.3, y: 0.6 } });
+      setTimeout(() => fire({ particleCount: 80, spread: 70, origin: { x: 0.7, y: 0.6 } }), 250);
+      setTimeout(() => fire({ particleCount: 60, spread: 100, origin: { x: 0.5, y: 0.4 } }), 500);
+    } else {
+      setShowCelebration(false);
+    }
+  }, [allDone]);
 
   const toggleComplete = (id: number) => {
     setCompleted((prev) => {
