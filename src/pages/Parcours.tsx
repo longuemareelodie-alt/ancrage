@@ -141,6 +141,7 @@ const Parcours = () => {
         </div>
       </SectionBlock>
 
+      <SectionBlock>
         <div className="space-y-4">
           {phases.map((phase) => (
             <motion.div
