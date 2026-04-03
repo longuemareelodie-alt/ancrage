@@ -11,6 +11,7 @@ import AllerPlusLoin from "./pages/AllerPlusLoin";
 import Parcours from "./pages/Parcours";
 import Auth from "./pages/Auth";
 import Profil from "./pages/Profil";
+import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
