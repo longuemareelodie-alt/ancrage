@@ -21,6 +21,24 @@ const Auth = () => {
     if (user) navigate("/profil");
   }, [user, navigate]);
 
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setInfo("");
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      if (error) throw error;
+      setInfo("Un email de réinitialisation t'a été envoyé 💌");
+    } catch (err: any) {
+      setError(err.message || "Une erreur est survenue");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
