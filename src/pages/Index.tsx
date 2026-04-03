@@ -1,11 +1,25 @@
 import SectionBlock from "@/components/SectionBlock";
 import CTAButton from "@/components/CTAButton";
 import { motion } from "framer-motion";
-import { Check } from "lucide-react";
+import { Check, User } from "lucide-react";
+import { Link } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {
+  const { user } = useAuth();
+
   return (
     <div className="min-h-screen bg-background">
+      {/* Top bar */}
+      <div className="flex items-center justify-end px-4 py-3">
+        <Link
+          to={user ? "/profil" : "/auth"}
+          className="flex items-center gap-1.5 rounded-full bg-card px-3 py-1.5 text-xs font-medium shadow-sm transition-colors hover:bg-secondary"
+        >
+          <User className="h-3.5 w-3.5" />
+          {user ? "Mon espace" : "Connexion"}
+        </Link>
+      </div>
       {/* HERO */}
       <SectionBlock variant="blue">
         <motion.div
