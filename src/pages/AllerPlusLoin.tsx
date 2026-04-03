@@ -6,23 +6,38 @@ const AllerPlusLoin = () => {
     <div className="min-h-screen bg-background">
       <SectionBlock variant="blue">
         <div className="space-y-4 text-center">
-          <h1 className="text-2xl font-bold">Tu veux aller plus loin ?</h1>
+          <h1 className="text-2xl font-bold">Tu peux continuer seule…</h1>
           <p className="text-muted-foreground">
-            Tu peux continuer seule.
-            <br />
-            Ou avancer avec un cadre.
+            Mais tu vas continuer à :
           </p>
+          <ul className="space-y-2 text-muted-foreground">
+            <li>• douter</li>
+            <li>• rechuter</li>
+            <li>• t'épuiser</li>
+            <li>• chercher sans trouver</li>
+          </ul>
         </div>
       </SectionBlock>
 
       <SectionBlock>
+        <div className="space-y-4 text-center">
+          <p className="text-lg font-bold">Ou tu peux avancer avec un cadre</p>
+          <div className="space-y-1 text-muted-foreground">
+            <p>👉 clair</p>
+            <p>👉 guidé</p>
+            <p>👉 sécurisé</p>
+          </div>
+        </div>
+      </SectionBlock>
+
+      <SectionBlock variant="blue">
         <p className="mb-6 text-lg font-bold text-primary">ANCRAGE t'aide à :</p>
         <ul className="space-y-3">
           {[
             "calmer ton système nerveux",
-            "comprendre l'emprise",
+            "comprendre ce que tu as vécu",
             "reprendre du pouvoir",
-            "te reconstruire",
+            "te reconstruire sans t'effondrer",
           ].map((item) => (
             <li key={item} className="flex items-start gap-3">
               <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-primary" />
@@ -30,8 +45,28 @@ const AllerPlusLoin = () => {
             </li>
           ))}
         </ul>
-        <div className="mt-8">
-          <CTAButton to="/parcours">Accéder à ANCRAGE — 29€</CTAButton>
+        <div className="mt-6 space-y-1 text-sm text-muted-foreground">
+          <p>👉 Même si aujourd'hui tu es perdue</p>
+          <p>👉 Même si tu n'as plus d'énergie</p>
+        </div>
+      </SectionBlock>
+
+      <SectionBlock>
+        <div className="space-y-6 text-center">
+          <p className="text-lg font-bold text-primary">
+            Tu n'as pas besoin d'aller bien pour commencer.
+          </p>
+          <div className="space-y-2">
+            <p className="font-semibold">Tu peux commencer maintenant</p>
+            <div className="space-y-1 text-sm text-muted-foreground">
+              <p>👉 sans te justifier</p>
+              <p>👉 sans te forcer</p>
+              <p>👉 sans te mettre en danger</p>
+            </div>
+          </div>
+          <div className="mt-4">
+            <CTAButton to="/parcours">Je veux arrêter de subir — 29€</CTAButton>
+          </div>
         </div>
       </SectionBlock>
     </div>

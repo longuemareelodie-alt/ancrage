@@ -2,11 +2,11 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
 const emotions = [
-  { emoji: "😰", label: "Je panique", path: "/emotion/panique" },
-  { emoji: "⚡", label: "Hypervigilance", path: "/emotion/hypervigilance" },
-  { emoji: "💭", label: "Rumination", path: "/emotion/rumination" },
-  { emoji: "😡", label: "Explosion", path: "/emotion/explosion" },
-  { emoji: "😶", label: "Vide", path: "/emotion/vide" },
+  { emoji: "😰", label: "Je panique", path: "/emotion/panique", hook: "Ton corps essaie de te protéger" },
+  { emoji: "⚡", label: "Hypervigilance", path: "/emotion/hypervigilance", hook: "Ton système est resté en alerte" },
+  { emoji: "💭", label: "Rumination", path: "/emotion/rumination", hook: "Ton cerveau cherche une sortie" },
+  { emoji: "😡", label: "Explosion", path: "/emotion/explosion", hook: "La pression est trop forte" },
+  { emoji: "😶", label: "Vide", path: "/emotion/vide", hook: "Ton système s'est coupé pour tenir" },
 ];
 
 const Emotions = () => {
@@ -38,7 +38,10 @@ const Emotions = () => {
               className="flex w-full items-center gap-4 rounded-xl bg-card p-5 text-left shadow-sm transition-shadow hover:shadow-md"
             >
               <span className="text-2xl">{emotion.emoji}</span>
-              <span className="font-medium">{emotion.label}</span>
+              <div>
+                <span className="font-medium">{emotion.label}</span>
+                <p className="text-xs text-muted-foreground mt-0.5">{emotion.hook}</p>
+              </div>
             </motion.button>
           ))}
         </div>

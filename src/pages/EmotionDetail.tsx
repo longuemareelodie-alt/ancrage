@@ -15,7 +15,7 @@ interface EmotionData {
 const emotionData: Record<string, EmotionData> = {
   panique: {
     title: "Tu paniques",
-    validation: "Ton corps est en alerte.",
+    validation: "Ton corps essaie de te protéger.",
     subtext: "Ce que tu ressens est réel.\n👉 Tu n'es pas en danger immédiat.",
     steps: [
       "Regarde autour de toi",
@@ -25,12 +25,13 @@ const emotionData: Record<string, EmotionData> = {
       "Expire plus longtemps",
     ],
     script: ["Tu es ici", "maintenant", "le danger n'est pas là", "ton corps peut redescendre"],
-    closing: "Si ça baisse même un peu,\n👉 c'est déjà un signal.",
+    closing:
+      "Tu viens de faire redescendre ton corps.\nMême légèrement.\n\n👉 Et ça, c'est déjà énorme.\n\nTon corps n'est pas bloqué.\n👉 Il peut redescendre.\n\nImagine quand tu sauras le faire plus vite…\net surtout… sans attendre d'être au bout.",
   },
   hypervigilance: {
     title: "Ton corps est en hypervigilance",
-    validation: "Ton système essaie de te protéger.",
-    subtext: "Il est resté en alerte.",
+    validation: "Ton système est resté en alerte.",
+    subtext: "Il essaie encore de te protéger.",
     steps: [
       "Regarde 3 choses",
       "Écoute 2 sons",
@@ -39,31 +40,35 @@ const emotionData: Record<string, EmotionData> = {
       "Respire lentement",
     ],
     script: ["Tu peux baisser la garde", "tu es en sécurité ici"],
-    closing: "Même un léger relâchement compte.",
+    closing:
+      "Tu viens de faire redescendre ton corps.\nMême légèrement.\n\n👉 Et ça, c'est déjà énorme.\n\nTon corps n'est pas bloqué.\n👉 Il peut redescendre.",
   },
   rumination: {
     title: "Ton mental tourne en boucle",
-    validation: "Ton cerveau cherche à comprendre.",
+    validation: "Ton cerveau cherche une sortie.",
     subtext: "Tu n'es pas faible.",
     steps: ["Regarde un point fixe", "Respire lentement", 'Dis "stop" intérieurement'],
     script: ["Tu peux laisser passer", "sans résoudre maintenant"],
-    closing: "Même 10 secondes comptent.",
+    closing:
+      "Tu viens de faire redescendre ton corps.\nMême légèrement.\n\n👉 Et ça, c'est déjà énorme.",
   },
   explosion: {
-    title: "La pression est trop haute",
-    validation: "Ton système est saturé.",
-    subtext: "",
+    title: "La pression est trop forte",
+    validation: "La pression est trop forte.",
+    subtext: "Ton système est saturé.",
     steps: ["Serre tes poings", "Relâche", "Appuie tes pieds", "Respire profondément"],
     script: ["Tu peux relâcher sans exploser"],
-    closing: "Ça va redescendre.",
+    closing:
+      "Tu viens de faire redescendre ton corps.\nMême légèrement.\n\n👉 Ça va redescendre.",
   },
   vide: {
     title: "Tu te sens vide",
-    validation: "Ton corps s'est coupé pour te protéger.",
-    subtext: "",
+    validation: "Ton système s'est coupé pour tenir.",
+    subtext: "Ton corps s'est coupé pour te protéger.",
     steps: ["Bouge tes mains", "Touche une surface", "Bois de l'eau", "Respire"],
     script: ["Tu peux revenir doucement"],
-    closing: "Même un léger retour suffit.",
+    closing:
+      "Tu viens de faire redescendre ton corps.\nMême légèrement.\n\n👉 Même un léger retour suffit.",
   },
 };
 
@@ -99,7 +104,10 @@ const EmotionDetail = () => {
 
       {/* Steps */}
       <SectionBlock>
-        <h2 className="mb-6 text-lg font-bold">Fais ça maintenant <span className="text-muted-foreground font-normal">(2 minutes)</span></h2>
+        <h2 className="mb-6 text-lg font-bold">
+          Fais ça maintenant{" "}
+          <span className="text-muted-foreground font-normal">(2 minutes)</span>
+        </h2>
         <div className="space-y-3">
           {data.steps.map((step, i) => (
             <motion.div
@@ -117,13 +125,16 @@ const EmotionDetail = () => {
             </motion.div>
           ))}
         </div>
+        <p className="mt-4 text-xs text-muted-foreground text-center">👉 Tu peux arrêter quand tu veux</p>
       </SectionBlock>
 
       {/* Script */}
       <SectionBlock variant="blue">
         <div className="space-y-3 text-center text-lg">
           {data.script.map((line) => (
-            <p key={line} className="font-medium">{line}</p>
+            <p key={line} className="font-medium">
+              {line}
+            </p>
           ))}
         </div>
       </SectionBlock>
@@ -132,8 +143,10 @@ const EmotionDetail = () => {
       <SectionBlock>
         <p className="whitespace-pre-line text-center text-muted-foreground">{data.closing}</p>
         <div className="mt-8 space-y-3">
-          <CTAButton to="/" variant="secondary">Revenir à l'accueil</CTAButton>
-          <CTAButton to="/aller-plus-loin">Aller plus loin</CTAButton>
+          <CTAButton to="/aller-plus-loin">Aller plus loin maintenant</CTAButton>
+          <CTAButton to="/" variant="secondary">
+            Revenir à l'accueil
+          </CTAButton>
         </div>
       </SectionBlock>
     </div>
