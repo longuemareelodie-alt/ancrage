@@ -68,6 +68,7 @@ const phases: Phase[] = [
 ];
 
 const Parcours = () => {
+  const { user } = useAuth();
   const [openPhase, setOpenPhase] = useState<number | null>(null);
   const [completed, setCompleted] = useState<Set<number>>(() => {
     try {
@@ -77,9 +78,36 @@ const Parcours = () => {
   });
   const [showCelebration, setShowCelebration] = useState(false);
 
+  // Load from DB if logged in
   useEffect(() => {
-    localStorage.setItem("ancrage-progress", JSON.stringify([...completed]));
-  }, [completed]);
+    if (!user) return;
+    supabase
+      .from("user_progress")
+      .select("completed_phases")
+      .eq("user_id", user.id)
+      .single()
+      .then(({ data }) => {
+        if (data?.completed_phases?.length) {
+          const dbSet = new Set(data.completed_phases);
+          setCompleted(dbSet);
+          localStorage.setItem("ancrage-progress", JSON.stringify([...dbSet]));
+        }
+      });
+  }, [user]);
+
+  // Save to localStorage + DB
+  const syncProgress = useCallback(
+    (phases: Set<number>) => {
+      const arr = [...phases];
+      localStorage.setItem("ancrage-progress", JSON.stringify(arr));
+      if (user) {
+        supabase
+          .from("user_progress")
+          .upsert({ user_id: user.id, completed_phases: arr }, { onConflict: "user_id" });
+      }
+    },
+    [user]
+  );
 
   const progress = Math.round((completed.size / phases.length) * 100);
   const allDone = completed.size === phases.length;
@@ -87,10 +115,8 @@ const Parcours = () => {
   useEffect(() => {
     if (allDone) {
       setShowCelebration(true);
-      // Fire confetti bursts
       const fire = (opts: confetti.Options) =>
         confetti({ ...opts, disableForReducedMotion: true });
-
       fire({ particleCount: 80, spread: 70, origin: { x: 0.3, y: 0.6 } });
       setTimeout(() => fire({ particleCount: 80, spread: 70, origin: { x: 0.7, y: 0.6 } }), 250);
       setTimeout(() => fire({ particleCount: 60, spread: 100, origin: { x: 0.5, y: 0.4 } }), 500);
@@ -104,6 +130,7 @@ const Parcours = () => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id);
       else next.add(id);
+      syncProgress(next);
       return next;
     });
   };
