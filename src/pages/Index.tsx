@@ -20,7 +20,8 @@ const Index = () => {
           {user ? "Mon espace" : "Connexion"}
         </Link>
       </div>
-      {/* HERO */}
+
+      {/* HERO — ACCROCHE */}
       <SectionBlock variant="blue">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -31,17 +32,16 @@ const Index = () => {
           <h1 className="text-2xl font-bold leading-tight tracking-tight md:text-3xl">
             Tu es sortie de la relation…
             <br />
-            <span className="text-primary">mais ton corps est resté en alerte</span>
+            <span className="text-primary">mais ton corps agit comme si tu y étais encore</span>
           </h1>
           <div className="space-y-1 text-muted-foreground">
             <p>Tu sursautes.</p>
-            <p>Tu doutes.</p>
-            <p>Tu t'épuises.</p>
             <p>Tu réfléchis trop.</p>
+            <p>Tu es épuisée sans comprendre.</p>
           </div>
-          <p className="text-sm text-muted-foreground">👉 Même quand tout est "fini"</p>
+          <p className="text-sm text-muted-foreground">👉 Même quand "tout est fini"</p>
           <div className="space-y-2 pt-2">
-            <p className="font-semibold">Ce n'est pas toi le problème.</p>
+            <p className="font-semibold">Ce n'est pas toi.</p>
             <p className="text-sm text-primary font-medium">👉 Ton système nerveux est resté bloqué.</p>
           </div>
           <div className="pt-4">
@@ -59,7 +59,7 @@ const Index = () => {
             "tu es en vigilance constante",
             "tu n'arrives plus à réfléchir clairement",
             "tu doutes de toi",
-            "tu te sens épuisée sans raison",
+            "tu es épuisée sans raison",
             "tu te sens encore « coincée » intérieurement",
           ].map((item) => (
             <li key={item} className="flex items-start gap-3">
@@ -107,14 +107,30 @@ const Index = () => {
         </div>
       </SectionBlock>
 
-      {/* OFFRE */}
+      {/* RESSENTI IMMÉDIAT — NOUVEAU BLOC */}
       <SectionBlock variant="blue">
-        <h2 className="mb-2 text-xl font-bold">Si tu veux aller plus loin :</h2>
+        <div className="space-y-4 text-center">
+          <p className="text-lg font-bold text-primary">💙 Dès les premières minutes, tu peux ressentir :</p>
+          <ul className="space-y-2 text-muted-foreground">
+            <li>un apaisement dans le corps</li>
+            <li>une respiration plus lente</li>
+            <li>un peu moins de tension</li>
+          </ul>
+          <div className="mt-4 space-y-1 text-sm text-muted-foreground">
+            <p>👉 Même si c'est léger</p>
+            <p>👉 Même si ça ne dure pas encore</p>
+          </div>
+          <p className="mt-4 font-semibold">Tu vas sentir que ça peut changer</p>
+        </div>
+      </SectionBlock>
+
+      {/* OFFRE */}
+      <SectionBlock>
         <p className="mb-6 text-lg font-bold text-primary">ANCRAGE t'aide à :</p>
         <ul className="space-y-3">
           {[
             "calmer ton système nerveux",
-            "comprendre ce que tu as vécu",
+            "comprendre ce que tu vis",
             "reprendre du pouvoir",
             "te reconstruire progressivement",
           ].map((item) => (
@@ -127,12 +143,12 @@ const Index = () => {
         <div className="mt-4 space-y-1 text-sm text-muted-foreground">
           <p>👉 À ton rythme</p>
           <p>👉 Sans pression</p>
-          <p>👉 Sans danger</p>
+          <p>👉 Sans te mettre en danger</p>
         </div>
       </SectionBlock>
 
       {/* BÉNÉFICES */}
-      <SectionBlock>
+      <SectionBlock variant="blue">
         <h2 className="mb-6 text-xl font-bold">Ce que tu vas retrouver</h2>
         <ul className="space-y-3">
           {[
@@ -151,7 +167,7 @@ const Index = () => {
       </SectionBlock>
 
       {/* PRIX */}
-      <SectionBlock variant="blue">
+      <SectionBlock>
         <div className="rounded-2xl bg-card p-8 text-center shadow-sm">
           <p className="text-sm font-medium text-muted-foreground">Accéder à</p>
           <p className="mt-1 text-2xl font-bold text-primary">ANCRAGE</p>
@@ -167,20 +183,19 @@ const Index = () => {
         </div>
       </SectionBlock>
 
-      {/* SÉCURITÉ */}
-      <SectionBlock>
-        <h2 className="mb-6 text-xl font-bold">Tu peux avancer ici sans :</h2>
-        <ul className="space-y-3 text-muted-foreground">
-          {["te justifier", "te forcer", "te mettre en danger"].map((item) => (
-            <li key={item} className="flex items-start gap-3">
-              <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-primary" />
-              <span>{item}</span>
-            </li>
-          ))}
-        </ul>
-        <p className="mt-4 text-sm font-medium text-primary">👉 Tu avances à ton rythme</p>
-        <div className="mt-6">
-          <CTAButton to="/emotions">Commencer maintenant</CTAButton>
+      {/* SÉCURITÉ + RASSURANCE */}
+      <SectionBlock variant="blue">
+        <div className="space-y-4 text-center">
+          <p className="font-semibold">Tu peux commencer maintenant</p>
+          <div className="space-y-1 text-sm text-muted-foreground">
+            <p>👉 sans te justifier</p>
+            <p>👉 sans te forcer</p>
+            <p>👉 sans te mettre en danger</p>
+          </div>
+          <p className="mt-4 text-sm font-medium text-primary">👉 Tu avances à ton rythme</p>
+          <div className="mt-6">
+            <CTAButton to="/emotions">Commencer maintenant</CTAButton>
+          </div>
         </div>
       </SectionBlock>
     </div>
