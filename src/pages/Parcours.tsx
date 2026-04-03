@@ -180,6 +180,18 @@ const Parcours = () => {
                       )}
 
                       <p className="text-sm font-medium text-primary">{phase.closing}</p>
+
+                      <button
+                        onClick={() => toggleComplete(phase.id)}
+                        className={`mt-2 flex w-full items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-medium transition-colors ${
+                          completed.has(phase.id)
+                            ? "bg-green-100 text-green-700"
+                            : "bg-secondary text-foreground hover:bg-secondary/80"
+                        }`}
+                      >
+                        <Check className="h-4 w-4" />
+                        {completed.has(phase.id) ? "Terminé ✓" : "Marquer comme terminé"}
+                      </button>
                     </div>
                   </motion.div>
                 )}
