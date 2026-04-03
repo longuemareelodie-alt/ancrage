@@ -75,6 +75,10 @@ const Parcours = () => {
   });
   const [showCelebration, setShowCelebration] = useState(false);
 
+  useEffect(() => {
+    localStorage.setItem("ancrage-progress", JSON.stringify([...completed]));
+  }, [completed]);
+
   const progress = Math.round((completed.size / phases.length) * 100);
   const allDone = completed.size === phases.length;
 
