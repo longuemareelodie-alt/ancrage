@@ -67,8 +67,17 @@ const phases: Phase[] = [
 
 const Parcours = () => {
   const [openPhase, setOpenPhase] = useState<number | null>(null);
-  const [completed, setCompleted] = useState<Set<number>>(new Set());
+  const [completed, setCompleted] = useState<Set<number>>(() => {
+    try {
+      const saved = localStorage.getItem("ancrage-progress");
+      return saved ? new Set(JSON.parse(saved) as number[]) : new Set();
+    } catch { return new Set(); }
+  });
   const [showCelebration, setShowCelebration] = useState(false);
+
+  useEffect(() => {
+    localStorage.setItem("ancrage-progress", JSON.stringify([...completed]));
+  }, [completed]);
 
   const progress = Math.round((completed.size / phases.length) * 100);
   const allDone = completed.size === phases.length;
