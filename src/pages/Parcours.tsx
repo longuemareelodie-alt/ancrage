@@ -66,6 +66,18 @@ const phases: Phase[] = [
 
 const Parcours = () => {
   const [openPhase, setOpenPhase] = useState<number | null>(null);
+  const [completed, setCompleted] = useState<Set<number>>(new Set());
+
+  const progress = Math.round((completed.size / phases.length) * 100);
+
+  const toggleComplete = (id: number) => {
+    setCompleted((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -73,6 +85,22 @@ const Parcours = () => {
         <div className="text-center">
           <h1 className="text-2xl font-bold">Comprendre et avancer</h1>
           <p className="mt-2 text-muted-foreground">Ton parcours, à ton rythme</p>
+
+          {/* Progress bar */}
+          <div className="mx-auto mt-5 max-w-xs">
+            <div className="mb-1.5 flex items-center justify-between text-xs font-medium">
+              <span>{completed.size} / {phases.length} phases</span>
+              <span>{progress}%</span>
+            </div>
+            <div className="h-2 w-full overflow-hidden rounded-full bg-white/40">
+              <motion.div
+                className="h-full rounded-full bg-primary"
+                initial={{ width: 0 }}
+                animate={{ width: `${progress}%` }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+              />
+            </div>
+          </div>
         </div>
       </SectionBlock>
 
