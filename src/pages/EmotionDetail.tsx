@@ -2,6 +2,9 @@ import { useParams } from "react-router-dom";
 import SectionBlock from "@/components/SectionBlock";
 import CTAButton from "@/components/CTAButton";
 import { motion } from "framer-motion";
+import { Check } from "lucide-react";
+
+const MOLLIE_LINK = "https://payment-links.mollie.com/payment/Uqs26mrjXBFeWj5oK8hkr";
 
 interface EmotionData {
   title: string;
@@ -9,7 +12,6 @@ interface EmotionData {
   subtext: string;
   steps: string[];
   script: string[];
-  closing: string;
 }
 
 const emotionData: Record<string, EmotionData> = {
@@ -25,8 +27,6 @@ const emotionData: Record<string, EmotionData> = {
       "Expire plus longtemps",
     ],
     script: ["Tu es ici", "maintenant", "le danger n'est pas là", "ton corps peut redescendre"],
-    closing:
-      "Tu viens de faire redescendre ton corps.\nMême légèrement.\n\n👉 Et ça, c'est déjà énorme.\n\nTon corps n'est pas bloqué.\n👉 Il peut redescendre.\n\nImagine quand tu sauras le faire plus vite…\net surtout… sans attendre d'être au bout.",
   },
   hypervigilance: {
     title: "Ton corps est en hypervigilance",
@@ -40,8 +40,6 @@ const emotionData: Record<string, EmotionData> = {
       "Respire lentement",
     ],
     script: ["Tu peux baisser la garde", "tu es en sécurité ici"],
-    closing:
-      "Tu viens de faire redescendre ton corps.\nMême légèrement.\n\n👉 Et ça, c'est déjà énorme.\n\nTon corps n'est pas bloqué.\n👉 Il peut redescendre.",
   },
   rumination: {
     title: "Ton mental tourne en boucle",
@@ -49,8 +47,6 @@ const emotionData: Record<string, EmotionData> = {
     subtext: "Tu n'es pas faible.",
     steps: ["Regarde un point fixe", "Respire lentement", 'Dis "stop" intérieurement'],
     script: ["Tu peux laisser passer", "sans résoudre maintenant"],
-    closing:
-      "Tu viens de faire redescendre ton corps.\nMême légèrement.\n\n👉 Et ça, c'est déjà énorme.",
   },
   explosion: {
     title: "La pression est trop forte",
@@ -58,8 +54,6 @@ const emotionData: Record<string, EmotionData> = {
     subtext: "Ton système est saturé.",
     steps: ["Serre tes poings", "Relâche", "Appuie tes pieds", "Respire profondément"],
     script: ["Tu peux relâcher sans exploser"],
-    closing:
-      "Tu viens de faire redescendre ton corps.\nMême légèrement.\n\n👉 Ça va redescendre.",
   },
   vide: {
     title: "Tu te sens vide",
@@ -67,8 +61,6 @@ const emotionData: Record<string, EmotionData> = {
     subtext: "Ton corps s'est coupé pour te protéger.",
     steps: ["Bouge tes mains", "Touche une surface", "Bois de l'eau", "Respire"],
     script: ["Tu peux revenir doucement"],
-    closing:
-      "Tu viens de faire redescendre ton corps.\nMême légèrement.\n\n👉 Même un léger retour suffit.",
   },
 };
 
@@ -139,14 +131,72 @@ const EmotionDetail = () => {
         </div>
       </SectionBlock>
 
-      {/* Closing */}
+      {/* Closing — new version */}
       <SectionBlock>
-        <p className="whitespace-pre-line text-center text-muted-foreground">{data.closing}</p>
-        <div className="mt-8 space-y-3">
-          <CTAButton to="/aller-plus-loin">Aller plus loin maintenant</CTAButton>
-          <CTAButton to="/" variant="secondary">
-            Revenir à l'accueil
-          </CTAButton>
+        <div className="space-y-4 text-center">
+          <p className="font-semibold">Tu viens de commencer à faire redescendre ton corps</p>
+          <p className="text-sm text-muted-foreground">👉 même légèrement</p>
+          <p className="font-medium mt-4">Mais ce n'est que le début</p>
+          <p className="text-sm text-muted-foreground">
+            Parce que ton système ne redescend pas en une seule fois
+          </p>
+        </div>
+      </SectionBlock>
+
+      {/* Warning */}
+      <SectionBlock variant="blue">
+        <div className="space-y-4 text-center">
+          <p className="font-bold">Et si tu t'arrêtes là…</p>
+          <div className="space-y-2 text-muted-foreground">
+            <p>👉 ton corps va remonter</p>
+            <p>👉 tes pensées vont revenir</p>
+            <p>👉 et tu vas repartir dans la boucle</p>
+          </div>
+        </div>
+      </SectionBlock>
+
+      {/* Projection */}
+      <SectionBlock>
+        <div className="space-y-4 text-center">
+          <p className="font-bold">En quelques minutes encore…</p>
+          <p className="text-sm text-muted-foreground">tu peux sentir :</p>
+          <ul className="space-y-3 text-left">
+            {[
+              "ton corps se relâcher davantage",
+              "ton mental ralentir",
+              "une sensation de sécurité revenir",
+            ].map((item) => (
+              <li key={item} className="flex items-center gap-3">
+                <Check className="h-5 w-5 shrink-0 text-primary" />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+          <p className="text-sm text-primary font-medium">
+            👉 pour la première fois depuis longtemps
+          </p>
+        </div>
+      </SectionBlock>
+
+      {/* Porte */}
+      <SectionBlock variant="blue">
+        <div className="space-y-4 text-center">
+          <p className="font-bold">Ce que tu viens de faire, c'est une porte</p>
+          <p className="text-muted-foreground">Mais pour vraiment sortir…</p>
+          <p className="text-primary font-semibold">👉 tu as besoin d'un cadre</p>
+        </div>
+      </SectionBlock>
+
+      {/* Social proof */}
+      <SectionBlock>
+        <div className="space-y-4 text-center">
+          <p className="text-muted-foreground">La plupart des femmes s'arrêtent ici</p>
+          <p className="font-bold">Et restent bloquées</p>
+          <p className="text-muted-foreground">Celles qui avancent vraiment…</p>
+          <p className="text-primary font-semibold">👉 vont jusqu'au bout</p>
+        </div>
+        <div className="mt-8">
+          <CTAButton to={MOLLIE_LINK}>Je veux arrêter cette boucle maintenant</CTAButton>
         </div>
       </SectionBlock>
     </div>
