@@ -9,12 +9,21 @@ interface CTAButtonProps {
 
 const CTAButton = ({ children, to, variant = "primary" }: CTAButtonProps) => {
   const navigate = useNavigate();
+  const isExternal = to.startsWith("http");
+
+  const handleClick = () => {
+    if (isExternal) {
+      window.open(to, "_blank", "noopener,noreferrer");
+    } else {
+      navigate(to);
+    }
+  };
 
   return (
     <motion.button
       whileHover={{ scale: 1.03 }}
       whileTap={{ scale: 0.98 }}
-      onClick={() => navigate(to)}
+      onClick={handleClick}
       className={`w-full rounded-xl px-8 py-4 text-base font-semibold transition-colors ${
         variant === "primary"
           ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25"
