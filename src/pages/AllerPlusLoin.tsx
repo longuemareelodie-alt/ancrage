@@ -65,7 +65,7 @@ const AllerPlusLoin = () => {
             </div>
           </div>
           <div className="mt-4">
-            <CTAButton to="/parcours">Je veux arrêter de subir — 29€</CTAButton>
+            <CTAButton to="https://payment-links.mollie.com/payment/Uqs26mrjXBFeWj5oK8hkr">Je veux arrêter de subir — 29€</CTAButton>
           </div>
         </div>
       </SectionBlock>
