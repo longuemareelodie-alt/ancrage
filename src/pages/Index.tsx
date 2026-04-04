@@ -6,7 +6,7 @@ import { Check, User, Lock } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 
-const MOLLIE_LINK = "#"; // TODO: remplacer par le lien Mollie
+const MOLLIE_LINK = "https://payment-links.mollie.com/payment/Uqs26mrjXBFeWj5oK8hkr";
 
 const Index = () => {
   const { user } = useAuth();
