@@ -1,10 +1,12 @@
 import SectionBlock from "@/components/SectionBlock";
 import CTAButton from "@/components/CTAButton";
 import EmergencySection from "@/components/EmergencySection";
+import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
 import { Check, User, Lock } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import logo from "@/assets/logo-ancrage.png";
 
 const MOLLIE_LINK = "https://payment-links.mollie.com/payment/Uqs26mrjXBFeWj5oK8hkr";
 
@@ -14,7 +16,11 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Top bar */}
-      <div className="flex items-center justify-end px-4 py-3">
+      <div className="flex items-center justify-between px-4 py-3">
+        <div />
+        <Link to="/" className="flex flex-col items-center">
+          <img src={logo} alt="Ancrage" className="h-12 w-auto" />
+        </Link>
         <Link
           to={user ? "/profil" : "/auth"}
           className="flex items-center gap-1.5 rounded-full bg-card px-3 py-1.5 text-xs font-medium shadow-sm transition-colors hover:bg-secondary"
@@ -54,25 +60,21 @@ const Index = () => {
           </div>
           <p className="text-xs text-muted-foreground">👇 Commence maintenant à en sortir</p>
           <div className="pt-2">
-            <CTAButton to="/emotions">Je veux sortir de cet état</CTAButton>
+            <CTAButton to="/emotions">Je veux que mon corps redescende</CTAButton>
           </div>
         </motion.div>
       </SectionBlock>
 
       {/* IDENTIFICATION */}
       <SectionBlock>
-        <h2 className="mb-4 text-xl font-bold">Si tu te reconnais…</h2>
-        <p className="mb-6 text-sm text-muted-foreground">
-          c'est que ton corps n'a jamais vraiment quitté la relation.
-        </p>
+        <h2 className="mb-4 text-xl font-bold">Tu fais peut-être ça sans t'en rendre compte :</h2>
         <ul className="space-y-3 text-muted-foreground">
           {[
-            "tu es à fleur de peau",
-            "tu es en vigilance constante",
-            "tu n'arrives plus à réfléchir clairement",
-            "tu doutes de toi",
-            "tu es épuisée sans raison",
-            "tu te sens encore « coincée » intérieurement",
+            "tu analyses tout",
+            "tu anticipes tout",
+            "tu te sens en danger sans raison",
+            "tu doutes de toi en permanence",
+            "tu es épuisée sans comprendre pourquoi",
           ].map((item) => (
             <li key={item} className="flex items-start gap-3">
               <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-primary" />
@@ -80,16 +82,19 @@ const Index = () => {
             </li>
           ))}
         </ul>
-        <p className="mt-6 text-sm font-semibold text-primary">👉 Tu n'inventes rien.</p>
+        <p className="mt-6 text-sm text-muted-foreground">
+          👉 et tu penses que le problème vient de toi
+        </p>
+        <p className="mt-2 text-sm font-semibold text-primary">👉 Tu n'inventes rien.</p>
       </SectionBlock>
 
       {/* MÉCANISME */}
       <SectionBlock variant="blue">
         <div className="space-y-4 text-center">
           <p className="text-lg font-bold">Tu n'as pas un problème de volonté</p>
+          <p className="text-primary font-medium">👉 Tu es en état d'alerte</p>
           <div className="space-y-2 text-muted-foreground">
-            <p>Tu es en état d'alerte</p>
-            <p>Ton cerveau cherche à te protéger</p>
+            <p>Ton cerveau essaie de te protéger</p>
             <p>Mais il ne sait pas que c'est terminé</p>
           </div>
           <p className="mt-2 font-semibold text-primary">
@@ -98,11 +103,24 @@ const Index = () => {
         </div>
       </SectionBlock>
 
-      {/* COMMENT ÇA MARCHE */}
+      {/* TENSION */}
       <SectionBlock>
-        <h2 className="mb-2 text-xl font-bold">Comment ça marche</h2>
-        <p className="mb-6 text-sm text-muted-foreground">
-          Tu ne vas pas réfléchir. Tu vas agir directement sur ton corps.
+        <div className="space-y-4 text-center">
+          <p className="text-lg font-bold">Et le problème…</p>
+          <p className="font-semibold text-primary">c'est que ça ne disparaît pas tout seul</p>
+          <div className="space-y-2 text-sm text-muted-foreground">
+            <p>👉 ton corps s'habitue à cet état</p>
+            <p>👉 ça devient ton "normal"</p>
+          </div>
+          <p className="font-medium">Et tu restes bloquée dedans</p>
+        </div>
+      </SectionBlock>
+
+      {/* COMMENT ÇA MARCHE */}
+      <SectionBlock variant="blue">
+        <h2 className="mb-2 text-xl font-bold">Ici, tu ne vas pas réfléchir</h2>
+        <p className="mb-6 text-sm text-primary font-medium">
+          👉 tu vas agir directement sur ton corps
         </p>
         <div className="space-y-4">
           {[
@@ -118,24 +136,26 @@ const Index = () => {
             </div>
           ))}
         </div>
-        <p className="mt-4 text-sm text-muted-foreground">👉 Même légèrement</p>
+        <p className="mt-4 text-sm text-muted-foreground">👉 même légèrement</p>
         <p className="mt-1 text-sm font-semibold text-primary">
           Et c'est là que tout commence à changer
         </p>
         <div className="mt-6">
-          <CTAButton to="/emotions">Accéder à l'outil</CTAButton>
+          <CTAButton to="/emotions">Je veux essayer maintenant</CTAButton>
         </div>
       </SectionBlock>
 
       {/* PROJECTION */}
-      <SectionBlock variant="blue">
-        <h2 className="mb-6 text-xl font-bold">Ce que tu vas retrouver</h2>
+      <SectionBlock>
+        <h2 className="mb-2 text-xl font-bold text-center">Dans 10 minutes…</h2>
+        <p className="mb-6 text-sm text-muted-foreground text-center">
+          tu peux déjà ressentir :
+        </p>
         <ul className="space-y-3">
           {[
-            "un corps plus calme",
-            "moins de pensées qui tournent",
-            "des décisions plus claires",
-            "moins de peur",
+            "moins de tension",
+            "moins de pensées",
+            "plus de calme",
             "plus de contrôle",
           ].map((item) => (
             <li key={item} className="flex items-center gap-3">
@@ -144,11 +164,14 @@ const Index = () => {
             </li>
           ))}
         </ul>
-        <p className="mt-6 text-sm font-semibold text-primary">👉 Tu redeviens toi</p>
+        <p className="mt-4 text-sm text-muted-foreground text-center">👉 même si c'est léger</p>
+        <p className="mt-2 text-sm font-semibold text-primary text-center">
+          Et c'est comme ça que ça commence
+        </p>
       </SectionBlock>
 
-      {/* DÉCLENCHEUR */}
-      <SectionBlock>
+      {/* DÉCLENCHEUR / RISQUE */}
+      <SectionBlock variant="blue">
         <div className="space-y-4 text-center">
           <p className="text-lg font-bold">Si tu ne fais rien :</p>
           <ul className="space-y-2 text-muted-foreground text-left">
@@ -156,7 +179,7 @@ const Index = () => {
               "ton corps restera en alerte",
               "tu continueras à douter",
               "tu resteras épuisée",
-              "tu risques de retomber dans les mêmes schémas",
+              "tu risques de revivre les mêmes schémas",
             ].map((item) => (
               <li key={item} className="flex items-start gap-3">
                 <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-destructive" />
@@ -173,28 +196,52 @@ const Index = () => {
         </div>
       </SectionBlock>
 
-      {/* PREUVE */}
-      <SectionBlock variant="blue">
-        <div className="space-y-4 text-center">
-          <p className="text-lg text-muted-foreground">
-            Beaucoup de femmes vivent cet état sans le comprendre
-          </p>
-          <p className="font-semibold text-primary">
-            Aujourd'hui, tu mets enfin des mots dessus
-          </p>
+      {/* FILTRE */}
+      <SectionBlock>
+        <div className="space-y-6">
+          <div>
+            <p className="font-bold mb-3">Cet outil n'est pas pour toi si :</p>
+            <ul className="space-y-2 text-muted-foreground">
+              <li className="flex items-start gap-3">
+                <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-destructive" />
+                <span>tu veux tout résoudre en réfléchissant</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-destructive" />
+                <span>tu refuses d'écouter ton corps</span>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <p className="font-bold mb-3">Par contre, il est pour toi si :</p>
+            <ul className="space-y-2 text-muted-foreground">
+              <li className="flex items-start gap-3">
+                <Check className="h-4 w-4 shrink-0 text-primary mt-0.5" />
+                <span>tu veux sortir concrètement de cet état</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <Check className="h-4 w-4 shrink-0 text-primary mt-0.5" />
+                <span>tu veux te sentir mieux rapidement</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <Check className="h-4 w-4 shrink-0 text-primary mt-0.5" />
+                <span>tu es prête à faire des actions simples</span>
+              </li>
+            </ul>
+          </div>
         </div>
       </SectionBlock>
 
       {/* PRIX + CTA */}
-      <SectionBlock>
+      <SectionBlock variant="blue">
         <div className="rounded-2xl bg-card p-8 text-center shadow-sm">
           <p className="text-sm font-medium text-muted-foreground">Accéder à</p>
           <p className="mt-1 text-2xl font-bold text-primary">ANCRAGE</p>
           <p className="mt-2 text-3xl font-bold">29€</p>
           <div className="mt-4 space-y-1 text-sm text-muted-foreground">
-            <p>✔ Paiement sécurisé</p>
             <p>✔ Accès immédiat</p>
             <p>✔ Utilisable à vie</p>
+            <p>✔ Aucun abonnement</p>
           </div>
           <div className="mt-2 space-y-1 text-xs text-muted-foreground">
             <p>👉 Moins qu'une séance</p>
@@ -210,8 +257,8 @@ const Index = () => {
         </div>
       </SectionBlock>
 
-      {/* RASSURANCE FINALE */}
-      <SectionBlock variant="blue">
+      {/* RASSURANCE FINALE / MICRO COPY */}
+      <SectionBlock>
         <div className="space-y-4 text-center">
           <p className="font-semibold">Tu peux commencer maintenant</p>
           <div className="space-y-1 text-sm text-muted-foreground">
@@ -221,7 +268,7 @@ const Index = () => {
             <p>👉 à ton rythme</p>
           </div>
           <div className="mt-4">
-            <CTAButton to="/emotions">Je veux sortir de cet état</CTAButton>
+            <CTAButton to={MOLLIE_LINK}>Je reprends le contrôle — 29€</CTAButton>
           </div>
         </div>
       </SectionBlock>
@@ -229,10 +276,8 @@ const Index = () => {
       {/* SECTION URGENCE */}
       <EmergencySection />
 
-      {/* CADRE LÉGAL */}
-      <div className="px-6 py-6 text-center text-xs text-muted-foreground">
-        Cet outil ne remplace pas un accompagnement médical, juridique ou psychologique.
-      </div>
+      {/* FOOTER */}
+      <Footer />
     </div>
   );
 };
