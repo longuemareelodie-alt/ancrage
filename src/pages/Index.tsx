@@ -6,12 +6,20 @@ import { motion } from "framer-motion";
 import { Check, User, Lock } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { useMolliePayment } from "@/hooks/useMolliePayment";
 import logo from "@/assets/logo-ancrage.png";
-
-const MOLLIE_LINK = "https://payment-links.mollie.com/payment/Uqs26mrjXBFeWj5oK8hkr";
 
 const Index = () => {
   const { user } = useAuth();
+  const { startPayment, loading: paymentLoading } = useMolliePayment();
+
+  const handlePayment = () => {
+    if (!user) {
+      window.location.href = "/auth?redirect=/&action=pay";
+      return;
+    }
+    startPayment();
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -141,9 +149,8 @@ const Index = () => {
             <p>✔ Aucun abonnement</p>
           </div>
           <div className="mt-6">
-            <CTAButton to={MOLLIE_LINK}>Je veux que ça s'arrête maintenant</CTAButton>
+            <CTAButton to="#" onClick={handlePayment} loading={paymentLoading}>Je veux que ça s'arrête maintenant</CTAButton>
           </div>
-          <div className="mt-4 flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
             <Lock className="h-3.5 w-3.5" />
             <span>Paiement 100% sécurisé via Mollie</span>
           </div>
@@ -160,7 +167,7 @@ const Index = () => {
             <p>👉 à ton rythme</p>
           </div>
           <div className="mt-4">
-            <CTAButton to={MOLLIE_LINK}>Je veux que ça s'arrête maintenant</CTAButton>
+            <CTAButton to="#" onClick={handlePayment} loading={paymentLoading}>Je veux que ça s'arrête maintenant</CTAButton>
           </div>
         </div>
       </SectionBlock>

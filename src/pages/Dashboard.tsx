@@ -4,13 +4,13 @@ import { Link } from "react-router-dom";
 import { Zap, Brain, Puzzle, User, Lock } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { useMolliePayment } from "@/hooks/useMolliePayment";
 import logo from "@/assets/logo-ancrage.png";
-
-const MOLLIE_LINK = "https://payment-links.mollie.com/payment/Uqs26mrjXBFeWj5oK8hkr";
 
 const Dashboard = () => {
   const { user } = useAuth();
   const [isPremium, setIsPremium] = useState<boolean | null>(null);
+  const { startPayment, loading: paymentLoading } = useMolliePayment();
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -138,10 +138,10 @@ const Dashboard = () => {
                 Accède à tous les exercices, au parcours guidé et aux outils de suivi
               </p>
               <a
-                href={MOLLIE_LINK}
-                className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 transition-transform hover:scale-[1.02] active:scale-[0.98]"
+                onClick={(e) => { e.preventDefault(); startPayment(); }}
+                className={`inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 transition-transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer ${paymentLoading ? 'opacity-60 pointer-events-none' : ''}`}
               >
-                Je veux que ça s'arrête maintenant — 29€
+                {paymentLoading ? "Chargement…" : "Je veux que ça s'arrête maintenant — 29€"}
               </a>
               <p className="text-xs text-muted-foreground">Accès à vie · Sans abonnement</p>
             </motion.div>

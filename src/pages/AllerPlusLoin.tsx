@@ -1,7 +1,20 @@
 import SectionBlock from "@/components/SectionBlock";
 import CTAButton from "@/components/CTAButton";
+import { useAuth } from "@/contexts/AuthContext";
+import { useMolliePayment } from "@/hooks/useMolliePayment";
 
 const AllerPlusLoin = () => {
+  const { user } = useAuth();
+  const { startPayment, loading: paymentLoading } = useMolliePayment();
+
+  const handlePayment = () => {
+    if (!user) {
+      window.location.href = "/auth?redirect=/aller-plus-loin&action=pay";
+      return;
+    }
+    startPayment();
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <SectionBlock variant="blue">
@@ -65,7 +78,7 @@ const AllerPlusLoin = () => {
             </div>
           </div>
           <div className="mt-4">
-            <CTAButton to="https://payment-links.mollie.com/payment/Uqs26mrjXBFeWj5oK8hkr">Je reprends le contrôle — 29€</CTAButton>
+            <CTAButton to="#" onClick={handlePayment} loading={paymentLoading}>Je reprends le contrôle — 29€</CTAButton>
           </div>
         </div>
       </SectionBlock>
