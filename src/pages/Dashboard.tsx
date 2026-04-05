@@ -122,6 +122,31 @@ const Dashboard = () => {
             </motion.div>
           </div>
 
+          {/* Upsell banner for non-premium */}
+          {user && isPremium === false && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6, duration: 0.5 }}
+              className="rounded-2xl bg-card p-6 text-center shadow-sm space-y-3"
+            >
+              <div className="flex items-center justify-center gap-2">
+                <Lock className="h-4 w-4 text-primary" />
+                <p className="font-bold">Débloque le programme complet</p>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Accède à tous les exercices, au parcours guidé et aux outils de suivi
+              </p>
+              <a
+                href={MOLLIE_LINK}
+                className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 transition-transform hover:scale-[1.02] active:scale-[0.98]"
+              >
+                Je veux que ça s'arrête maintenant — 29€
+              </a>
+              <p className="text-xs text-muted-foreground">Accès à vie · Sans abonnement</p>
+            </motion.div>
+          )}
+
           {/* Retention hook */}
           <motion.p
             initial={{ opacity: 0 }}
