@@ -35,7 +35,7 @@ const Profil = () => {
     // Load profile
     supabase
       .from("profiles")
-      .select("first_name, email")
+      .select("first_name, email, is_premium")
       .eq("user_id", user.id)
       .single()
       .then(({ data }) => {
