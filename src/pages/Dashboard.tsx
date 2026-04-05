@@ -1,11 +1,29 @@
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Zap, Brain, Puzzle, User } from "lucide-react";
+import { Zap, Brain, Puzzle, User, Lock } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 import logo from "@/assets/logo-ancrage.png";
+
+const MOLLIE_LINK = "https://payment-links.mollie.com/payment/Uqs26mrjXBFeWj5oK8hkr";
 
 const Dashboard = () => {
   const { user } = useAuth();
+  const [isPremium, setIsPremium] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (!user) return;
+      const { data } = await supabase
+        .from("profiles")
+        .select("is_premium")
+        .eq("user_id", user.id)
+        .single();
+      setIsPremium(data?.is_premium ?? false);
+    };
+    fetchProfile();
+  }, [user]);
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
