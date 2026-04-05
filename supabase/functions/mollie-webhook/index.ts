@@ -12,6 +12,9 @@ const jsonResponse = (payload: unknown, status = 200) =>
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
 
+const webhookAck = (payload: Record<string, unknown> = {}) =>
+  jsonResponse({ received: true, ...payload });
+
 const firstString = (...values: unknown[]) => {
   for (const value of values) {
     if (typeof value === "string" && value.trim().length > 0) {
@@ -22,7 +25,25 @@ const firstString = (...values: unknown[]) => {
   return null;
 };
 
-const parseRequestBody = (rawBody: string, contentType: string) => {
+const parseRequestBody = async (
+  rawBody: string,
+  contentType: string,
+  requestClone?: Request,
+) => {
+  if (contentType.includes("multipart/form-data") && requestClone) {
+    try {
+      const formData = await requestClone.formData();
+      return Object.fromEntries(
+        Array.from(formData.entries()).map(([key, value]) => [
+          key,
+          typeof value === "string" ? value : value.name,
+        ]),
+      );
+    } catch (error) {
+      console.error("Failed to parse multipart body:", error?.message || error);
+    }
+  }
+
   if (!rawBody.trim()) {
     return null;
   }
@@ -79,8 +100,12 @@ Deno.serve(async (req) => {
 
   try {
     const contentType = req.headers.get("content-type") || "";
+    const requestClone = req.clone();
     const rawBody = await req.text();
-    const payload = parseRequestBody(rawBody, contentType);
+
+    console.log("Received webhook body:", rawBody || "<empty>");
+
+    const payload = await parseRequestBody(rawBody, contentType, requestClone);
     const { rawId, paymentId } = extractWebhookIds(payload);
 
     console.log(
@@ -93,10 +118,11 @@ Deno.serve(async (req) => {
           payload && typeof payload === "object" ? Object.keys(payload).slice(0, 10) : [],
       }),
     );
+    console.log("Parsed webhook payload:", JSON.stringify(payload));
 
     if (!paymentId) {
       console.error("Unable to extract payment id from webhook payload", payload);
-      return jsonResponse({
+      return webhookAck({
         status: "ignored",
         action: "none",
         reason: "payment_id_not_found",
@@ -114,7 +140,10 @@ Deno.serve(async (req) => {
         hasUrl: !!supabaseUrl,
         hasServiceKey: !!serviceRoleKey,
       });
-      return jsonResponse({ error: "Server config error" }, 500);
+      return webhookAck({
+        status: "error",
+        error: "server_config_error",
+      });
     }
 
     const mollieRes = await fetch(
@@ -127,7 +156,7 @@ Deno.serve(async (req) => {
       console.error("Mollie API error:", mollieRes.status, errText);
 
       if (mollieRes.status === 404) {
-        return jsonResponse({
+        return webhookAck({
           status: "ignored",
           action: "none",
           reason: "payment_not_found",
@@ -136,7 +165,12 @@ Deno.serve(async (req) => {
         });
       }
 
-      return jsonResponse({ error: "Failed to fetch payment from Mollie" }, 502);
+      return webhookAck({
+        status: "error",
+        error: "mollie_fetch_failed",
+        payment_id: paymentId,
+        mollie_status: mollieRes.status,
+      });
     }
 
     const payment = await mollieRes.json();
@@ -153,7 +187,7 @@ Deno.serve(async (req) => {
 
     if (payment.status !== "paid") {
       console.log("Payment not paid, status:", payment.status);
-      return jsonResponse({ status: payment.status, action: "none" });
+      return webhookAck({ status: payment.status, action: "none" });
     }
 
     const userId = firstString(payment.metadata?.user_id, payment.metadata?.userId);
@@ -165,7 +199,7 @@ Deno.serve(async (req) => {
         paymentId,
         JSON.stringify({ metadata: payment.metadata, paymentId: payment.id })
       );
-      return jsonResponse({
+      return webhookAck({
         status: "ignored",
         action: "none",
         reason: "user_identifier_missing",
@@ -260,7 +294,7 @@ Deno.serve(async (req) => {
 
     if (!profile) {
       console.error("No profile found for payment", payment.id, JSON.stringify({ userId, email }));
-      return jsonResponse({
+      return webhookAck({
         status: "ignored",
         action: "none",
         reason: "profile_not_found",
@@ -270,7 +304,7 @@ Deno.serve(async (req) => {
 
     if (profile.is_premium) {
       console.log("Profile already premium:", JSON.stringify(profile));
-      return jsonResponse({
+      return webhookAck({
         status: "premium_already_active",
         user_id: profile.user_id,
         email: profile.email,
@@ -286,18 +320,25 @@ Deno.serve(async (req) => {
 
     if (updateError) {
       console.error("DB update error:", updateError.message, updateError.details);
-      return jsonResponse({ error: "Failed to update profile" }, 500);
+      return webhookAck({
+        status: "error",
+        error: "profile_update_failed",
+        user_id: profile.user_id,
+      });
     }
 
     console.log("Premium activated:", JSON.stringify(updatedProfile));
 
-    return jsonResponse({
+    return webhookAck({
       status: "premium_activated",
       user_id: updatedProfile.user_id,
       email: updatedProfile.email,
     });
   } catch (err) {
-    console.error("Webhook error:", err?.message || err);
-    return jsonResponse({ error: "Internal error" }, 500);
+    console.error("Webhook error:", err?.stack || err?.message || err);
+    return webhookAck({
+      status: "error",
+      error: "internal_error",
+    });
   }
 });
