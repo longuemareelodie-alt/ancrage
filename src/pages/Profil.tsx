@@ -124,20 +124,22 @@ const Profil = () => {
       {/* Tabs */}
       <div className="flex border-b border-border bg-card">
         {([
-          { key: "profil" as const, icon: User, label: "Profil" },
-          { key: "parcours" as const, icon: BookOpen, label: "Parcours" },
-          { key: "notes" as const, icon: StickyNote, label: "Notes" },
+          { key: "profil" as const, icon: User, label: "Profil", locked: false },
+          { key: "parcours" as const, icon: BookOpen, label: "Parcours", locked: !profile?.is_premium },
+          { key: "notes" as const, icon: StickyNote, label: "Notes", locked: !profile?.is_premium },
         ]).map((tab) => (
           <button
             key={tab.key}
-            onClick={() => setActiveTab(tab.key)}
+            onClick={() => !tab.locked && setActiveTab(tab.key)}
             className={`flex flex-1 items-center justify-center gap-1.5 py-3 text-sm font-medium transition-colors ${
-              activeTab === tab.key
-                ? "border-b-2 border-primary text-primary"
-                : "text-muted-foreground hover:text-foreground"
+              tab.locked
+                ? "text-muted-foreground/50 cursor-not-allowed"
+                : activeTab === tab.key
+                  ? "border-b-2 border-primary text-primary"
+                  : "text-muted-foreground hover:text-foreground"
             }`}
           >
-            <tab.icon className="h-4 w-4" />
+            {tab.locked ? <Lock className="h-3.5 w-3.5" /> : <tab.icon className="h-4 w-4" />}
             {tab.label}
           </button>
         ))}
