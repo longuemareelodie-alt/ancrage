@@ -1,11 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import SectionBlock from "@/components/SectionBlock";
 import CTAButton from "@/components/CTAButton";
 import { motion, AnimatePresence } from "framer-motion";
-import { LogOut, Plus, Trash2, Save, User, BookOpen, StickyNote, Lock } from "lucide-react";
+import { LogOut, Plus, Trash2, Save, User, BookOpen, StickyNote, Lock, Pencil, Check } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
 
 interface Note {
   id: string;
@@ -24,6 +25,9 @@ const Profil = () => {
   const [editingNote, setEditingNote] = useState<{ title: string; content: string } | null>(null);
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState<"profil" | "parcours" | "notes">("profil");
+  const [editingName, setEditingName] = useState(false);
+  const [nameValue, setNameValue] = useState("");
+  const [savingName, setSavingName] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) navigate("/auth");
@@ -91,6 +95,25 @@ const Profil = () => {
     navigate("/");
   };
 
+  const startEditingName = () => {
+    setNameValue(profile?.first_name || "");
+    setEditingName(true);
+  };
+
+  const saveName = async () => {
+    if (!user || !nameValue.trim()) return;
+    setSavingName(true);
+    const { error } = await supabase
+      .from("profiles")
+      .update({ first_name: nameValue.trim() })
+      .eq("user_id", user.id);
+    if (!error) {
+      setProfile((prev) => prev ? { ...prev, first_name: nameValue.trim() } : prev);
+      setEditingName(false);
+    }
+    setSavingName(false);
+  };
+
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
@@ -152,7 +175,36 @@ const Profil = () => {
               <div className="space-y-4 rounded-xl bg-card p-5 shadow-sm">
                 <div>
                   <p className="text-xs font-medium text-muted-foreground">Prénom</p>
-                  <p className="text-sm font-semibold">{profile?.first_name || "–"}</p>
+                  {editingName ? (
+                    <div className="mt-1 flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={nameValue}
+                        onChange={(e) => setNameValue(e.target.value)}
+                        className="flex-1 rounded-lg border border-border bg-background px-3 py-1.5 text-sm outline-none focus:ring-2 focus:ring-primary/30"
+                        placeholder="Ton prénom"
+                        autoFocus
+                        onKeyDown={(e) => e.key === "Enter" && saveName()}
+                      />
+                      <button
+                        onClick={saveName}
+                        disabled={savingName || !nameValue.trim()}
+                        className="rounded-lg bg-primary p-1.5 text-primary-foreground disabled:opacity-50"
+                      >
+                        <Check className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-semibold">{profile?.first_name || "–"}</p>
+                      <button
+                        onClick={startEditingName}
+                        className="rounded-lg p-1 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+                      >
+                        <Pencil className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  )}
                 </div>
                 <div>
                   <p className="text-xs font-medium text-muted-foreground">Email</p>
@@ -160,7 +212,8 @@ const Profil = () => {
                 </div>
                 <div>
                   <p className="text-xs font-medium text-muted-foreground">Progression</p>
-                  <p className="text-sm font-semibold">{completedPhases.length} / 4 phases terminées</p>
+                  <p className="mt-1 text-sm font-semibold">{completedPhases.length} / 4 phases terminées</p>
+                  <Progress value={(completedPhases.length / 4) * 100} className="mt-2 h-2.5" />
                 </div>
               </div>
             </motion.div>
