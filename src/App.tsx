@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/contexts/AuthContext";
+import ProtectedRoute from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import Emotions from "./pages/Emotions";
@@ -31,11 +32,11 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/emotions" element={<Emotions />} />
-            <Route path="/emotion/:emotion" element={<EmotionDetail />} />
-            <Route path="/comprendre" element={<Comprendre />} />
-            <Route path="/avancer" element={<Avancer />} />
+            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/emotions" element={<ProtectedRoute><Emotions /></ProtectedRoute>} />
+            <Route path="/emotion/:emotion" element={<ProtectedRoute><EmotionDetail /></ProtectedRoute>} />
+            <Route path="/comprendre" element={<ProtectedRoute><Comprendre /></ProtectedRoute>} />
+            <Route path="/avancer" element={<ProtectedRoute><Avancer /></ProtectedRoute>} />
             <Route path="/aller-plus-loin" element={<AllerPlusLoin />} />
             <Route path="/parcours" element={<Parcours />} />
             <Route path="/auth" element={<Auth />} />
