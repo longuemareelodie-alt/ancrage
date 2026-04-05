@@ -24,6 +24,9 @@ const Profil = () => {
   const [editingNote, setEditingNote] = useState<{ title: string; content: string } | null>(null);
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState<"profil" | "parcours" | "notes">("profil");
+  const [editingName, setEditingName] = useState(false);
+  const [nameValue, setNameValue] = useState("");
+  const [savingName, setSavingName] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) navigate("/auth");
