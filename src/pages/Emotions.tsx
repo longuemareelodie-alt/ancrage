@@ -22,7 +22,7 @@ const Emotions = () => {
       >
         <div>
           <h1 className="text-2xl font-bold">Comment tu te sens là maintenant ?</h1>
-          <p className="mt-2 text-muted-foreground">Choisis ce qui se rapproche le plus de ton état actuel</p>
+          <p className="mt-2 text-muted-foreground">Choisis sans réfléchir</p>
         </div>
 
         <div className="space-y-3">
