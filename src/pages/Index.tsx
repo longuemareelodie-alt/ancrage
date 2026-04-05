@@ -132,7 +132,7 @@ const Index = () => {
               <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground">
                 {step.num}
               </span>
-              <span>{step}</span>
+              <span>{step.text}</span>
             </div>
           ))}
         </div>
