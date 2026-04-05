@@ -1,11 +1,29 @@
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Zap, Brain, Puzzle, User } from "lucide-react";
+import { Zap, Brain, Puzzle, User, Lock } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 import logo from "@/assets/logo-ancrage.png";
+
+const MOLLIE_LINK = "https://payment-links.mollie.com/payment/Uqs26mrjXBFeWj5oK8hkr";
 
 const Dashboard = () => {
   const { user } = useAuth();
+  const [isPremium, setIsPremium] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (!user) return;
+      const { data } = await supabase
+        .from("profiles")
+        .select("is_premium")
+        .eq("user_id", user.id)
+        .single();
+      setIsPremium(data?.is_premium ?? false);
+    };
+    fetchProfile();
+  }, [user]);
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -103,6 +121,31 @@ const Dashboard = () => {
               </Link>
             </motion.div>
           </div>
+
+          {/* Upsell banner for non-premium */}
+          {user && isPremium === false && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6, duration: 0.5 }}
+              className="rounded-2xl bg-card p-6 text-center shadow-sm space-y-3"
+            >
+              <div className="flex items-center justify-center gap-2">
+                <Lock className="h-4 w-4 text-primary" />
+                <p className="font-bold">Débloque le programme complet</p>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Accède à tous les exercices, au parcours guidé et aux outils de suivi
+              </p>
+              <a
+                href={MOLLIE_LINK}
+                className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 transition-transform hover:scale-[1.02] active:scale-[0.98]"
+              >
+                Je veux que ça s'arrête maintenant — 29€
+              </a>
+              <p className="text-xs text-muted-foreground">Accès à vie · Sans abonnement</p>
+            </motion.div>
+          )}
 
           {/* Retention hook */}
           <motion.p
