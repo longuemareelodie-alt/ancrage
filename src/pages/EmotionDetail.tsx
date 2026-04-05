@@ -98,6 +98,8 @@ const EmotionDetail = () => {
           <p className="text-lg font-medium text-primary">{data.validation}</p>
           <p className="text-muted-foreground">Ton cerveau essaie de te protéger</p>
           <p className="text-sm text-muted-foreground">Mais là… il s'emballe</p>
+          <p className="text-sm font-medium text-primary">👉 Ce que tu ressens est normal</p>
+          <p className="text-sm text-muted-foreground">Tu n'es pas en danger là maintenant</p>
           <p className="font-semibold">On va juste le faire redescendre</p>
         </motion.div>
       </SectionBlock>
@@ -105,7 +107,7 @@ const EmotionDetail = () => {
       {/* Free Steps */}
       <SectionBlock>
         <h2 className="mb-6 text-lg font-bold">
-          Fais ça maintenant{" "}
+          Fais ça avec moi maintenant{" "}
           <span className="text-muted-foreground font-normal">(30 secondes)</span>
         </h2>
         <div className="space-y-3">
@@ -146,8 +148,8 @@ const EmotionDetail = () => {
       {/* Post-exercise: tu viens de redescendre */}
       <SectionBlock variant="blue">
         <div className="space-y-3 text-center">
-          <p className="text-xl font-bold">Tu viens de redescendre</p>
-          <p className="text-muted-foreground">Même légèrement</p>
+          <p className="text-xl font-bold">Tu viens de faire redescendre ton corps</p>
+          <p className="text-muted-foreground">Même un peu → c'est déjà un changement</p>
           <p className="text-primary font-semibold">👉 et ça change déjà tout</p>
         </div>
       </SectionBlock>
