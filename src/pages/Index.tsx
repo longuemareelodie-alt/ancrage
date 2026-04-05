@@ -145,18 +145,17 @@ const Index = () => {
         </div>
       </SectionBlock>
 
-      {/* PROJECTION */}
+      {/* PROJECTION (modifiée — moins généreuse) */}
       <SectionBlock>
-        <h2 className="mb-2 text-xl font-bold text-center">Dans 10 minutes…</h2>
+        <h2 className="mb-2 text-xl font-bold text-center">En continuant…</h2>
         <p className="mb-6 text-sm text-muted-foreground text-center">
-          tu peux déjà ressentir :
+          tu peux ressentir :
         </p>
         <ul className="space-y-3">
           {[
-            "moins de tension",
-            "moins de pensées",
-            "plus de calme",
-            "plus de contrôle",
+            "encore plus de calme",
+            "un vrai relâchement",
+            "un mental qui ralentit vraiment",
           ].map((item) => (
             <li key={item} className="flex items-center gap-3">
               <Check className="h-5 w-5 shrink-0 text-primary" />
@@ -164,9 +163,8 @@ const Index = () => {
             </li>
           ))}
         </ul>
-        <p className="mt-4 text-sm text-muted-foreground text-center">👉 même si c'est léger</p>
-        <p className="mt-2 text-sm font-semibold text-primary text-center">
-          Et c'est comme ça que ça commence
+        <p className="mt-4 text-sm font-semibold text-primary text-center">
+          👉 mais seulement si tu vas jusqu'au bout
         </p>
       </SectionBlock>
 
@@ -232,6 +230,35 @@ const Index = () => {
         </div>
       </SectionBlock>
 
+      {/* POURQUOI PAYER */}
+      <SectionBlock variant="blue">
+        <div className="space-y-4 text-center">
+          <p className="text-lg font-bold">Ce que tu as essayé avant :</p>
+          <ul className="space-y-2 text-muted-foreground">
+            <li>• réfléchir</li>
+            <li>• analyser</li>
+            <li>• attendre que ça passe</li>
+          </ul>
+          <p className="font-semibold text-primary">👉 ça ne marche pas</p>
+          <p className="text-muted-foreground">Parce que le problème n'est pas mental</p>
+          <p className="font-bold text-primary">👉 il est dans ton système nerveux</p>
+        </div>
+      </SectionBlock>
+
+      {/* POSITIONNEMENT PRODUIT */}
+      <SectionBlock>
+        <div className="space-y-4 text-center">
+          <p className="text-lg font-bold">ANCRAGE n'est pas :</p>
+          <div className="space-y-2 text-muted-foreground">
+            <p>❌ une thérapie</p>
+            <p>❌ du blabla</p>
+            <p>❌ de la motivation</p>
+          </div>
+          <p className="font-bold text-primary mt-4">👉 c'est un outil concret</p>
+          <p className="text-muted-foreground">qui agit directement sur ton corps</p>
+        </div>
+      </SectionBlock>
+
       {/* PRIX + CTA */}
       <SectionBlock variant="blue">
         <div className="rounded-2xl bg-card p-8 text-center shadow-sm">
@@ -257,7 +284,7 @@ const Index = () => {
         </div>
       </SectionBlock>
 
-      {/* RASSURANCE FINALE / MICRO COPY */}
+      {/* RASSURANCE FINALE */}
       <SectionBlock>
         <div className="space-y-4 text-center">
           <p className="font-semibold">Tu peux commencer maintenant</p>
