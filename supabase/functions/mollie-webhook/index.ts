@@ -15,6 +15,57 @@ const jsonResponse = (payload: unknown, status = 200) =>
 const webhookAck = (payload: Record<string, unknown> = {}) =>
   jsonResponse({ received: true, ...payload });
 
+const safeStringify = (value: unknown) => {
+  try {
+    return JSON.stringify(value);
+  } catch (error) {
+    return JSON.stringify({
+      serializationError: true,
+      error:
+        error instanceof Error
+          ? { name: error.name, message: error.message, stack: error.stack }
+          : String(error),
+    });
+  }
+};
+
+const serializeError = (error: unknown) => {
+  if (error instanceof Error) {
+    return {
+      name: error.name,
+      message: error.message,
+      stack: error.stack,
+      cause: error.cause ? safeStringify(error.cause) : null,
+    };
+  }
+
+  return {
+    name: "UnknownError",
+    message: typeof error === "string" ? error : safeStringify(error),
+    stack: null,
+    cause: null,
+  };
+};
+
+const logDebug = (label: string, value?: unknown) => {
+  if (typeof value === "undefined") {
+    console.log(label);
+    return;
+  }
+
+  console.log(label, safeStringify(value));
+};
+
+const logError = (label: string, error: unknown, context?: unknown) => {
+  console.error(
+    label,
+    safeStringify({
+      error: serializeError(error),
+      context: typeof context === "undefined" ? null : context,
+    }),
+  );
+};
+
 const firstString = (...values: unknown[]) => {
   for (const value of values) {
     if (typeof value === "string" && value.trim().length > 0) {
@@ -51,6 +102,19 @@ const getEmbeddedPayments = (value: any) => {
   return Array.isArray(payments) ? payments : [];
 };
 
+const safeParseJsonText = (raw: string) => {
+  if (!raw.trim()) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(raw);
+  } catch (error) {
+    logError("Failed to parse JSON text", error, { bodyPreview: raw.slice(0, 1000) });
+    return null;
+  }
+};
+
 const parseRequestBody = async (
   rawBody: string,
   contentType: string,
@@ -66,7 +130,7 @@ const parseRequestBody = async (
         ]),
       );
     } catch (error) {
-      console.error("Failed to parse multipart body:", error?.message || error);
+      logError("Failed to parse multipart body", error);
     }
   }
 
@@ -210,9 +274,25 @@ Deno.serve(async (req) => {
     const requestClone = req.clone();
     const rawBody = await req.text();
 
-    console.log("Received webhook body:", rawBody || "<empty>");
+    logDebug("Received webhook request", {
+      method: req.method,
+      contentType,
+      url: req.url,
+      headers: Object.fromEntries(req.headers.entries()),
+      rawBody: rawBody || "<empty>",
+    });
 
-    const payload = await parseRequestBody(rawBody, contentType, requestClone);
+    let payload: any = null;
+    try {
+      payload = await parseRequestBody(rawBody, contentType, requestClone);
+    } catch (error) {
+      logError("Request body parsing crashed", error, { rawBody, contentType });
+      return webhookAck({
+        status: "error",
+        error: "body_parse_failed",
+      });
+    }
+
     const {
       rawId,
       paymentId: directPaymentId,
@@ -223,29 +303,26 @@ Deno.serve(async (req) => {
       resourceType,
     } = extractWebhookIds(payload);
 
-    console.log(
-      "Webhook received:",
-      JSON.stringify({
-        contentType,
-        rawId,
-        directPaymentId,
-        paymentLinkId,
-        eventType,
-          resourceType,
-        isEventId,
-          isPaymentLinkEvent,
-        payloadKeys:
-          payload && typeof payload === "object" ? Object.keys(payload).slice(0, 10) : [],
-      }),
-    );
-    console.log("Parsed webhook payload:", JSON.stringify(payload));
+    logDebug("Webhook parsed", {
+      contentType,
+      rawId,
+      directPaymentId,
+      paymentLinkId,
+      eventType,
+      resourceType,
+      isEventId,
+      isPaymentLinkEvent,
+      payloadKeys:
+        payload && typeof payload === "object" ? Object.keys(payload).slice(0, 20) : [],
+      payload,
+    });
 
     const mollieKey = Deno.env.get("MOLLIE_API_KEY");
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
     if (!mollieKey || !supabaseUrl || !serviceRoleKey) {
-      console.error("Missing env vars:", {
+      logDebug("Missing env vars", {
         hasMollie: !!mollieKey,
         hasUrl: !!supabaseUrl,
         hasServiceKey: !!serviceRoleKey,
@@ -266,22 +343,39 @@ Deno.serve(async (req) => {
 
     // Strategy 1: If we have a payment-link event or payment-link ID, fetch its payments
     if (!paymentId && paymentLinkId && isPaymentLinkEvent) {
-      console.log("Resolving payment from payment-link:", paymentLinkId);
+      logDebug("Resolving payment from payment-link", { paymentLinkId, eventType, resourceType });
       try {
         const plRes = await fetch(
           `https://api.mollie.com/v2/payment-links/${paymentLinkId}?include=payments`,
           { headers: mollieHeaders },
         );
+        const plText = await plRes.text();
+        logDebug("Payment-link fetch result", {
+          status: plRes.status,
+          ok: plRes.ok,
+          paymentLinkId,
+          bodyPreview: plText.slice(0, 2000),
+        });
+
         if (plRes.ok) {
-          const plData = await plRes.json();
+          const plData = safeParseJsonText(plText);
+          if (!plData) {
+            return webhookAck({
+              status: "ignored",
+              action: "none",
+              reason: "payment_link_response_invalid_json",
+              payment_link_id: paymentLinkId,
+            });
+          }
+
           const embeddedPayments = getEmbeddedPayments(plData);
-          console.log("Payment-link data:", JSON.stringify({
+          logDebug("Payment-link data", {
             id: plData.id,
             status: plData.status,
             paidAt: plData.paidAt,
             _links: plData._links ? Object.keys(plData._links) : [],
             embeddedPayments: embeddedPayments.length,
-          }));
+          });
           const paidPayment = embeddedPayments.find(
             (candidate: any) => candidate?.status === "paid" && typeof candidate?.id === "string",
           );
@@ -295,28 +389,46 @@ Deno.serve(async (req) => {
 
           if (paidPayment?.id) {
             paymentId = paidPayment.id;
-            console.log("Found paid payment from payment-link:", paymentId);
+            logDebug("Found paid payment from payment-link", { paymentId, paymentLinkId });
           } else if (latestPayment?.id) {
             paymentId = latestPayment.id;
-            console.log("Using fallback payment from payment-link:", paymentId);
+            logDebug("Using fallback payment from payment-link", { paymentId, paymentLinkId });
           } else if (paymentIdFromLinks) {
             paymentId = paymentIdFromLinks;
-            console.log("Found payment from payment-link _links:", paymentId);
+            logDebug("Found payment from payment-link _links", { paymentId, paymentLinkId });
           }
         } else {
-          const errText = await plRes.text();
-          console.error("Payment-link fetch error:", plRes.status, errText);
+          logDebug("Payment-link fetch error", {
+            status: plRes.status,
+            paymentLinkId,
+            bodyPreview: plText.slice(0, 2000),
+          });
         }
       } catch (err) {
-        console.error("Payment-link fetch exception:", err?.message || err);
+        logError("Payment-link fetch exception", err, { paymentLinkId, eventType });
       }
     }
 
+    logDebug("Resolved payment identifier", {
+      rawId,
+      directPaymentId,
+      paymentLinkId,
+      paymentId,
+      eventType,
+      resourceType,
+    });
+
     // If we still have no payment ID, acknowledge and exit
     if (!paymentId) {
-      console.error("Unable to resolve payment ID from webhook", JSON.stringify({
-        rawId, directPaymentId, paymentLinkId, eventType, isEventId, resourceType,
-      }));
+      logDebug("Unable to resolve payment ID from webhook", {
+        rawId,
+        directPaymentId,
+        paymentLinkId,
+        eventType,
+        isEventId,
+        resourceType,
+        payload,
+      });
       return webhookAck({
         status: "ignored",
         action: "none",
@@ -329,15 +441,38 @@ Deno.serve(async (req) => {
     }
 
     // --- Fetch the actual payment details ---
-    console.log("Fetching payment details for:", paymentId);
-    const mollieRes = await fetch(
-      `https://api.mollie.com/v2/payments/${paymentId}`,
-      { headers: mollieHeaders },
-    );
+    logDebug("Fetching payment details", { paymentId });
+
+    let mollieRes: Response;
+    try {
+      mollieRes = await fetch(
+        `https://api.mollie.com/v2/payments/${paymentId}`,
+        { headers: mollieHeaders },
+      );
+    } catch (error) {
+      logError("Mollie payment fetch crashed", error, { paymentId });
+      return webhookAck({
+        status: "error",
+        error: "mollie_payment_fetch_crashed",
+        payment_id: paymentId,
+      });
+    }
+
+    const mollieBody = await mollieRes.text();
+    logDebug("Mollie payment fetch result", {
+      paymentId,
+      status: mollieRes.status,
+      ok: mollieRes.ok,
+      contentType: mollieRes.headers.get("content-type"),
+      bodyPreview: mollieBody.slice(0, 3000),
+    });
 
     if (!mollieRes.ok) {
-      const errText = await mollieRes.text();
-      console.error("Mollie payment fetch error:", mollieRes.status, errText);
+      logDebug("Mollie payment fetch error", {
+        paymentId,
+        mollieStatus: mollieRes.status,
+        bodyPreview: mollieBody.slice(0, 2000),
+      });
       return webhookAck({
         status: "error",
         error: "mollie_payment_fetch_failed",
@@ -346,37 +481,50 @@ Deno.serve(async (req) => {
       });
     }
 
-    const payment = await mollieRes.json();
-    console.log(
-      "Payment details:",
-      JSON.stringify({
-        id: payment.id,
-        status: payment.status,
-        metadata: payment.metadata,
-        amount: payment.amount,
-        billingEmail: payment.billingEmail ?? payment.details?.billingEmail ?? null,
-      }),
-    );
+    const payment = safeParseJsonText(mollieBody);
+    if (!payment || typeof payment !== "object") {
+      logDebug("Mollie payment payload invalid", { paymentId, mollieBodyPreview: mollieBody.slice(0, 1000) });
+      return webhookAck({
+        status: "error",
+        error: "mollie_payment_invalid_payload",
+        payment_id: paymentId,
+      });
+    }
+
+    logDebug("Payment details", {
+      id: payment?.id ?? null,
+      status: payment?.status ?? null,
+      metadata: payment?.metadata ?? null,
+      amount: payment?.amount ?? null,
+      billingEmail: payment?.billingEmail ?? payment?.details?.billingEmail ?? null,
+    });
 
     if (payment.status !== "paid") {
-      console.log("Payment not paid, status:", payment.status);
+      logDebug("Payment not paid", { paymentId, status: payment?.status ?? null });
       return webhookAck({ status: payment.status, action: "none" });
     }
 
     const userId = firstString(payment.metadata?.user_id, payment.metadata?.userId);
     const email = extractPaymentEmail(payment);
 
+    logDebug("Resolved user lookup data", {
+      paymentId,
+      userId,
+      email,
+      metadata: payment?.metadata ?? null,
+    });
+
     if (!userId && !email) {
-      console.error(
-        "No user_id or email found for payment",
+      logDebug("No user_id or email found for payment", {
         paymentId,
-        JSON.stringify({ metadata: payment.metadata, paymentId: payment.id })
-      );
+        paymentRecordId: payment?.id ?? null,
+        metadata: payment?.metadata ?? null,
+      });
       return webhookAck({
         status: "ignored",
         action: "none",
         reason: "user_identifier_missing",
-        payment_id: payment.id,
+        payment_id: payment?.id ?? paymentId,
       });
     }
 
@@ -385,6 +533,7 @@ Deno.serve(async (req) => {
     let profile: { user_id: string; email: string | null; is_premium: boolean } | null = null;
 
     if (userId) {
+      logDebug("Looking up profile by user_id", { userId, paymentId });
       const { data, error } = await supabase
         .from("profiles")
         .select("user_id, email, is_premium")
@@ -392,13 +541,21 @@ Deno.serve(async (req) => {
         .maybeSingle();
 
       if (error) {
-        console.error("Profile lookup by user_id failed:", error.message, error.details);
+        logDebug("Profile lookup by user_id failed", {
+          userId,
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code,
+        });
       } else {
         profile = data;
+        logDebug("Profile lookup by user_id result", { userId, profile });
       }
     }
 
     if (!profile && email) {
+      logDebug("Looking up profile by email", { email, paymentId });
       const { data, error } = await supabase
         .from("profiles")
         .select("user_id, email, is_premium")
@@ -406,13 +563,21 @@ Deno.serve(async (req) => {
         .maybeSingle();
 
       if (error) {
-        console.error("Profile lookup by email failed:", error.message, error.details);
+        logDebug("Profile lookup by email failed", {
+          email,
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code,
+        });
       } else {
         profile = data;
+        logDebug("Profile lookup by email result", { email, profile });
       }
     }
 
     if (!profile && userId) {
+      logDebug("Inserting profile by user_id", { userId, email, isPremium: true });
       const { data, error } = await supabase
         .from("profiles")
         .insert({
@@ -425,23 +590,42 @@ Deno.serve(async (req) => {
         .single();
 
       if (error) {
-        console.error("Profile insert by user_id failed:", error.message, error.details);
+        logDebug("Profile insert by user_id failed", {
+          userId,
+          email,
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code,
+        });
       } else {
         profile = data;
+        logDebug("Profile insert by user_id result", { profile });
       }
     }
 
     if (!profile && email) {
+      logDebug("Listing auth users to match email", { email });
       const { data: userListData, error: usersError } = await supabase.auth.admin.listUsers();
 
       if (usersError) {
-        console.error("Auth user lookup by email failed:", usersError.message);
+        logDebug("Auth user lookup by email failed", {
+          email,
+          message: usersError.message,
+        });
       } else {
-        const authUser = userListData.users.find(
+        const authUsers = Array.isArray(userListData?.users) ? userListData.users : [];
+        logDebug("Auth user lookup result", { email, totalUsersScanned: authUsers.length });
+        const authUser = authUsers.find(
           (candidate) => candidate.email?.toLowerCase() === email.toLowerCase(),
         );
 
         if (authUser) {
+          logDebug("Inserting profile from auth user", {
+            authUserId: authUser.id,
+            email,
+            matchedEmail: authUser.email ?? null,
+          });
           const { data, error } = await supabase
             .from("profiles")
             .insert({
@@ -457,32 +641,51 @@ Deno.serve(async (req) => {
             .single();
 
           if (error) {
-            console.error("Profile insert by email failed:", error.message, error.details);
+            logDebug("Profile insert by email failed", {
+              email,
+              authUserId: authUser.id,
+              message: error.message,
+              details: error.details,
+              hint: error.hint,
+              code: error.code,
+            });
           } else {
             profile = data;
+            logDebug("Profile insert by email result", { profile });
           }
         }
       }
     }
 
     if (!profile) {
-      console.error("No profile found for payment", payment.id, JSON.stringify({ userId, email }));
+      logDebug("No profile found for payment", {
+        paymentId,
+        paymentRecordId: payment?.id ?? null,
+        userId,
+        email,
+      });
       return webhookAck({
         status: "ignored",
         action: "none",
         reason: "profile_not_found",
-        payment_id: payment.id,
+        payment_id: payment?.id ?? paymentId,
       });
     }
 
     if (profile.is_premium) {
-      console.log("Profile already premium:", JSON.stringify(profile));
+      logDebug("Profile already premium", { profile, paymentId });
       return webhookAck({
         status: "premium_already_active",
         user_id: profile.user_id,
         email: profile.email,
       });
     }
+
+    logDebug("Running premium update query", {
+      targetUserId: profile.user_id,
+      update: { is_premium: true },
+      paymentId,
+    });
 
     const { data: updatedProfile, error: updateError } = await supabase
       .from("profiles")
@@ -492,7 +695,13 @@ Deno.serve(async (req) => {
       .single();
 
     if (updateError) {
-      console.error("DB update error:", updateError.message, updateError.details);
+      logDebug("DB update error", {
+        targetUserId: profile.user_id,
+        message: updateError.message,
+        details: updateError.details,
+        hint: updateError.hint,
+        code: updateError.code,
+      });
       return webhookAck({
         status: "error",
         error: "profile_update_failed",
@@ -500,7 +709,18 @@ Deno.serve(async (req) => {
       });
     }
 
-    console.log("Premium activated:", JSON.stringify(updatedProfile));
+    logDebug("Premium update result", {
+      targetUserId: profile.user_id,
+      updatedProfile: updatedProfile ?? null,
+    });
+
+    if (!updatedProfile?.user_id) {
+      return webhookAck({
+        status: "error",
+        error: "profile_update_empty_result",
+        user_id: profile.user_id,
+      });
+    }
 
     return webhookAck({
       status: "premium_activated",
@@ -508,7 +728,7 @@ Deno.serve(async (req) => {
       email: updatedProfile.email,
     });
   } catch (err) {
-    console.error("Webhook error:", err?.stack || err?.message || err);
+    logError("Webhook error", err);
     return webhookAck({
       status: "error",
       error: "internal_error",
