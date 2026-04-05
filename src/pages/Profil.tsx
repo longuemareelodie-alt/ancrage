@@ -95,6 +95,25 @@ const Profil = () => {
     navigate("/");
   };
 
+  const startEditingName = () => {
+    setNameValue(profile?.first_name || "");
+    setEditingName(true);
+  };
+
+  const saveName = async () => {
+    if (!user || !nameValue.trim()) return;
+    setSavingName(true);
+    const { error } = await supabase
+      .from("profiles")
+      .update({ first_name: nameValue.trim() })
+      .eq("user_id", user.id);
+    if (!error) {
+      setProfile((prev) => prev ? { ...prev, first_name: nameValue.trim() } : prev);
+      setEditingName(false);
+    }
+    setSavingName(false);
+  };
+
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
