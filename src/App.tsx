@@ -36,8 +36,8 @@ const App = () => (
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/emotions" element={<ProtectedRoute><Emotions /></ProtectedRoute>} />
             <Route path="/emotion/:emotion" element={<ProtectedRoute><EmotionDetail /></ProtectedRoute>} />
-            <Route path="/comprendre" element={<ProtectedRoute><Comprendre /></ProtectedRoute>} />
-            <Route path="/avancer" element={<ProtectedRoute><Avancer /></ProtectedRoute>} />
+            <Route path="/comprendre" element={<PremiumRoute><Comprendre /></PremiumRoute>} />
+            <Route path="/avancer" element={<PremiumRoute><Avancer /></PremiumRoute>} />
             <Route path="/aller-plus-loin" element={<AllerPlusLoin />} />
             <Route path="/parcours" element={<Parcours />} />
             <Route path="/auth" element={<Auth />} />
