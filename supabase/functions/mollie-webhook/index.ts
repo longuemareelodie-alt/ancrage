@@ -25,6 +25,32 @@ const firstString = (...values: unknown[]) => {
   return null;
 };
 
+const asRecord = (value: unknown): Record<string, any> | null =>
+  value !== null && typeof value === "object" && !Array.isArray(value)
+    ? (value as Record<string, any>)
+    : null;
+
+const getHref = (value: unknown) => {
+  if (typeof value === "string") {
+    return value;
+  }
+
+  return firstString(asRecord(value)?.href);
+};
+
+const extractTokenFromHref = (href: unknown, prefix: "tr_" | "pl_") => {
+  if (typeof href !== "string") {
+    return null;
+  }
+
+  return href.match(new RegExp(`${prefix}[^/?#]+`))?.[0] ?? null;
+};
+
+const getEmbeddedPayments = (value: any) => {
+  const payments = value?._embedded?.payments;
+  return Array.isArray(payments) ? payments : [];
+};
+
 const parseRequestBody = async (
   rawBody: string,
   contentType: string,
@@ -62,67 +88,105 @@ const parseRequestBody = async (
 };
 
 const extractWebhookIds = (payload: any) => {
-  // Only accept IDs that look like Mollie payment tokens (tr_*)
-  const isPaymentId = (id: string | null) => id && id.startsWith("tr_");
-  const isPaymentLinkId = (id: string | null) => id && id.startsWith("pl_");
+  const root = asRecord(payload);
+  const data = asRecord(root?.data);
+  const resourceObject = asRecord(root?.resource);
+  const embedded = asRecord(root?._embedded);
+  const rootLinks = asRecord(root?._links);
+  const resourceLinks = asRecord(resourceObject?._links);
+  const dataLinks = asRecord(data?._links);
+  const embeddedEntity = asRecord(embedded?.entity);
+  const embeddedPayment = asRecord(embedded?.payment);
+  const rootPayment = asRecord(root?.payment);
+  const dataPayment = asRecord(data?.payment);
+  const resourcePayment = asRecord(resourceObject?.payment);
 
-  // Look for explicit payment IDs in various locations
-  const candidates = [
-    payload?.paymentId,
-    payload?.payment_id,
-    payload?.payment?.id,
-    payload?.data?.paymentId,
-    payload?.data?.payment_id,
-    payload?.data?.payment?.id,
-    payload?._embedded?.payment?.id,
-  ];
+  const isPaymentId = (id: string | null) => Boolean(id?.startsWith("tr_"));
+  const isPaymentLinkId = (id: string | null) => Boolean(id?.startsWith("pl_"));
 
-  const explicitPaymentId = firstString(...candidates.filter((c) => {
-    const s = typeof c === "string" ? c : null;
-    return s && isPaymentId(s);
-  })) ?? firstString(...candidates);
-
-  const rawId = firstString(payload?.id);
-
-  // Only use rawId as paymentId if it looks like a payment token
-  const paymentId =
-    (explicitPaymentId && isPaymentId(explicitPaymentId) ? explicitPaymentId : null)
-    ?? (rawId && isPaymentId(rawId) ? rawId : null);
-
-  // Detect payment-link ID (pl_*) which needs separate handling
-  const entityId = firstString(payload?.entityId, payload?._embedded?.entity?.id);
-  const paymentLinkId = firstString(
-    payload?.paymentLinkId,
-    payload?.payment_link_id,
-    payload?.data?.paymentLinkId,
-    payload?.data?.payment_link_id,
-  )
-    ?? (entityId && isPaymentLinkId(entityId) ? entityId : null)
-    ?? (rawId && isPaymentLinkId(rawId) ? rawId : null);
-
-  // Also extract payment-link ID from _links
-  const plFromLinks = !paymentLinkId
-    ? firstString(
-        payload?._links?.paymentLink?.href?.match?.(/payment-links\/(pl_\w+)/)?.[1],
-        payload?._links?.entity?.href?.match?.(/payment-links\/(pl_\w+)/)?.[1],
-        payload?._embedded?.entity?._links?.self?.href?.match?.(/payment-links\/(pl_\w+)/)?.[1],
-      )
-    : null;
-
-  const resolvedPlId = paymentLinkId ?? plFromLinks;
-
-  // Detect event type from payload
+  const rawId = firstString(root?.id);
   const eventType = firstString(
-    payload?.type,
-    payload?.event,
-    payload?.eventType,
-    payload?.data?.type,
+    root?.type,
+    root?.event,
+    root?.eventType,
+    data?.type,
+    resourceObject?.type,
+  );
+  const resourceType = firstString(
+    typeof root?.resource === "string" ? root.resource : null,
+    resourceObject?.resource,
+    data?.resource,
   );
 
-  // Check if rawId is an event ID that needs resolution
-  const isEventId = rawId?.startsWith("event_") || rawId?.startsWith("evt_");
+  const paymentCandidates = [
+    rawId,
+    root?.paymentId,
+    root?.payment_id,
+    rootPayment?.id,
+    data?.id,
+    data?.paymentId,
+    data?.payment_id,
+    dataPayment?.id,
+    resourceObject?.id,
+    resourceObject?.paymentId,
+    resourceObject?.payment_id,
+    resourcePayment?.id,
+    embeddedPayment?.id,
+    extractTokenFromHref(getHref(rootLinks?.payment), "tr_"),
+    extractTokenFromHref(getHref(resourceLinks?.payment), "tr_"),
+    extractTokenFromHref(getHref(dataLinks?.payment), "tr_"),
+    extractTokenFromHref(getHref(rootLinks?.self), "tr_"),
+  ];
 
-  return { rawId, paymentId, paymentLinkId: resolvedPlId, eventType, isEventId };
+  const paymentLinkCandidates = [
+    rawId,
+    root?.paymentLinkId,
+    root?.payment_link_id,
+    root?.entityId,
+    data?.id,
+    data?.paymentLinkId,
+    data?.payment_link_id,
+    resourceObject?.id,
+    resourceObject?.paymentLinkId,
+    resourceObject?.payment_link_id,
+    embeddedEntity?.id,
+    extractTokenFromHref(getHref(rootLinks?.paymentLink), "pl_"),
+    extractTokenFromHref(getHref(rootLinks?.entity), "pl_"),
+    extractTokenFromHref(getHref(resourceLinks?.paymentLink), "pl_"),
+    extractTokenFromHref(getHref(resourceLinks?.self), "pl_"),
+    extractTokenFromHref(getHref(dataLinks?.paymentLink), "pl_"),
+    extractTokenFromHref(getHref(rootLinks?.self), "pl_"),
+  ];
+
+  const paymentId =
+    firstString(
+      ...paymentCandidates.filter((candidate) =>
+        typeof candidate === "string" && isPaymentId(candidate),
+      ),
+    ) ?? null;
+
+  const paymentLinkId =
+    firstString(
+      ...paymentLinkCandidates.filter((candidate) =>
+        typeof candidate === "string" && isPaymentLinkId(candidate),
+      ),
+    ) ?? null;
+
+  const isEventId = rawId?.startsWith("event_") || rawId?.startsWith("evt_");
+  const isPaymentLinkEvent =
+    Boolean(eventType?.startsWith("payment-link."))
+    || resourceType === "payment-link"
+    || isPaymentLinkId(paymentLinkId);
+
+  return {
+    rawId,
+    paymentId,
+    paymentLinkId,
+    eventType,
+    isEventId,
+    isPaymentLinkEvent,
+    resourceType,
+  };
 };
 
 const extractPaymentEmail = (payment: any) =>
@@ -149,7 +213,15 @@ Deno.serve(async (req) => {
     console.log("Received webhook body:", rawBody || "<empty>");
 
     const payload = await parseRequestBody(rawBody, contentType, requestClone);
-    const { rawId, paymentId: directPaymentId, paymentLinkId, eventType, isEventId } = extractWebhookIds(payload);
+    const {
+      rawId,
+      paymentId: directPaymentId,
+      paymentLinkId,
+      eventType,
+      isEventId,
+      isPaymentLinkEvent,
+      resourceType,
+    } = extractWebhookIds(payload);
 
     console.log(
       "Webhook received:",
@@ -159,7 +231,9 @@ Deno.serve(async (req) => {
         directPaymentId,
         paymentLinkId,
         eventType,
+          resourceType,
         isEventId,
+          isPaymentLinkEvent,
         payloadKeys:
           payload && typeof payload === "object" ? Object.keys(payload).slice(0, 10) : [],
       }),
@@ -182,12 +256,16 @@ Deno.serve(async (req) => {
       });
     }
 
+    if (eventType === "hook.ping") {
+      return webhookAck({ status: "hook_ping", action: "none" });
+    }
+
     // --- Resolve the payment ID through multiple strategies ---
     let paymentId = directPaymentId;
     const mollieHeaders = { Authorization: `Bearer ${mollieKey}` };
 
-    // Strategy 1: If we have a payment-link ID, fetch its payments
-    if (!paymentId && paymentLinkId) {
+    // Strategy 1: If we have a payment-link event or payment-link ID, fetch its payments
+    if (!paymentId && paymentLinkId && isPaymentLinkEvent) {
       console.log("Resolving payment from payment-link:", paymentLinkId);
       try {
         const plRes = await fetch(
@@ -196,27 +274,34 @@ Deno.serve(async (req) => {
         );
         if (plRes.ok) {
           const plData = await plRes.json();
+          const embeddedPayments = getEmbeddedPayments(plData);
           console.log("Payment-link data:", JSON.stringify({
             id: plData.id,
             status: plData.status,
             paidAt: plData.paidAt,
             _links: plData._links ? Object.keys(plData._links) : [],
-            embeddedPayments: plData._embedded?.payments?.length ?? 0,
+            embeddedPayments: embeddedPayments.length,
           }));
-          // Find the paid payment from embedded payments
-          const paidPayment = plData._embedded?.payments?.find(
-            (p: any) => p.status === "paid",
+          const paidPayment = embeddedPayments.find(
+            (candidate: any) => candidate?.status === "paid" && typeof candidate?.id === "string",
           );
+          const latestPayment = embeddedPayments.find(
+            (candidate: any) => typeof candidate?.id === "string",
+          );
+          const paymentIdFromLinks = extractTokenFromHref(
+            getHref(asRecord(plData?._links)?.payment),
+            "tr_",
+          );
+
           if (paidPayment?.id) {
             paymentId = paidPayment.id;
             console.log("Found paid payment from payment-link:", paymentId);
-          } else {
-            // Try the last payment
-            const lastPayment = plData._embedded?.payments?.slice(-1)[0];
-            if (lastPayment?.id) {
-              paymentId = lastPayment.id;
-              console.log("Using last payment from payment-link:", paymentId);
-            }
+          } else if (latestPayment?.id) {
+            paymentId = latestPayment.id;
+            console.log("Using fallback payment from payment-link:", paymentId);
+          } else if (paymentIdFromLinks) {
+            paymentId = paymentIdFromLinks;
+            console.log("Found payment from payment-link _links:", paymentId);
           }
         } else {
           const errText = await plRes.text();
@@ -227,67 +312,10 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Strategy 2: If we have an event ID, try to fetch the event to get the resource
-    if (!paymentId && isEventId && rawId) {
-      console.log("Resolving payment from event:", rawId);
-      try {
-        // Try the events endpoint (next-gen webhooks)
-        const evtRes = await fetch(
-          `https://api.mollie.com/v2/events/${rawId}`,
-          { headers: mollieHeaders },
-        );
-        if (evtRes.ok) {
-          const evtData = await evtRes.json();
-          console.log("Event data:", JSON.stringify(evtData));
-          // Extract payment ID from event resource
-          const resourcePaymentId = firstString(
-            evtData?.resource?.id,
-            evtData?.data?.id,
-            evtData?.paymentId,
-            evtData?._links?.payment?.href?.match(/payments\/(tr_\w+)/)?.[1],
-          );
-          // Extract payment-link ID from event
-          const resourcePlId = firstString(
-            evtData?.paymentLinkId,
-            evtData?.resource?.paymentLinkId,
-            evtData?._links?.paymentLink?.href?.match(/payment-links\/(pl_\w+)/)?.[1],
-          );
-          if (resourcePaymentId) {
-            paymentId = resourcePaymentId;
-            console.log("Found payment ID from event:", paymentId);
-          } else if (resourcePlId) {
-            // Fetch payment-link to get payment
-            console.log("Found payment-link from event, fetching:", resourcePlId);
-            const plRes2 = await fetch(
-              `https://api.mollie.com/v2/payment-links/${resourcePlId}?include=payments`,
-              { headers: mollieHeaders },
-            );
-            if (plRes2.ok) {
-              const plData2 = await plRes2.json();
-              const paidP = plData2._embedded?.payments?.find(
-                (p: any) => p.status === "paid",
-              ) ?? plData2._embedded?.payments?.slice(-1)[0];
-              if (paidP?.id) {
-                paymentId = paidP.id;
-                console.log("Found payment from event->payment-link:", paymentId);
-              }
-            } else {
-              await plRes2.text(); // consume body
-            }
-          }
-        } else {
-          const errText = await evtRes.text();
-          console.log("Event fetch returned:", evtRes.status, errText);
-        }
-      } catch (err) {
-        console.error("Event fetch exception:", err?.message || err);
-      }
-    }
-
     // If we still have no payment ID, acknowledge and exit
     if (!paymentId) {
       console.error("Unable to resolve payment ID from webhook", JSON.stringify({
-        rawId, directPaymentId, paymentLinkId, eventType, isEventId,
+        rawId, directPaymentId, paymentLinkId, eventType, isEventId, resourceType,
       }));
       return webhookAck({
         status: "ignored",
@@ -296,6 +324,7 @@ Deno.serve(async (req) => {
         raw_id: rawId,
         payment_link_id: paymentLinkId,
         event_type: eventType,
+        resource_type: resourceType,
       });
     }
 
