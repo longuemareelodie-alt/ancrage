@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import SectionBlock from "@/components/SectionBlock";
 import CTAButton from "@/components/CTAButton";
 import { motion } from "framer-motion";
-import { Check } from "lucide-react";
+import { Check, Lock } from "lucide-react";
 
 const MOLLIE_LINK = "https://payment-links.mollie.com/payment/Uqs26mrjXBFeWj5oK8hkr";
 
@@ -10,7 +10,8 @@ interface EmotionData {
   title: string;
   validation: string;
   subtext: string;
-  steps: string[];
+  freeSteps: string[];
+  lockedSteps: string[];
   script: string[];
 }
 
@@ -19,47 +20,54 @@ const emotionData: Record<string, EmotionData> = {
     title: "Tu paniques",
     validation: "Ton corps essaie de te protéger.",
     subtext: "Ce que tu ressens est réel.\n👉 Tu n'es pas en danger immédiat.",
-    steps: [
+    freeSteps: [
       "Regarde autour de toi",
       "Nomme 5 objets",
+    ],
+    lockedSteps: [
       "Pose une main sur ton cœur",
       "Inspire lentement",
       "Expire plus longtemps",
     ],
-    script: ["Tu es ici", "maintenant", "le danger n'est pas là", "ton corps peut redescendre"],
+    script: ["Tu es ici", "maintenant"],
   },
   hypervigilance: {
     title: "Ton corps est en hypervigilance",
     validation: "Ton système est resté en alerte.",
     subtext: "Il essaie encore de te protéger.",
-    steps: [
+    freeSteps: [
       "Regarde 3 choses",
       "Écoute 2 sons",
+    ],
+    lockedSteps: [
       "Touche un objet",
       "Relâche tes épaules",
       "Respire lentement",
     ],
-    script: ["Tu peux baisser la garde", "tu es en sécurité ici"],
+    script: ["Tu peux baisser la garde"],
   },
   rumination: {
     title: "Ton mental tourne en boucle",
     validation: "Ton cerveau cherche une sortie.",
     subtext: "Tu n'es pas faible.",
-    steps: ["Regarde un point fixe", "Respire lentement", 'Dis "stop" intérieurement'],
-    script: ["Tu peux laisser passer", "sans résoudre maintenant"],
+    freeSteps: ["Regarde un point fixe", "Respire lentement"],
+    lockedSteps: ['Dis "stop" intérieurement'],
+    script: ["Tu peux laisser passer"],
   },
   explosion: {
     title: "La pression est trop forte",
     validation: "La pression est trop forte.",
     subtext: "Ton système est saturé.",
-    steps: ["Serre tes poings", "Relâche", "Appuie tes pieds", "Respire profondément"],
+    freeSteps: ["Serre tes poings", "Relâche"],
+    lockedSteps: ["Appuie tes pieds", "Respire profondément"],
     script: ["Tu peux relâcher sans exploser"],
   },
   vide: {
     title: "Tu te sens vide",
     validation: "Ton système s'est coupé pour tenir.",
     subtext: "Ton corps s'est coupé pour te protéger.",
-    steps: ["Bouge tes mains", "Touche une surface", "Bois de l'eau", "Respire"],
+    freeSteps: ["Bouge tes mains", "Touche une surface"],
+    lockedSteps: ["Bois de l'eau", "Respire"],
     script: ["Tu peux revenir doucement"],
   },
 };
@@ -94,14 +102,14 @@ const EmotionDetail = () => {
         </motion.div>
       </SectionBlock>
 
-      {/* Steps */}
+      {/* Free Steps */}
       <SectionBlock>
         <h2 className="mb-6 text-lg font-bold">
           Fais ça maintenant{" "}
-          <span className="text-muted-foreground font-normal">(2 minutes)</span>
+          <span className="text-muted-foreground font-normal">(30 secondes)</span>
         </h2>
         <div className="space-y-3">
-          {data.steps.map((step, i) => (
+          {data.freeSteps.map((step, i) => (
             <motion.div
               key={step}
               initial={{ opacity: 0, x: -15 }}
@@ -117,10 +125,26 @@ const EmotionDetail = () => {
             </motion.div>
           ))}
         </div>
-        <p className="mt-4 text-xs text-muted-foreground text-center">👉 Tu peux arrêter quand tu veux</p>
+
+        {/* Locked Steps */}
+        <div className="mt-4 space-y-3 relative">
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/60 to-background z-10 rounded-xl" />
+          {data.lockedSteps.map((step, i) => (
+            <div
+              key={step}
+              className="flex items-center gap-4 rounded-xl bg-card p-4 shadow-sm opacity-40 blur-[2px]"
+            >
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-bold text-muted-foreground">
+                <Lock className="h-3.5 w-3.5" />
+              </span>
+              <span>{step}</span>
+            </div>
+          ))}
+        </div>
+        <p className="mt-4 text-xs text-muted-foreground text-center">👉 La suite est dans ANCRAGE</p>
       </SectionBlock>
 
-      {/* Script */}
+      {/* Script (minimal) */}
       <SectionBlock variant="blue">
         <div className="space-y-3 text-center text-lg">
           {data.script.map((line) => (
@@ -131,40 +155,52 @@ const EmotionDetail = () => {
         </div>
       </SectionBlock>
 
-      {/* Closing — new version */}
+      {/* Closing — tu viens de commencer */}
       <SectionBlock>
         <div className="space-y-4 text-center">
           <p className="font-semibold">Tu viens de commencer à faire redescendre ton corps</p>
           <p className="text-sm text-muted-foreground">👉 même légèrement</p>
-          <p className="font-medium mt-4">Mais ce n'est que le début</p>
-          <p className="text-sm text-muted-foreground">
-            Parce que ton système ne redescend pas en une seule fois
-          </p>
         </div>
       </SectionBlock>
 
-      {/* Warning */}
+      {/* Moment de manque */}
       <SectionBlock variant="blue">
         <div className="space-y-4 text-center">
-          <p className="font-bold">Et si tu t'arrêtes là…</p>
+          <p className="font-bold">Tu sens que ça commence à bouger…</p>
+          <p className="text-primary font-semibold">👉 mais ça ne tient pas</p>
           <div className="space-y-2 text-muted-foreground">
-            <p>👉 ton corps va remonter</p>
-            <p>👉 tes pensées vont revenir</p>
-            <p>👉 et tu vas repartir dans la boucle</p>
+            <p>Parce que ton système ne redescend pas en une seule fois</p>
+          </div>
+          <p className="font-medium mt-2">Et sans cadre…</p>
+          <div className="space-y-2 text-muted-foreground">
+            <p>👉 ça remonte</p>
+            <p>👉 ça revient</p>
+            <p>👉 et tu repars dans la boucle</p>
           </div>
         </div>
       </SectionBlock>
 
-      {/* Projection */}
+      {/* Frustration intelligente */}
       <SectionBlock>
         <div className="space-y-4 text-center">
-          <p className="font-bold">En quelques minutes encore…</p>
-          <p className="text-sm text-muted-foreground">tu peux sentir :</p>
+          <p className="font-bold">Ce que tu viens de faire est un début</p>
+          <p className="text-primary font-semibold">Mais ce n'est pas suffisant pour sortir de cet état durablement</p>
+          <div className="space-y-2 text-muted-foreground">
+            <p>👉 ton corps a besoin d'un enchaînement précis</p>
+            <p>👉 pas juste d'un exercice</p>
+          </div>
+        </div>
+      </SectionBlock>
+
+      {/* Promesse contrôlée */}
+      <SectionBlock variant="blue">
+        <div className="space-y-4 text-center">
+          <p className="text-lg font-bold">Avec ANCRAGE, tu vas :</p>
           <ul className="space-y-3 text-left">
             {[
-              "ton corps se relâcher davantage",
-              "ton mental ralentir",
-              "une sensation de sécurité revenir",
+              "enchaîner les bonnes actions",
+              "faire redescendre ton système progressivement",
+              "sortir réellement de la boucle",
             ].map((item) => (
               <li key={item} className="flex items-center gap-3">
                 <Check className="h-5 w-5 shrink-0 text-primary" />
@@ -172,31 +208,28 @@ const EmotionDetail = () => {
               </li>
             ))}
           </ul>
-          <p className="text-sm text-primary font-medium">
-            👉 pour la première fois depuis longtemps
+          <p className="text-sm text-muted-foreground">
+            👉 même si aujourd'hui tu te sens bloquée
           </p>
         </div>
       </SectionBlock>
 
-      {/* Porte */}
-      <SectionBlock variant="blue">
-        <div className="space-y-4 text-center">
-          <p className="font-bold">Ce que tu viens de faire, c'est une porte</p>
-          <p className="text-muted-foreground">Mais pour vraiment sortir…</p>
-          <p className="text-primary font-semibold">👉 tu as besoin d'un cadre</p>
-        </div>
-      </SectionBlock>
-
-      {/* Social proof */}
+      {/* CTA */}
       <SectionBlock>
         <div className="space-y-4 text-center">
-          <p className="text-muted-foreground">La plupart des femmes s'arrêtent ici</p>
-          <p className="font-bold">Et restent bloquées</p>
-          <p className="text-muted-foreground">Celles qui avancent vraiment…</p>
-          <p className="text-primary font-semibold">👉 vont jusqu'au bout</p>
-        </div>
-        <div className="mt-8">
-          <CTAButton to={MOLLIE_LINK}>Je veux arrêter cette boucle maintenant</CTAButton>
+          <p className="font-semibold">Tu peux commencer maintenant</p>
+          <div className="space-y-1 text-sm text-muted-foreground">
+            <p>👉 sans te justifier</p>
+            <p>👉 sans te forcer</p>
+            <p>👉 à ton rythme</p>
+          </div>
+          <div className="mt-4">
+            <CTAButton to={MOLLIE_LINK}>Je veux que ça s'arrête vraiment</CTAButton>
+          </div>
+          <div className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground mt-2">
+            <Lock className="h-3.5 w-3.5" />
+            <span>Paiement 100% sécurisé via Mollie</span>
+          </div>
         </div>
       </SectionBlock>
     </div>
