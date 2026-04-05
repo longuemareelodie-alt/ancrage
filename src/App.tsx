@@ -21,6 +21,7 @@ import NotFound from "./pages/NotFound";
 import CGV from "./pages/CGV";
 import Confidentialite from "./pages/Confidentialite";
 import MentionsLegales from "./pages/MentionsLegales";
+import PaymentSuccess from "./pages/PaymentSuccess";
 
 const queryClient = new QueryClient();
 
@@ -41,6 +42,7 @@ const App = () => (
             <Route path="/aller-plus-loin" element={<AllerPlusLoin />} />
             <Route path="/parcours" element={<PremiumRoute><Parcours /></PremiumRoute>} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/payment-success" element={<ProtectedRoute><PaymentSuccess /></ProtectedRoute>} />
             <Route path="/profil" element={<Profil />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/cgv" element={<CGV />} />

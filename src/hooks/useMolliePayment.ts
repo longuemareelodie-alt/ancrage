@@ -19,7 +19,7 @@ export const useMolliePayment = () => {
         "create-mollie-payment",
         {
           body: {
-            redirectUrl: `${window.location.origin}/dashboard?payment=success`,
+            redirectUrl: `${window.location.origin}/payment-success`,
           },
         }
       );
