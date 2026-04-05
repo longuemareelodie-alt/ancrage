@@ -18,7 +18,7 @@ const Profil = () => {
   const { user, loading, signOut } = useAuth();
   const navigate = useNavigate();
 
-  const [profile, setProfile] = useState<{ first_name: string; email: string | null } | null>(null);
+  const [profile, setProfile] = useState<{ first_name: string; email: string | null; is_premium: boolean } | null>(null);
   const [completedPhases, setCompletedPhases] = useState<number[]>([]);
   const [notes, setNotes] = useState<Note[]>([]);
   const [editingNote, setEditingNote] = useState<{ title: string; content: string } | null>(null);
