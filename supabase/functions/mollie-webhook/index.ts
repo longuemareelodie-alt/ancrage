@@ -11,9 +11,16 @@ Deno.serve(async (req) => {
   }
 
   try {
-    // Mollie sends a POST with form-encoded body containing "id"
-    const formData = await req.formData();
-    const paymentId = formData.get("id") as string;
+    // Mollie sends form-encoded or JSON body containing "id"
+    let paymentId: string | null = null;
+    const contentType = req.headers.get("content-type") || "";
+    if (contentType.includes("application/x-www-form-urlencoded")) {
+      const formData = await req.formData();
+      paymentId = formData.get("id") as string;
+    } else {
+      const body = await req.json();
+      paymentId = body.id;
+    }
 
     if (!paymentId) {
       return new Response(JSON.stringify({ error: "Missing payment id" }), {
