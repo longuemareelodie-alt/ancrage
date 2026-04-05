@@ -181,6 +181,7 @@ const extractWebhookIds = (payload: any) => {
   const dataLinks = asRecord(data?._links);
   const embeddedEntity = asRecord(embedded?.entity);
   const embeddedPayment = asRecord(embedded?.payment);
+  const embeddedEntityContext = asRecord(embeddedEntity?.context);
   const rootPayment = asRecord(root?.payment);
   const dataPayment = asRecord(data?.payment);
   const resourcePayment = asRecord(resourceObject?.payment);
@@ -221,6 +222,8 @@ const extractWebhookIds = (payload: any) => {
       { value: resourceObject?.payment_id, source: "body.resource.payment_id" },
       { value: resourcePayment?.id, source: "body.resource.payment.id" },
       { value: embeddedPayment?.id, source: "body._embedded.payment.id" },
+      { value: embeddedEntityContext?.paymentId, source: "body._embedded.entity.context.paymentId" },
+      { value: embeddedEntityContext?.payment_id, source: "body._embedded.entity.context.payment_id" },
       {
         value: extractTokenFromHref(getHref(rootLinks?.payment), "tr_"),
         source: "body._links.payment.href",
@@ -407,8 +410,9 @@ Deno.serve(async (req) => {
         resourceType,
       });
       try {
+        // Step 1: Fetch payment-link details (no ?include=payments — not supported)
         const plRes = await fetch(
-          `https://api.mollie.com/v2/payment-links/${paymentLinkId}?include=payments`,
+          `https://api.mollie.com/v2/payment-links/${paymentLinkId}`,
           { headers: mollieHeaders },
         );
         const plText = await plRes.text();
@@ -430,37 +434,65 @@ Deno.serve(async (req) => {
             });
           }
 
-          const embeddedPayments = getEmbeddedPayments(plData);
           logDebug("Payment-link data", {
             id: plData.id,
             status: plData.status,
             paidAt: plData.paidAt,
             _links: plData._links ? Object.keys(plData._links) : [],
-            embeddedPayments: embeddedPayments.length,
           });
-          const paidPayment = embeddedPayments.find(
-            (candidate: any) => candidate?.status === "paid" && typeof candidate?.id === "string",
-          );
-          const latestPayment = embeddedPayments.find(
-            (candidate: any) => typeof candidate?.id === "string",
-          );
+
+          // Try _links.payment on the payment-link itself
           const paymentIdFromLinks = extractTokenFromHref(
             getHref(asRecord(plData?._links)?.payment),
             "tr_",
           );
 
-          if (paidPayment?.id) {
-            paymentId = paidPayment.id;
-            paymentIdSource = "payment-link._embedded.payments[paid].id";
-            logDebug("Found paid payment from payment-link", { paymentId, paymentLinkId });
-          } else if (latestPayment?.id) {
-            paymentId = latestPayment.id;
-            paymentIdSource = "payment-link._embedded.payments[0].id";
-            logDebug("Using fallback payment from payment-link", { paymentId, paymentLinkId });
-          } else if (paymentIdFromLinks) {
+          if (paymentIdFromLinks) {
             paymentId = paymentIdFromLinks;
             paymentIdSource = "payment-link._links.payment.href";
             logDebug("Found payment from payment-link _links", { paymentId, paymentLinkId });
+          }
+
+          // Step 2: If still no paymentId, list payments for this payment-link
+          if (!paymentId) {
+            logDebug("Listing payments for payment-link", { paymentLinkId });
+            try {
+              const paymentsRes = await fetch(
+                `https://api.mollie.com/v2/payment-links/${paymentLinkId}/payments`,
+                { headers: mollieHeaders },
+              );
+              const paymentsText = await paymentsRes.text();
+              logDebug("Payment-link payments list result", {
+                status: paymentsRes.status,
+                ok: paymentsRes.ok,
+                bodyPreview: paymentsText.slice(0, 2000),
+              });
+
+              if (paymentsRes.ok) {
+                const paymentsData = safeParseJsonText(paymentsText);
+                const paymentsList = getEmbeddedPayments(paymentsData);
+                logDebug("Payment-link payments found", { count: paymentsList.length });
+
+                const paidPayment = paymentsList.find(
+                  (c: any) => c?.status === "paid" && typeof c?.id === "string",
+                );
+                const anyPayment = paymentsList.find(
+                  (c: any) => typeof c?.id === "string",
+                );
+
+                if (paidPayment?.id) {
+                  paymentId = paidPayment.id;
+                  paymentIdSource = "payment-link/payments[paid].id";
+                  logDebug("Found paid payment from payments list", { paymentId, paymentLinkId });
+                } else if (anyPayment?.id) {
+                  paymentId = anyPayment.id;
+                  paymentIdSource = "payment-link/payments[0].id";
+                  logDebug("Using first payment from payments list", { paymentId, paymentLinkId });
+                }
+              }
+            } catch (err) {
+              logError("Payment-link payments list exception", err, { paymentLinkId });
+            }
           }
         } else {
           logDebug("Payment-link fetch error", {
