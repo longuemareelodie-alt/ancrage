@@ -215,7 +215,6 @@ const Profil = () => {
                   <p className="mt-1 text-sm font-semibold">{completedPhases.length} / 4 phases terminées</p>
                   <Progress value={(completedPhases.length / 4) * 100} className="mt-2 h-2.5" />
                 </div>
-                </div>
               </div>
             </motion.div>
           )}
