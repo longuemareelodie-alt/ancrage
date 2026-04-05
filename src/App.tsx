@@ -39,7 +39,7 @@ const App = () => (
             <Route path="/comprendre" element={<PremiumRoute><Comprendre /></PremiumRoute>} />
             <Route path="/avancer" element={<PremiumRoute><Avancer /></PremiumRoute>} />
             <Route path="/aller-plus-loin" element={<AllerPlusLoin />} />
-            <Route path="/parcours" element={<Parcours />} />
+            <Route path="/parcours" element={<PremiumRoute><Parcours /></PremiumRoute>} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/profil" element={<Profil />} />
             <Route path="/reset-password" element={<ResetPassword />} />

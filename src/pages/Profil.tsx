@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import SectionBlock from "@/components/SectionBlock";
 import CTAButton from "@/components/CTAButton";
 import { motion, AnimatePresence } from "framer-motion";
-import { LogOut, Plus, Trash2, Save, User, BookOpen, StickyNote } from "lucide-react";
+import { LogOut, Plus, Trash2, Save, User, BookOpen, StickyNote, Lock } from "lucide-react";
 
 interface Note {
   id: string;
@@ -18,7 +18,7 @@ const Profil = () => {
   const { user, loading, signOut } = useAuth();
   const navigate = useNavigate();
 
-  const [profile, setProfile] = useState<{ first_name: string; email: string | null } | null>(null);
+  const [profile, setProfile] = useState<{ first_name: string; email: string | null; is_premium: boolean } | null>(null);
   const [completedPhases, setCompletedPhases] = useState<number[]>([]);
   const [notes, setNotes] = useState<Note[]>([]);
   const [editingNote, setEditingNote] = useState<{ title: string; content: string } | null>(null);
@@ -35,7 +35,7 @@ const Profil = () => {
     // Load profile
     supabase
       .from("profiles")
-      .select("first_name, email")
+      .select("first_name, email, is_premium")
       .eq("user_id", user.id)
       .single()
       .then(({ data }) => {
@@ -124,20 +124,22 @@ const Profil = () => {
       {/* Tabs */}
       <div className="flex border-b border-border bg-card">
         {([
-          { key: "profil" as const, icon: User, label: "Profil" },
-          { key: "parcours" as const, icon: BookOpen, label: "Parcours" },
-          { key: "notes" as const, icon: StickyNote, label: "Notes" },
+          { key: "profil" as const, icon: User, label: "Profil", locked: false },
+          { key: "parcours" as const, icon: BookOpen, label: "Parcours", locked: !profile?.is_premium },
+          { key: "notes" as const, icon: StickyNote, label: "Notes", locked: !profile?.is_premium },
         ]).map((tab) => (
           <button
             key={tab.key}
-            onClick={() => setActiveTab(tab.key)}
+            onClick={() => !tab.locked && setActiveTab(tab.key)}
             className={`flex flex-1 items-center justify-center gap-1.5 py-3 text-sm font-medium transition-colors ${
-              activeTab === tab.key
-                ? "border-b-2 border-primary text-primary"
-                : "text-muted-foreground hover:text-foreground"
+              tab.locked
+                ? "text-muted-foreground/50 cursor-not-allowed"
+                : activeTab === tab.key
+                  ? "border-b-2 border-primary text-primary"
+                  : "text-muted-foreground hover:text-foreground"
             }`}
           >
-            <tab.icon className="h-4 w-4" />
+            {tab.locked ? <Lock className="h-3.5 w-3.5" /> : <tab.icon className="h-4 w-4" />}
             {tab.label}
           </button>
         ))}
