@@ -5,8 +5,11 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
+import Dashboard from "./pages/Dashboard";
 import Emotions from "./pages/Emotions";
 import EmotionDetail from "./pages/EmotionDetail";
+import Comprendre from "./pages/Comprendre";
+import Avancer from "./pages/Avancer";
 import AllerPlusLoin from "./pages/AllerPlusLoin";
 import Parcours from "./pages/Parcours";
 import Auth from "./pages/Auth";
@@ -28,8 +31,11 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/emotions" element={<Emotions />} />
             <Route path="/emotion/:emotion" element={<EmotionDetail />} />
+            <Route path="/comprendre" element={<Comprendre />} />
+            <Route path="/avancer" element={<Avancer />} />
             <Route path="/aller-plus-loin" element={<AllerPlusLoin />} />
             <Route path="/parcours" element={<Parcours />} />
             <Route path="/auth" element={<Auth />} />

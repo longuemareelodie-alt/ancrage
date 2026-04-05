@@ -95,10 +95,10 @@ const EmotionDetail = () => {
           className="space-y-4 text-center"
         >
           <h1 className="text-2xl font-bold">{data.title}</h1>
-          <p className="text-lg">{data.validation}</p>
-          {data.subtext && (
-            <p className="whitespace-pre-line text-muted-foreground">{data.subtext}</p>
-          )}
+          <p className="text-lg font-medium text-primary">{data.validation}</p>
+          <p className="text-muted-foreground">Ton cerveau essaie de te protéger</p>
+          <p className="text-sm text-muted-foreground">Mais là… il s'emballe</p>
+          <p className="font-semibold">On va juste le faire redescendre</p>
         </motion.div>
       </SectionBlock>
 
@@ -129,7 +129,7 @@ const EmotionDetail = () => {
         {/* Locked Steps */}
         <div className="mt-4 space-y-3 relative">
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/60 to-background z-10 rounded-xl" />
-          {data.lockedSteps.map((step, i) => (
+          {data.lockedSteps.map((step) => (
             <div
               key={step}
               className="flex items-center gap-4 rounded-xl bg-card p-4 shadow-sm opacity-40 blur-[2px]"
@@ -141,95 +141,33 @@ const EmotionDetail = () => {
             </div>
           ))}
         </div>
-        <p className="mt-4 text-xs text-muted-foreground text-center">👉 La suite est dans ANCRAGE</p>
       </SectionBlock>
 
-      {/* Script (minimal) */}
+      {/* Post-exercise: tu viens de redescendre */}
       <SectionBlock variant="blue">
-        <div className="space-y-3 text-center text-lg">
-          {data.script.map((line) => (
-            <p key={line} className="font-medium">
-              {line}
-            </p>
-          ))}
+        <div className="space-y-3 text-center">
+          <p className="text-xl font-bold">Tu viens de redescendre</p>
+          <p className="text-muted-foreground">Même légèrement</p>
+          <p className="text-primary font-semibold">👉 et ça change déjà tout</p>
         </div>
       </SectionBlock>
 
-      {/* Closing — tu viens de commencer */}
+      {/* Transition — tu n'as pas besoin de rester seule */}
       <SectionBlock>
         <div className="space-y-4 text-center">
-          <p className="font-semibold">Tu viens de commencer à faire redescendre ton corps</p>
-          <p className="text-sm text-muted-foreground">👉 même légèrement</p>
+          <p className="font-bold">Tu n'as pas besoin de rester seule avec ça</p>
+          <p className="text-muted-foreground">Maintenant que ton corps redescend…</p>
+          <div className="space-y-2 text-sm text-primary font-medium">
+            <p>👉 tu peux comprendre ce que tu vis</p>
+            <p>👉 ou avancer sans te brusquer</p>
+          </div>
         </div>
       </SectionBlock>
 
-      {/* Moment de manque */}
+      {/* CTA vers dashboard */}
       <SectionBlock variant="blue">
         <div className="space-y-4 text-center">
-          <p className="font-bold">Tu sens que ça commence à bouger…</p>
-          <p className="text-primary font-semibold">👉 mais ça ne tient pas</p>
-          <div className="space-y-2 text-muted-foreground">
-            <p>Parce que ton système ne redescend pas en une seule fois</p>
-          </div>
-          <p className="font-medium mt-2">Et sans cadre…</p>
-          <div className="space-y-2 text-muted-foreground">
-            <p>👉 ça remonte</p>
-            <p>👉 ça revient</p>
-            <p>👉 et tu repars dans la boucle</p>
-          </div>
-        </div>
-      </SectionBlock>
-
-      {/* Frustration intelligente */}
-      <SectionBlock>
-        <div className="space-y-4 text-center">
-          <p className="font-bold">Ce que tu viens de faire est un début</p>
-          <p className="text-primary font-semibold">Mais ce n'est pas suffisant pour sortir de cet état durablement</p>
-          <div className="space-y-2 text-muted-foreground">
-            <p>👉 ton corps a besoin d'un enchaînement précis</p>
-            <p>👉 pas juste d'un exercice</p>
-          </div>
-        </div>
-      </SectionBlock>
-
-      {/* Promesse contrôlée */}
-      <SectionBlock variant="blue">
-        <div className="space-y-4 text-center">
-          <p className="text-lg font-bold">Avec ANCRAGE, tu vas :</p>
-          <ul className="space-y-3 text-left">
-            {[
-              "enchaîner les bonnes actions",
-              "faire redescendre ton système progressivement",
-              "sortir réellement de la boucle",
-            ].map((item) => (
-              <li key={item} className="flex items-center gap-3">
-                <Check className="h-5 w-5 shrink-0 text-primary" />
-                <span>{item}</span>
-              </li>
-            ))}
-          </ul>
-          <p className="text-sm text-muted-foreground">
-            👉 même si aujourd'hui tu te sens bloquée
-          </p>
-        </div>
-      </SectionBlock>
-
-      {/* CTA */}
-      <SectionBlock>
-        <div className="space-y-4 text-center">
-          <p className="font-semibold">Tu peux commencer maintenant</p>
-          <div className="space-y-1 text-sm text-muted-foreground">
-            <p>👉 sans te justifier</p>
-            <p>👉 sans te forcer</p>
-            <p>👉 à ton rythme</p>
-          </div>
-          <div className="mt-4">
-            <CTAButton to={MOLLIE_LINK}>Je veux que ça s'arrête vraiment</CTAButton>
-          </div>
-          <div className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground mt-2">
-            <Lock className="h-3.5 w-3.5" />
-            <span>Paiement 100% sécurisé via Mollie</span>
-          </div>
+          <CTAButton to="/dashboard">Continuer doucement</CTAButton>
         </div>
       </SectionBlock>
     </div>
