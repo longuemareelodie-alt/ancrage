@@ -569,6 +569,15 @@ Deno.serve(async (req) => {
       billingEmail: payment?.billingEmail ?? payment?.details?.billingEmail ?? null,
     });
 
+    logDebug("Payment metadata", payment?.metadata ?? null);
+
+    if (!payment?.metadata || typeof payment.metadata !== "object") {
+      logError("Payment metadata missing", new Error("payment_metadata_missing"), {
+        paymentId,
+        payment,
+      });
+    }
+
     if (payment.status !== "paid") {
       logDebug("Payment not paid", { paymentId, status: payment?.status ?? null });
       return webhookAck({ status: payment.status, action: "none" });
@@ -586,10 +595,11 @@ Deno.serve(async (req) => {
     });
 
     if (!userId && !email) {
-      logDebug("No user_id or email found for payment", {
+      logError("No user identifier found for payment", new Error("user_identifier_missing"), {
         paymentId,
         paymentRecordId: payment?.id ?? null,
         metadata: payment?.metadata ?? null,
+        payment,
       });
       return webhookAck({
         status: "ignored",
@@ -603,142 +613,85 @@ Deno.serve(async (req) => {
 
     let profile: { user_id: string; email: string | null; is_premium: boolean } | null = null;
 
-    if (userId) {
-      logDebug("Looking up profile by user_id", { userId, paymentId });
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("user_id, email, is_premium")
-        .eq("user_id", userId)
-        .maybeSingle();
+    try {
+      if (userId) {
+        logDebug("Looking up profile by user_id", { userId, paymentId, metadata: paymentMetadata });
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("user_id, email, is_premium")
+          .eq("user_id", userId)
+          .maybeSingle();
 
-      if (error) {
-        logDebug("Profile lookup by user_id failed", {
-          userId,
-          message: error.message,
-          details: error.details,
-          hint: error.hint,
-          code: error.code,
-        });
-      } else {
-        profile = data;
-        logDebug("Profile lookup by user_id result", { userId, profile });
-      }
-    }
-
-    if (!profile && email) {
-      logDebug("Looking up profile by email", { email, paymentId });
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("user_id, email, is_premium")
-        .eq("email", email)
-        .maybeSingle();
-
-      if (error) {
-        logDebug("Profile lookup by email failed", {
-          email,
-          message: error.message,
-          details: error.details,
-          hint: error.hint,
-          code: error.code,
-        });
-      } else {
-        profile = data;
-        logDebug("Profile lookup by email result", { email, profile });
-      }
-    }
-
-    if (!profile && userId) {
-      logDebug("Inserting profile by user_id", { userId, email, isPremium: true });
-      const { data, error } = await supabase
-        .from("profiles")
-        .insert({
-          user_id: userId,
-          email,
-          first_name: "",
-          is_premium: true,
-        })
-        .select("user_id, email, is_premium")
-        .single();
-
-      if (error) {
-        logDebug("Profile insert by user_id failed", {
-          userId,
-          email,
-          message: error.message,
-          details: error.details,
-          hint: error.hint,
-          code: error.code,
-        });
-      } else {
-        profile = data;
-        logDebug("Profile insert by user_id result", { profile });
-      }
-    }
-
-    if (!profile && email) {
-      logDebug("Listing auth users to match email", { email });
-      const { data: userListData, error: usersError } = await supabase.auth.admin.listUsers();
-
-      if (usersError) {
-        logDebug("Auth user lookup by email failed", {
-          email,
-          message: usersError.message,
-        });
-      } else {
-        const authUsers = Array.isArray(userListData?.users) ? userListData.users : [];
-        logDebug("Auth user lookup result", { email, totalUsersScanned: authUsers.length });
-        const authUser = authUsers.find(
-          (candidate) => candidate.email?.toLowerCase() === email.toLowerCase(),
-        );
-
-        if (authUser) {
-          logDebug("Inserting profile from auth user", {
-            authUserId: authUser.id,
-            email,
-            matchedEmail: authUser.email ?? null,
+        if (error) {
+          logError("Profile lookup by user_id failed", error, {
+            userId,
+            paymentId,
+            metadata: paymentMetadata,
           });
-          const { data, error } = await supabase
-            .from("profiles")
-            .insert({
-              user_id: authUser.id,
-              email: authUser.email ?? email,
-              first_name:
-                typeof authUser.user_metadata?.first_name === "string"
-                  ? authUser.user_metadata.first_name
-                  : "",
-              is_premium: true,
-            })
-            .select("user_id, email, is_premium")
-            .single();
-
-          if (error) {
-            logDebug("Profile insert by email failed", {
-              email,
-              authUserId: authUser.id,
-              message: error.message,
-              details: error.details,
-              hint: error.hint,
-              code: error.code,
-            });
-          } else {
-            profile = data;
-            logDebug("Profile insert by email result", { profile });
-          }
+        } else {
+          profile = data;
+          logDebug("User lookup result", {
+            lookup: "user_id",
+            paymentId,
+            userId,
+            email,
+            profile,
+          });
         }
       }
+
+      if (!profile && email) {
+        logDebug("Looking up profile by email", { email, paymentId, metadata: paymentMetadata });
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("user_id, email, is_premium")
+          .eq("email", email)
+          .maybeSingle();
+
+        if (error) {
+          logError("Profile lookup by email failed", error, {
+            email,
+            paymentId,
+            metadata: paymentMetadata,
+          });
+        } else {
+          profile = data;
+          logDebug("User lookup result", {
+            lookup: "email",
+            paymentId,
+            userId,
+            email,
+            profile,
+          });
+        }
+      }
+    } catch (error) {
+      logError("User lookup crashed", error, {
+        paymentId,
+        userId,
+        email,
+        metadata: paymentMetadata,
+      });
+      return webhookAck({
+        status: "error",
+        error: "user_lookup_crashed",
+        payment_id: payment?.id ?? paymentId,
+      });
     }
 
     if (!profile) {
-      logDebug("No profile found for payment", {
+      logError("User not found for payment", new Error("user_not_found"), {
         paymentId,
         paymentRecordId: payment?.id ?? null,
         userId,
         email,
+        paymentMetadata,
+        payment,
       });
       return webhookAck({
         status: "ignored",
         action: "none",
-        reason: "profile_not_found",
+        reason: "user_not_found",
         payment_id: payment?.id ?? paymentId,
       });
     }
