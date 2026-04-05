@@ -4,8 +4,6 @@ import CTAButton from "@/components/CTAButton";
 import { motion } from "framer-motion";
 import { Check, Lock } from "lucide-react";
 
-const MOLLIE_LINK = "https://payment-links.mollie.com/payment/Uqs26mrjXBFeWj5oK8hkr";
-
 interface EmotionData {
   title: string;
   validation: string;
