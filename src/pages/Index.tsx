@@ -151,6 +151,7 @@ const Index = () => {
           <div className="mt-6">
             <CTAButton to="#" onClick={handlePayment} loading={paymentLoading}>Je veux que ça s'arrête maintenant</CTAButton>
           </div>
+          <div className="mt-4 flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
             <Lock className="h-3.5 w-3.5" />
             <span>Paiement 100% sécurisé via Mollie</span>
           </div>
