@@ -102,6 +102,26 @@ const getEmbeddedPayments = (value: any) => {
   return Array.isArray(payments) ? payments : [];
 };
 
+const pickFirstStringMatch = (
+  candidates: Array<{ value: unknown; source: string }>,
+  predicate: (value: string) => boolean,
+) => {
+  for (const candidate of candidates) {
+    if (typeof candidate.value !== "string") {
+      continue;
+    }
+
+    const value = candidate.value.trim();
+    if (!value || !predicate(value)) {
+      continue;
+    }
+
+    return { value, source: candidate.source };
+  }
+
+  return { value: null, source: null };
+};
+
 const safeParseJsonText = (raw: string) => {
   if (!raw.trim()) {
     return null;
@@ -169,6 +189,7 @@ const extractWebhookIds = (payload: any) => {
   const isPaymentLinkId = (id: string | null) => Boolean(id?.startsWith("pl_"));
 
   const rawId = firstString(root?.id);
+  const rootResourceString = typeof root?.resource === "string" ? root.resource.trim() : null;
   const eventType = firstString(
     root?.type,
     root?.event,
@@ -177,64 +198,93 @@ const extractWebhookIds = (payload: any) => {
     resourceObject?.type,
   );
   const resourceType = firstString(
-    typeof root?.resource === "string" ? root.resource : null,
+    rootResourceString && !isPaymentId(rootResourceString) && !isPaymentLinkId(rootResourceString)
+      ? rootResourceString
+      : null,
     resourceObject?.resource,
     data?.resource,
   );
 
-  const paymentCandidates = [
-    rawId,
-    root?.paymentId,
-    root?.payment_id,
-    rootPayment?.id,
-    data?.id,
-    data?.paymentId,
-    data?.payment_id,
-    dataPayment?.id,
-    resourceObject?.id,
-    resourceObject?.paymentId,
-    resourceObject?.payment_id,
-    resourcePayment?.id,
-    embeddedPayment?.id,
-    extractTokenFromHref(getHref(rootLinks?.payment), "tr_"),
-    extractTokenFromHref(getHref(resourceLinks?.payment), "tr_"),
-    extractTokenFromHref(getHref(dataLinks?.payment), "tr_"),
-    extractTokenFromHref(getHref(rootLinks?.self), "tr_"),
-  ];
+  const paymentMatch = pickFirstStringMatch(
+    [
+      { value: rawId, source: "body.id" },
+      { value: rootResourceString, source: "body.resource" },
+      { value: root?.paymentId, source: "body.paymentId" },
+      { value: root?.payment_id, source: "body.payment_id" },
+      { value: rootPayment?.id, source: "body.payment.id" },
+      { value: data?.id, source: "body.data.id" },
+      { value: data?.paymentId, source: "body.data.paymentId" },
+      { value: data?.payment_id, source: "body.data.payment_id" },
+      { value: dataPayment?.id, source: "body.data.payment.id" },
+      { value: resourceObject?.id, source: "body.resource.id" },
+      { value: resourceObject?.paymentId, source: "body.resource.paymentId" },
+      { value: resourceObject?.payment_id, source: "body.resource.payment_id" },
+      { value: resourcePayment?.id, source: "body.resource.payment.id" },
+      { value: embeddedPayment?.id, source: "body._embedded.payment.id" },
+      {
+        value: extractTokenFromHref(getHref(rootLinks?.payment), "tr_"),
+        source: "body._links.payment.href",
+      },
+      {
+        value: extractTokenFromHref(getHref(resourceLinks?.payment), "tr_"),
+        source: "body.resource._links.payment.href",
+      },
+      {
+        value: extractTokenFromHref(getHref(dataLinks?.payment), "tr_"),
+        source: "body.data._links.payment.href",
+      },
+      {
+        value: extractTokenFromHref(getHref(rootLinks?.self), "tr_"),
+        source: "body._links.self.href",
+      },
+    ],
+    (candidate) => isPaymentId(candidate),
+  );
 
-  const paymentLinkCandidates = [
-    rawId,
-    root?.paymentLinkId,
-    root?.payment_link_id,
-    root?.entityId,
-    data?.id,
-    data?.paymentLinkId,
-    data?.payment_link_id,
-    resourceObject?.id,
-    resourceObject?.paymentLinkId,
-    resourceObject?.payment_link_id,
-    embeddedEntity?.id,
-    extractTokenFromHref(getHref(rootLinks?.paymentLink), "pl_"),
-    extractTokenFromHref(getHref(rootLinks?.entity), "pl_"),
-    extractTokenFromHref(getHref(resourceLinks?.paymentLink), "pl_"),
-    extractTokenFromHref(getHref(resourceLinks?.self), "pl_"),
-    extractTokenFromHref(getHref(dataLinks?.paymentLink), "pl_"),
-    extractTokenFromHref(getHref(rootLinks?.self), "pl_"),
-  ];
+  const paymentLinkMatch = pickFirstStringMatch(
+    [
+      { value: rawId, source: "body.id" },
+      { value: rootResourceString, source: "body.resource" },
+      { value: root?.paymentLinkId, source: "body.paymentLinkId" },
+      { value: root?.payment_link_id, source: "body.payment_link_id" },
+      { value: root?.entityId, source: "body.entityId" },
+      { value: data?.id, source: "body.data.id" },
+      { value: data?.paymentLinkId, source: "body.data.paymentLinkId" },
+      { value: data?.payment_link_id, source: "body.data.payment_link_id" },
+      { value: resourceObject?.id, source: "body.resource.id" },
+      { value: resourceObject?.paymentLinkId, source: "body.resource.paymentLinkId" },
+      { value: resourceObject?.payment_link_id, source: "body.resource.payment_link_id" },
+      { value: embeddedEntity?.id, source: "body._embedded.entity.id" },
+      {
+        value: extractTokenFromHref(getHref(rootLinks?.paymentLink), "pl_"),
+        source: "body._links.paymentLink.href",
+      },
+      {
+        value: extractTokenFromHref(getHref(rootLinks?.entity), "pl_"),
+        source: "body._links.entity.href",
+      },
+      {
+        value: extractTokenFromHref(getHref(resourceLinks?.paymentLink), "pl_"),
+        source: "body.resource._links.paymentLink.href",
+      },
+      {
+        value: extractTokenFromHref(getHref(resourceLinks?.self), "pl_"),
+        source: "body.resource._links.self.href",
+      },
+      {
+        value: extractTokenFromHref(getHref(dataLinks?.paymentLink), "pl_"),
+        source: "body.data._links.paymentLink.href",
+      },
+      {
+        value: extractTokenFromHref(getHref(rootLinks?.self), "pl_"),
+        source: "body._links.self.href",
+      },
+    ],
+    (candidate) => isPaymentLinkId(candidate),
+  );
 
-  const paymentId =
-    firstString(
-      ...paymentCandidates.filter((candidate) =>
-        typeof candidate === "string" && isPaymentId(candidate),
-      ),
-    ) ?? null;
-
-  const paymentLinkId =
-    firstString(
-      ...paymentLinkCandidates.filter((candidate) =>
-        typeof candidate === "string" && isPaymentLinkId(candidate),
-      ),
-    ) ?? null;
+  const paymentId = paymentMatch.value;
+  const paymentLinkId = paymentLinkMatch.value;
 
   const isEventId = rawId?.startsWith("event_") || rawId?.startsWith("evt_");
   const isPaymentLinkEvent =
@@ -245,7 +295,9 @@ const extractWebhookIds = (payload: any) => {
   return {
     rawId,
     paymentId,
+    paymentIdSource: paymentMatch.source,
     paymentLinkId,
+    paymentLinkIdSource: paymentLinkMatch.source,
     eventType,
     isEventId,
     isPaymentLinkEvent,
@@ -296,7 +348,9 @@ Deno.serve(async (req) => {
     const {
       rawId,
       paymentId: directPaymentId,
+      paymentIdSource: directPaymentIdSource,
       paymentLinkId,
+      paymentLinkIdSource,
       eventType,
       isEventId,
       isPaymentLinkEvent,
@@ -307,7 +361,9 @@ Deno.serve(async (req) => {
       contentType,
       rawId,
       directPaymentId,
+      directPaymentIdSource,
       paymentLinkId,
+      paymentLinkIdSource,
       eventType,
       resourceType,
       isEventId,
@@ -339,11 +395,17 @@ Deno.serve(async (req) => {
 
     // --- Resolve the payment ID through multiple strategies ---
     let paymentId = directPaymentId;
+    let paymentIdSource = directPaymentIdSource;
     const mollieHeaders = { Authorization: `Bearer ${mollieKey}` };
 
     // Strategy 1: If we have a payment-link event or payment-link ID, fetch its payments
     if (!paymentId && paymentLinkId && isPaymentLinkEvent) {
-      logDebug("Resolving payment from payment-link", { paymentLinkId, eventType, resourceType });
+      logDebug("Resolving payment from payment-link", {
+        paymentLinkId,
+        paymentLinkIdSource,
+        eventType,
+        resourceType,
+      });
       try {
         const plRes = await fetch(
           `https://api.mollie.com/v2/payment-links/${paymentLinkId}?include=payments`,
@@ -389,12 +451,15 @@ Deno.serve(async (req) => {
 
           if (paidPayment?.id) {
             paymentId = paidPayment.id;
+            paymentIdSource = "payment-link._embedded.payments[paid].id";
             logDebug("Found paid payment from payment-link", { paymentId, paymentLinkId });
           } else if (latestPayment?.id) {
             paymentId = latestPayment.id;
+            paymentIdSource = "payment-link._embedded.payments[0].id";
             logDebug("Using fallback payment from payment-link", { paymentId, paymentLinkId });
           } else if (paymentIdFromLinks) {
             paymentId = paymentIdFromLinks;
+            paymentIdSource = "payment-link._links.payment.href";
             logDebug("Found payment from payment-link _links", { paymentId, paymentLinkId });
           }
         } else {
@@ -412,8 +477,11 @@ Deno.serve(async (req) => {
     logDebug("Resolved payment identifier", {
       rawId,
       directPaymentId,
+      directPaymentIdSource,
       paymentLinkId,
+      paymentLinkIdSource,
       paymentId,
+      paymentIdSource,
       eventType,
       resourceType,
     });
@@ -423,7 +491,9 @@ Deno.serve(async (req) => {
       logDebug("Unable to resolve payment ID from webhook", {
         rawId,
         directPaymentId,
+        directPaymentIdSource,
         paymentLinkId,
+        paymentLinkIdSource,
         eventType,
         isEventId,
         resourceType,
@@ -504,7 +574,8 @@ Deno.serve(async (req) => {
       return webhookAck({ status: payment.status, action: "none" });
     }
 
-    const userId = firstString(payment.metadata?.user_id, payment.metadata?.userId);
+    const paymentMetadata = asRecord(payment?.metadata);
+    const userId = firstString(paymentMetadata?.user_id, paymentMetadata?.userId);
     const email = extractPaymentEmail(payment);
 
     logDebug("Resolved user lookup data", {
