@@ -62,30 +62,54 @@ const parseRequestBody = async (
 };
 
 const extractWebhookIds = (payload: any) => {
-  const explicitPaymentId = firstString(
+  // Only accept IDs that look like Mollie payment tokens (tr_*)
+  const isPaymentId = (id: string | null) => id && id.startsWith("tr_");
+  const isPaymentLinkId = (id: string | null) => id && id.startsWith("pl_");
+
+  // Look for explicit payment IDs in various locations
+  const candidates = [
     payload?.paymentId,
     payload?.payment_id,
     payload?.payment?.id,
     payload?.data?.paymentId,
     payload?.data?.payment_id,
     payload?.data?.payment?.id,
-    payload?.entityId,
-    payload?.resourceId,
     payload?._embedded?.payment?.id,
-    payload?._embedded?.entity?.id,
-  );
+  ];
+
+  const explicitPaymentId = firstString(...candidates.filter((c) => {
+    const s = typeof c === "string" ? c : null;
+    return s && isPaymentId(s);
+  })) ?? firstString(...candidates);
 
   const rawId = firstString(payload?.id);
+
+  // Only use rawId as paymentId if it looks like a payment token
   const paymentId =
-    explicitPaymentId ?? (rawId && !rawId.startsWith("event_") ? rawId : null);
+    (explicitPaymentId && isPaymentId(explicitPaymentId) ? explicitPaymentId : null)
+    ?? (rawId && isPaymentId(rawId) ? rawId : null);
 
   // Detect payment-link ID (pl_*) which needs separate handling
+  const entityId = firstString(payload?.entityId, payload?._embedded?.entity?.id);
   const paymentLinkId = firstString(
     payload?.paymentLinkId,
     payload?.payment_link_id,
     payload?.data?.paymentLinkId,
     payload?.data?.payment_link_id,
-  ) ?? (rawId && rawId.startsWith("pl_") ? rawId : null);
+  )
+    ?? (entityId && isPaymentLinkId(entityId) ? entityId : null)
+    ?? (rawId && isPaymentLinkId(rawId) ? rawId : null);
+
+  // Also extract payment-link ID from _links
+  const plFromLinks = !paymentLinkId
+    ? firstString(
+        payload?._links?.paymentLink?.href?.match?.(/payment-links\/(pl_\w+)/)?.[1],
+        payload?._links?.entity?.href?.match?.(/payment-links\/(pl_\w+)/)?.[1],
+        payload?._embedded?.entity?._links?.self?.href?.match?.(/payment-links\/(pl_\w+)/)?.[1],
+      )
+    : null;
+
+  const resolvedPlId = paymentLinkId ?? plFromLinks;
 
   // Detect event type from payload
   const eventType = firstString(
@@ -98,7 +122,7 @@ const extractWebhookIds = (payload: any) => {
   // Check if rawId is an event ID that needs resolution
   const isEventId = rawId?.startsWith("event_") || rawId?.startsWith("evt_");
 
-  return { rawId, paymentId, paymentLinkId, eventType, isEventId };
+  return { rawId, paymentId, paymentLinkId: resolvedPlId, eventType, isEventId };
 };
 
 const extractPaymentEmail = (payment: any) =>
