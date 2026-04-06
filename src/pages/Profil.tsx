@@ -297,6 +297,12 @@ const Profil = () => {
                   </div>
                 </div>
 
+                {/* Streak Calendar */}
+                <div>
+                  <p className="text-xs font-medium text-muted-foreground mb-2">Historique des check-ins</p>
+                  <StreakCalendar checkinDates={checkinDates} />
+                </div>
+
                 {/* Push notifications toggle */}
                 {isSupported && (
                   <div className="flex items-center justify-between">
