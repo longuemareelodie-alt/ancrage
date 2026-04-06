@@ -217,7 +217,12 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      award_badges: { Args: { _badge_keys: string[] }; Returns: undefined }
       get_is_premium: { Args: { _user_id: string }; Returns: boolean }
+      upsert_user_progress: {
+        Args: { _completed_phases: number[] }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
