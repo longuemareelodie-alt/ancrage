@@ -41,34 +41,40 @@ export type Database = {
       profiles: {
         Row: {
           created_at: string
+          current_streak: number
           email: string | null
           first_name: string
           id: string
           is_premium: boolean
           last_checkin_date: string | null
           last_emotion: string | null
+          longest_streak: number
           updated_at: string
           user_id: string
         }
         Insert: {
           created_at?: string
+          current_streak?: number
           email?: string | null
           first_name?: string
           id?: string
           is_premium?: boolean
           last_checkin_date?: string | null
           last_emotion?: string | null
+          longest_streak?: number
           updated_at?: string
           user_id: string
         }
         Update: {
           created_at?: string
+          current_streak?: number
           email?: string | null
           first_name?: string
           id?: string
           is_premium?: boolean
           last_checkin_date?: string | null
           last_emotion?: string | null
+          longest_streak?: number
           updated_at?: string
           user_id?: string
         }
@@ -97,6 +103,27 @@ export type Database = {
           endpoint?: string
           id?: string
           p256dh?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_badges: {
+        Row: {
+          badge_key: string
+          earned_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          badge_key: string
+          earned_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          badge_key?: string
+          earned_at?: string
+          id?: string
           user_id?: string
         }
         Relationships: []
