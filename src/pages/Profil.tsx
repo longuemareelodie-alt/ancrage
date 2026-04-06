@@ -36,10 +36,9 @@ const Profil = () => {
     if (!loading && !user) navigate("/auth");
   }, [loading, user, navigate]);
 
-  useEffect(() => {
+  const loadData = useCallback(() => {
     if (!user) return;
 
-    // Load profile
     supabase
       .from("profiles")
       .select("first_name, email, is_premium")
@@ -49,7 +48,6 @@ const Profil = () => {
         if (data) setProfile(data);
       });
 
-    // Load progress
     supabase
       .from("user_progress")
       .select("completed_phases")
@@ -59,9 +57,25 @@ const Profil = () => {
         if (data) setCompletedPhases(data.completed_phases ?? []);
       });
 
-    // Load notes
     loadNotes();
   }, [user]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
+  // Refresh data when returning to this page
+  useEffect(() => {
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") loadData();
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
+    window.addEventListener("focus", loadData);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibility);
+      window.removeEventListener("focus", loadData);
+    };
+  }, [loadData]);
 
   const loadNotes = async () => {
     if (!user) return;
