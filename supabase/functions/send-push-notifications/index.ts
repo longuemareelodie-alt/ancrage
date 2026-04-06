@@ -1,5 +1,9 @@
-import { corsHeaders } from "@supabase/supabase-js/cors";
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+};
 
 const VAPID_PUBLIC_KEY = "BJ8BYifl7YJiA-6ZhmzPZMO6aTTdHTNJzIEyZsLf10JXumrvmvxpANpLsY-y2XmewaDzOfhdd1ssc8nic8k1g_8";
 
