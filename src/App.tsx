@@ -1,11 +1,13 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { AnimatePresence } from "framer-motion";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import PremiumRoute from "@/components/PremiumRoute";
+import PageTransition from "@/components/PageTransition";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import Emotions from "./pages/Emotions";
@@ -27,6 +29,35 @@ import Historique from "./pages/Historique";
 
 const queryClient = new QueryClient();
 
+const AnimatedRoutes = () => {
+  const location = useLocation();
+
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        <Route path="/" element={<PageTransition><Index /></PageTransition>} />
+        <Route path="/dashboard" element={<ProtectedRoute><PageTransition><Dashboard /></PageTransition></ProtectedRoute>} />
+        <Route path="/emotions" element={<ProtectedRoute><PageTransition><Emotions /></PageTransition></ProtectedRoute>} />
+        <Route path="/emotion/:emotion" element={<ProtectedRoute><PageTransition><EmotionDetail /></PageTransition></ProtectedRoute>} />
+        <Route path="/checkin" element={<ProtectedRoute><PageTransition><Checkin /></PageTransition></ProtectedRoute>} />
+        <Route path="/historique" element={<PremiumRoute><PageTransition><Historique /></PageTransition></PremiumRoute>} />
+        <Route path="/comprendre" element={<PremiumRoute><PageTransition><Comprendre /></PageTransition></PremiumRoute>} />
+        <Route path="/avancer" element={<PremiumRoute><PageTransition><Avancer /></PageTransition></PremiumRoute>} />
+        <Route path="/aller-plus-loin" element={<PageTransition><AllerPlusLoin /></PageTransition>} />
+        <Route path="/parcours" element={<PremiumRoute><PageTransition><Parcours /></PageTransition></PremiumRoute>} />
+        <Route path="/auth" element={<PageTransition><Auth /></PageTransition>} />
+        <Route path="/payment-success" element={<ProtectedRoute><PageTransition><PaymentSuccess /></PageTransition></ProtectedRoute>} />
+        <Route path="/profil" element={<PageTransition><Profil /></PageTransition>} />
+        <Route path="/reset-password" element={<PageTransition><ResetPassword /></PageTransition>} />
+        <Route path="/cgv" element={<PageTransition><CGV /></PageTransition>} />
+        <Route path="/confidentialite" element={<PageTransition><Confidentialite /></PageTransition>} />
+        <Route path="/mentions-legales" element={<PageTransition><MentionsLegales /></PageTransition>} />
+        <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
+      </Routes>
+    </AnimatePresence>
+  );
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
@@ -34,26 +65,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-            <Route path="/emotions" element={<ProtectedRoute><Emotions /></ProtectedRoute>} />
-            <Route path="/emotion/:emotion" element={<ProtectedRoute><EmotionDetail /></ProtectedRoute>} />
-            <Route path="/checkin" element={<ProtectedRoute><Checkin /></ProtectedRoute>} />
-            <Route path="/historique" element={<PremiumRoute><Historique /></PremiumRoute>} />
-            <Route path="/comprendre" element={<PremiumRoute><Comprendre /></PremiumRoute>} />
-            <Route path="/avancer" element={<PremiumRoute><Avancer /></PremiumRoute>} />
-            <Route path="/aller-plus-loin" element={<AllerPlusLoin />} />
-            <Route path="/parcours" element={<PremiumRoute><Parcours /></PremiumRoute>} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/payment-success" element={<ProtectedRoute><PaymentSuccess /></ProtectedRoute>} />
-            <Route path="/profil" element={<Profil />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/cgv" element={<CGV />} />
-            <Route path="/confidentialite" element={<Confidentialite />} />
-            <Route path="/mentions-legales" element={<MentionsLegales />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <AnimatedRoutes />
         </BrowserRouter>
       </TooltipProvider>
     </AuthProvider>
