@@ -19,6 +19,7 @@ interface Note {
 
 const Profil = () => {
   const { user, loading, signOut } = useAuth();
+  const navigate = useNavigate();
   const { isSupported, isSubscribed, subscribe, unsubscribe, loading: pushLoading } = usePushNotifications();
 
   const [profile, setProfile] = useState<{ first_name: string; email: string | null; is_premium: boolean } | null>(null);
