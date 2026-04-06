@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Zap, Brain, Puzzle, User, Lock, Heart } from "lucide-react";
+import { Zap, Brain, Puzzle, User, Lock, Heart, BarChart3 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
@@ -144,6 +144,28 @@ const Dashboard = () => {
               </Link>
             </motion.div>
           </div>
+
+          {/* History link for premium users */}
+          {user && isPremium === true && (
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5, duration: 0.5 }}
+            >
+              <Link
+                to="/historique"
+                className="flex w-full items-center gap-4 rounded-2xl bg-gradient-to-r from-primary/10 to-accent/20 p-5 text-left shadow-sm transition-transform hover:scale-[1.02] active:scale-[0.98]"
+              >
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/20">
+                  <BarChart3 className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm font-bold">📊 Mon historique émotionnel</p>
+                  <p className="mt-0.5 text-xs text-muted-foreground">Tendances et progression sur 30 jours</p>
+                </div>
+              </Link>
+            </motion.div>
+          )}
 
           {/* Upsell banner for non-premium */}
           {user && isPremium === false && (
