@@ -69,6 +69,17 @@ const Profil = () => {
         if (data) setCompletedPhases(data.completed_phases ?? []);
       });
 
+    // Load checkin dates for calendar
+    supabase
+      .from("emotion_checkins")
+      .select("created_at")
+      .eq("user_id", user.id)
+      .then(({ data }) => {
+        if (data) {
+          setCheckinDates(new Set(data.map((d) => d.created_at.split("T")[0])));
+        }
+      });
+
     loadNotes();
   }, [user]);
 
