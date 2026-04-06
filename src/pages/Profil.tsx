@@ -5,8 +5,10 @@ import { supabase } from "@/integrations/supabase/client";
 import SectionBlock from "@/components/SectionBlock";
 import CTAButton from "@/components/CTAButton";
 import { motion, AnimatePresence } from "framer-motion";
-import { LogOut, Plus, Trash2, Save, User, BookOpen, StickyNote, Lock, Pencil, Check } from "lucide-react";
+import { LogOut, Plus, Trash2, Save, User, BookOpen, StickyNote, Lock, Pencil, Check, Bell, BellOff } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
+import { usePushNotifications } from "@/hooks/usePushNotifications";
+import { Switch } from "@/components/ui/switch";
 
 interface Note {
   id: string;
@@ -18,6 +20,7 @@ interface Note {
 const Profil = () => {
   const { user, loading, signOut } = useAuth();
   const navigate = useNavigate();
+  const { isSupported, isSubscribed, subscribe, unsubscribe, loading: pushLoading } = usePushNotifications();
 
   const [profile, setProfile] = useState<{ first_name: string; email: string | null; is_premium: boolean } | null>(null);
   const [completedPhases, setCompletedPhases] = useState<number[]>([]);
@@ -215,6 +218,35 @@ const Profil = () => {
                   <p className="mt-1 text-sm font-semibold">{completedPhases.length} / 4 phases terminées</p>
                   <Progress value={(completedPhases.length / 4) * 100} className="mt-2 h-2.5" />
                 </div>
+
+                {/* Push notifications toggle */}
+                {isSupported && (
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      {isSubscribed ? (
+                        <Bell className="h-4 w-4 text-primary" />
+                      ) : (
+                        <BellOff className="h-4 w-4 text-muted-foreground" />
+                      )}
+                      <div>
+                        <p className="text-sm font-semibold">Rappels quotidiens</p>
+                        <p className="text-xs text-muted-foreground">
+                          {isSubscribed
+                            ? "Tu recevras un rappel doux chaque jour"
+                            : "Active les rappels pour prendre soin de toi"}
+                        </p>
+                      </div>
+                    </div>
+                    <Switch
+                      checked={isSubscribed}
+                      disabled={pushLoading}
+                      onCheckedChange={(checked) => {
+                        if (checked) subscribe();
+                        else unsubscribe();
+                      }}
+                    />
+                  </div>
+                )}
               </div>
             </motion.div>
           )}
