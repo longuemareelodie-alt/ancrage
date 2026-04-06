@@ -143,7 +143,7 @@ const EmotionDetail = () => {
         </div>
       </SectionBlock>
 
-      {/* Post-exercise: tu viens de redescendre */}
+      {/* Post-exercise: redirect to post-flow */}
       <SectionBlock variant="blue">
         <div className="space-y-3 text-center">
           <p className="text-xl font-bold">Tu viens de faire redescendre ton corps</p>
@@ -152,22 +152,10 @@ const EmotionDetail = () => {
         </div>
       </SectionBlock>
 
-      {/* Transition — tu n'as pas besoin de rester seule */}
+      {/* CTA vers post-flow */}
       <SectionBlock>
         <div className="space-y-4 text-center">
-          <p className="font-bold">Tu n'as pas besoin de rester seule avec ça</p>
-          <p className="text-muted-foreground">Maintenant que ton corps redescend…</p>
-          <div className="space-y-2 text-sm text-primary font-medium">
-            <p>👉 tu peux comprendre ce que tu vis</p>
-            <p>👉 ou avancer sans te brusquer</p>
-          </div>
-        </div>
-      </SectionBlock>
-
-      {/* CTA vers dashboard */}
-      <SectionBlock variant="blue">
-        <div className="space-y-4 text-center">
-          <CTAButton to="/dashboard">Continuer doucement</CTAButton>
+          <CTAButton to="/post-flow">Et maintenant ?</CTAButton>
         </div>
       </SectionBlock>
     </div>

@@ -1,12 +1,14 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ChevronRight, Heart, Lock, Sparkles } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { updateStreakAndBadges, type BadgeDef } from "@/lib/streaks";
 import { emotions, type EmotionData } from "@/data/emotions";
+import { getStreakLabel } from "@/data/streakLabels";
 import BadgeCelebration from "@/components/BadgeCelebration";
+import MicroRewardPopup from "@/components/MicroRewardPopup";
 
 type Step = "select" | "response" | "action" | "after" | "evolution" | "validation" | "summary";
 
@@ -22,6 +24,7 @@ const progressLabels: Record<Step, string> = {
 
 const Checkin = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [step, setStep] = useState<Step>("select");
   const [selected, setSelected] = useState<EmotionData | null>(null);
   const [afterEmotion, setAfterEmotion] = useState<EmotionData | null>(null);
@@ -30,6 +33,7 @@ const Checkin = () => {
   const [actionDone, setActionDone] = useState(false);
   const [newBadges, setNewBadges] = useState<BadgeDef[]>([]);
   const [streakCount, setStreakCount] = useState(0);
+  const [showReward, setShowReward] = useState(false);
 
   const dismissBadges = useCallback(() => setNewBadges([]), []);
 
@@ -53,6 +57,7 @@ const Checkin = () => {
   const handleSelect = async (emotion: EmotionData) => {
     setSelected(emotion);
     setStep("response");
+    setShowReward(true); // Show micro reward
 
     if (!user) return;
     await supabase.from("emotion_checkins").insert({
@@ -116,11 +121,9 @@ const Checkin = () => {
   };
 
   const getStreakMessage = () => {
-    if (streakCount <= 1) return "Tu viens de poser un premier geste pour toi.";
-    if (streakCount <= 3) return `${streakCount} jours que tu prends soin de toi. Ton corps le sent.`;
-    if (streakCount <= 7) return `${streakCount} jours de suite. Tu crées un espace de sécurité.`;
-    if (streakCount <= 14) return `${streakCount} jours. Ton système nerveux se reprogramme.`;
-    return `${streakCount} jours. Tu n'es plus la même personne qu'au début.`;
+    const info = getStreakLabel(streakCount);
+    if (streakCount <= 0) return "Tu viens de poser un premier geste pour toi.";
+    return `${info.emoji} ${info.label} — ${streakCount} jour${streakCount > 1 ? "s" : ""}`;
   };
 
   const getEvolutionMessage = () => {
@@ -143,6 +146,7 @@ const Checkin = () => {
   return (
     <div className="flex min-h-screen flex-col bg-background px-5 py-6">
       <BadgeCelebration badges={newBadges} onDone={dismissBadges} />
+      <MicroRewardPopup show={showReward} onDone={() => setShowReward(false)} />
 
       {/* Header */}
       <div className="flex items-center justify-between">
