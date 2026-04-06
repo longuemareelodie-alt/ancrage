@@ -10,6 +10,7 @@ import { Progress } from "@/components/ui/progress";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { Switch } from "@/components/ui/switch";
 import { BADGES } from "@/lib/streaks";
+import StreakCalendar from "@/components/StreakCalendar";
 
 interface Note {
   id: string;
@@ -26,6 +27,7 @@ const Profil = () => {
   const [profile, setProfile] = useState<{ first_name: string; email: string | null; is_premium: boolean; current_streak: number; longest_streak: number } | null>(null);
   const [completedPhases, setCompletedPhases] = useState<number[]>([]);
   const [earnedBadges, setEarnedBadges] = useState<string[]>([]);
+  const [checkinDates, setCheckinDates] = useState<Set<string>>(new Set());
   const [notes, setNotes] = useState<Note[]>([]);
   const [editingNote, setEditingNote] = useState<{ title: string; content: string } | null>(null);
   const [saving, setSaving] = useState(false);
@@ -65,6 +67,17 @@ const Profil = () => {
       .single()
       .then(({ data }) => {
         if (data) setCompletedPhases(data.completed_phases ?? []);
+      });
+
+    // Load checkin dates for calendar
+    supabase
+      .from("emotion_checkins")
+      .select("created_at")
+      .eq("user_id", user.id)
+      .then(({ data }) => {
+        if (data) {
+          setCheckinDates(new Set(data.map((d) => d.created_at.split("T")[0])));
+        }
       });
 
     loadNotes();
@@ -282,6 +295,12 @@ const Profil = () => {
                       );
                     })}
                   </div>
+                </div>
+
+                {/* Streak Calendar */}
+                <div>
+                  <p className="text-xs font-medium text-muted-foreground mb-2">Historique des check-ins</p>
+                  <StreakCalendar checkinDates={checkinDates} />
                 </div>
 
                 {/* Push notifications toggle */}
