@@ -108,7 +108,7 @@ const Paywall = () => {
               }`}
             >
               Annuel
-              <span className="absolute -top-2 -right-1 rounded-full bg-green-500 px-1.5 py-0.5 text-[9px] font-bold text-white">
+              <span className="absolute -top-2 -right-1 rounded-full bg-primary px-1.5 py-0.5 text-[9px] font-bold text-primary-foreground">
                 -45%
               </span>
             </button>
