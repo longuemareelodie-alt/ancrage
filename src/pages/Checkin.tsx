@@ -4,6 +4,7 @@ import { ArrowLeft, ChevronRight, Heart, Lock, TrendingUp } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { updateStreakAndBadges } from "@/lib/streaks";
 import { emotions, type EmotionData } from "@/data/emotions";
 import { Progress } from "@/components/ui/progress";
 
@@ -52,6 +53,8 @@ const Checkin = () => {
         last_checkin_date: new Date().toISOString().split("T")[0],
       })
       .eq("user_id", user.id);
+    // Update streak & badges
+    await updateStreakAndBadges(user.id);
   };
 
   const handleActionComplete = () => {

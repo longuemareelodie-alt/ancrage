@@ -5,10 +5,11 @@ import { supabase } from "@/integrations/supabase/client";
 import SectionBlock from "@/components/SectionBlock";
 import CTAButton from "@/components/CTAButton";
 import { motion, AnimatePresence } from "framer-motion";
-import { LogOut, Plus, Trash2, Save, User, BookOpen, StickyNote, Lock, Pencil, Check, Bell, BellOff } from "lucide-react";
+import { LogOut, Plus, Trash2, Save, User, BookOpen, StickyNote, Lock, Pencil, Check, Bell, BellOff, Flame, Trophy } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { Switch } from "@/components/ui/switch";
+import { BADGES } from "@/lib/streaks";
 
 interface Note {
   id: string;
@@ -22,8 +23,9 @@ const Profil = () => {
   const navigate = useNavigate();
   const { isSupported, isSubscribed, subscribe, unsubscribe, loading: pushLoading } = usePushNotifications();
 
-  const [profile, setProfile] = useState<{ first_name: string; email: string | null; is_premium: boolean } | null>(null);
+  const [profile, setProfile] = useState<{ first_name: string; email: string | null; is_premium: boolean; current_streak: number; longest_streak: number } | null>(null);
   const [completedPhases, setCompletedPhases] = useState<number[]>([]);
+  const [earnedBadges, setEarnedBadges] = useState<string[]>([]);
   const [notes, setNotes] = useState<Note[]>([]);
   const [editingNote, setEditingNote] = useState<{ title: string; content: string } | null>(null);
   const [saving, setSaving] = useState(false);
@@ -41,11 +43,19 @@ const Profil = () => {
 
     supabase
       .from("profiles")
-      .select("first_name, email, is_premium")
+      .select("first_name, email, is_premium, current_streak, longest_streak")
       .eq("user_id", user.id)
       .single()
       .then(({ data }) => {
-        if (data) setProfile(data);
+        if (data) setProfile(data as any);
+      });
+
+    supabase
+      .from("user_badges")
+      .select("badge_key")
+      .eq("user_id", user.id)
+      .then(({ data }) => {
+        if (data) setEarnedBadges(data.map((b) => b.badge_key));
       });
 
     supabase
@@ -231,6 +241,47 @@ const Profil = () => {
                   <p className="text-xs font-medium text-muted-foreground">Progression</p>
                   <p className="mt-1 text-sm font-semibold">{completedPhases.length} / 4 phases terminées</p>
                   <Progress value={(completedPhases.length / 4) * 100} className="mt-2 h-2.5" />
+                </div>
+
+                {/* Streak */}
+                <div className="flex items-center gap-4 rounded-xl bg-secondary/50 p-4">
+                  <div className="flex items-center gap-2">
+                    <Flame className="h-5 w-5 text-orange-500" />
+                    <div>
+                      <p className="text-lg font-bold leading-none">{profile?.current_streak ?? 0}</p>
+                      <p className="text-[10px] text-muted-foreground">jours de suite</p>
+                    </div>
+                  </div>
+                  <div className="h-8 w-px bg-border" />
+                  <div className="flex items-center gap-2">
+                    <Trophy className="h-5 w-5 text-yellow-500" />
+                    <div>
+                      <p className="text-lg font-bold leading-none">{profile?.longest_streak ?? 0}</p>
+                      <p className="text-[10px] text-muted-foreground">record</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Badges */}
+                <div>
+                  <p className="text-xs font-medium text-muted-foreground mb-2">Badges gagnés</p>
+                  <div className="grid grid-cols-4 gap-2">
+                    {BADGES.map((badge) => {
+                      const earned = earnedBadges.includes(badge.key);
+                      return (
+                        <div
+                          key={badge.key}
+                          className={`flex flex-col items-center gap-1 rounded-xl p-2.5 text-center transition-all ${
+                            earned ? "bg-primary/10" : "bg-secondary/30 opacity-40 grayscale"
+                          }`}
+                          title={badge.description}
+                        >
+                          <span className="text-xl">{badge.emoji}</span>
+                          <span className="text-[9px] font-medium leading-tight">{badge.label}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
 
                 {/* Push notifications toggle */}
