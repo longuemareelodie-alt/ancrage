@@ -5,13 +5,12 @@ import { supabase } from "@/integrations/supabase/client";
 import SectionBlock from "@/components/SectionBlock";
 import CTAButton from "@/components/CTAButton";
 import { motion, AnimatePresence } from "framer-motion";
-import { LogOut, Plus, Trash2, Save, User, BookOpen, StickyNote, Lock, Pencil, Check, Bell, BellOff, Flame, Trophy } from "lucide-react";
+import { LogOut, Plus, Trash2, Save, User, BookOpen, StickyNote, Lock, Pencil, Check, Bell, BellOff, Flame, Trophy, Download, Share } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { Switch } from "@/components/ui/switch";
 import { BADGES } from "@/lib/streaks";
 import StreakCalendar from "@/components/StreakCalendar";
-
 interface Note {
   id: string;
   title: string;
@@ -35,7 +34,23 @@ const Profil = () => {
   const [editingName, setEditingName] = useState(false);
   const [nameValue, setNameValue] = useState("");
   const [savingName, setSavingName] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
 
+  const isMobileDevice = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+  const isStandalone =
+    window.matchMedia("(display-mode: standalone)").matches ||
+    (navigator as any).standalone === true;
+
+  // Capture beforeinstallprompt for Android
+  useEffect(() => {
+    const handler = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+    window.addEventListener("beforeinstallprompt", handler);
+    return () => window.removeEventListener("beforeinstallprompt", handler);
+  }, []);
   useEffect(() => {
     if (!loading && !user) navigate("/auth");
   }, [loading, user, navigate]);
@@ -330,6 +345,36 @@ const Profil = () => {
                       }}
                     />
                   </div>
+                )}
+
+                {/* Install PWA button for mobile */}
+                {!isStandalone && isMobileDevice && (
+                  <button
+                    onClick={() => {
+                      if (isIOS) {
+                        // Can't programmatically install on iOS, show instructions
+                        alert("Pour installer Ancrage :\n\n1. Appuie sur l'icône de partage en bas de Safari\n2. Choisis « Sur l'écran d'accueil »");
+                      } else if (deferredPrompt) {
+                        deferredPrompt.prompt();
+                        deferredPrompt.userChoice.then(() => setDeferredPrompt(null));
+                      } else {
+                        alert("Ouvre le menu de ton navigateur (⋮) puis choisis « Installer l'application » ou « Ajouter à l'écran d'accueil ».");
+                      }
+                    }}
+                    className="flex w-full items-center gap-3 rounded-xl bg-primary/10 p-4 transition-colors hover:bg-primary/20"
+                  >
+                    {isIOS ? (
+                      <Share className="h-5 w-5 text-primary" />
+                    ) : (
+                      <Download className="h-5 w-5 text-primary" />
+                    )}
+                    <div className="text-left">
+                      <p className="text-sm font-semibold">Installer Ancrage</p>
+                      <p className="text-xs text-muted-foreground">
+                        Ajoute l'app sur ton écran d'accueil pour les rappels
+                      </p>
+                    </div>
+                  </button>
                 )}
               </div>
             </motion.div>
