@@ -12,6 +12,7 @@ import { Switch } from "@/components/ui/switch";
 import { BADGES } from "@/lib/streaks";
 import StreakCalendar from "@/components/StreakCalendar";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
+import PaymentHistory from "@/components/PaymentHistory";
 interface Note {
   id: string;
   title: string;
