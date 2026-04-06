@@ -1,12 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ChevronRight, Heart, Lock, TrendingUp } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { updateStreakAndBadges } from "@/lib/streaks";
+import { updateStreakAndBadges, type BadgeDef } from "@/lib/streaks";
 import { emotions, type EmotionData } from "@/data/emotions";
 import { Progress } from "@/components/ui/progress";
+import BadgeCelebration from "@/components/BadgeCelebration";
 
 type Step = "select" | "response" | "action" | "validation" | "summary";
 
@@ -17,6 +18,9 @@ const Checkin = () => {
   const [isPremium, setIsPremium] = useState(false);
   const [weeklyData, setWeeklyData] = useState<{ emotion: string; type: string; date: string }[]>([]);
   const [actionDone, setActionDone] = useState(false);
+  const [newBadges, setNewBadges] = useState<BadgeDef[]>([]);
+
+  const dismissBadges = useCallback(() => setNewBadges([]), []);
 
   useEffect(() => {
     if (!user) return;
@@ -54,7 +58,10 @@ const Checkin = () => {
       })
       .eq("user_id", user.id);
     // Update streak & badges
-    await updateStreakAndBadges(user.id);
+    const result = await updateStreakAndBadges(user.id);
+    if (result?.newBadges?.length) {
+      setNewBadges(result.newBadges);
+    }
   };
 
   const handleActionComplete = () => {
@@ -93,6 +100,7 @@ const Checkin = () => {
 
   return (
     <div className="flex min-h-screen flex-col bg-background px-5 py-6">
+      <BadgeCelebration badges={newBadges} onDone={dismissBadges} />
       {/* Header */}
       <div className="flex items-center justify-between">
         <Link to="/dashboard" className="rounded-full p-2 hover:bg-secondary">
