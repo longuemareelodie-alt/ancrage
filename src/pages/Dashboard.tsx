@@ -108,12 +108,38 @@ const Dashboard = () => {
           transition={{ duration: 0.6 }}
           className="w-full max-w-lg space-y-10 text-center"
         >
-          {/* Greeting */}
-          <div className="space-y-2">
-            <p className="text-sm text-muted-foreground">Tu es ici</p>
-            <h1 className="text-2xl font-bold">Comment tu te sens maintenant ?</h1>
-            <p className="text-xs text-muted-foreground">Ton corps peut redescendre</p>
-          </div>
+          {/* Personalized motivation */}
+          {(() => {
+            const motivation = getMotivationMessage(lastEmotion, streak);
+            const emotionData = lastEmotion ? emotions.find((e) => e.id === lastEmotion) : null;
+            return (
+              <div className="space-y-2">
+                {streak > 0 && (
+                  <motion.p
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.05 }}
+                    className="text-xs text-primary font-medium"
+                  >
+                    🔥 {streak} jour{streak > 1 ? "s" : ""} de suite
+                  </motion.p>
+                )}
+                {emotionData && (
+                  <motion.p
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.1 }}
+                    className="text-xs text-muted-foreground"
+                  >
+                    Dernière émotion : {emotionData.emoji} {emotionData.label}
+                  </motion.p>
+                )}
+                <h1 className="text-2xl font-bold">
+                  {motivation.emoji && `${motivation.emoji} `}{motivation.text}
+                </h1>
+              </div>
+            );
+          })()}
 
           {/* 3 main CTAs */}
           <div className="space-y-4">
