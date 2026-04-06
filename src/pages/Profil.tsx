@@ -33,7 +33,7 @@ const Profil = () => {
   const [notes, setNotes] = useState<Note[]>([]);
   const [editingNote, setEditingNote] = useState<{ title: string; content: string } | null>(null);
   const [saving, setSaving] = useState(false);
-  const [activeTab, setActiveTab] = useState<"profil" | "parcours" | "notes">("profil");
+  const [activeTab, setActiveTab] = useState<"profil" | "parcours" | "notes" | "paiements">("profil");
   const [editingName, setEditingName] = useState(false);
   const [nameValue, setNameValue] = useState("");
   const [savingName, setSavingName] = useState(false);
