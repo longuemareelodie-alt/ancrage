@@ -101,9 +101,7 @@ const Parcours = () => {
       const arr = [...phases];
       localStorage.setItem("ancrage-progress", JSON.stringify(arr));
       if (user) {
-        supabase
-          .from("user_progress")
-          .upsert({ user_id: user.id, completed_phases: arr }, { onConflict: "user_id" });
+        supabase.rpc("upsert_user_progress", { _completed_phases: arr });
       }
     },
     [user]

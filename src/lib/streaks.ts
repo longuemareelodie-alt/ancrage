@@ -113,9 +113,9 @@ export async function updateStreakAndBadges(userId: string) {
   );
 
   if (newBadges.length > 0) {
-    await supabase.from("user_badges").insert(
-      newBadges.map((b) => ({ user_id: userId, badge_key: b.key }))
-    );
+    await supabase.rpc("award_badges", {
+      _badge_keys: newBadges.map((b) => b.key),
+    });
   }
 
   return { streak: newStreak, longest: newLongest, newBadges };
