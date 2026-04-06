@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
 import logo from "@/assets/logo-ancrage.png";
 import InAppReminder from "@/components/InAppReminder";
+import InstallPWAPrompt from "@/components/InstallPWAPrompt";
 
 const Dashboard = () => {
   const { user } = useAuth();
