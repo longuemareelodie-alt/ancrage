@@ -121,11 +121,9 @@ const Checkin = () => {
   };
 
   const getStreakMessage = () => {
-    if (streakCount <= 1) return "Tu viens de poser un premier geste pour toi.";
-    if (streakCount <= 3) return `${streakCount} jours que tu prends soin de toi. Ton corps le sent.`;
-    if (streakCount <= 7) return `${streakCount} jours de suite. Tu crées un espace de sécurité.`;
-    if (streakCount <= 14) return `${streakCount} jours. Ton système nerveux se reprogramme.`;
-    return `${streakCount} jours. Tu n'es plus la même personne qu'au début.`;
+    const info = getStreakLabel(streakCount);
+    if (streakCount <= 0) return "Tu viens de poser un premier geste pour toi.";
+    return `${info.emoji} ${info.label} — ${streakCount} jour${streakCount > 1 ? "s" : ""}`;
   };
 
   const getEvolutionMessage = () => {
@@ -148,6 +146,7 @@ const Checkin = () => {
   return (
     <div className="flex min-h-screen flex-col bg-background px-5 py-6">
       <BadgeCelebration badges={newBadges} onDone={dismissBadges} />
+      <MicroRewardPopup show={showReward} onDone={() => setShowReward(false)} />
 
       {/* Header */}
       <div className="flex items-center justify-between">
