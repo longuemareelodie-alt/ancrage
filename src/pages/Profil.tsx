@@ -23,7 +23,8 @@ const Profil = () => {
   const { user, loading, signOut } = useAuth();
   const navigate = useNavigate();
   const { isSupported, isSubscribed, subscribe, unsubscribe, loading: pushLoading } = usePushNotifications();
-
+  const { cancelSubscription, cancelLoading } = useMolliePayment();
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [profile, setProfile] = useState<{ first_name: string; email: string | null; is_premium: boolean; current_streak: number; longest_streak: number } | null>(null);
   const [completedPhases, setCompletedPhases] = useState<number[]>([]);
   const [earnedBadges, setEarnedBadges] = useState<string[]>([]);
