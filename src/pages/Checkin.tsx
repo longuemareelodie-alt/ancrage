@@ -1,24 +1,35 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, ChevronRight, Heart, Lock, TrendingUp } from "lucide-react";
+import { ArrowLeft, ChevronRight, Heart, Lock, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { updateStreakAndBadges, type BadgeDef } from "@/lib/streaks";
 import { emotions, type EmotionData } from "@/data/emotions";
-import { Progress } from "@/components/ui/progress";
 import BadgeCelebration from "@/components/BadgeCelebration";
 
-type Step = "select" | "response" | "action" | "validation" | "summary";
+type Step = "select" | "response" | "action" | "after" | "evolution" | "validation" | "summary";
+
+const progressLabels: Record<Step, string> = {
+  select: "Écoute-toi",
+  response: "On t'entend",
+  action: "Redescends",
+  after: "Et maintenant ?",
+  evolution: "Ce qui a changé",
+  validation: "Tu as avancé",
+  summary: "Ta semaine",
+};
 
 const Checkin = () => {
   const { user } = useAuth();
   const [step, setStep] = useState<Step>("select");
   const [selected, setSelected] = useState<EmotionData | null>(null);
+  const [afterEmotion, setAfterEmotion] = useState<EmotionData | null>(null);
   const [isPremium, setIsPremium] = useState(false);
   const [weeklyData, setWeeklyData] = useState<{ emotion: string; type: string; date: string }[]>([]);
   const [actionDone, setActionDone] = useState(false);
   const [newBadges, setNewBadges] = useState<BadgeDef[]>([]);
+  const [streakCount, setStreakCount] = useState(0);
 
   const dismissBadges = useCallback(() => setNewBadges([]), []);
 
@@ -27,10 +38,11 @@ const Checkin = () => {
     const fetchProfile = async () => {
       const { data } = await supabase
         .from("profiles")
-        .select("is_premium")
+        .select("is_premium, current_streak")
         .eq("user_id", user.id)
         .single();
       setIsPremium(data?.is_premium ?? false);
+      setStreakCount(data?.current_streak ?? 0);
     };
     fetchProfile();
   }, [user]);
@@ -43,13 +55,11 @@ const Checkin = () => {
     setStep("response");
 
     if (!user) return;
-    // Save check-in
     await supabase.from("emotion_checkins").insert({
       user_id: user.id,
       emotion: emotion.id,
       emotion_type: emotion.type,
     });
-    // Update profile
     await supabase
       .from("profiles")
       .update({
@@ -57,23 +67,32 @@ const Checkin = () => {
         last_checkin_date: new Date().toISOString().split("T")[0],
       })
       .eq("user_id", user.id);
-    // Update streak & badges
     const result = await updateStreakAndBadges(user.id);
     if (result?.newBadges?.length) {
       setNewBadges(result.newBadges);
+    }
+    if (result?.streak) {
+      setStreakCount(result.streak);
     }
   };
 
   const handleActionComplete = () => {
     setActionDone(true);
-    setTimeout(() => {
-      if (isPremium) {
-        loadWeeklySummary();
-        setStep("summary");
-      } else {
-        setStep("validation");
-      }
-    }, 2000);
+    setTimeout(() => setStep("after"), 1500);
+  };
+
+  const handleAfterSelect = (emotion: EmotionData) => {
+    setAfterEmotion(emotion);
+    setStep("evolution");
+  };
+
+  const handleEvolutionContinue = () => {
+    if (isPremium) {
+      loadWeeklySummary();
+      setStep("summary");
+    } else {
+      setStep("validation");
+    }
   };
 
   const loadWeeklySummary = async () => {
@@ -96,20 +115,60 @@ const Checkin = () => {
     );
   };
 
-  const stepProgress = { select: 0, response: 25, action: 50, validation: 75, summary: 100 };
+  const getStreakMessage = () => {
+    if (streakCount <= 1) return "Tu viens de poser un premier geste pour toi.";
+    if (streakCount <= 3) return `${streakCount} jours que tu prends soin de toi. Ton corps le sent.`;
+    if (streakCount <= 7) return `${streakCount} jours de suite. Tu crées un espace de sécurité.`;
+    if (streakCount <= 14) return `${streakCount} jours. Ton système nerveux se reprogramme.`;
+    return `${streakCount} jours. Tu n'es plus la même personne qu'au début.`;
+  };
+
+  const getEvolutionMessage = () => {
+    if (!selected || !afterEmotion) return "";
+    const before = selected.type;
+    const after = afterEmotion.type;
+
+    if (before === "negative" && after === "positive") {
+      return "Ton corps a redescendu. Ce que tu ressens maintenant, c'est toi qui l'as créé.";
+    }
+    if (before === "negative" && after === "negative") {
+      return "C'est encore là. Et c'est normal. Tu as quand même fait quelque chose pour toi — et ça compte.";
+    }
+    if (before === "positive" && after === "positive") {
+      return "Tu étais déjà dans un espace doux, et tu l'as renforcé. C'est précieux.";
+    }
+    return "Quelque chose a bougé en toi. Même un micro-changement, c'est déjà de la régulation.";
+  };
 
   return (
     <div className="flex min-h-screen flex-col bg-background px-5 py-6">
       <BadgeCelebration badges={newBadges} onDone={dismissBadges} />
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <Link to="/dashboard" className="rounded-full p-2 hover:bg-secondary">
           <ArrowLeft className="h-5 w-5" />
         </Link>
-        <div className="flex-1 mx-4">
-          <Progress value={stepProgress[step]} className="h-1.5" />
-        </div>
-        <span className="text-xs text-muted-foreground">{stepProgress[step]}%</span>
+        <p className="text-xs text-muted-foreground font-medium">{progressLabels[step]}</p>
+        <div className="w-9" />
+      </div>
+
+      {/* Soft progress dots */}
+      <div className="flex items-center justify-center gap-1.5 mt-3">
+        {(["select", "response", "action", "after", "evolution"] as Step[]).map((s, i) => {
+          const steps: Step[] = ["select", "response", "action", "after", "evolution"];
+          const currentIdx = steps.indexOf(step);
+          return (
+            <div
+              key={s}
+              className={`h-1.5 rounded-full transition-all duration-500 ${
+                i <= currentIdx
+                  ? "bg-primary w-6"
+                  : "bg-secondary w-1.5"
+              }`}
+            />
+          );
+        })}
       </div>
 
       <AnimatePresence mode="wait">
@@ -123,12 +182,12 @@ const Checkin = () => {
             className="mt-8 space-y-6"
           >
             <div className="text-center space-y-2">
-              <h1 className="text-xl font-bold">Comment tu te sens aujourd'hui ?</h1>
-              <p className="text-sm text-muted-foreground">Choisis sans réfléchir</p>
+              <h1 className="text-xl font-bold">Comment tu te sens là, maintenant ?</h1>
+              <p className="text-sm text-muted-foreground">Pas de bonne ou mauvaise réponse</p>
             </div>
 
             <div className="space-y-4">
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Ce que je ressens</p>
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Ce qui monte en toi</p>
               <div className="grid grid-cols-2 gap-2">
                 {negativeEmotions.map((e, i) => (
                   <motion.button
@@ -148,7 +207,7 @@ const Checkin = () => {
             </div>
 
             <div className="space-y-4">
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Du positif aussi</p>
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Ce qui va mieux</p>
               <div className="grid grid-cols-2 gap-2">
                 {positiveEmotions.map((e, i) => (
                   <motion.button
@@ -169,7 +228,7 @@ const Checkin = () => {
           </motion.div>
         )}
 
-        {/* STEP 2: RESPONSE */}
+        {/* STEP 2: RESPONSE — emotional validation */}
         {step === "response" && selected && (
           <motion.div
             key="response"
@@ -178,13 +237,52 @@ const Checkin = () => {
             exit={{ opacity: 0, y: -20 }}
             className="mt-12 flex flex-1 flex-col items-center justify-center text-center space-y-8"
           >
-            <span className="text-5xl">{selected.emoji}</span>
+            <motion.span
+              initial={{ scale: 0 }}
+              animate={{ scale: [0, 1.2, 1] }}
+              transition={{ duration: 0.5 }}
+              className="text-5xl"
+            >
+              {selected.emoji}
+            </motion.span>
             <div className="space-y-4 max-w-sm">
-              <h2 className="text-lg font-bold">{selected.label}</h2>
-              <p className="text-sm leading-relaxed">{selected.response}</p>
-              <p className="text-sm text-primary font-medium italic">"{selected.reassurance}"</p>
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
+                className="text-sm text-muted-foreground"
+              >
+                Tu ressens :
+              </motion.p>
+              <motion.h2
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                className="text-xl font-bold"
+              >
+                {selected.label}
+              </motion.h2>
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.7 }}
+                className="text-sm leading-relaxed"
+              >
+                {selected.response}
+              </motion.p>
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1 }}
+                className="rounded-xl bg-primary/10 p-4"
+              >
+                <p className="text-sm text-primary font-semibold">"{selected.reassurance}"</p>
+              </motion.div>
             </div>
             <motion.button
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.3 }}
               whileTap={{ scale: 0.96 }}
               onClick={() => setStep("action")}
               className="flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25"
@@ -233,13 +331,126 @@ const Checkin = () => {
                 className="space-y-2"
               >
                 <p className="text-primary font-bold">Bien joué 💛</p>
-                <p className="text-xs text-muted-foreground">Redirection…</p>
+                <p className="text-xs text-muted-foreground">Ton corps te remercie…</p>
               </motion.div>
             )}
           </motion.div>
         )}
 
-        {/* STEP 4: VALIDATION (non-premium ending) */}
+        {/* STEP 4: AFTER — how do you feel now? */}
+        {step === "after" && (
+          <motion.div
+            key="after"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="mt-8 space-y-6"
+          >
+            <div className="text-center space-y-2">
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.2 }}
+                className="text-sm text-muted-foreground"
+              >
+                Tu as fait redescendre ton corps
+              </motion.p>
+              <h1 className="text-xl font-bold">Et maintenant, comment tu te sens ?</h1>
+              <p className="text-sm text-muted-foreground">Même un micro-changement compte</p>
+            </div>
+
+            <div className="space-y-3">
+              {/* Show a curated subset — mix of positive shifts and still-struggling */}
+              {[
+                ...positiveEmotions.slice(0, 6),
+                ...negativeEmotions.slice(0, 4),
+              ].map((e, i) => (
+                <motion.button
+                  key={e.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.04 }}
+                  whileTap={{ scale: 0.96 }}
+                  onClick={() => handleAfterSelect(e)}
+                  className="flex w-full items-center gap-3 rounded-xl bg-card p-3.5 text-left shadow-sm text-sm"
+                >
+                  <span className="text-lg">{e.emoji}</span>
+                  <span className="font-medium">{e.label}</span>
+                </motion.button>
+              ))}
+            </div>
+          </motion.div>
+        )}
+
+        {/* STEP 5: EVOLUTION — before vs after */}
+        {step === "evolution" && selected && afterEmotion && (
+          <motion.div
+            key="evolution"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="mt-12 flex flex-1 flex-col items-center justify-center text-center space-y-8"
+          >
+            {/* Before → After visual */}
+            <div className="flex items-center gap-4">
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 0.5, x: 0 }}
+                transition={{ delay: 0.2 }}
+                className="flex flex-col items-center gap-1 rounded-xl bg-card p-4 opacity-50"
+              >
+                <span className="text-3xl">{selected.emoji}</span>
+                <span className="text-xs text-muted-foreground">Avant</span>
+                <span className="text-xs font-medium">{selected.label}</span>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.5, type: "spring" }}
+                className="text-xl text-primary"
+              >
+                →
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.4 }}
+                className="flex flex-col items-center gap-1 rounded-xl bg-primary/10 p-4 ring-2 ring-primary/20"
+              >
+                <span className="text-3xl">{afterEmotion.emoji}</span>
+                <span className="text-xs text-primary font-medium">Après</span>
+                <span className="text-xs font-medium">{afterEmotion.label}</span>
+              </motion.div>
+            </div>
+
+            {/* Emotional message */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.8 }}
+              className="space-y-3 max-w-sm"
+            >
+              <p className="text-sm leading-relaxed font-medium">{getEvolutionMessage()}</p>
+              <p className="text-xs text-muted-foreground italic">{getStreakMessage()}</p>
+            </motion.div>
+
+            <motion.button
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.2 }}
+              whileTap={{ scale: 0.96 }}
+              onClick={handleEvolutionContinue}
+              className="flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25"
+            >
+              <Sparkles className="h-4 w-4" />
+              Continuer
+            </motion.button>
+          </motion.div>
+        )}
+
+        {/* STEP 6: VALIDATION (non-premium ending) */}
         {step === "validation" && (
           <motion.div
             key="validation"
@@ -258,10 +469,11 @@ const Checkin = () => {
             </motion.div>
 
             <div className="space-y-3 max-w-sm">
-              <h2 className="text-lg font-bold">Tu viens de faire redescendre ton système nerveux</h2>
+              <h2 className="text-lg font-bold">Tu viens de prendre soin de toi</h2>
               <p className="text-sm text-muted-foreground">
-                Ce que tu viens de faire compte. Chaque micro-action régule ton corps.
+                Ce que tu viens de faire, la plupart des gens ne le font jamais. Tu as écouté ton corps, tu l'as aidé à redescendre.
               </p>
+              <p className="text-sm text-primary font-medium">C'est ça, avancer. Pas à pas. 💛</p>
             </div>
 
             {!isPremium && (
@@ -271,13 +483,13 @@ const Checkin = () => {
                   <p className="font-bold text-sm">Tu peux aller plus loin</p>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Suis ta progression, accède à ton historique émotionnel et vraiment sortir de cet état.
+                  Comprends tes schémas, suis ton évolution et apprends à sortir durablement de cet état.
                 </p>
                 <Link
                   to="/aller-plus-loin"
                   className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25"
                 >
-                  Débloquer le suivi complet
+                  Débloquer le programme complet
                 </Link>
               </div>
             )}
@@ -291,7 +503,7 @@ const Checkin = () => {
           </motion.div>
         )}
 
-        {/* STEP 5: SUMMARY (premium) */}
+        {/* STEP 7: SUMMARY (premium) */}
         {step === "summary" && (
           <motion.div
             key="summary"
@@ -304,21 +516,22 @@ const Checkin = () => {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ type: "spring", stiffness: 200, damping: 15 }}
-              className="text-center"
+              className="text-center space-y-2"
             >
               <span className="text-4xl">🌿</span>
-              <h2 className="mt-3 text-lg font-bold">Tu viens de faire redescendre ton système nerveux</h2>
+              <h2 className="mt-3 text-lg font-bold">Tu prends soin de toi, et ça se voit</h2>
+              <p className="text-sm text-muted-foreground">{getStreakMessage()}</p>
             </motion.div>
 
             {/* Weekly summary */}
             <div className="rounded-2xl bg-card p-5 shadow-sm space-y-4">
               <div className="flex items-center gap-2">
-                <TrendingUp className="h-4 w-4 text-primary" />
-                <h3 className="font-bold text-sm">Ta semaine</h3>
+                <Heart className="h-4 w-4 text-primary" />
+                <h3 className="font-bold text-sm">Comment tu as évolué cette semaine</h3>
               </div>
 
               {weeklyData.length === 0 ? (
-                <p className="text-xs text-muted-foreground">C'est ton premier check-in ! Reviens demain pour voir ta progression.</p>
+                <p className="text-xs text-muted-foreground">C'est ton premier check-in ! Reviens demain pour voir comment tu évolues.</p>
               ) : (
                 <>
                   <WeeklySummaryContent data={weeklyData} />
@@ -352,7 +565,7 @@ const Checkin = () => {
               to="/dashboard"
               className="mx-auto rounded-full bg-primary px-6 py-3 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25"
             >
-              Retour au tableau de bord
+              Retour à mon espace
             </Link>
           </motion.div>
         )}
@@ -373,26 +586,24 @@ const WeeklySummaryContent = ({ data }: { data: { emotion: string; type: string;
   const mostFrequent = Object.entries(topEmotion).sort((a, b) => b[1] - a[1])[0];
   const emotionData = emotions.find((e) => e.id === mostFrequent?.[0]);
 
+  const getMessage = () => {
+    if (total === 1) return "Tu commences à t'écouter. C'est le geste le plus important.";
+    if (positiveCount > negativeCount) return "Tu vas de mieux en mieux. Ton corps apprend à se réguler. 💛";
+    if (positiveCount === negativeCount) return "Des hauts et des bas — c'est le chemin. Tu es présente, c'est ce qui compte.";
+    return "Des jours difficiles, mais tu es revenue à chaque fois. C'est ta force.";
+  };
+
   return (
     <div className="space-y-2 text-sm">
-      {positiveCount > 0 && (
-        <p>
-          Tu t'es sentie <span className="font-bold text-primary">positive {positiveCount} fois</span> cette semaine
-        </p>
-      )}
-      {negativeCount > 0 && positiveCount > 0 && (
-        <p className="text-xs text-muted-foreground">
-          {positiveCount > negativeCount
-            ? "Tu progresses. Continue comme ça. 💛"
-            : "Des jours difficiles, mais tu es là. C'est ce qui compte."}
-        </p>
-      )}
+      <p className="font-medium">{getMessage()}</p>
       {emotionData && mostFrequent[1] > 1 && (
         <p className="text-xs text-muted-foreground">
-          Émotion la plus fréquente : {emotionData.emoji} {emotionData.label} ({mostFrequent[1]}x)
+          Tu as souvent ressenti : {emotionData.emoji} {emotionData.label}
         </p>
       )}
-      <p className="text-xs text-muted-foreground">{total} check-in{total > 1 ? "s" : ""} cette semaine</p>
+      <p className="text-xs text-muted-foreground">
+        {total} moment{total > 1 ? "s" : ""} pour toi cette semaine
+      </p>
     </div>
   );
 };
