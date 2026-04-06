@@ -22,6 +22,7 @@ import CGV from "./pages/CGV";
 import Confidentialite from "./pages/Confidentialite";
 import MentionsLegales from "./pages/MentionsLegales";
 import PaymentSuccess from "./pages/PaymentSuccess";
+import Checkin from "./pages/Checkin";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +38,7 @@ const App = () => (
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/emotions" element={<ProtectedRoute><Emotions /></ProtectedRoute>} />
             <Route path="/emotion/:emotion" element={<ProtectedRoute><EmotionDetail /></ProtectedRoute>} />
+            <Route path="/checkin" element={<ProtectedRoute><Checkin /></ProtectedRoute>} />
             <Route path="/comprendre" element={<PremiumRoute><Comprendre /></PremiumRoute>} />
             <Route path="/avancer" element={<PremiumRoute><Avancer /></PremiumRoute>} />
             <Route path="/aller-plus-loin" element={<AllerPlusLoin />} />
