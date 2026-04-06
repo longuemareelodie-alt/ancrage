@@ -27,6 +27,7 @@ const Profil = () => {
   const [profile, setProfile] = useState<{ first_name: string; email: string | null; is_premium: boolean; current_streak: number; longest_streak: number } | null>(null);
   const [completedPhases, setCompletedPhases] = useState<number[]>([]);
   const [earnedBadges, setEarnedBadges] = useState<string[]>([]);
+  const [checkinDates, setCheckinDates] = useState<Set<string>>(new Set());
   const [notes, setNotes] = useState<Note[]>([]);
   const [editingNote, setEditingNote] = useState<{ title: string; content: string } | null>(null);
   const [saving, setSaving] = useState(false);
