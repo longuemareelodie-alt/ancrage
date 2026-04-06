@@ -5,13 +5,67 @@ import { Zap, Brain, Puzzle, User, Lock, Heart, BarChart3 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
+import { emotions } from "@/data/emotions";
 import logo from "@/assets/logo-ancrage.png";
 import InAppReminder from "@/components/InAppReminder";
 import InstallPWAPrompt from "@/components/InstallPWAPrompt";
 
+const getMotivationMessage = (lastEmotion: string | null, streak: number) => {
+  const emotionData = lastEmotion ? emotions.find((e) => e.id === lastEmotion) : null;
+
+  // Streak-based messages
+  if (streak >= 14) {
+    return { text: "Ton système nerveux se transforme. Tu le sens ?", emoji: "🌟" };
+  }
+  if (streak >= 7) {
+    return { text: "Une semaine à prendre soin de toi. Ton corps s'en souvient.", emoji: "⭐" };
+  }
+  if (streak >= 3) {
+    return { text: `${streak} jours pour toi. Tu crées un nouveau réflexe.`, emoji: "🔥" };
+  }
+
+  // Emotion-based messages
+  if (emotionData) {
+    if (emotionData.type === "negative") {
+      const negativeMessages: Record<string, { text: string; emoji: string }> = {
+        anxieuse: { text: "Ton corps était en alerte hier. Aujourd'hui, tu peux l'aider à redescendre.", emoji: "🫂" },
+        oppressee: { text: "La pression que tu portais hier mérite de l'espace aujourd'hui.", emoji: "💨" },
+        submergee: { text: "Hier c'était beaucoup. Aujourd'hui, juste un pas.", emoji: "🌊" },
+        epuisee: { text: "Ton corps t'a demandé de t'arrêter. Écoute-le encore aujourd'hui.", emoji: "🔋" },
+        triste: { text: "La tristesse d'hier avait sa place. Comment tu te sens maintenant ?", emoji: "💧" },
+        vide: { text: "Hier tu étais en mode survie. Aujourd'hui, reviens doucement.", emoji: "🕊️" },
+        colere: { text: "Ta colère protégeait quelque chose d'important. Prends soin de ça.", emoji: "🛡️" },
+        perdue: { text: "Le brouillard d'hier peut se lever. Un geste à la fois.", emoji: "🌤️" },
+        surmenage: { text: "Ton mental tournait en boucle. Aujourd'hui, pose-le.", emoji: "🧘" },
+        survie: { text: "Tu as tenu. Tu es là. C'est déjà énorme.", emoji: "💪" },
+      };
+      return negativeMessages[lastEmotion!] || { text: "Tu es revenue. C'est déjà prendre soin de toi.", emoji: "💜" };
+    }
+    // Positive
+    const positiveMessages: Record<string, { text: string; emoji: string }> = {
+      calme: { text: "Tu as trouvé du calme hier. Nourris-le aujourd'hui.", emoji: "🕊️" },
+      apaisee: { text: "L'apaisement que tu as ressenti t'appartient.", emoji: "☁️" },
+      stable: { text: "Tu étais au centre hier. Continue d'ancrer ça.", emoji: "⚖️" },
+      mieux: { text: "Même un petit mieux, c'est un signal énorme.", emoji: "🌱" },
+      soulagee: { text: "Le soulagement d'hier, c'est toi qui l'as créé.", emoji: "😮‍💨" },
+      fiere: { text: "Tu as le droit d'être fière. Encore aujourd'hui.", emoji: "✨" },
+      claire: { text: "La clarté revient. Ton cerveau retrouve de l'espace.", emoji: "💡" },
+      securite: { text: "Cet espace de sécurité est à toi. Reviens y quand tu veux.", emoji: "🛡️" },
+      connectee: { text: "Tu te reconnectes à toi. C'est précieux.", emoji: "💜" },
+      presente: { text: "Tu es présente. C'est le contraire de la dissociation.", emoji: "🌸" },
+    };
+    return positiveMessages[lastEmotion!] || { text: "Quelque chose de doux s'installe en toi.", emoji: "💛" };
+  }
+
+  // No emotion yet
+  return { text: "Ton corps peut redescendre", emoji: "" };
+};
+
 const Dashboard = () => {
   const { user } = useAuth();
   const [isPremium, setIsPremium] = useState<boolean | null>(null);
+  const [lastEmotion, setLastEmotion] = useState<string | null>(null);
+  const [streak, setStreak] = useState(0);
   const { startPayment, loading: paymentLoading } = useMolliePayment();
 
   useEffect(() => {
@@ -19,10 +73,12 @@ const Dashboard = () => {
       if (!user) return;
       const { data } = await supabase
         .from("profiles")
-        .select("is_premium")
+        .select("is_premium, last_emotion, current_streak")
         .eq("user_id", user.id)
         .single();
       setIsPremium(data?.is_premium ?? false);
+      setLastEmotion(data?.last_emotion ?? null);
+      setStreak(data?.current_streak ?? 0);
     };
     fetchProfile();
   }, [user]);
