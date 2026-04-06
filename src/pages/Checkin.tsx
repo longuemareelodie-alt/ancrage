@@ -57,6 +57,7 @@ const Checkin = () => {
   const handleSelect = async (emotion: EmotionData) => {
     setSelected(emotion);
     setStep("response");
+    setShowReward(true); // Show micro reward
 
     if (!user) return;
     await supabase.from("emotion_checkins").insert({
