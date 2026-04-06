@@ -1,12 +1,14 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ChevronRight, Heart, Lock, Sparkles } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { updateStreakAndBadges, type BadgeDef } from "@/lib/streaks";
 import { emotions, type EmotionData } from "@/data/emotions";
+import { getStreakLabel } from "@/data/streakLabels";
 import BadgeCelebration from "@/components/BadgeCelebration";
+import MicroRewardPopup from "@/components/MicroRewardPopup";
 
 type Step = "select" | "response" | "action" | "after" | "evolution" | "validation" | "summary";
 
@@ -22,6 +24,7 @@ const progressLabels: Record<Step, string> = {
 
 const Checkin = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [step, setStep] = useState<Step>("select");
   const [selected, setSelected] = useState<EmotionData | null>(null);
   const [afterEmotion, setAfterEmotion] = useState<EmotionData | null>(null);
@@ -30,6 +33,7 @@ const Checkin = () => {
   const [actionDone, setActionDone] = useState(false);
   const [newBadges, setNewBadges] = useState<BadgeDef[]>([]);
   const [streakCount, setStreakCount] = useState(0);
+  const [showReward, setShowReward] = useState(false);
 
   const dismissBadges = useCallback(() => setNewBadges([]), []);
 
