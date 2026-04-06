@@ -34,7 +34,23 @@ const Profil = () => {
   const [editingName, setEditingName] = useState(false);
   const [nameValue, setNameValue] = useState("");
   const [savingName, setSavingName] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
 
+  const isMobileDevice = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+  const isStandalone =
+    window.matchMedia("(display-mode: standalone)").matches ||
+    (navigator as any).standalone === true;
+
+  // Capture beforeinstallprompt for Android
+  useEffect(() => {
+    const handler = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+    window.addEventListener("beforeinstallprompt", handler);
+    return () => window.removeEventListener("beforeinstallprompt", handler);
+  }, []);
   useEffect(() => {
     if (!loading && !user) navigate("/auth");
   }, [loading, user, navigate]);
