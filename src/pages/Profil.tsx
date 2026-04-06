@@ -5,13 +5,12 @@ import { supabase } from "@/integrations/supabase/client";
 import SectionBlock from "@/components/SectionBlock";
 import CTAButton from "@/components/CTAButton";
 import { motion, AnimatePresence } from "framer-motion";
-import { LogOut, Plus, Trash2, Save, User, BookOpen, StickyNote, Lock, Pencil, Check, Bell, BellOff, Flame, Trophy } from "lucide-react";
+import { LogOut, Plus, Trash2, Save, User, BookOpen, StickyNote, Lock, Pencil, Check, Bell, BellOff, Flame, Trophy, Download, Share } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { Switch } from "@/components/ui/switch";
 import { BADGES } from "@/lib/streaks";
 import StreakCalendar from "@/components/StreakCalendar";
-
 interface Note {
   id: string;
   title: string;
