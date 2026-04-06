@@ -155,7 +155,7 @@ const Index = () => {
           </div>
           
           <div className="mt-4">
-            <CTAButton to="/paywall" onClick={() => {}}>Je veux être accompagnée</CTAButton>
+            <CTAButton to="/paywall">Je veux être accompagnée</CTAButton>
           </div>
 
           {/* One-time — secondary */}

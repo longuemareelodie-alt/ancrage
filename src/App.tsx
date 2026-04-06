@@ -53,7 +53,7 @@ const AnimatedRoutes = () => {
         <Route path="/comparaison" element={<PageTransition><Comparison /></PageTransition>} />
         <Route path="/auth" element={<PageTransition><Auth /></PageTransition>} />
         <Route path="/payment-success" element={<ProtectedRoute><PageTransition><PaymentSuccess /></PageTransition></ProtectedRoute>} />
-        <Route path="/profil" element={<PageTransition><Profil /></PageTransition>} />
+        <Route path="/profil" element={<PremiumRoute><PageTransition><Profil /></PageTransition></PremiumRoute>} />
         <Route path="/reset-password" element={<PageTransition><ResetPassword /></PageTransition>} />
         <Route path="/cgv" element={<PageTransition><CGV /></PageTransition>} />
         <Route path="/confidentialite" element={<PageTransition><Confidentialite /></PageTransition>} />
