@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { useAuth } from "@/contexts/AuthContext";
@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 
 const Auth = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { user } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
   const [isForgot, setIsForgot] = useState(false);
@@ -17,9 +18,19 @@ const Auth = () => {
   const [info, setInfo] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const redirectTo = searchParams.get("redirect") || "/dashboard";
+  const action = searchParams.get("action");
+
   useEffect(() => {
-    if (user) navigate("/profil");
-  }, [user, navigate]);
+    if (user) {
+      // If user came from a payment button, redirect to paywall
+      if (action === "pay") {
+        navigate("/paywall", { replace: true });
+      } else {
+        navigate(redirectTo, { replace: true });
+      }
+    }
+  }, [user, navigate, redirectTo, action]);
 
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,7 +70,7 @@ const Auth = () => {
         });
         if (error) throw error;
       }
-      navigate("/profil");
+      // Redirect handled by useEffect on user change
     } catch (err: any) {
       setError(err.message || "Une erreur est survenue");
     } finally {
@@ -71,8 +82,9 @@ const Auth = () => {
     setError("");
     setLoading(true);
     try {
+      const googleRedirect = action === "pay" ? "/paywall" : redirectTo;
       const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin + "/profil",
+        redirect_uri: window.location.origin + googleRedirect,
       });
       if (result.error) {
         setError(result.error.message || "Erreur avec Google");
