@@ -5,13 +5,14 @@ import { supabase } from "@/integrations/supabase/client";
 import SectionBlock from "@/components/SectionBlock";
 import CTAButton from "@/components/CTAButton";
 import { motion, AnimatePresence } from "framer-motion";
-import { LogOut, Plus, Trash2, Save, User, BookOpen, StickyNote, Lock, Pencil, Check, Bell, BellOff, Flame, Trophy, Download, Share, XCircle } from "lucide-react";
+import { LogOut, Plus, Trash2, Save, User, BookOpen, StickyNote, Lock, Pencil, Check, Bell, BellOff, Flame, Trophy, Download, Share, XCircle, CreditCard } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { Switch } from "@/components/ui/switch";
 import { BADGES } from "@/lib/streaks";
 import StreakCalendar from "@/components/StreakCalendar";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
+import PaymentHistory from "@/components/PaymentHistory";
 interface Note {
   id: string;
   title: string;
@@ -32,7 +33,7 @@ const Profil = () => {
   const [notes, setNotes] = useState<Note[]>([]);
   const [editingNote, setEditingNote] = useState<{ title: string; content: string } | null>(null);
   const [saving, setSaving] = useState(false);
-  const [activeTab, setActiveTab] = useState<"profil" | "parcours" | "notes">("profil");
+  const [activeTab, setActiveTab] = useState<"profil" | "parcours" | "notes" | "paiements">("profil");
   const [editingName, setEditingName] = useState(false);
   const [nameValue, setNameValue] = useState("");
   const [savingName, setSavingName] = useState(false);
@@ -205,6 +206,7 @@ const Profil = () => {
       <div className="flex border-b border-border bg-card">
         {([
           { key: "profil" as const, icon: User, label: "Profil", locked: false },
+          { key: "paiements" as const, icon: CreditCard, label: "Paiements", locked: false },
           { key: "parcours" as const, icon: BookOpen, label: "Parcours", locked: !profile?.is_premium },
           { key: "notes" as const, icon: StickyNote, label: "Notes", locked: !profile?.is_premium },
         ]).map((tab) => (
@@ -532,6 +534,12 @@ const Profil = () => {
                   </div>
                 ))}
               </div>
+            </motion.div>
+          )}
+
+          {activeTab === "paiements" && (
+            <motion.div key="paiements" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <PaymentHistory />
             </motion.div>
           )}
         </AnimatePresence>
