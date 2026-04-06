@@ -204,6 +204,7 @@ const Dashboard = () => {
           </motion.p>
         </motion.div>
       </div>
+      <InstallPWAPrompt />
     </div>
   );
 };
