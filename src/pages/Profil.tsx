@@ -378,6 +378,49 @@ const Profil = () => {
                     </div>
                   </button>
                 )}
+
+                {/* Cancel subscription */}
+                {profile?.is_premium && (
+                  <div className="rounded-xl border border-border bg-card p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-semibold">Abonnement Premium</p>
+                        <p className="text-xs text-muted-foreground">Tu as accès à tout le contenu</p>
+                      </div>
+                      {!showCancelConfirm ? (
+                        <button
+                          onClick={() => setShowCancelConfirm(true)}
+                          className="text-xs text-muted-foreground underline hover:text-destructive"
+                        >
+                          Annuler
+                        </button>
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={async () => {
+                              const success = await cancelSubscription();
+                              if (success) {
+                                setShowCancelConfirm(false);
+                                setProfile((prev) => prev ? { ...prev, is_premium: false } : prev);
+                              }
+                            }}
+                            disabled={cancelLoading}
+                            className="flex items-center gap-1 rounded-lg bg-destructive px-3 py-1.5 text-xs font-medium text-destructive-foreground disabled:opacity-50"
+                          >
+                            <XCircle className="h-3.5 w-3.5" />
+                            {cancelLoading ? "..." : "Confirmer"}
+                          </button>
+                          <button
+                            onClick={() => setShowCancelConfirm(false)}
+                            className="rounded-lg bg-secondary px-3 py-1.5 text-xs font-medium"
+                          >
+                            Non
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
             </motion.div>
           )}
