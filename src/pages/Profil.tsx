@@ -330,6 +330,36 @@ const Profil = () => {
                     />
                   </div>
                 )}
+
+                {/* Install PWA button for mobile */}
+                {!isStandalone && isMobileDevice && (
+                  <button
+                    onClick={() => {
+                      if (isIOS) {
+                        // Can't programmatically install on iOS, show instructions
+                        alert("Pour installer Ancrage :\n\n1. Appuie sur l'icône de partage en bas de Safari\n2. Choisis « Sur l'écran d'accueil »");
+                      } else if (deferredPrompt) {
+                        deferredPrompt.prompt();
+                        deferredPrompt.userChoice.then(() => setDeferredPrompt(null));
+                      } else {
+                        alert("Ouvre le menu de ton navigateur (⋮) puis choisis « Installer l'application » ou « Ajouter à l'écran d'accueil ».");
+                      }
+                    }}
+                    className="flex w-full items-center gap-3 rounded-xl bg-primary/10 p-4 transition-colors hover:bg-primary/20"
+                  >
+                    {isIOS ? (
+                      <Share className="h-5 w-5 text-primary" />
+                    ) : (
+                      <Download className="h-5 w-5 text-primary" />
+                    )}
+                    <div className="text-left">
+                      <p className="text-sm font-semibold">Installer Ancrage</p>
+                      <p className="text-xs text-muted-foreground">
+                        Ajoute l'app sur ton écran d'accueil pour les rappels
+                      </p>
+                    </div>
+                  </button>
+                )}
               </div>
             </motion.div>
           )}
