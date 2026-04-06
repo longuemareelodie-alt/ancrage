@@ -778,6 +778,76 @@ Deno.serve(async (req) => {
       });
     }
 
+    // --- Handle subscription creation if this was a "first" payment ---
+    const paymentType = firstString(paymentMetadata?.type);
+    if (paymentType === "subscription_first" && payment.sequenceType === "first") {
+      const subPlan = firstString(paymentMetadata?.plan) || "monthly";
+      const subInterval = firstString(paymentMetadata?.interval) || "1 month";
+      const subAmount = firstString(paymentMetadata?.subscription_amount) || (subPlan === "yearly" ? "59.00" : "9.00");
+      const subDescription = firstString(paymentMetadata?.subscription_description) || "ANCRAGE Premium";
+      const custId = payment.customerId;
+
+      if (custId) {
+        logDebug("Creating Mollie subscription", {
+          customerId: custId,
+          plan: subPlan,
+          interval: subInterval,
+          amount: subAmount,
+        });
+
+        try {
+          const subRes = await fetch(
+            `https://api.mollie.com/v2/customers/${custId}/subscriptions`,
+            {
+              method: "POST",
+              headers: mollieHeaders,
+              body: JSON.stringify({
+                amount: { currency: "EUR", value: subAmount },
+                interval: subInterval,
+                description: subDescription,
+                webhookUrl: `${supabaseUrl}/functions/v1/mollie-webhook`,
+                metadata: { user_id: profile.user_id, plan: subPlan },
+              }),
+            },
+          );
+
+          const subData = await fetch(
+            `https://api.mollie.com/v2/customers/${custId}/subscriptions`,
+            { headers: mollieHeaders },
+          ).then(() => subRes.json());
+
+          const subBody = await subRes.json().catch(() => null);
+          logDebug("Subscription creation result", {
+            status: subRes.status,
+            ok: subRes.ok,
+            body: subBody,
+          });
+
+          if (subRes.ok && subBody?.id) {
+            await supabase
+              .from("subscriptions")
+              .update({
+                mollie_subscription_id: subBody.id,
+                status: "active",
+              })
+              .eq("user_id", profile.user_id)
+              .eq("mollie_customer_id", custId)
+              .eq("status", "pending");
+
+            logDebug("Subscription activated in DB", {
+              subscriptionId: subBody.id,
+              userId: profile.user_id,
+            });
+          }
+        } catch (subErr) {
+          logError("Subscription creation failed", subErr, {
+            customerId: custId,
+            userId: profile.user_id,
+          });
+        }
+      }
+    }
+
     return webhookAck({
       status: "premium_activated",
       user_id: updatedProfile.user_id,

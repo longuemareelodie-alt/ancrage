@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Heart, Lock, Check, Star } from "lucide-react";
@@ -6,14 +7,22 @@ import { useMolliePayment } from "@/hooks/useMolliePayment";
 
 const Paywall = () => {
   const { user } = useAuth();
-  const { startPayment, loading: paymentLoading } = useMolliePayment();
+  const { startPayment, startSubscription, loading: paymentLoading } = useMolliePayment();
+  const [selectedPlan, setSelectedPlan] = useState<"monthly" | "yearly">("monthly");
 
-  const handlePayment = (type: "one-time" | "subscription") => {
+  const handleSubscription = () => {
     if (!user) {
       window.location.href = "/auth?redirect=/paywall&action=pay";
       return;
     }
-    // For now both go through Mollie — subscription logic will be separate
+    startSubscription(selectedPlan);
+  };
+
+  const handleOneTime = () => {
+    if (!user) {
+      window.location.href = "/auth?redirect=/paywall&action=pay";
+      return;
+    }
     startPayment();
   };
 
@@ -64,21 +73,61 @@ const Paywall = () => {
           </div>
         </motion.div>
 
-        {/* Subscription offer — primary */}
+        {/* Plan toggle */}
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="rounded-2xl bg-card p-6 shadow-md ring-2 ring-primary/30 space-y-4 relative"
+          className="rounded-2xl bg-card p-6 shadow-md ring-2 ring-primary/30 space-y-5 relative"
         >
           <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-1 text-[10px] font-bold text-primary-foreground">
             RECOMMANDÉ
           </div>
           <div className="text-center">
             <p className="text-sm font-medium text-muted-foreground">Accompagnement Premium</p>
-            <p className="mt-1 text-3xl font-bold">9€<span className="text-base font-normal text-muted-foreground">/mois</span></p>
-            <p className="text-xs text-muted-foreground">ou 59€/an (économise 49€)</p>
           </div>
+
+          {/* Monthly / Yearly toggle */}
+          <div className="flex rounded-xl bg-secondary p-1 gap-1">
+            <button
+              onClick={() => setSelectedPlan("monthly")}
+              className={`flex-1 rounded-lg py-2 text-sm font-medium transition-colors ${
+                selectedPlan === "monthly"
+                  ? "bg-card shadow-sm text-foreground"
+                  : "text-muted-foreground"
+              }`}
+            >
+              Mensuel
+            </button>
+            <button
+              onClick={() => setSelectedPlan("yearly")}
+              className={`flex-1 rounded-lg py-2 text-sm font-medium transition-colors relative ${
+                selectedPlan === "yearly"
+                  ? "bg-card shadow-sm text-foreground"
+                  : "text-muted-foreground"
+              }`}
+            >
+              Annuel
+              <span className="absolute -top-2 -right-1 rounded-full bg-primary px-1.5 py-0.5 text-[9px] font-bold text-primary-foreground">
+                -45%
+              </span>
+            </button>
+          </div>
+
+          <div className="text-center">
+            {selectedPlan === "monthly" ? (
+              <>
+                <p className="text-3xl font-bold">9€<span className="text-base font-normal text-muted-foreground">/mois</span></p>
+                <p className="text-xs text-muted-foreground">Sans engagement · Annulable à tout moment</p>
+              </>
+            ) : (
+              <>
+                <p className="text-3xl font-bold">59€<span className="text-base font-normal text-muted-foreground">/an</span></p>
+                <p className="text-xs text-muted-foreground">Soit 4,92€/mois · Économise 49€</p>
+              </>
+            )}
+          </div>
+
           <ul className="space-y-2">
             {[
               "Soutien émotionnel quotidien",
@@ -95,7 +144,7 @@ const Paywall = () => {
             ))}
           </ul>
           <button
-            onClick={() => handlePayment("subscription")}
+            onClick={handleSubscription}
             disabled={paymentLoading}
             className="w-full rounded-xl bg-primary py-3.5 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 transition-transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60"
           >
@@ -106,7 +155,7 @@ const Paywall = () => {
           </p>
         </motion.div>
 
-        {/* One-time offer — secondary */}
+        {/* One-time offer */}
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
@@ -131,7 +180,7 @@ const Paywall = () => {
             ))}
           </ul>
           <button
-            onClick={() => handlePayment("one-time")}
+            onClick={handleOneTime}
             disabled={paymentLoading}
             className="w-full rounded-xl border border-border bg-background py-3 text-sm font-medium transition-transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60"
           >
