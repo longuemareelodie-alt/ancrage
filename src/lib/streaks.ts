@@ -9,13 +9,55 @@ export interface BadgeDef {
 }
 
 export const BADGES: BadgeDef[] = [
-  { key: "first_checkin", emoji: "🌱", label: "Premier pas", description: "Tu as fait ton premier check-in", condition: (_, total) => total >= 1 },
-  { key: "streak_3", emoji: "🔥", label: "3 jours de suite", description: "3 jours consécutifs de check-in", condition: (s) => s >= 3 },
-  { key: "streak_7", emoji: "⭐", label: "1 semaine", description: "7 jours consécutifs", condition: (s) => s >= 7 },
-  { key: "streak_14", emoji: "💪", label: "2 semaines", description: "14 jours consécutifs", condition: (s) => s >= 14 },
-  { key: "streak_30", emoji: "👑", label: "1 mois", description: "30 jours consécutifs", condition: (s) => s >= 30 },
-  { key: "checkins_10", emoji: "📝", label: "10 check-ins", description: "10 check-ins au total", condition: (_, total) => total >= 10 },
-  { key: "checkins_50", emoji: "💎", label: "50 check-ins", description: "50 check-ins au total", condition: (_, total) => total >= 50 },
+  {
+    key: "first_checkin",
+    emoji: "🌱",
+    label: "Tu as commencé",
+    description: "Tu as osé regarder ce que tu ressens. C'est déjà énorme.",
+    condition: (_, total) => total >= 1,
+  },
+  {
+    key: "streak_3",
+    emoji: "🔥",
+    label: "3 jours pour toi",
+    description: "3 jours de suite où tu as pris soin de toi. Ton corps s'en souvient.",
+    condition: (s) => s >= 3,
+  },
+  {
+    key: "streak_7",
+    emoji: "⭐",
+    label: "Une semaine de présence",
+    description: "7 jours à t'écouter. Tu crées un espace de sécurité pour toi.",
+    condition: (s) => s >= 7,
+  },
+  {
+    key: "streak_14",
+    emoji: "💪",
+    label: "Ton système se régule",
+    description: "14 jours. Ton système nerveux commence à se reprogrammer.",
+    condition: (s) => s >= 14,
+  },
+  {
+    key: "streak_30",
+    emoji: "👑",
+    label: "Un mois de transformation",
+    description: "30 jours. Tu n'es plus la même. Et c'est toi qui as fait ça.",
+    condition: (s) => s >= 30,
+  },
+  {
+    key: "checkins_10",
+    emoji: "💜",
+    label: "10 moments pour toi",
+    description: "10 fois où tu as choisi de t'écouter plutôt que de t'ignorer.",
+    condition: (_, total) => total >= 10,
+  },
+  {
+    key: "checkins_50",
+    emoji: "💎",
+    label: "Tu as changé ta relation à toi",
+    description: "50 check-ins. Prendre soin de toi est devenu un réflexe.",
+    condition: (_, total) => total >= 50,
+  },
 ];
 
 export async function updateStreakAndBadges(userId: string) {

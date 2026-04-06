@@ -16,7 +16,7 @@ const BadgeCelebration = ({ badges, onDone }: Props) => {
     fire({ particleCount: 60, spread: 80, origin: { x: 0.5, y: 0.5 } });
     setTimeout(() => fire({ particleCount: 40, spread: 60, origin: { x: 0.3, y: 0.6 } }), 300);
 
-    const timer = setTimeout(onDone, 4000);
+    const timer = setTimeout(onDone, 5000);
     return () => clearTimeout(timer);
   }, [badges, onDone]);
 
@@ -45,9 +45,10 @@ const BadgeCelebration = ({ badges, onDone }: Props) => {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="text-4xl"
           >
-            🎉
+            💜
           </motion.p>
-          <p className="text-lg font-bold">Nouveau badge débloqué !</p>
+          <p className="text-lg font-bold">Quelque chose a changé en toi</p>
+          <p className="text-sm text-muted-foreground">Et tu mérites de le voir</p>
           <div className="flex flex-wrap items-center justify-center gap-3">
             {badges.map((badge, i) => (
               <motion.div
@@ -55,11 +56,11 @@ const BadgeCelebration = ({ badges, onDone }: Props) => {
                 initial={{ scale: 0, rotate: -20 }}
                 animate={{ scale: 1, rotate: 0 }}
                 transition={{ type: "spring", delay: 0.3 + i * 0.15 }}
-                className="flex flex-col items-center gap-1 rounded-xl bg-primary/10 p-3"
+                className="flex flex-col items-center gap-1.5 rounded-xl bg-primary/10 p-4"
               >
                 <span className="text-3xl">{badge.emoji}</span>
-                <span className="text-xs font-semibold">{badge.label}</span>
-                <span className="text-[10px] text-muted-foreground">{badge.description}</span>
+                <span className="text-sm font-semibold">{badge.label}</span>
+                <span className="text-[11px] text-muted-foreground leading-tight max-w-[180px]">{badge.description}</span>
               </motion.div>
             ))}
           </div>
@@ -67,7 +68,7 @@ const BadgeCelebration = ({ badges, onDone }: Props) => {
             onClick={onDone}
             className="mt-2 rounded-full bg-primary px-5 py-2 text-sm font-bold text-primary-foreground"
           >
-            Continuer
+            Continuer 💛
           </button>
         </motion.div>
       </motion.div>
