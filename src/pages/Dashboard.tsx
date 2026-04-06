@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Zap, Brain, Puzzle, User, Lock } from "lucide-react";
+import { Zap, Brain, Puzzle, User, Lock, Heart } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
@@ -57,22 +57,42 @@ const Dashboard = () => {
 
           {/* 3 main CTAs */}
           <div className="space-y-4">
+            {/* Check-in émotionnel */}
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1, duration: 0.5 }}
+            >
+              <Link
+                to="/checkin"
+                className="flex w-full items-center gap-4 rounded-2xl bg-gradient-to-r from-primary to-primary/80 p-6 text-left text-primary-foreground shadow-lg shadow-primary/25 transition-transform hover:scale-[1.02] active:scale-[0.98]"
+              >
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary-foreground/20">
+                  <Heart className="h-6 w-6" />
+                </div>
+                <div>
+                  <p className="text-lg font-bold">💛 Check-in du jour</p>
+                  <p className="mt-1 text-sm opacity-80">Comment tu te sens ?</p>
+                </div>
+              </Link>
+            </motion.div>
+
             {/* Aide immédiate */}
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.15, duration: 0.5 }}
+              transition={{ delay: 0.2, duration: 0.5 }}
             >
               <Link
                 to="/emotions"
-                className="flex w-full items-center gap-4 rounded-2xl bg-primary p-6 text-left text-primary-foreground shadow-lg shadow-primary/25 transition-transform hover:scale-[1.02] active:scale-[0.98]"
+                className="flex w-full items-center gap-4 rounded-2xl bg-card p-6 text-left shadow-sm transition-transform hover:scale-[1.02] active:scale-[0.98]"
               >
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary-foreground/20">
-                  <Zap className="h-6 w-6" />
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-secondary">
+                  <Zap className="h-6 w-6 text-primary" />
                 </div>
                 <div>
                   <p className="text-lg font-bold">⚡ Aide immédiate</p>
-                  <p className="mt-1 text-sm opacity-80">Aide-moi maintenant</p>
+                  <p className="mt-1 text-sm text-muted-foreground">Aide-moi maintenant</p>
                 </div>
               </Link>
             </motion.div>
