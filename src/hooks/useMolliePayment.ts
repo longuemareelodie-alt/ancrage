@@ -43,5 +43,42 @@ export const useMolliePayment = () => {
     }
   };
 
-  return { startPayment, loading };
+  const startSubscription = async (plan: "monthly" | "yearly" = "monthly") => {
+    if (!user) {
+      toast.error("Tu dois être connectée pour accéder au paiement.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke(
+        "create-mollie-subscription",
+        {
+          body: {
+            plan,
+            redirectUrl: `${window.location.origin}/payment-success`,
+          },
+        }
+      );
+
+      if (error) {
+        console.error("Subscription function error:", error);
+        toast.error("Erreur lors de la création de l'abonnement. Réessaie.");
+        return;
+      }
+
+      if (data?.checkoutUrl) {
+        window.location.href = data.checkoutUrl;
+      } else {
+        toast.error("Impossible d'obtenir le lien de paiement.");
+      }
+    } catch (err) {
+      console.error("Subscription error:", err);
+      toast.error("Une erreur est survenue. Réessaie.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { startPayment, startSubscription, loading };
 };
