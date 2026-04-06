@@ -6,6 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
 import logo from "@/assets/logo-ancrage.png";
+import InAppReminder from "@/components/InAppReminder";
 
 const Dashboard = () => {
   const { user } = useAuth();
