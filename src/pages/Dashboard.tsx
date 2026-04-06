@@ -41,6 +41,8 @@ const Dashboard = () => {
         </Link>
       </div>
 
+      <InAppReminder />
+
       {/* Main content */}
       <div className="flex flex-1 flex-col items-center justify-center px-6 pb-12">
         <motion.div
