@@ -6,6 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
 import logo from "@/assets/logo-ancrage.png";
+import InAppReminder from "@/components/InAppReminder";
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -39,6 +40,8 @@ const Dashboard = () => {
           {user ? "Mon espace" : "Connexion"}
         </Link>
       </div>
+
+      <InAppReminder />
 
       {/* Main content */}
       <div className="flex flex-1 flex-col items-center justify-center px-6 pb-12">
