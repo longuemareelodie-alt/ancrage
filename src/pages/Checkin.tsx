@@ -100,6 +100,7 @@ const Checkin = () => {
 
   return (
     <div className="flex min-h-screen flex-col bg-background px-5 py-6">
+      <BadgeCelebration badges={newBadges} onDone={dismissBadges} />
       {/* Header */}
       <div className="flex items-center justify-between">
         <Link to="/dashboard" className="rounded-full p-2 hover:bg-secondary">
