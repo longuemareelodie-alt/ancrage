@@ -6,60 +6,11 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
 import { emotions } from "@/data/emotions";
+import { getDailyMessage } from "@/data/dailyMessages";
+import { getStreakLabel } from "@/data/streakLabels";
 import logo from "@/assets/logo-ancrage.png";
 import InAppReminder from "@/components/InAppReminder";
 import InstallPWAPrompt from "@/components/InstallPWAPrompt";
-
-const getMotivationMessage = (lastEmotion: string | null, streak: number) => {
-  const emotionData = lastEmotion ? emotions.find((e) => e.id === lastEmotion) : null;
-
-  // Streak-based messages
-  if (streak >= 14) {
-    return { text: "Ton système nerveux se transforme. Tu le sens ?", emoji: "🌟" };
-  }
-  if (streak >= 7) {
-    return { text: "Une semaine à prendre soin de toi. Ton corps s'en souvient.", emoji: "⭐" };
-  }
-  if (streak >= 3) {
-    return { text: `${streak} jours pour toi. Tu crées un nouveau réflexe.`, emoji: "🔥" };
-  }
-
-  // Emotion-based messages
-  if (emotionData) {
-    if (emotionData.type === "negative") {
-      const negativeMessages: Record<string, { text: string; emoji: string }> = {
-        anxieuse: { text: "Ton corps était en alerte hier. Aujourd'hui, tu peux l'aider à redescendre.", emoji: "🫂" },
-        oppressee: { text: "La pression que tu portais hier mérite de l'espace aujourd'hui.", emoji: "💨" },
-        submergee: { text: "Hier c'était beaucoup. Aujourd'hui, juste un pas.", emoji: "🌊" },
-        epuisee: { text: "Ton corps t'a demandé de t'arrêter. Écoute-le encore aujourd'hui.", emoji: "🔋" },
-        triste: { text: "La tristesse d'hier avait sa place. Comment tu te sens maintenant ?", emoji: "💧" },
-        vide: { text: "Hier tu étais en mode survie. Aujourd'hui, reviens doucement.", emoji: "🕊️" },
-        colere: { text: "Ta colère protégeait quelque chose d'important. Prends soin de ça.", emoji: "🛡️" },
-        perdue: { text: "Le brouillard d'hier peut se lever. Un geste à la fois.", emoji: "🌤️" },
-        surmenage: { text: "Ton mental tournait en boucle. Aujourd'hui, pose-le.", emoji: "🧘" },
-        survie: { text: "Tu as tenu. Tu es là. C'est déjà énorme.", emoji: "💪" },
-      };
-      return negativeMessages[lastEmotion!] || { text: "Tu es revenue. C'est déjà prendre soin de toi.", emoji: "💜" };
-    }
-    // Positive
-    const positiveMessages: Record<string, { text: string; emoji: string }> = {
-      calme: { text: "Tu as trouvé du calme hier. Nourris-le aujourd'hui.", emoji: "🕊️" },
-      apaisee: { text: "L'apaisement que tu as ressenti t'appartient.", emoji: "☁️" },
-      stable: { text: "Tu étais au centre hier. Continue d'ancrer ça.", emoji: "⚖️" },
-      mieux: { text: "Même un petit mieux, c'est un signal énorme.", emoji: "🌱" },
-      soulagee: { text: "Le soulagement d'hier, c'est toi qui l'as créé.", emoji: "😮‍💨" },
-      fiere: { text: "Tu as le droit d'être fière. Encore aujourd'hui.", emoji: "✨" },
-      claire: { text: "La clarté revient. Ton cerveau retrouve de l'espace.", emoji: "💡" },
-      securite: { text: "Cet espace de sécurité est à toi. Reviens y quand tu veux.", emoji: "🛡️" },
-      connectee: { text: "Tu te reconnectes à toi. C'est précieux.", emoji: "💜" },
-      presente: { text: "Tu es présente. C'est le contraire de la dissociation.", emoji: "🌸" },
-    };
-    return positiveMessages[lastEmotion!] || { text: "Quelque chose de doux s'installe en toi.", emoji: "💛" };
-  }
-
-  // No emotion yet
-  return { text: "Ton corps peut redescendre", emoji: "" };
-};
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -82,6 +33,10 @@ const Dashboard = () => {
     };
     fetchProfile();
   }, [user]);
+
+  const dailyMsg = getDailyMessage();
+  const streakInfo = getStreakLabel(streak);
+  const emotionData = lastEmotion ? emotions.find((e) => e.id === lastEmotion) : null;
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -108,42 +63,49 @@ const Dashboard = () => {
           transition={{ duration: 0.6 }}
           className="w-full max-w-lg space-y-10 text-center"
         >
-          {/* Personalized motivation */}
-          {(() => {
-            const motivation = getMotivationMessage(lastEmotion, streak);
-            const emotionData = lastEmotion ? emotions.find((e) => e.id === lastEmotion) : null;
-            return (
-              <div className="space-y-2">
-                {streak > 0 && (
-                  <motion.p
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.05 }}
-                    className="text-xs text-primary font-medium"
-                  >
-                    🔥 {streak} jour{streak > 1 ? "s" : ""} de suite
-                  </motion.p>
-                )}
-                {emotionData && (
-                  <motion.p
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.1 }}
-                    className="text-xs text-muted-foreground"
-                  >
-                    Dernière émotion : {emotionData.emoji} {emotionData.label}
-                  </motion.p>
-                )}
-                <h1 className="text-2xl font-bold">
-                  {motivation.emoji && `${motivation.emoji} `}{motivation.text}
-                </h1>
-              </div>
-            );
-          })()}
+          {/* Daily message of the day */}
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1, duration: 0.5 }}
+            className="rounded-2xl bg-primary/5 border border-primary/10 p-4 space-y-1"
+          >
+            <p className="text-lg">
+              {dailyMsg.emoji} {dailyMsg.text}
+            </p>
+          </motion.div>
+
+          {/* Streak + emotion info */}
+          <div className="space-y-2">
+            {streak > 0 && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.15 }}
+                className="space-y-0.5"
+              >
+                <p className="text-sm font-bold text-primary">
+                  {streakInfo.emoji} {streakInfo.label}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {streak} jour{streak > 1 ? "s" : ""} de suite
+                </p>
+              </motion.div>
+            )}
+            {emotionData && (
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.2 }}
+                className="text-xs text-muted-foreground"
+              >
+                Dernière émotion : {emotionData.emoji} {emotionData.label}
+              </motion.p>
+            )}
+          </div>
 
           {/* 3 main CTAs */}
           <div className="space-y-4">
-            {/* Check-in émotionnel */}
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
@@ -163,7 +125,6 @@ const Dashboard = () => {
               </Link>
             </motion.div>
 
-            {/* Aide immédiate */}
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
@@ -183,7 +144,6 @@ const Dashboard = () => {
               </Link>
             </motion.div>
 
-            {/* Comprendre ton état */}
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
@@ -205,7 +165,6 @@ const Dashboard = () => {
               </Link>
             </motion.div>
 
-            {/* Avancer aujourd'hui */}
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
@@ -265,17 +224,23 @@ const Dashboard = () => {
               <p className="text-sm text-muted-foreground">
                 Accède à tous les exercices, au parcours guidé et aux outils de suivi
               </p>
-              <a
-                onClick={(e) => { e.preventDefault(); startPayment(); }}
-                className={`inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 transition-transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer ${paymentLoading ? 'opacity-60 pointer-events-none' : ''}`}
-              >
-                {paymentLoading ? "Chargement…" : "Je veux que ça s'arrête maintenant — 29€"}
-              </a>
-              <p className="text-xs text-muted-foreground">Accès à vie · Sans abonnement</p>
+              <div className="flex flex-col gap-2">
+                <Link
+                  to="/paywall"
+                  className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 transition-transform hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  Être accompagnée — 9€/mois
+                </Link>
+                <a
+                  onClick={(e) => { e.preventDefault(); startPayment(); }}
+                  className={`inline-flex items-center justify-center rounded-full border border-border px-6 py-2.5 text-sm font-medium cursor-pointer transition-transform hover:scale-[1.02] active:scale-[0.98] ${paymentLoading ? 'opacity-60 pointer-events-none' : ''}`}
+                >
+                  {paymentLoading ? "Chargement…" : "Accès unique — 29€"}
+                </a>
+              </div>
             </motion.div>
           )}
 
-          {/* Retention hook */}
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

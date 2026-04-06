@@ -26,6 +26,9 @@ import MentionsLegales from "./pages/MentionsLegales";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import Checkin from "./pages/Checkin";
 import Historique from "./pages/Historique";
+import PostFlow from "./pages/PostFlow";
+import Paywall from "./pages/Paywall";
+import Comparison from "./pages/Comparison";
 
 const queryClient = new QueryClient();
 
@@ -45,6 +48,9 @@ const AnimatedRoutes = () => {
         <Route path="/avancer" element={<PremiumRoute><PageTransition><Avancer /></PageTransition></PremiumRoute>} />
         <Route path="/aller-plus-loin" element={<PageTransition><AllerPlusLoin /></PageTransition>} />
         <Route path="/parcours" element={<PremiumRoute><PageTransition><Parcours /></PageTransition></PremiumRoute>} />
+        <Route path="/post-flow" element={<ProtectedRoute><PageTransition><PostFlow /></PageTransition></ProtectedRoute>} />
+        <Route path="/paywall" element={<PageTransition><Paywall /></PageTransition>} />
+        <Route path="/comparaison" element={<PageTransition><Comparison /></PageTransition>} />
         <Route path="/auth" element={<PageTransition><Auth /></PageTransition>} />
         <Route path="/payment-success" element={<ProtectedRoute><PageTransition><PaymentSuccess /></PageTransition></ProtectedRoute>} />
         <Route path="/profil" element={<PageTransition><Profil /></PageTransition>} />

@@ -1,9 +1,9 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState, useMemo } from "react";
 
 interface Props {
-  checkinDates: Set<string>; // "YYYY-MM-DD" strings
+  checkinDates: Set<string>;
 }
 
 const DAYS_FR = ["L", "M", "M", "J", "V", "S", "D"];
@@ -14,6 +14,7 @@ const MONTHS_FR = [
 
 const StreakCalendar = ({ checkinDates }: Props) => {
   const [monthOffset, setMonthOffset] = useState(0);
+  const [selectedDay, setSelectedDay] = useState<number | null>(null);
 
   const { year, month, days, firstDayOffset } = useMemo(() => {
     const now = new Date();
@@ -21,7 +22,6 @@ const StreakCalendar = ({ checkinDates }: Props) => {
     const year = d.getFullYear();
     const month = d.getMonth();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
-    // Monday = 0, Sunday = 6
     const rawDay = d.getDay();
     const firstDayOffset = rawDay === 0 ? 6 : rawDay - 1;
     const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
@@ -45,12 +45,17 @@ const StreakCalendar = ({ checkinDates }: Props) => {
     return dateStr > today;
   };
 
-  // Detect consecutive streaks for coloring
   const isPartOfStreak = (day: number) => {
     if (!isCheckedIn(day)) return false;
     const prevDate = `${year}-${String(month + 1).padStart(2, "0")}-${String(day - 1).padStart(2, "0")}`;
     const nextDate = `${year}-${String(month + 1).padStart(2, "0")}-${String(day + 1).padStart(2, "0")}`;
     return checkinDates.has(prevDate) || checkinDates.has(nextDate);
+  };
+
+  const handleDayClick = (day: number) => {
+    if (isCheckedIn(day)) {
+      setSelectedDay(selectedDay === day ? null : day);
+    }
   };
 
   return (
@@ -86,7 +91,6 @@ const StreakCalendar = ({ checkinDates }: Props) => {
 
       {/* Days grid */}
       <div className="grid grid-cols-7 gap-1">
-        {/* Empty cells for offset */}
         {Array.from({ length: firstDayOffset }).map((_, i) => (
           <div key={`empty-${i}`} />
         ))}
@@ -97,28 +101,46 @@ const StreakCalendar = ({ checkinDates }: Props) => {
           const future = isFuture(day);
 
           return (
-            <motion.div
+            <motion.button
               key={day}
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: day * 0.01 }}
+              onClick={() => handleDayClick(day)}
+              disabled={future || !checked}
               className={`flex h-8 w-full items-center justify-center rounded-lg text-xs font-medium transition-colors ${
                 future
                   ? "text-muted-foreground/30"
                   : checked
                     ? streak
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-primary/60 text-primary-foreground"
+                      ? "bg-primary text-primary-foreground cursor-pointer"
+                      : "bg-primary/60 text-primary-foreground cursor-pointer"
                     : todayCell
                       ? "ring-1 ring-primary/40 text-foreground"
                       : "text-muted-foreground"
               }`}
             >
               {day}
-            </motion.div>
+            </motion.button>
           );
         })}
       </div>
+
+      {/* Emotional message when clicking a checked day */}
+      <AnimatePresence>
+        {selectedDay && isCheckedIn(selectedDay) && (
+          <motion.div
+            initial={{ opacity: 0, y: -5, height: 0 }}
+            animate={{ opacity: 1, y: 0, height: "auto" }}
+            exit={{ opacity: 0, y: -5, height: 0 }}
+            className="mt-3 rounded-lg bg-primary/5 border border-primary/10 p-3 text-center"
+          >
+            <p className="text-xs font-medium text-primary">
+              💛 Ce jour-là, tu t'es choisie
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Legend */}
       <div className="mt-3 flex items-center justify-center gap-4 text-[10px] text-muted-foreground">
