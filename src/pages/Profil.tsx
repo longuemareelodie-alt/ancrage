@@ -206,6 +206,7 @@ const Profil = () => {
       <div className="flex border-b border-border bg-card">
         {([
           { key: "profil" as const, icon: User, label: "Profil", locked: false },
+          { key: "paiements" as const, icon: CreditCard, label: "Paiements", locked: false },
           { key: "parcours" as const, icon: BookOpen, label: "Parcours", locked: !profile?.is_premium },
           { key: "notes" as const, icon: StickyNote, label: "Notes", locked: !profile?.is_premium },
         ]).map((tab) => (
