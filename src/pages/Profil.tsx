@@ -43,11 +43,19 @@ const Profil = () => {
 
     supabase
       .from("profiles")
-      .select("first_name, email, is_premium")
+      .select("first_name, email, is_premium, current_streak, longest_streak")
       .eq("user_id", user.id)
       .single()
       .then(({ data }) => {
-        if (data) setProfile(data);
+        if (data) setProfile(data as any);
+      });
+
+    supabase
+      .from("user_badges")
+      .select("badge_key")
+      .eq("user_id", user.id)
+      .then(({ data }) => {
+        if (data) setEarnedBadges(data.map((b) => b.badge_key));
       });
 
     supabase
