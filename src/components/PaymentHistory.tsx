@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { CreditCard } from "lucide-react";
+import { CreditCard, Download, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 interface Subscription {
   id: string;
@@ -28,6 +29,7 @@ const PaymentHistory = () => {
   const { user } = useAuth();
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
   const [loading, setLoading] = useState(true);
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -42,6 +44,35 @@ const PaymentHistory = () => {
     };
     load();
   }, [user]);
+
+  const downloadInvoice = async (subscriptionId: string) => {
+    setDownloadingId(subscriptionId);
+    try {
+      const { data, error } = await supabase.functions.invoke("generate-invoice", {
+        body: { subscriptionId },
+      });
+
+      if (error) {
+        toast.error("Erreur lors du téléchargement de la facture.");
+        return;
+      }
+
+      // data is already a Blob or ArrayBuffer from the response
+      const blob = data instanceof Blob ? data : new Blob([data], { type: "application/pdf" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `facture-ancrage-${subscriptionId.slice(0, 8)}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch {
+      toast.error("Impossible de télécharger la facture.");
+    } finally {
+      setDownloadingId(null);
+    }
+  };
 
   if (loading) {
     return (
@@ -67,27 +98,42 @@ const PaymentHistory = () => {
           label: sub.status,
           className: "bg-muted text-muted-foreground",
         };
+        const isDownloading = downloadingId === sub.id;
         return (
-          <div key={sub.id} className="flex items-center justify-between rounded-xl bg-card p-4 shadow-sm">
-            <div>
-              <p className="text-sm font-semibold">
-                {planLabels[sub.plan] ?? sub.plan}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                {new Date(sub.created_at).toLocaleDateString("fr-FR", {
-                  day: "numeric",
-                  month: "long",
-                  year: "numeric",
-                })}
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              <p className="text-sm font-bold">
-                {(sub.amount / 100).toFixed(2).replace(".", ",")}€
-              </p>
-              <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${status.className}`}>
-                {status.label}
-              </span>
+          <div key={sub.id} className="rounded-xl bg-card p-4 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-semibold">
+                  {planLabels[sub.plan] ?? sub.plan}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {new Date(sub.created_at).toLocaleDateString("fr-FR", {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  })}
+                </p>
+              </div>
+              <div className="flex items-center gap-3">
+                <p className="text-sm font-bold">
+                  {(sub.amount / 100).toFixed(2).replace(".", ",")}€
+                </p>
+                <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${status.className}`}>
+                  {status.label}
+                </span>
+                <button
+                  onClick={() => downloadInvoice(sub.id)}
+                  disabled={isDownloading}
+                  className="rounded-lg p-1.5 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground disabled:opacity-50"
+                  title="Télécharger la facture"
+                >
+                  {isDownloading ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Download className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         );
