@@ -10,6 +10,7 @@ import { Progress } from "@/components/ui/progress";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { Switch } from "@/components/ui/switch";
 import { BADGES } from "@/lib/streaks";
+import StreakCalendar from "@/components/StreakCalendar";
 
 interface Note {
   id: string;
