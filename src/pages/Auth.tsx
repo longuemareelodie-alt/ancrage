@@ -9,11 +9,9 @@ const Auth = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { user } = useAuth();
-  const [isLogin, setIsLogin] = useState(true);
   const [isForgot, setIsForgot] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [firstName, setFirstName] = useState("");
   const [error, setError] = useState("");
   const [info, setInfo] = useState("");
   const [loading, setLoading] = useState(false);
@@ -23,7 +21,6 @@ const Auth = () => {
 
   useEffect(() => {
     if (user) {
-      // If user came from a payment button, redirect to paywall
       if (action === "pay") {
         navigate("/paywall", { replace: true });
       } else {
@@ -54,23 +51,9 @@ const Auth = () => {
     e.preventDefault();
     setError("");
     setLoading(true);
-
     try {
-      if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-      } else {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            data: { first_name: firstName },
-            emailRedirectTo: window.location.origin,
-          },
-        });
-        if (error) throw error;
-      }
-      // Redirect handled by useEffect on user change
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
     } catch (err: any) {
       setError(err.message || "Une erreur est survenue");
     } finally {
@@ -105,14 +88,12 @@ const Auth = () => {
       >
         <div className="text-center">
           <h1 className="text-2xl font-bold">
-            {isForgot ? "Mot de passe oublié" : isLogin ? "Bon retour 💛" : "Créer ton espace"}
+            {isForgot ? "Mot de passe oublié" : "Bon retour 💛"}
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
             {isForgot
               ? "Entre ton email pour recevoir un lien de réinitialisation"
-              : isLogin
-              ? "Connecte-toi pour retrouver ton parcours"
-              : "Ton espace sécurisé et confidentiel"}
+              : "Connecte-toi pour retrouver ton parcours"}
           </p>
         </div>
 
@@ -161,20 +142,6 @@ const Auth = () => {
         ) : (
           <>
             <form onSubmit={handleSubmit} className="space-y-4">
-              {!isLogin && (
-                <div>
-                  <label className="mb-1 block text-sm font-medium">Prénom</label>
-                  <input
-                    type="text"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    required={!isLogin}
-                    className="w-full rounded-lg border border-border bg-card px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30"
-                    placeholder="Ton prénom"
-                  />
-                </div>
-              )}
-
               <div>
                 <label className="mb-1 block text-sm font-medium">Email</label>
                 <input
@@ -200,24 +167,22 @@ const Auth = () => {
                 />
               </div>
 
-              {isLogin && (
-                <div className="text-right">
-                  <button
-                    type="button"
-                    onClick={() => { setIsForgot(true); setError(""); }}
-                    className="text-xs text-muted-foreground hover:text-primary hover:underline"
-                  >
-                    Mot de passe oublié ?
-                  </button>
-                </div>
-              )}
+              <div className="text-right">
+                <button
+                  type="button"
+                  onClick={() => { setIsForgot(true); setError(""); }}
+                  className="text-xs text-muted-foreground hover:text-primary hover:underline"
+                >
+                  Mot de passe oublié ?
+                </button>
+              </div>
 
               <button
                 type="submit"
                 disabled={loading}
                 className="w-full rounded-lg bg-primary py-2.5 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-50"
               >
-                {loading ? "..." : isLogin ? "Se connecter" : "Créer mon espace"}
+                {loading ? "..." : "Se connecter"}
               </button>
             </form>
 
@@ -241,16 +206,6 @@ const Auth = () => {
               </svg>
               Continuer avec Google
             </button>
-
-            <p className="text-center text-sm text-muted-foreground">
-              {isLogin ? "Pas encore d'espace ?" : "Déjà un espace ?"}{" "}
-              <button
-                onClick={() => { setIsLogin(!isLogin); setError(""); }}
-                className="font-medium text-primary hover:underline"
-              >
-                {isLogin ? "Créer un compte" : "Se connecter"}
-              </button>
-            </p>
           </>
         )}
       </motion.div>
