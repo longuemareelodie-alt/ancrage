@@ -88,7 +88,11 @@ export async function updateStreakAndBadges(userId: string) {
 
   await supabase
     .from("profiles")
-    .update({ current_streak: newStreak, longest_streak: newLongest })
+    .update({
+      current_streak: newStreak,
+      longest_streak: newLongest,
+      last_checkin_date: today,
+    })
     .eq("user_id", userId);
 
   // Count total checkins

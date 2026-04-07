@@ -65,12 +65,10 @@ const Checkin = () => {
       emotion: emotion.id,
       emotion_type: emotion.type,
     });
+    // Update last_emotion only — last_checkin_date is handled by updateStreakAndBadges
     await supabase
       .from("profiles")
-      .update({
-        last_emotion: emotion.id,
-        last_checkin_date: new Date().toISOString().split("T")[0],
-      })
+      .update({ last_emotion: emotion.id })
       .eq("user_id", user.id);
     const result = await updateStreakAndBadges(user.id);
     if (result?.newBadges?.length) {
