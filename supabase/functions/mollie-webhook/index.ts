@@ -799,8 +799,24 @@ Deno.serve(async (req) => {
         });
         logDebug("Welcome premium email sent", { recipientEmail, paymentId });
       }
+
+      // Send admin notification email
+      await supabase.functions.invoke("send-transactional-email", {
+        body: {
+          templateName: "admin-payment-notification",
+          recipientEmail: "longuemareelodie9@gmail.com",
+          idempotencyKey: `admin-notify-${paymentId}`,
+          templateData: {
+            customerEmail: updatedProfile.email || email || "Inconnu",
+            customerName: profileData?.first_name || "",
+            amount: payment?.amount ? `${payment.amount.value} ${payment.amount.currency}` : "",
+            paymentId: paymentId,
+          },
+        },
+      });
+      logDebug("Admin payment notification sent", { paymentId });
     } catch (emailErr) {
-      logError("Failed to send welcome email (non-fatal)", emailErr, { paymentId });
+      logError("Failed to send email notifications (non-fatal)", emailErr, { paymentId });
     }
 
     // --- Handle subscription creation if this was a "first" payment ---
