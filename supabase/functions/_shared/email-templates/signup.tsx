@@ -9,6 +9,7 @@ import {
   Head,
   Heading,
   Html,
+  Img,
   Link,
   Preview,
   Text,
@@ -21,6 +22,8 @@ interface SignupEmailProps {
   confirmationUrl: string
 }
 
+const LOGO_URL = 'https://mpadkxqomykztvqrnmfv.supabase.co/storage/v1/object/public/email-assets/logo-ancrage.png'
+
 export const SignupEmail = ({
   siteName,
   siteUrl,
@@ -32,6 +35,7 @@ export const SignupEmail = ({
     <Preview>Confirme ton email pour Ancrage 💛</Preview>
     <Body style={main}>
       <Container style={container}>
+        <Img src={LOGO_URL} alt="Ancrage" width="120" height="auto" style={logo} />
         <Heading style={h1}>Bienvenue sur Ancrage 💛</Heading>
         <Text style={text}>
           Merci d'avoir créé ton espace sur{' '}
@@ -62,6 +66,7 @@ export default SignupEmail
 
 const main = { backgroundColor: '#ffffff', fontFamily: "'DM Sans', Arial, sans-serif" }
 const container = { padding: '32px 28px' }
+const logo = { margin: '0 0 24px' }
 const h1 = {
   fontSize: '24px',
   fontWeight: 'bold' as const,
