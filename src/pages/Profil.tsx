@@ -82,7 +82,7 @@ const Profil = () => {
       .from("user_progress")
       .select("completed_phases")
       .eq("user_id", user.id)
-      .single()
+      .maybeSingle()
       .then(({ data }) => {
         if (data) setCompletedPhases(data.completed_phases ?? []);
       });
