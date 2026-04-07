@@ -85,7 +85,7 @@ const Parcours = () => {
       .from("user_progress")
       .select("completed_phases")
       .eq("user_id", user.id)
-      .single()
+      .maybeSingle()
       .then(({ data }) => {
         if (data?.completed_phases?.length) {
           const dbSet = new Set(data.completed_phases);
