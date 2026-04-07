@@ -86,7 +86,7 @@ export async function updateStreakAndBadges(userId: string) {
 
   const newLongest = Math.max(newStreak, profile.longest_streak || 0);
 
-  await supabase
+  const { error: updateError } = await supabase
     .from("profiles")
     .update({
       current_streak: newStreak,
@@ -94,6 +94,11 @@ export async function updateStreakAndBadges(userId: string) {
       last_checkin_date: today,
     })
     .eq("user_id", userId);
+
+  if (updateError) {
+    console.error("Streak update failed:", updateError);
+    return;
+  }
 
   // Count total checkins
   const { count } = await supabase
