@@ -778,6 +778,31 @@ Deno.serve(async (req) => {
       });
     }
 
+    // --- Send welcome premium email ---
+    try {
+      // Fetch first_name for personalization
+      const { data: profileData } = await supabase
+        .from("profiles")
+        .select("first_name")
+        .eq("user_id", updatedProfile.user_id)
+        .single();
+
+      const recipientEmail = updatedProfile.email || email;
+      if (recipientEmail) {
+        await supabase.functions.invoke("send-transactional-email", {
+          body: {
+            templateName: "welcome-premium",
+            recipientEmail,
+            idempotencyKey: `welcome-premium-${paymentId}`,
+            templateData: { firstName: profileData?.first_name || "" },
+          },
+        });
+        logDebug("Welcome premium email sent", { recipientEmail, paymentId });
+      }
+    } catch (emailErr) {
+      logError("Failed to send welcome email (non-fatal)", emailErr, { paymentId });
+    }
+
     // --- Handle subscription creation if this was a "first" payment ---
     const paymentType = firstString(paymentMetadata?.type);
     if (paymentType === "subscription_first" && payment.sequenceType === "first") {
