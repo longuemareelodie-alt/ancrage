@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
+import { toast } from "sonner";
 
 const InAppReminder = () => {
   const { user } = useAuth();
@@ -36,8 +37,29 @@ const InAppReminder = () => {
   }, [user, isSupported, isSubscribed]);
 
   const handleEnablePush = async () => {
-    const ok = await subscribe();
-    if (ok) setShowPushPrompt(false);
+    if (!isSupported) {
+      toast.error("Les notifications ne sont pas supportées sur ce navigateur. Essaie depuis Chrome ou Safari sur ton téléphone.");
+      return;
+    }
+
+    // Check notification permission first
+    if ("Notification" in window && Notification.permission === "denied") {
+      toast.error("Les notifications sont bloquées. Va dans les paramètres de ton navigateur pour les autoriser.");
+      return;
+    }
+
+    try {
+      const ok = await subscribe();
+      if (ok) {
+        setShowPushPrompt(false);
+        toast.success("Rappels activés 💛 Tu recevras un petit message chaque jour.");
+      } else {
+        toast.error("Impossible d'activer les rappels. Vérifie que les notifications sont autorisées dans ton navigateur.");
+      }
+    } catch (err) {
+      console.error("Push enable error:", err);
+      toast.error("Une erreur est survenue lors de l'activation des rappels.");
+    }
   };
 
   const dismissPushPrompt = () => {
