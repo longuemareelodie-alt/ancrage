@@ -10,7 +10,9 @@ export interface TemplateEntry {
 }
 
 import { template as welcomePremium } from './welcome-premium.tsx'
+import { template as adminPaymentNotification } from './admin-payment-notification.tsx'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'welcome-premium': welcomePremium,
+  'admin-payment-notification': adminPaymentNotification,
 }
