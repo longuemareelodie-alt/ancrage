@@ -9,6 +9,7 @@ import {
   Head,
   Heading,
   Html,
+  Img,
   Link,
   Preview,
   Text,
@@ -20,6 +21,8 @@ interface InviteEmailProps {
   confirmationUrl: string
 }
 
+const LOGO_URL = 'https://mpadkxqomykztvqrnmfv.supabase.co/storage/v1/object/public/email-assets/logo-ancrage.png'
+
 export const InviteEmail = ({
   siteName,
   siteUrl,
@@ -30,6 +33,7 @@ export const InviteEmail = ({
     <Preview>Tu es invitée à rejoindre Ancrage 💛</Preview>
     <Body style={main}>
       <Container style={container}>
+        <Img src={LOGO_URL} alt="Ancrage" width="120" height="auto" style={logo} />
         <Heading style={h1}>Tu es invitée 💛</Heading>
         <Text style={text}>
           Tu as été invitée à rejoindre{' '}
@@ -53,6 +57,7 @@ export default InviteEmail
 
 const main = { backgroundColor: '#ffffff', fontFamily: "'DM Sans', Arial, sans-serif" }
 const container = { padding: '32px 28px' }
+const logo = { margin: '0 0 24px' }
 const h1 = {
   fontSize: '24px',
   fontWeight: 'bold' as const,
