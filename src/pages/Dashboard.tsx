@@ -112,16 +112,21 @@ const Dashboard = () => {
               transition={{ delay: 0.1, duration: 0.5 }}
             >
               <Link
-                to="/checkin"
-                className="flex w-full items-center gap-4 rounded-2xl bg-gradient-to-r from-primary to-primary/80 p-6 text-left text-primary-foreground shadow-lg shadow-primary/25 transition-transform hover:scale-[1.02] active:scale-[0.98]"
+                to={isPremium ? "/checkin" : "/paywall"}
+                className="flex w-full items-center gap-4 rounded-2xl bg-gradient-to-r from-primary to-primary/80 p-6 text-left text-primary-foreground shadow-lg shadow-primary/25 transition-transform hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden"
               >
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary-foreground/20">
-                  <Heart className="h-6 w-6" />
+                  {isPremium ? <Heart className="h-6 w-6" /> : <Lock className="h-6 w-6" />}
                 </div>
                 <div>
                   <p className="text-lg font-bold">💛 Check-in du jour</p>
                   <p className="mt-1 text-sm opacity-80">Comment tu te sens ?</p>
                 </div>
+                {!isPremium && (
+                  <div className="absolute -right-1 -top-1 rounded-bl-lg bg-primary-foreground px-2 py-0.5 text-[10px] font-bold text-primary">
+                    PREMIUM
+                  </div>
+                )}
               </Link>
             </motion.div>
 
