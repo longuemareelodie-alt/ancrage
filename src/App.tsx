@@ -42,7 +42,7 @@ const AnimatedRoutes = () => {
         <Route path="/dashboard" element={<ProtectedRoute><PageTransition><Dashboard /></PageTransition></ProtectedRoute>} />
         <Route path="/emotions" element={<ProtectedRoute><PageTransition><Emotions /></PageTransition></ProtectedRoute>} />
         <Route path="/emotion/:emotion" element={<ProtectedRoute><PageTransition><EmotionDetail /></PageTransition></ProtectedRoute>} />
-        <Route path="/checkin" element={<ProtectedRoute><PageTransition><Checkin /></PageTransition></ProtectedRoute>} />
+        <Route path="/checkin" element={<PremiumRoute><PageTransition><Checkin /></PageTransition></PremiumRoute>} />
         <Route path="/historique" element={<PremiumRoute><PageTransition><Historique /></PageTransition></PremiumRoute>} />
         <Route path="/comprendre" element={<PremiumRoute><PageTransition><Comprendre /></PageTransition></PremiumRoute>} />
         <Route path="/avancer" element={<PremiumRoute><PageTransition><Avancer /></PageTransition></PremiumRoute>} />
