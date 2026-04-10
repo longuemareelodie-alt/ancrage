@@ -1,14 +1,16 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Heart, Lock, Check, Star } from "lucide-react";
+import { Lock, Check } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
+import { Input } from "@/components/ui/input";
 
 const Paywall = () => {
   const { user } = useAuth();
   const { startPayment, startSubscription, loading: paymentLoading } = useMolliePayment();
   const [selectedPlan, setSelectedPlan] = useState<"monthly" | "yearly">("monthly");
+  const [promoCode, setPromoCode] = useState("");
 
   const handleSubscription = () => {
     if (!user) {
@@ -47,33 +49,27 @@ const Paywall = () => {
           <h1 className="text-xl font-bold">
             Tu peux continuer seule…
             <br />
-            <span className="text-primary">ou te faire accompagner</span>
+            <span className="text-primary">ou être accompagnée chaque jour</span>
           </h1>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            Tu viens de commencer à apaiser ton corps.
+            Tu viens de faire quelque chose pour toi.
             <br />
-            Imagine si tu pouvais aller plus loin, doucement, sans te sentir seule.
+            Imagine si tu pouvais te sentir comme ça plus souvent.
           </p>
         </div>
 
-        {/* Testimonial */}
+        {/* Social proof — sans témoignages */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.4 }}
-          className="rounded-xl bg-primary/5 p-4 text-center border border-primary/10"
+          transition={{ delay: 0.3 }}
+          className="space-y-2 text-center"
         >
-          <p className="text-sm italic text-muted-foreground">
-            "Je pensais être seule… et ça m'a vraiment aidée."
-          </p>
-          <div className="flex justify-center gap-0.5 mt-2">
-            {[...Array(5)].map((_, i) => (
-              <Star key={i} className="h-3.5 w-3.5 fill-primary text-primary" />
-            ))}
-          </div>
+          <p className="text-sm text-muted-foreground">Tu n'es pas la seule à ressentir ça.</p>
+          <p className="text-sm font-medium">Des femmes utilisent Ancrage pour ces moments-là.</p>
         </motion.div>
 
-        {/* Plan toggle */}
+        {/* Plan card */}
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
@@ -92,9 +88,7 @@ const Paywall = () => {
             <button
               onClick={() => setSelectedPlan("monthly")}
               className={`flex-1 rounded-lg py-2 text-sm font-medium transition-colors ${
-                selectedPlan === "monthly"
-                  ? "bg-card shadow-sm text-foreground"
-                  : "text-muted-foreground"
+                selectedPlan === "monthly" ? "bg-card shadow-sm text-foreground" : "text-muted-foreground"
               }`}
             >
               Mensuel
@@ -102,9 +96,7 @@ const Paywall = () => {
             <button
               onClick={() => setSelectedPlan("yearly")}
               className={`flex-1 rounded-lg py-2 text-sm font-medium transition-colors relative ${
-                selectedPlan === "yearly"
-                  ? "bg-card shadow-sm text-foreground"
-                  : "text-muted-foreground"
+                selectedPlan === "yearly" ? "bg-card shadow-sm text-foreground" : "text-muted-foreground"
               }`}
             >
               Annuel
@@ -130,10 +122,10 @@ const Paywall = () => {
 
           <ul className="space-y-2">
             {[
-              "Soutien émotionnel quotidien",
-              "Messages personnalisés selon ton état",
-              "Notifications de soutien",
+              "Rituel matin / soir personnalisé",
+              "Bouton urgence illimité",
               "Suivi de progression émotionnelle",
+              "Messages quotidiens",
               "Exercices approfondis",
               "Contenu qui évolue avec toi",
             ].map((item) => (
@@ -143,12 +135,26 @@ const Paywall = () => {
               </li>
             ))}
           </ul>
+
+          {/* Promo code */}
+          <div className="space-y-1.5">
+            <p className="text-xs text-muted-foreground text-center">
+              Certaines personnes ont accès à une réduction
+            </p>
+            <Input
+              placeholder="Code promo"
+              value={promoCode}
+              onChange={(e) => setPromoCode(e.target.value)}
+              className="text-center text-sm"
+            />
+          </div>
+
           <button
             onClick={handleSubscription}
             disabled={paymentLoading}
             className="w-full rounded-xl bg-primary py-3.5 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 transition-transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60"
           >
-            {paymentLoading ? "Chargement…" : "Je veux être accompagnée"}
+            {paymentLoading ? "Chargement…" : "Je veux me sentir mieux"}
           </button>
           <p className="text-center text-xs text-muted-foreground">
             Tu peux arrêter quand tu veux. Aucun jugement.

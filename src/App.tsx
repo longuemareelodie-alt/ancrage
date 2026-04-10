@@ -30,6 +30,7 @@ import PostFlow from "./pages/PostFlow";
 import Paywall from "./pages/Paywall";
 import Comparison from "./pages/Comparison";
 import Unsubscribe from "./pages/Unsubscribe";
+import Emergency from "./pages/Emergency";
 
 const queryClient = new QueryClient();
 
@@ -59,6 +60,7 @@ const AnimatedRoutes = () => {
         <Route path="/cgv" element={<PageTransition><CGV /></PageTransition>} />
         <Route path="/confidentialite" element={<PageTransition><Confidentialite /></PageTransition>} />
         <Route path="/mentions-legales" element={<PageTransition><MentionsLegales /></PageTransition>} />
+        <Route path="/urgence" element={<ProtectedRoute><PageTransition><Emergency /></PageTransition></ProtectedRoute>} />
         <Route path="/unsubscribe" element={<PageTransition><Unsubscribe /></PageTransition>} />
         <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
       </Routes>

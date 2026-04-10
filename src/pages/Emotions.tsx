@@ -7,6 +7,13 @@ const emotions = [
   { emoji: "💭", label: "Rumination", path: "/emotion/rumination", hook: "Ton cerveau cherche une sortie" },
   { emoji: "😡", label: "Explosion", path: "/emotion/explosion", hook: "La pression est trop forte" },
   { emoji: "😶", label: "Vide", path: "/emotion/vide", hook: "Ton système s'est coupé pour tenir" },
+  { emoji: "🔋", label: "Épuisée", path: "/emotion/epuisee", hook: "Tu as trop donné" },
+];
+
+const positiveEmotions = [
+  { emoji: "🕊️", label: "Plus calme", path: "/emotion/calme", hook: "Tu peux profiter de ce moment" },
+  { emoji: "☁️", label: "Apaisée", path: "/emotion/apaisee", hook: "Garde-le en toi" },
+  { emoji: "✨", label: "Fière de moi", path: "/emotion/fiere", hook: "Tu mérites de le ressentir" },
 ];
 
 const Emotions = () => {
@@ -26,17 +33,42 @@ const Emotions = () => {
           <p className="mt-1 text-muted-foreground">Choisis sans réfléchir</p>
         </div>
 
+        {/* Negative emotions */}
         <div className="space-y-3">
+          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Ce qui monte en toi</p>
           {emotions.map((emotion, i) => (
             <motion.button
               key={emotion.path}
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: i * 0.08 }}
+              transition={{ duration: 0.4, delay: i * 0.06 }}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => navigate(emotion.path)}
               className="flex w-full items-center gap-4 rounded-xl bg-card p-5 text-left shadow-sm transition-shadow hover:shadow-md"
+            >
+              <span className="text-2xl">{emotion.emoji}</span>
+              <div>
+                <span className="font-medium">{emotion.label}</span>
+                <p className="text-xs text-muted-foreground mt-0.5">{emotion.hook}</p>
+              </div>
+            </motion.button>
+          ))}
+        </div>
+
+        {/* Positive emotions */}
+        <div className="space-y-3">
+          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Ce qui va mieux</p>
+          {positiveEmotions.map((emotion, i) => (
+            <motion.button
+              key={emotion.path}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.4 + i * 0.06 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => navigate(emotion.path)}
+              className="flex w-full items-center gap-4 rounded-xl bg-card p-5 text-left shadow-sm transition-shadow hover:shadow-md border border-primary/10"
             >
               <span className="text-2xl">{emotion.emoji}</span>
               <div>
