@@ -68,6 +68,38 @@ const emotionData: Record<string, EmotionData> = {
     lockedSteps: ["Bois de l'eau", "Respire"],
     script: ["Tu peux revenir doucement"],
   },
+  epuisee: {
+    title: "Tu es épuisée",
+    validation: "Ton système nerveux a trop donné.",
+    subtext: "C'est un signal, pas une faiblesse.",
+    freeSteps: ["Pose ta main sur ton cœur", "Sens ta respiration"],
+    lockedSteps: ["Ferme les yeux", "Relâche chaque muscle", "Reste 1 minute"],
+    script: ["Tu as le droit de t'arrêter"],
+  },
+  calme: {
+    title: "Tu te sens plus calme",
+    validation: "Ton système nerveux redescend.",
+    subtext: "Ce calme t'appartient. Tu l'as créé.",
+    freeSteps: ["Ferme les yeux", "Respire 3 fois lentement"],
+    lockedSteps: ["Souris légèrement", "Savoure ce moment"],
+    script: ["Tu peux garder ce calme"],
+  },
+  apaisee: {
+    title: "Tu te sens apaisée",
+    validation: "Ton corps a trouvé un espace de sécurité.",
+    subtext: "Tu mérites ce répit.",
+    freeSteps: ["Inspire profondément", "Pense à une chose positive"],
+    lockedSteps: ["Expire avec gratitude", "Reste dans ce moment"],
+    script: ["L'apaisement est en toi"],
+  },
+  fiere: {
+    title: "Tu es fière de toi",
+    validation: "Ton système reconnaît que tu as fait quelque chose de difficile.",
+    subtext: "Tu as le droit d'être fière. Vraiment.",
+    freeSteps: ["Souris", "Pose ta main sur ton cœur"],
+    lockedSteps: ["Dis « bravo »", "Célèbre en silence"],
+    script: ["Tu mérites cette fierté"],
+  },
 };
 
 const EmotionDetail = () => {
