@@ -9,6 +9,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import PremiumRoute from "@/components/PremiumRoute";
 import SubscriptionRoute from "@/components/SubscriptionRoute";
 import PageTransition from "@/components/PageTransition";
+import BottomNav from "@/components/BottomNav";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import Emotions from "./pages/Emotions";
@@ -65,6 +66,7 @@ const AnimatedRoutes = () => {
         <Route path="/unsubscribe" element={<PageTransition><Unsubscribe /></PageTransition>} />
         <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
       </Routes>
+      <BottomNav />
     </AnimatePresence>
   );
 };
