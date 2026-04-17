@@ -7,6 +7,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { AnimatePresence } from "framer-motion";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import PremiumRoute from "@/components/PremiumRoute";
+import SubscriptionRoute from "@/components/SubscriptionRoute";
 import PageTransition from "@/components/PageTransition";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
@@ -45,9 +46,9 @@ const AnimatedRoutes = () => {
         <Route path="/emotions" element={<ProtectedRoute><PageTransition><Emotions /></PageTransition></ProtectedRoute>} />
         <Route path="/emotion/:emotion" element={<ProtectedRoute><PageTransition><EmotionDetail /></PageTransition></ProtectedRoute>} />
         <Route path="/checkin" element={<PremiumRoute><PageTransition><Checkin /></PageTransition></PremiumRoute>} />
-        <Route path="/historique" element={<PremiumRoute><PageTransition><Historique /></PageTransition></PremiumRoute>} />
-        <Route path="/comprendre" element={<PremiumRoute><PageTransition><Comprendre /></PageTransition></PremiumRoute>} />
-        <Route path="/avancer" element={<PremiumRoute><PageTransition><Avancer /></PageTransition></PremiumRoute>} />
+        <Route path="/historique" element={<SubscriptionRoute><PageTransition><Historique /></PageTransition></SubscriptionRoute>} />
+        <Route path="/comprendre" element={<SubscriptionRoute><PageTransition><Comprendre /></PageTransition></SubscriptionRoute>} />
+        <Route path="/avancer" element={<SubscriptionRoute><PageTransition><Avancer /></PageTransition></SubscriptionRoute>} />
         <Route path="/aller-plus-loin" element={<PageTransition><AllerPlusLoin /></PageTransition>} />
         <Route path="/parcours" element={<PremiumRoute><PageTransition><Parcours /></PageTransition></PremiumRoute>} />
         <Route path="/post-flow" element={<ProtectedRoute><PageTransition><PostFlow /></PageTransition></ProtectedRoute>} />
