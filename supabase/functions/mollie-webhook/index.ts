@@ -643,14 +643,14 @@ Deno.serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, serviceRoleKey);
 
-    let profile: { user_id: string; email: string | null; is_premium: boolean } | null = null;
+    let profile: { user_id: string; email: string | null; is_premium: boolean; plan_type: string } | null = null;
 
     try {
       if (userId) {
         logDebug("Looking up profile by user_id", { userId, paymentId, metadata: paymentMetadata });
         const { data, error } = await supabase
           .from("profiles")
-          .select("user_id, email, is_premium")
+          .select("user_id, email, is_premium, plan_type")
           .eq("user_id", userId)
           .maybeSingle();
 
@@ -661,7 +661,7 @@ Deno.serve(async (req) => {
             metadata: paymentMetadata,
           });
         } else {
-          profile = data;
+          profile = data as any;
           logDebug("User lookup result", {
             lookup: "user_id",
             paymentId,
@@ -676,7 +676,7 @@ Deno.serve(async (req) => {
         logDebug("Looking up profile by email", { email, paymentId, metadata: paymentMetadata });
         const { data, error } = await supabase
           .from("profiles")
-          .select("user_id, email, is_premium")
+          .select("user_id, email, is_premium, plan_type")
           .eq("email", email)
           .maybeSingle();
 
@@ -687,7 +687,7 @@ Deno.serve(async (req) => {
             metadata: paymentMetadata,
           });
         } else {
-          profile = data;
+          profile = data as any;
           logDebug("User lookup result", {
             lookup: "email",
             paymentId,
@@ -728,26 +728,42 @@ Deno.serve(async (req) => {
       });
     }
 
-    if (profile.is_premium) {
-      logDebug("Profile already premium", { profile, paymentId });
+    // --- Determine plan_type from payment metadata ---
+    const paymentTypeMeta = firstString(paymentMetadata?.type);
+    // "lifetime" = 29€ one-time, "subscription_first" or absent w/ recurring = subscription
+    let newPlanType: "lifetime" | "subscription";
+    if (paymentTypeMeta === "lifetime") {
+      newPlanType = "lifetime";
+    } else {
+      // subscription_first OR recurring subscription payments
+      newPlanType = "subscription";
+    }
+
+    // Don't downgrade: if user already has subscription, keep it even if a lifetime payment comes in
+    const finalPlanType =
+      profile.plan_type === "subscription" ? "subscription" : newPlanType;
+
+    if (profile.is_premium && profile.plan_type === finalPlanType) {
+      logDebug("Profile already at this plan", { profile, paymentId, finalPlanType });
       return webhookAck({
         status: "premium_already_active",
         user_id: profile.user_id,
         email: profile.email,
+        plan_type: profile.plan_type,
       });
     }
 
     logDebug("Running premium update query", {
       targetUserId: profile.user_id,
-      update: { is_premium: true },
+      update: { is_premium: true, plan_type: finalPlanType },
       paymentId,
     });
 
     const { data: updatedProfile, error: updateError } = await supabase
       .from("profiles")
-      .update({ is_premium: true })
+      .update({ is_premium: true, plan_type: finalPlanType })
       .eq("user_id", profile.user_id)
-      .select("user_id, email, is_premium")
+      .select("user_id, email, is_premium, plan_type")
       .single();
 
     if (updateError) {

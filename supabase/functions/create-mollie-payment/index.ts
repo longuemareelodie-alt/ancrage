@@ -67,6 +67,7 @@ Deno.serve(async (req) => {
       metadata: {
         user_id: user.id,
         email: user.email,
+        type: "lifetime",
       },
     };
 

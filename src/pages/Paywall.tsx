@@ -124,9 +124,9 @@ const Paywall = () => {
             {[
               "Rituel matin / soir personnalisé",
               "Bouton urgence illimité",
-              "Suivi de progression émotionnelle",
+              "Historique & suivi de progression",
               "Messages quotidiens",
-              "Exercices approfondis",
+              "Section Comprendre & Avancer",
               "Contenu qui évolue avec toi",
             ].map((item) => (
               <li key={item} className="flex items-center gap-2 text-sm">
@@ -175,9 +175,10 @@ const Paywall = () => {
           </div>
           <ul className="space-y-1.5">
             {[
-              "Check-in émotionnel",
+              "Check-in émotionnel quotidien",
               "Exercices de régulation",
               "Parcours guidé",
+              "Bouton urgence (accès de base)",
             ].map((item) => (
               <li key={item} className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Check className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
@@ -185,6 +186,9 @@ const Paywall = () => {
               </li>
             ))}
           </ul>
+          <p className="text-[11px] text-muted-foreground text-center italic">
+            Ne comprend pas : historique, messages quotidiens, sections Comprendre & Avancer
+          </p>
           <button
             onClick={handleOneTime}
             disabled={paymentLoading}
