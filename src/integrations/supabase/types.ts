@@ -101,6 +101,27 @@ export type Database = {
         }
         Relationships: []
       }
+      emergency_uses: {
+        Row: {
+          id: string
+          used_at: string
+          used_date: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          used_at?: string
+          used_date?: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          used_at?: string
+          used_date?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       emotion_checkins: {
         Row: {
           created_at: string
@@ -340,6 +361,7 @@ export type Database = {
         Args: { payload: Json; queue_name: string }
         Returns: number
       }
+      get_emergency_usage: { Args: never; Returns: Json }
       get_is_premium: { Args: { _user_id: string }; Returns: boolean }
       move_to_dlq: {
         Args: {
@@ -362,6 +384,7 @@ export type Database = {
         Args: { _completed_phases: number[] }
         Returns: undefined
       }
+      use_emergency: { Args: never; Returns: Json }
     }
     Enums: {
       [_ in never]: never
