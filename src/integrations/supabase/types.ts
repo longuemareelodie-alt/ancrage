@@ -136,6 +136,7 @@ export type Database = {
           last_checkin_date: string | null
           last_emotion: string | null
           longest_streak: number
+          plan_type: string
           updated_at: string
           user_id: string
         }
@@ -149,6 +150,7 @@ export type Database = {
           last_checkin_date?: string | null
           last_emotion?: string | null
           longest_streak?: number
+          plan_type?: string
           updated_at?: string
           user_id: string
         }
@@ -162,6 +164,7 @@ export type Database = {
           last_checkin_date?: string | null
           last_emotion?: string | null
           longest_streak?: number
+          plan_type?: string
           updated_at?: string
           user_id?: string
         }
