@@ -83,9 +83,22 @@ const SanteFicheMedicale = () => {
 
   const regenerateToken = async () => {
     const { data, error } = await supabase.rpc("regenerate_medical_token");
-    if (error || !data) toast.error("Erreur");
-    else {
-      setRecord((p) => ({ ...p, public_token: data as string }));
+    if (error || !data) {
+      toast.error("Erreur lors de la régénération");
+      return;
+    }
+    const result = data as { success: boolean; token?: string; retry_after_seconds?: number; cooldown_seconds?: number };
+    if (!result.success) {
+      const wait = result.retry_after_seconds ?? 0;
+      const minutes = Math.ceil(wait / 60);
+      toast.error(
+        `Trop de régénérations. Réessaie dans ${minutes > 1 ? `${minutes} minutes` : `${wait} secondes`}.`,
+        { description: "Pour éviter les abus, le lien ne peut être régénéré qu'une fois toutes les 5 minutes." }
+      );
+      return;
+    }
+    if (result.token) {
+      setRecord((p) => ({ ...p, public_token: result.token! }));
       toast.success("Nouveau lien généré, l'ancien ne fonctionne plus");
     }
   };
