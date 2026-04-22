@@ -117,6 +117,19 @@ const FicheUrgencePublique = () => {
           )}
         </Section>
 
+        {/* Avis sur l'expiration du lien */}
+        <div className="rounded-xl border border-amber-300 bg-amber-50 p-3">
+          <div className="flex gap-2">
+            <AlertTriangle className="h-4 w-4 shrink-0 text-amber-600" />
+            <div className="text-[11px] leading-relaxed text-amber-900">
+              <p className="font-semibold">Lien sécurisé temporaire</p>
+              <p className="mt-1">
+                Ce lien signé peut être révoqué à tout moment par la titulaire de la fiche. Si elle régénère son lien, cette page ne sera plus accessible et un nouveau QR code devra être utilisé.
+              </p>
+            </div>
+          </div>
+        </div>
+
         <p className="text-center text-[10px] text-gray-400">
           Mise à jour : {new Date(record.updated_at).toLocaleDateString("fr-FR")}
         </p>
