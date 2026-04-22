@@ -14,7 +14,7 @@ const SectionBlock = ({ variant = "light", children, className = "" }: SectionBl
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 0.5 }}
-      className={`px-6 py-12 md:py-16 ${variant === "blue" ? "bg-secondary" : ""} ${className}`}
+      className={`px-6 py-12 md:py-16 ${className}`}
     >
       <div className="mx-auto max-w-lg">{children}</div>
     </motion.section>
