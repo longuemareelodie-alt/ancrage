@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      appointments: {
+        Row: {
+          appointment_at: string
+          created_at: string
+          id: string
+          location: string | null
+          notes: string | null
+          reminder_1h_sent: boolean
+          reminder_24h_sent: boolean
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          appointment_at: string
+          created_at?: string
+          id?: string
+          location?: string | null
+          notes?: string | null
+          reminder_1h_sent?: boolean
+          reminder_24h_sent?: boolean
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          appointment_at?: string
+          created_at?: string
+          id?: string
+          location?: string | null
+          notes?: string | null
+          reminder_1h_sent?: boolean
+          reminder_24h_sent?: boolean
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       email_send_log: {
         Row: {
           created_at: string
@@ -142,6 +181,141 @@ export type Database = {
           emotion?: string
           emotion_type?: string
           id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      medical_records: {
+        Row: {
+          allergies: string | null
+          birth_date: string | null
+          blood_type: string | null
+          created_at: string
+          current_treatments: string | null
+          doctor_name: string | null
+          doctor_phone: string | null
+          emergency_contact_name: string | null
+          emergency_contact_phone: string | null
+          first_name: string | null
+          id: string
+          is_public: boolean
+          last_name: string | null
+          medical_history: string | null
+          public_token: string
+          social_security_number: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          allergies?: string | null
+          birth_date?: string | null
+          blood_type?: string | null
+          created_at?: string
+          current_treatments?: string | null
+          doctor_name?: string | null
+          doctor_phone?: string | null
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          first_name?: string | null
+          id?: string
+          is_public?: boolean
+          last_name?: string | null
+          medical_history?: string | null
+          public_token?: string
+          social_security_number?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          allergies?: string | null
+          birth_date?: string | null
+          blood_type?: string | null
+          created_at?: string
+          current_treatments?: string | null
+          doctor_name?: string | null
+          doctor_phone?: string | null
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          first_name?: string | null
+          id?: string
+          is_public?: boolean
+          last_name?: string | null
+          medical_history?: string | null
+          public_token?: string
+          social_security_number?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      medication_reminder_log: {
+        Row: {
+          id: string
+          medication_id: string
+          reminder_date: string
+          reminder_time: string
+          sent_at: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          medication_id: string
+          reminder_date: string
+          reminder_time: string
+          sent_at?: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          medication_id?: string
+          reminder_date?: string
+          reminder_time?: string
+          sent_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      medications: {
+        Row: {
+          active: boolean
+          created_at: string
+          dosage: string | null
+          end_date: string | null
+          frequency: string | null
+          id: string
+          name: string
+          notes: string | null
+          schedule_times: string[]
+          start_date: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          dosage?: string | null
+          end_date?: string | null
+          frequency?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          schedule_times?: string[]
+          start_date?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          dosage?: string | null
+          end_date?: string | null
+          frequency?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          schedule_times?: string[]
+          start_date?: string | null
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
@@ -363,6 +537,7 @@ export type Database = {
       }
       get_emergency_usage: { Args: never; Returns: Json }
       get_is_premium: { Args: { _user_id: string }; Returns: boolean }
+      get_medical_record_by_token: { Args: { _token: string }; Returns: Json }
       move_to_dlq: {
         Args: {
           dlq_name: string
@@ -380,6 +555,7 @@ export type Database = {
           read_ct: number
         }[]
       }
+      regenerate_medical_token: { Args: never; Returns: string }
       upsert_user_progress: {
         Args: { _completed_phases: number[] }
         Returns: undefined
