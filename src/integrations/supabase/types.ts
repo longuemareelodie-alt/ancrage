@@ -200,6 +200,7 @@ export type Database = {
           id: string
           is_public: boolean
           last_name: string | null
+          last_token_regen_at: string | null
           medical_history: string | null
           public_token: string
           social_security_number: string | null
@@ -220,6 +221,7 @@ export type Database = {
           id?: string
           is_public?: boolean
           last_name?: string | null
+          last_token_regen_at?: string | null
           medical_history?: string | null
           public_token?: string
           social_security_number?: string | null
@@ -240,6 +242,7 @@ export type Database = {
           id?: string
           is_public?: boolean
           last_name?: string | null
+          last_token_regen_at?: string | null
           medical_history?: string | null
           public_token?: string
           social_security_number?: string | null
@@ -555,7 +558,7 @@ export type Database = {
           read_ct: number
         }[]
       }
-      regenerate_medical_token: { Args: never; Returns: string }
+      regenerate_medical_token: { Args: never; Returns: Json }
       upsert_user_progress: {
         Args: { _completed_phases: number[] }
         Returns: undefined
