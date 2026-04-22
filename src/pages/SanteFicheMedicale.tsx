@@ -153,14 +153,46 @@ const SanteFicheMedicale = () => {
                     <Eye className="h-3.5 w-3.5" /> Aperçu
                   </a>
                 </div>
-                <button
-                  onClick={regenerateToken}
-                  className="flex items-center gap-1 text-[11px] text-muted-foreground underline"
-                >
-                  <RefreshCw className="h-3 w-3" /> Générer un nouveau lien
-                </button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <button
+                      className="flex items-center gap-1 text-[11px] text-muted-foreground underline"
+                    >
+                      <RefreshCw className="h-3 w-3" /> Générer un nouveau lien
+                    </button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle className="flex items-center gap-2">
+                        <AlertTriangle className="h-5 w-5 text-amber-500" />
+                        Régénérer le lien d'urgence ?
+                      </AlertDialogTitle>
+                      <AlertDialogDescription className="space-y-2">
+                        <span className="block">
+                          L'ancien lien et le QR code actuel cesseront immédiatement de fonctionner.
+                        </span>
+                        <span className="block font-medium text-foreground">
+                          Tous tes proches et secours qui possèdent l'ancien QR ne pourront plus accéder à ta fiche. Tu devras leur partager le nouveau.
+                        </span>
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Annuler</AlertDialogCancel>
+                      <AlertDialogAction onClick={regenerateToken}>
+                        Confirmer et régénérer
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
             )}
+
+            <div className="mt-3 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 p-2">
+              <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-600" />
+              <p className="text-[11px] leading-relaxed text-amber-900">
+                Ce lien signé reste actif tant que tu ne le régénères pas. Si tu perds ton QR ou doutes qu'il soit entre de mauvaises mains, régénère-le pour révoquer l'ancien.
+              </p>
+            </div>
 
             <label className="mt-4 flex items-center gap-2 text-xs">
               <input
