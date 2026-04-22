@@ -3,9 +3,20 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import SectionBlock from "@/components/SectionBlock";
-import { ArrowLeft, Save, QrCode, Eye, RefreshCw, Copy, Check } from "lucide-react";
+import { ArrowLeft, Save, QrCode, Eye, RefreshCw, Copy, Check, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { QRCodeSVG } from "qrcode.react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface Record {
   first_name: string;
