@@ -57,6 +57,7 @@ const BottomNav = () => {
   if (!user) return null;
   if (planType === "none") return null;
   if (hiddenRoutes.includes(location.pathname)) return null;
+  if (location.pathname.startsWith("/fiche-urgence/")) return null;
 
   // Build nav items — same set for lifetime & subscription (Santé hub gates internally)
   const items = [
