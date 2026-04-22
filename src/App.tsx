@@ -8,6 +8,7 @@ import { AnimatePresence } from "framer-motion";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import PremiumRoute from "@/components/PremiumRoute";
 import SubscriptionRoute from "@/components/SubscriptionRoute";
+import PaidRoute from "@/components/PaidRoute";
 import PageTransition from "@/components/PageTransition";
 import BottomNav from "@/components/BottomNav";
 import Index from "./pages/Index";
@@ -33,6 +34,12 @@ import Paywall from "./pages/Paywall";
 import Comparison from "./pages/Comparison";
 import Unsubscribe from "./pages/Unsubscribe";
 import Emergency from "./pages/Emergency";
+import Sante from "./pages/Sante";
+import SanteRendezVous from "./pages/SanteRendezVous";
+import SanteMedicaments from "./pages/SanteMedicaments";
+import SanteFicheMedicale from "./pages/SanteFicheMedicale";
+import SanteRessources from "./pages/SanteRessources";
+import FicheUrgencePublique from "./pages/FicheUrgencePublique";
 
 const queryClient = new QueryClient();
 
@@ -63,6 +70,12 @@ const AnimatedRoutes = () => {
         <Route path="/confidentialite" element={<PageTransition><Confidentialite /></PageTransition>} />
         <Route path="/mentions-legales" element={<PageTransition><MentionsLegales /></PageTransition>} />
         <Route path="/urgence" element={<ProtectedRoute><PageTransition><Emergency /></PageTransition></ProtectedRoute>} />
+        <Route path="/sante" element={<PaidRoute><PageTransition><Sante /></PageTransition></PaidRoute>} />
+        <Route path="/sante/rendez-vous" element={<SubscriptionRoute><PageTransition><SanteRendezVous /></PageTransition></SubscriptionRoute>} />
+        <Route path="/sante/medicaments" element={<SubscriptionRoute><PageTransition><SanteMedicaments /></PageTransition></SubscriptionRoute>} />
+        <Route path="/sante/fiche-medicale" element={<SubscriptionRoute><PageTransition><SanteFicheMedicale /></PageTransition></SubscriptionRoute>} />
+        <Route path="/sante/ressources" element={<PaidRoute><PageTransition><SanteRessources /></PageTransition></PaidRoute>} />
+        <Route path="/fiche-urgence/:token" element={<PageTransition><FicheUrgencePublique /></PageTransition>} />
         <Route path="/unsubscribe" element={<PageTransition><Unsubscribe /></PageTransition>} />
         <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
       </Routes>
