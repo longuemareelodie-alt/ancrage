@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import { Home, Heart, BarChart3, BookOpen, User } from "lucide-react";
+import { Home, Heart, HeartPulse, User } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -58,25 +58,11 @@ const BottomNav = () => {
   if (planType === "none") return null;
   if (hiddenRoutes.includes(location.pathname)) return null;
 
-  const isLifetime = planType === "lifetime";
-  const isSubscription = planType === "subscription";
-
-  // Build nav items per plan
+  // Build nav items — same set for lifetime & subscription (Santé hub gates internally)
   const items = [
     { to: "/dashboard", label: "Accueil", icon: Home, show: true },
     { to: "/checkin", label: "Rituel", icon: Heart, show: true },
-    {
-      to: "/historique",
-      label: "Historique",
-      icon: BarChart3,
-      show: isSubscription,
-    },
-    {
-      to: "/comprendre",
-      label: "Comprendre",
-      icon: BookOpen,
-      show: isSubscription,
-    },
+    { to: "/sante", label: "Santé", icon: HeartPulse, show: true },
     { to: "/profil", label: "Espace", icon: User, show: true },
   ].filter((i) => i.show);
 
