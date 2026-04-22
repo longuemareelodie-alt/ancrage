@@ -187,6 +187,9 @@ const SanteFicheMedicale = () => {
                         <span className="block font-medium text-foreground">
                           Tous tes proches et secours qui possèdent l'ancien QR ne pourront plus accéder à ta fiche. Tu devras leur partager le nouveau.
                         </span>
+                        <span className="block text-xs">
+                          ⏱️ Limite : 1 régénération toutes les 5 minutes.
+                        </span>
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
