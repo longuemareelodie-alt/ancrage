@@ -13,6 +13,7 @@ import { BADGES } from "@/lib/streaks";
 import StreakCalendar from "@/components/StreakCalendar";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
 import PaymentHistory from "@/components/PaymentHistory";
+import DataActions from "@/components/DataActions";
 interface Note {
   id: string;
   title: string;
@@ -423,6 +424,11 @@ const Profil = () => {
                     </div>
                   </div>
                 )}
+              </div>
+
+              {/* RGPD : export et suppression */}
+              <div className="mt-4">
+                <DataActions />
               </div>
             </motion.div>
           )}
