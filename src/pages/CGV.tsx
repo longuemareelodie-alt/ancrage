@@ -361,6 +361,7 @@ const CGV = () => (
       </div>
     </SectionBlock>
     <Footer />
+    <BackToTop />
   </div>
 );
 
