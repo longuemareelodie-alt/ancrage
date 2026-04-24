@@ -206,6 +206,22 @@ const Auth = () => {
               </svg>
               Continuer avec Google
             </button>
+
+            <p className="text-center text-[11px] leading-relaxed text-muted-foreground pt-2">
+              En créant un compte ou en te connectant, tu acceptes nos{" "}
+              <Link to="/cgv" className="underline hover:text-foreground">
+                CGV
+              </Link>
+              , notre{" "}
+              <Link to="/confidentialite" className="underline hover:text-foreground">
+                Politique de confidentialité
+              </Link>{" "}
+              et nos{" "}
+              <Link to="/mentions-legales" className="underline hover:text-foreground">
+                Mentions légales
+              </Link>
+              .
+            </p>
           </>
         )}
       </motion.div>
