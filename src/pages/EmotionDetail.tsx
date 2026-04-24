@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import SectionBlock from "@/components/SectionBlock";
 import CTAButton from "@/components/CTAButton";
+import QuickBackLinks from "@/components/QuickBackLinks";
 import { motion } from "framer-motion";
 import { Check, Lock } from "lucide-react";
 
@@ -236,6 +237,7 @@ const EmotionDetail = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <QuickBackLinks />
       {/* Title + Validation */}
       <SectionBlock variant="blue">
         <motion.div

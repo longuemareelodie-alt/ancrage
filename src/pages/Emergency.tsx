@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Heart, Lock } from "lucide-react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import QuickBackLinks from "@/components/QuickBackLinks";
 
 type EmergencyStep = "loading" | "blocked" | "breathe" | "message" | "done";
 
@@ -55,14 +56,17 @@ const Emergency = () => {
   return (
     <div className="flex min-h-screen flex-col bg-background px-5 py-6">
       <div className="flex items-center justify-between">
-        <Link to="/dashboard" className="rounded-full p-2 hover:bg-secondary">
+        <Link to="/dashboard" className="rounded-full p-2 hover:bg-secondary" aria-label="Retour au tableau de bord">
           <ArrowLeft className="h-5 w-5" />
         </Link>
-        {usage && !usage.unlimited && step !== "blocked" && step !== "loading" && (
-          <span className="text-xs text-muted-foreground">
-            {usage.remaining} / {usage.daily_limit} aujourd'hui
-          </span>
-        )}
+        <div className="flex items-center gap-2">
+          {usage && !usage.unlimited && step !== "blocked" && step !== "loading" && (
+            <span className="text-xs text-muted-foreground">
+              {usage.remaining} / {usage.daily_limit} aujourd'hui
+            </span>
+          )}
+          <QuickBackLinks variant="inline" />
+        </div>
       </div>
 
       <div className="flex flex-1 flex-col items-center justify-center">

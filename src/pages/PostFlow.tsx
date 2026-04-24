@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Heart } from "lucide-react";
+import QuickBackLinks from "@/components/QuickBackLinks";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -20,7 +21,10 @@ const PostFlow = () => {
   }, [user]);
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-background px-6 py-12">
+    <div className="relative flex min-h-screen flex-col items-center justify-center bg-background px-6 py-12">
+      <div className="absolute left-0 right-0 top-4 flex justify-center">
+        <QuickBackLinks variant="inline" />
+      </div>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
