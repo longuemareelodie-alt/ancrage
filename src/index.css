@@ -60,39 +60,3 @@
     scroll-behavior: smooth;
   }
 }
-
-@layer utilities {
-  /* Gradient background painted once on a fixed, GPU-promoted layer.
-     Avoids repaints while scrolling on low-end devices. */
-  .home-gradient {
-    background-color: hsl(var(--background));
-    isolation: isolate;
-  }
-  .home-gradient::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    /* Two stacked layers:
-       1. Subtle dark veil at the top → guarantees text contrast on the pink area.
-       2. The pink-to-cream gradient itself, slightly more saturated up top. */
-    background:
-      linear-gradient(
-        to bottom,
-        hsl(240 15% 15% / 0.06) 0%,
-        hsl(240 15% 15% / 0) 40%
-      ),
-      linear-gradient(
-        to bottom,
-        hsl(327 70% 78%) 0%,
-        hsl(327 80% 86%) 25%,
-        hsl(var(--background)) 65%,
-        hsl(var(--background)) 100%
-      );
-    /* Promote to its own compositor layer — paint once, no reflow on scroll */
-    transform: translateZ(0);
-    will-change: transform;
-    backface-visibility: hidden;
-  }
-}

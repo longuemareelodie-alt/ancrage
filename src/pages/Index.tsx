@@ -21,7 +21,7 @@ const Index = () => {
   };
 
   return (
-    <div className="home-gradient relative min-h-screen">
+    <div className="min-h-screen bg-gradient-to-b from-secondary/30 via-background to-background">
       {/* Top bar */}
       <div className="flex items-center justify-between px-4 py-3">
         <div />

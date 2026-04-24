@@ -1,5 +1,6 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { ReactNode, useEffect, useRef, useState } from "react";
+import { trackAnimation } from "@/lib/perfMetrics";
 
 interface SectionBlockProps {
   variant?: "light" | "blue";
@@ -20,11 +21,9 @@ const SectionBlock = ({ variant = "light", children, className = "" }: SectionBl
     }
     const rect = ref.current.getBoundingClientRect();
     const vh = window.innerHeight || document.documentElement.clientHeight;
-    // Consider visible if any part of the section is already in viewport on first paint.
     setInitiallyVisible(rect.top < vh && rect.bottom > 0);
   }, []);
 
-  // Wait one paint before deciding to avoid a flash of hidden content.
   if (initiallyVisible === null) {
     return (
       <section
@@ -38,7 +37,6 @@ const SectionBlock = ({ variant = "light", children, className = "" }: SectionBl
     );
   }
 
-  // Sections already on screen at load OR reduced-motion users → render without animation.
   if (initiallyVisible || prefersReducedMotion) {
     return (
       <section className={`px-6 py-12 md:py-16 ${className}`}>
@@ -51,9 +49,9 @@ const SectionBlock = ({ variant = "light", children, className = "" }: SectionBl
     <motion.section
       initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
+      onViewportEnter={() => trackAnimation("section")}
       viewport={{ once: true, amount: 0.15, margin: "0px 0px -10% 0px" }}
       transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-      // Promote to its own GPU layer so the transform animation doesn't repaint siblings.
       style={{ willChange: "opacity, transform", transform: "translateZ(0)" }}
       className={`px-6 py-12 md:py-16 ${className}`}
     >
