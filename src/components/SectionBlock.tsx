@@ -1,5 +1,6 @@
-import { motion } from "framer-motion";
-import { ReactNode } from "react";
+import { motion, useReducedMotion } from "framer-motion";
+import { ReactNode, useEffect, useRef, useState } from "react";
+import { trackAnimation } from "@/lib/perfMetrics";
 
 interface SectionBlockProps {
   variant?: "light" | "blue";
@@ -8,12 +9,50 @@ interface SectionBlockProps {
 }
 
 const SectionBlock = ({ variant = "light", children, className = "" }: SectionBlockProps) => {
+  const ref = useRef<HTMLElement>(null);
+  const prefersReducedMotion = useReducedMotion();
+  // `null` = not yet decided. `true` = visible at mount → skip animation.
+  const [initiallyVisible, setInitiallyVisible] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    if (!ref.current) {
+      setInitiallyVisible(false);
+      return;
+    }
+    const rect = ref.current.getBoundingClientRect();
+    const vh = window.innerHeight || document.documentElement.clientHeight;
+    setInitiallyVisible(rect.top < vh && rect.bottom > 0);
+  }, []);
+
+  if (initiallyVisible === null) {
+    return (
+      <section
+        ref={ref}
+        className={`px-6 py-12 md:py-16 ${className}`}
+        style={{ opacity: 0 }}
+        aria-hidden="true"
+      >
+        <div className="mx-auto max-w-lg">{children}</div>
+      </section>
+    );
+  }
+
+  if (initiallyVisible || prefersReducedMotion) {
+    return (
+      <section className={`px-6 py-12 md:py-16 ${className}`}>
+        <div className="mx-auto max-w-lg">{children}</div>
+      </section>
+    );
+  }
+
   return (
     <motion.section
       initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
+      onViewportEnter={() => trackAnimation("section")}
       viewport={{ once: true, amount: 0.15, margin: "0px 0px -10% 0px" }}
       transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+      style={{ willChange: "opacity, transform", transform: "translateZ(0)" }}
       className={`px-6 py-12 md:py-16 ${className}`}
     >
       <div className="mx-auto max-w-lg">{children}</div>
