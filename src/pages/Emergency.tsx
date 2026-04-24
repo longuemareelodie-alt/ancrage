@@ -91,17 +91,11 @@ const Emergency = () => {
               <div className="space-y-3">
                 <h1 className="text-xl font-bold">Tu as utilisé tes 3 accès du jour</h1>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  Avec ton accès unique, tu peux ouvrir le bouton urgence 3 fois par jour.
-                  Ça redescend toujours — reviens demain, ou passe à l'abonnement pour un accès illimité.
+                  Avec ton accès, tu peux ouvrir le bouton urgence 3 fois par jour.
+                  Ça redescend toujours — reviens demain.
                 </p>
               </div>
               <div className="space-y-3 w-full">
-                <Link
-                  to="/paywall?upgrade=subscription"
-                  className="block w-full rounded-full bg-primary px-6 py-3 text-center text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25"
-                >
-                  Passer à l'abonnement
-                </Link>
                 <Link
                   to="/dashboard"
                   className="block w-full rounded-full border border-border px-6 py-3 text-center text-sm font-medium"
@@ -231,14 +225,6 @@ const Emergency = () => {
                 >
                   Retour à mon espace
                 </Link>
-                {usage?.plan_type !== "subscription" && (
-                  <Link
-                    to="/paywall?upgrade=subscription"
-                    className="block w-full rounded-full border border-border px-6 py-3 text-center text-sm font-medium"
-                  >
-                    Aller plus loin
-                  </Link>
-                )}
               </div>
             </motion.div>
           )}
