@@ -60,3 +60,29 @@
     scroll-behavior: smooth;
   }
 }
+
+@layer utilities {
+  /* Gradient background painted once on a fixed, GPU-promoted layer.
+     Avoids repaints while scrolling on low-end devices. */
+  .home-gradient {
+    background-color: hsl(var(--background));
+    isolation: isolate;
+  }
+  .home-gradient::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: linear-gradient(
+      to bottom,
+      hsl(var(--secondary) / 0.3),
+      hsl(var(--background)) 60%,
+      hsl(var(--background))
+    );
+    /* Promote to its own compositor layer — paint once, no reflow on scroll */
+    transform: translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
+  }
+}
