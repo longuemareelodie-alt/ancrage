@@ -148,11 +148,11 @@ const Checkin = () => {
 
       {/* Header */}
       <div className="flex items-center justify-between">
-        <Link to="/dashboard" className="rounded-full p-2 hover:bg-secondary">
+        <Link to="/dashboard" className="rounded-full p-2 hover:bg-secondary" aria-label="Retour au tableau de bord">
           <ArrowLeft className="h-5 w-5" />
         </Link>
         <p className="text-xs text-muted-foreground font-medium">{progressLabels[step]}</p>
-        <div className="w-9" />
+        <QuickBackLinks variant="inline" />
       </div>
 
       {/* Soft progress dots */}
