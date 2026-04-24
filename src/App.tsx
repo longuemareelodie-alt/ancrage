@@ -46,6 +46,23 @@ import FicheUrgencePublique from "./pages/FicheUrgencePublique";
 
 const queryClient = new QueryClient();
 
+/**
+ * AnimatePresence (framer-motion) attaches a ref to its direct child to
+ * coordinate exit animations. `<Routes>` from react-router is a function
+ * component and cannot receive refs, which triggers the warning:
+ *   "Function components cannot be given refs."
+ *
+ * We wrap it in a `forwardRef` div so the ref lands on a real DOM node.
+ */
+const RoutesWrapper = forwardRef<HTMLDivElement, { children: ReactNode }>(
+  ({ children }, ref) => (
+    <div ref={ref} className="contents">
+      {children}
+    </div>
+  ),
+);
+RoutesWrapper.displayName = "RoutesWrapper";
+
 const AnimatedRoutes = () => {
   const location = useLocation();
 
@@ -54,7 +71,8 @@ const AnimatedRoutes = () => {
       <ScrollToHash />
       <TopNav />
       <AnimatePresence mode="wait">
-      <Routes location={location} key={location.pathname}>
+        <RoutesWrapper key={location.pathname}>
+          <Routes location={location}>
         <Route path="/" element={<PageTransition><Index /></PageTransition>} />
         <Route path="/dashboard" element={<ProtectedRoute><PageTransition><Dashboard /></PageTransition></ProtectedRoute>} />
         <Route path="/emotions" element={<ProtectedRoute><PageTransition><Emotions /></PageTransition></ProtectedRoute>} />
