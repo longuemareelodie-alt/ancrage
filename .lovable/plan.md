@@ -1,56 +1,48 @@
-# Tester les liens légaux du Paywall (desktop + mobile)
+# Sitemap XML pour l'indexation
 
 ## Objectif
 
-Garantir, via un test automatisé qui s'exécute à chaque modification du code, que les **trois liens légaux** présents sur la page Paywall (`/paywall`) sont bien :
+Faciliter l'indexation par Google/Bing des pages publiques de l'app, en particulier les pages légales demandées (`/cgv`, `/confidentialite`, `/mentions-legales`).
 
-1. **Présents** dans le DOM,
-2. **Cliquables** (visibles, non bloqués par CSS),
-3. **Fonctionnels** : leur clic navigue effectivement vers `/cgv`, `/confidentialite` et `/mentions-legales`,
-4. **Identiques en desktop et en mobile** (viewport 375×812 — iPhone X / standard mobile).
+## Approche
 
-## Ce qui change pour l'utilisateur
+Sitemap **statique** servi depuis `public/sitemap.xml` (route automatique `/sitemap.xml` avec Vite, aucune config serveur nécessaire). Plus simple et plus performant qu'une route React (les crawlers ont besoin de XML brut, pas d'une SPA).
 
-Aucun changement visible dans l'app. Un nouveau fichier de test est ajouté au projet. Il s'exécute en local et en CI :
+Domaine canonique utilisé : `https://www.digitalmamanlibre.com`.
 
-- vérifie chaque lien individuellement (CGV, Confidentialité, Mentions légales) ;
-- vérifie qu'ils sont **présents simultanément** (URL cohérentes) ;
-- simule un **clic réel** (avec `userEvent`) et vérifie que la navigation aboutit ;
-- rejoue le même test en **viewport mobile 375×812** pour valider la version mobile.
+## Modifications
 
-Si demain quelqu'un casse un lien (mauvais href, lien retiré, lien masqué en CSS sur mobile…), le test échoue immédiatement.
+### 1. Création de `public/sitemap.xml`
+
+Liste les pages **publiques et indexables** uniquement (on exclut les pages protégées par auth comme `/dashboard`, `/profil`, `/sante/*`, `/checkin`, etc., qui n'apportent rien à un crawler).
+
+URLs incluses :
+- `/` (priorité 1.0)
+- `/comparaison` (0.8)
+- `/aller-plus-loin` (0.7)
+- `/paywall` (0.7)
+- `/auth` (0.5)
+- `/cgv` (0.4)
+- `/confidentialite` (0.4)
+- `/mentions-legales` (0.4)
+
+Format XML standard `sitemaps.org` avec `<lastmod>` à la date du jour, `<changefreq>` et `<priority>`.
+
+### 2. Mise à jour de `public/robots.txt`
+
+Ajout de la ligne :
+```
+Sitemap: https://www.digitalmamanlibre.com/sitemap.xml
+```
 
 ## Détails techniques
 
-### Fichier ajouté
+- Vite sert automatiquement tout le contenu de `public/` à la racine → `/sitemap.xml` sera accessible sans configuration de route.
+- Pas besoin de toucher à `App.tsx` ni à `index.html`.
+- Pas de génération dynamique : la liste de pages publiques est stable, un fichier statique suffit. Si on ajoute une page publique plus tard, il faudra mettre à jour le sitemap manuellement (mention dans le commentaire en tête du fichier).
 
-`src/pages/Paywall.test.tsx` — nouveau test Vitest + React Testing Library.
+## Hors scope
 
-### Approche
-
-- **Mock de `useAuth`** (utilisateur non connecté, suffisant pour tester l'affichage des liens, sans toucher Supabase).
-- **Mock de `useMolliePayment`** (pas d'appel réseau).
-- Rendu via `<MemoryRouter>` avec des **routes-cibles factices** (`/cgv`, `/confidentialite`, `/mentions-legales`) qui rendent un texte sentinelle (ex. `PAGE_CGV`). Permet de prouver que le clic a bien navigué, sans charger les vraies pages (qui ont d'autres dépendances).
-- **Helper `setViewport(width, height)`** qui modifie `window.innerWidth/Height` et déclenche un `resize` pour tester le mobile.
-- Pour chaque lien : `findByRole("link")` filtré par `href`, vérification de `toBeVisible()`, vérification que `pointer-events` ≠ `none` et `display` ≠ `none`, puis `userEvent.click(link)` et `findByText(...)` sur le contenu de la route cible.
-
-### Setup déjà en place dans le projet
-
-- `vitest.config.ts` ✅
-- `src/test/setup.ts` ✅
-- Dépendances `vitest`, `@testing-library/react`, `@testing-library/jest-dom`, `jsdom` ✅
-
-### Dépendance à ajouter
-
-- `@testing-library/user-event` (pour simuler des clics réalistes). Pas encore listé dans `package.json` — à installer via `bun add -d @testing-library/user-event`.
-
-### Comment exécuter
-
-- `bun run test:watch` (script déjà présent dans `package.json`),
-- ou via l'outil `lovable-exec test` (qui appelle vitest).
-
-## Hors-scope
-
-- Pas de test E2E réseau (pas de Playwright/Cypress).
-- Pas de modification de la page Paywall ni des composants liés — uniquement l'ajout d'un fichier de test.
-- Pas de test des liens du Footer ni de la page Auth (peut être ajouté ensuite avec le même pattern si tu veux).
+- Pas de soumission automatique à Google Search Console (à faire par l'utilisateur).
+- Pas de sitemap multilingue (à voir quand l'i18n EN sera en place).
+- Pas d'inclusion des pages authentifiées (non pertinent SEO).
