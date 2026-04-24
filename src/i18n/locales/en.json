@@ -7,15 +7,72 @@
     "main": "Main navigation",
     "back_home": "Back to home",
     "back_faq": "Back to FAQ",
+    "back_dashboard": "Back to dashboard",
     "language": "Language",
     "my_space": "My space",
     "login": "Sign in"
   },
   "footer": {
-    "tagline": "A wellbeing tool, not a medical substitute.",
+    "tagline": "This tool is not a substitute for medical, legal or psychological care.",
     "legal": "Legal notice",
-    "privacy": "Privacy",
-    "terms": "Terms"
+    "privacy": "Privacy policy",
+    "terms": "Terms of sale"
+  },
+  "home": {
+    "hero": {
+      "line1": "You overthink.",
+      "line2": "You burn out without knowing why.",
+      "line3": "And your body won't settle.",
+      "rea1": "It's not you.",
+      "rea2": "👉 Your nervous system is on alert.",
+      "cta": "Try it free"
+    },
+    "mechanism": {
+      "title": "It's not a willpower problem",
+      "subtitle": "👉 You're stuck in permanent alert mode",
+      "p1": "Your brain is trying to protect you",
+      "p2": "But it doesn't know it's over"
+    },
+    "how": {
+      "title": "Here, you don't have to think",
+      "subtitle": "👉 you act directly on your body",
+      "step1": "You name your state",
+      "step2": "You do one simple action",
+      "step3": "Your system settles"
+    },
+    "urgency": {
+      "title": "The longer you wait…",
+      "subtitle": "the longer your body stays stuck in this state",
+      "p1": "👉 your system gets used to alert",
+      "p2": "👉 it becomes your \"normal\"",
+      "p3": "And it doesn't go away on its own."
+    },
+    "projection": {
+      "title": "In a few minutes:",
+      "i1": "your body settles",
+      "i2": "your mind slows down",
+      "i3": "you finally breathe"
+    },
+    "social": {
+      "p1": "You're not the only one feeling this.",
+      "p2": "Women use Ancrage exactly for moments like this.",
+      "p3": "I built this because I needed it too."
+    },
+    "price": {
+      "access": "Access",
+      "amount": "€39",
+      "subtitle": "One-time payment · Lifetime access",
+      "cta": "I want to feel better — €39",
+      "note": "One-time payment. Lifetime access. 100% secure via Mollie.",
+      "secure": "Payment 100% secure via Mollie"
+    },
+    "final": {
+      "title": "You can start now",
+      "p1": "👉 no need to justify yourself",
+      "p2": "👉 no need to push",
+      "p3": "👉 at your own pace",
+      "cta": "Try it free"
+    }
   },
   "faq": {
     "title": "Frequently asked questions",
@@ -39,7 +96,7 @@
       },
       "privacy": {
         "q": "Is my data private?",
-        "a": "Yes. Your notes and emotional states are securely stored and remain strictly yours. You can export or delete everything from your profile."
+        "a": "Yes. Your notes and emotional states are securely stored and remain strictly yours. You can export or delete everything from your profile. Full details in the <lnk>Privacy policy</lnk>."
       },
       "duration": {
         "q": "How much time does it take per day?",
@@ -51,7 +108,7 @@
       },
       "refund": {
         "q": "Can I get a refund?",
-        "a": "Because digital access is immediate, you waive your withdrawal right at checkout. See the Terms for details."
+        "a": "Because digital access is immediate, you waive your withdrawal right at checkout. Details in the <lnk>Terms of sale</lnk>."
       }
     }
   },
@@ -73,6 +130,46 @@
       "fiere": { "label": "Proud of myself", "hook": "You deserve to feel it" }
     }
   },
+  "emotion_detail": {
+    "not_found": "Emotion not found",
+    "intro1": "Your brain is trying to protect you",
+    "intro2": "But right now… it's overshooting",
+    "intro3": "👉 What you feel is normal",
+    "intro4": "You're not in danger right now",
+    "intro5": "We're just going to bring it back down",
+    "do_with_me": "Do this with me right now",
+    "duration_30s": "(30 seconds)",
+    "after_title": "You just brought your body back down",
+    "after_p1": "Even a little → that's already a change",
+    "after_p2": "👉 and that already changes everything",
+    "next": "What now?",
+    "data": {
+      "panique": { "title": "You're panicking", "validation": "Your body is trying to protect you.", "free": ["Look around you", "Name 5 objects"], "locked": ["Place a hand on your heart", "Breathe in slowly", "Breathe out longer"] },
+      "hypervigilance": { "title": "Your body is hypervigilant", "validation": "Your system stayed on alert.", "free": ["Look at 3 things", "Listen for 2 sounds"], "locked": ["Touch an object", "Drop your shoulders", "Breathe slowly"] },
+      "rumination": { "title": "Your mind is in a loop", "validation": "Your brain is looking for a way out.", "free": ["Look at a fixed point", "Breathe slowly"], "locked": ["Say \"stop\" inside"] },
+      "explosion": { "title": "The pressure is too much", "validation": "The pressure is too much.", "free": ["Clench your fists", "Release"], "locked": ["Press your feet down", "Breathe deeply"] },
+      "vide": { "title": "You feel empty", "validation": "Your system shut down to cope.", "free": ["Move your hands", "Touch a surface"], "locked": ["Drink water", "Breathe"] },
+      "epuisee": { "title": "You're exhausted", "validation": "Your nervous system has given too much.", "free": ["Place your hand on your heart", "Feel your breathing"], "locked": ["Close your eyes", "Release every muscle", "Stay 1 minute"] },
+      "calme": { "title": "You feel calmer", "validation": "Your nervous system is settling.", "free": ["Close your eyes", "Breathe slowly 3 times"], "locked": ["Smile gently", "Savour this moment"] },
+      "apaisee": { "title": "You feel soothed", "validation": "Your body has found a safe space.", "free": ["Breathe in deeply", "Think of one positive thing"], "locked": ["Breathe out with gratitude", "Stay in this moment"] },
+      "fiere": { "title": "You're proud of yourself", "validation": "Your system recognises you did something hard.", "free": ["Smile", "Place your hand on your heart"], "locked": ["Say \"well done\"", "Celebrate silently"] },
+      "anxieuse": { "title": "You're anxious", "validation": "Your nervous system is on alert.", "free": ["Breathe in 4 seconds", "Breathe out 6 seconds"], "locked": ["Repeat 5 times", "Plant your feet on the ground", "Feel the contact"] },
+      "oppressee": { "title": "You feel pressed down", "validation": "Your body carries a load it can no longer hold.", "free": ["Open your arms wide", "Stretch"], "locked": ["Breathe deeply 5 times", "Drop your shoulders"] },
+      "submergee": { "title": "You feel overwhelmed", "validation": "Too much information, too much load.", "free": ["Plant both feet on the ground", "Name 3 things you see"], "locked": ["Breathe slowly", "Close your eyes for 30 seconds"] },
+      "triste": { "title": "You're sad", "validation": "Sadness is a healthy emotion.", "free": ["Cross your arms over your chest", "Squeeze gently"], "locked": ["Breathe", "Let the emotion pass"] },
+      "colere": { "title": "You feel angry", "validation": "Anger protects a wound.", "free": ["Clench your fists hard for 5 seconds", "Release"], "locked": ["Repeat 5 times", "Breathe out long"] },
+      "perdue": { "title": "You feel lost", "validation": "Your brain is searching for direction but there's too much noise.", "free": ["Look at a fixed point", "Breathe slowly"], "locked": ["Write one thought", "Put down the phone"] },
+      "surmenage": { "title": "You're mentally overworked", "validation": "Your brain is in a loop.", "free": ["Note 3 thoughts spinning", "Put down the phone"], "locked": ["Breathe 5 times", "Close your eyes"] },
+      "survie": { "title": "You're in survival mode", "validation": "Your nervous system is stuck in permanent alert.", "free": ["Breathe in 3 seconds", "Breathe out 8 seconds"], "locked": ["Repeat 4 times", "Release your whole body"] },
+      "stable": { "title": "You feel stable", "validation": "Your nervous system is centred.", "free": ["Plant your feet", "Feel your body"], "locked": ["Say \"I am here\"", "Stay a moment"] },
+      "mieux": { "title": "You feel slightly better", "validation": "Even a little better is a huge signal.", "free": ["Tell yourself \"I'm getting better\"", "Breathe"], "locked": ["Note this progress", "Smile"] },
+      "soulagee": { "title": "You feel relieved", "validation": "Relief comes when the pressure eases.", "free": ["A big sigh", "Let it all out"], "locked": ["Do it again", "Breathe deeply"] },
+      "claire": { "title": "You feel clearer", "validation": "Mental clarity is returning.", "free": ["Note one thing to do today", "Just one"], "locked": ["Breathe", "Anchor this clarity"] },
+      "securite": { "title": "You feel safe", "validation": "Feeling safe is the deepest signal of regulation.", "free": ["Do nothing", "Just breathe"], "locked": ["Enjoy", "Stay here a moment"] },
+      "connectee": { "title": "You feel connected to yourself", "validation": "You hear your needs without judging them.", "free": ["Scan your body head to toe", "Where do you feel good?"], "locked": ["Stay with this sensation", "Breathe"] },
+      "presente": { "title": "You're present", "validation": "Being present is the opposite of dissociation.", "free": ["Name 3 beautiful things around you", "Smile"], "locked": ["Breathe", "Savour the moment"] }
+    }
+  },
   "contextual_faq": {
     "back": "Back to states",
     "continue": "Open the tool",
@@ -80,24 +177,53 @@
   },
   "post_flow": {
     "title": "You just did something for yourself.",
+    "subtitle": "Imagine if you could feel like this more often.",
     "back_dashboard": "Back to my space",
-    "back_home": "Back to home"
+    "ritual_waiting": "Your ritual is waiting",
+    "go_further": "Go further",
+    "go_further_sub": "Be supported every day"
   },
   "auth": {
-    "title": "Welcome",
+    "title_login": "Welcome back 💛",
+    "title_forgot": "Forgot password",
+    "subtitle_login": "Sign in to find your journey",
+    "subtitle_forgot": "Enter your email to receive a reset link",
     "email": "Email",
+    "email_placeholder": "you@email.com",
     "password": "Password",
     "submit_login": "Sign in",
-    "submit_signup": "Create an account",
-    "switch_to_signup": "No account yet? Sign up",
-    "switch_to_login": "Already registered? Sign in",
-    "forgot": "Forgot password?"
+    "submit_send_link": "Send the link",
+    "loading_dots": "...",
+    "forgot": "Forgot password?",
+    "back_to_login": "Back to sign in",
+    "or": "or",
+    "google": "Continue with Google",
+    "google_error": "Google error",
+    "reset_sent": "A reset email has been sent 💌",
+    "generic_error": "Something went wrong",
+    "legal_intro": "By creating an account or signing in, you accept our",
+    "legal_cgv": "Terms",
+    "legal_and": ", our",
+    "legal_privacy": "Privacy policy",
+    "legal_and2": " and our",
+    "legal_legal": "Legal notice"
   },
   "paywall": {
-    "title": "Full access to Ancrage",
-    "price": "€39 — one-time payment",
-    "cta": "Get access",
+    "breadcrumb": "Full access",
+    "header_title_l1": "One single access.",
+    "header_title_l2": "For your whole life.",
+    "header_p1": "You just did something for yourself.",
+    "header_p2": "Imagine if you could feel like this more often.",
+    "badge": "LIFETIME ACCESS",
+    "brand": "ANCRAGE",
+    "amount": "€39",
+    "amount_note": "One-time payment · Lifetime access",
+    "cta": "I want to feel better — €39",
     "loading": "Loading…",
+    "secure_short": "One-time payment. Lifetime access. 100% secure via Mollie.",
+    "secure_long": "Payment 100% secure via Mollie",
+    "legal": "By clicking \"I want to feel better — €39\", I accept the <cgv>Terms of sale</cgv> and acknowledge that access to digital content begins immediately after payment, which means I expressly waive my withdrawal right. See also the <privacy>Privacy policy</privacy> and <legal>Legal notice</legal>.",
+    "continue_alone": "Continue on my own",
     "features": {
       "ritual": "Full daily ritual",
       "emergency": "\"It's too much\" emergency button",
@@ -108,6 +234,25 @@
       "journey": "4-phase journey",
       "lifetime": "Lifetime access — no subscription"
     }
+  },
+  "emergency": {
+    "today_count": "{{remaining}} / {{limit}} today",
+    "blocked_title": "You've used your 3 daily uses",
+    "blocked_text": "With your one-time access, you can open the emergency button 3 times a day. It always settles — come back tomorrow, or upgrade to the subscription for unlimited access.",
+    "blocked_cta": "Upgrade to subscription",
+    "back_dashboard": "Back to my space",
+    "breathe_title": "Let's slow down together.",
+    "breathe_subtitle": "Breathe in… breathe out… gently.",
+    "breathe_start": "I'm breathing",
+    "breathe_again": "Again… ({{count}}/4)",
+    "message_title": "I'm here.",
+    "message_subtitle": "We slow down together. You don't have to do anything else.",
+    "message_quote": "It will settle. It always settles.",
+    "message_cta": "I feel a bit better",
+    "done_title": "You just did something for yourself.",
+    "done_subtitle": "Imagine if you could feel like this more often.",
+    "done_back": "Back to my space",
+    "done_upgrade": "Go further"
   },
   "common": {
     "loading": "Loading…",
