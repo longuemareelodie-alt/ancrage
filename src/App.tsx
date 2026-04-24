@@ -102,7 +102,8 @@ const AnimatedRoutes = () => {
         <Route path="/fiche-urgence/:token" element={<PageTransition><FicheUrgencePublique /></PageTransition>} />
         <Route path="/unsubscribe" element={<PageTransition><Unsubscribe /></PageTransition>} />
         <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
-      </Routes>
+          </Routes>
+        </RoutesWrapper>
       </AnimatePresence>
       <BottomNav />
     </>
