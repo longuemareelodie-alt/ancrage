@@ -7,15 +7,72 @@
     "main": "Navigation principale",
     "back_home": "Retour à l'accueil",
     "back_faq": "Retour à la FAQ",
+    "back_dashboard": "Retour au tableau de bord",
     "language": "Langue",
     "my_space": "Mon espace",
     "login": "Connexion"
   },
   "footer": {
-    "tagline": "Un outil de bien-être, pas un substitut médical.",
+    "tagline": "Cet outil ne remplace pas un accompagnement médical, juridique ou psychologique.",
     "legal": "Mentions légales",
-    "privacy": "Confidentialité",
-    "terms": "CGV"
+    "privacy": "Politique de confidentialité",
+    "terms": "Conditions générales de vente"
+  },
+  "home": {
+    "hero": {
+      "line1": "Tu réfléchis trop.",
+      "line2": "Tu t'épuises sans comprendre.",
+      "line3": "Et ton corps ne redescend pas.",
+      "rea1": "Ce n'est pas toi.",
+      "rea2": "👉 Ton système nerveux est en mode alerte.",
+      "cta": "Essayer gratuitement"
+    },
+    "mechanism": {
+      "title": "Tu n'as pas un problème de volonté",
+      "subtitle": "👉 Tu es en état d'alerte permanent",
+      "p1": "Ton cerveau essaie de te protéger",
+      "p2": "Mais il ne sait pas que c'est terminé"
+    },
+    "how": {
+      "title": "Ici, tu ne vas pas réfléchir",
+      "subtitle": "👉 tu vas agir directement sur ton corps",
+      "step1": "Tu identifies ton état",
+      "step2": "Tu fais une action simple",
+      "step3": "Ton système redescend"
+    },
+    "urgency": {
+      "title": "Plus tu attends…",
+      "subtitle": "plus ton corps reste bloqué dans cet état",
+      "p1": "👉 ton système s'habitue à l'alerte",
+      "p2": "👉 ça devient ton « normal »",
+      "p3": "Et ça ne disparaît pas tout seul."
+    },
+    "projection": {
+      "title": "Dans quelques minutes :",
+      "i1": "ton corps redescend",
+      "i2": "ton mental ralentit",
+      "i3": "tu respires enfin"
+    },
+    "social": {
+      "p1": "Tu n'es pas la seule à ressentir ça.",
+      "p2": "Des femmes utilisent Ancrage pour ces moments-là.",
+      "p3": "J'ai créé ça parce que j'en avais besoin moi aussi."
+    },
+    "price": {
+      "access": "Accéder à",
+      "amount": "39€",
+      "subtitle": "Paiement unique · Accès à vie",
+      "cta": "Je veux me sentir mieux — 39€",
+      "note": "Paiement unique. Accès à vie. 100% sécurisé via Mollie.",
+      "secure": "Paiement 100% sécurisé via Mollie"
+    },
+    "final": {
+      "title": "Tu peux commencer maintenant",
+      "p1": "👉 sans te justifier",
+      "p2": "👉 sans te forcer",
+      "p3": "👉 à ton rythme",
+      "cta": "Essayer gratuitement"
+    }
   },
   "faq": {
     "title": "Questions fréquentes",
@@ -39,7 +96,7 @@
       },
       "privacy": {
         "q": "Mes données sont-elles privées ?",
-        "a": "Oui. Tes notes et tes états émotionnels sont stockés de façon sécurisée et restent strictement les tiens. Tu peux tout exporter ou supprimer depuis ton profil."
+        "a": "Oui. Tes notes et tes états émotionnels sont stockés de façon sécurisée et restent strictement les tiens. Tu peux tout exporter ou supprimer depuis ton profil. Détails complets dans la <lnk>Politique de confidentialité</lnk>."
       },
       "duration": {
         "q": "Combien de temps faut-il par jour ?",
@@ -51,7 +108,7 @@
       },
       "refund": {
         "q": "Puis-je être remboursée ?",
-        "a": "L'accès au contenu numérique étant immédiat, tu renonces à ton droit de rétractation au moment du clic. Voir les CGV pour les détails."
+        "a": "L'accès au contenu numérique étant immédiat, tu renonces à ton droit de rétractation au moment du clic. Détails dans les <lnk>Conditions générales de vente</lnk>."
       }
     }
   },
@@ -73,6 +130,46 @@
       "fiere": { "label": "Fière de moi", "hook": "Tu mérites de le ressentir" }
     }
   },
+  "emotion_detail": {
+    "not_found": "Émotion non trouvée",
+    "intro1": "Ton cerveau essaie de te protéger",
+    "intro2": "Mais là… il s'emballe",
+    "intro3": "👉 Ce que tu ressens est normal",
+    "intro4": "Tu n'es pas en danger là maintenant",
+    "intro5": "On va juste le faire redescendre",
+    "do_with_me": "Fais ça avec moi maintenant",
+    "duration_30s": "(30 secondes)",
+    "after_title": "Tu viens de faire redescendre ton corps",
+    "after_p1": "Même un peu → c'est déjà un changement",
+    "after_p2": "👉 et ça change déjà tout",
+    "next": "Et maintenant ?",
+    "data": {
+      "panique": { "title": "Tu paniques", "validation": "Ton corps essaie de te protéger.", "free": ["Regarde autour de toi", "Nomme 5 objets"], "locked": ["Pose une main sur ton cœur", "Inspire lentement", "Expire plus longtemps"] },
+      "hypervigilance": { "title": "Ton corps est en hypervigilance", "validation": "Ton système est resté en alerte.", "free": ["Regarde 3 choses", "Écoute 2 sons"], "locked": ["Touche un objet", "Relâche tes épaules", "Respire lentement"] },
+      "rumination": { "title": "Ton mental tourne en boucle", "validation": "Ton cerveau cherche une sortie.", "free": ["Regarde un point fixe", "Respire lentement"], "locked": ["Dis « stop » intérieurement"] },
+      "explosion": { "title": "La pression est trop forte", "validation": "La pression est trop forte.", "free": ["Serre tes poings", "Relâche"], "locked": ["Appuie tes pieds", "Respire profondément"] },
+      "vide": { "title": "Tu te sens vide", "validation": "Ton système s'est coupé pour tenir.", "free": ["Bouge tes mains", "Touche une surface"], "locked": ["Bois de l'eau", "Respire"] },
+      "epuisee": { "title": "Tu es épuisée", "validation": "Ton système nerveux a trop donné.", "free": ["Pose ta main sur ton cœur", "Sens ta respiration"], "locked": ["Ferme les yeux", "Relâche chaque muscle", "Reste 1 minute"] },
+      "calme": { "title": "Tu te sens plus calme", "validation": "Ton système nerveux redescend.", "free": ["Ferme les yeux", "Respire 3 fois lentement"], "locked": ["Souris légèrement", "Savoure ce moment"] },
+      "apaisee": { "title": "Tu te sens apaisée", "validation": "Ton corps a trouvé un espace de sécurité.", "free": ["Inspire profondément", "Pense à une chose positive"], "locked": ["Expire avec gratitude", "Reste dans ce moment"] },
+      "fiere": { "title": "Tu es fière de toi", "validation": "Ton système reconnaît que tu as fait quelque chose de difficile.", "free": ["Souris", "Pose ta main sur ton cœur"], "locked": ["Dis « bravo »", "Célèbre en silence"] },
+      "anxieuse": { "title": "Tu es anxieuse", "validation": "Ton système nerveux est en alerte.", "free": ["Inspire 4 secondes", "Expire 6 secondes"], "locked": ["Répète 5 fois", "Pose tes pieds au sol", "Sens le contact"] },
+      "oppressee": { "title": "Tu te sens oppressée", "validation": "Ton corps porte une charge qu'il n'arrive plus à contenir.", "free": ["Ouvre grand les bras", "Étire-toi"], "locked": ["Respire profondément 5 fois", "Relâche les épaules"] },
+      "submergee": { "title": "Tu te sens submergée", "validation": "Trop d'informations, trop de charge.", "free": ["Pose tes deux pieds au sol", "Nomme 3 choses que tu vois"], "locked": ["Respire lentement", "Ferme les yeux 30 secondes"] },
+      "triste": { "title": "Tu es triste", "validation": "La tristesse est une émotion saine.", "free": ["Croise tes bras sur ta poitrine", "Serre doucement"], "locked": ["Respire", "Laisse l'émotion passer"] },
+      "colere": { "title": "Tu ressens de la colère", "validation": "La colère protège une blessure.", "free": ["Serre fort tes poings 5 secondes", "Relâche"], "locked": ["Répète 5 fois", "Expire longuement"] },
+      "perdue": { "title": "Tu te sens perdue", "validation": "Ton cerveau cherche une direction mais il y a trop de bruit.", "free": ["Regarde un point fixe", "Respire lentement"], "locked": ["Écris une seule pensée", "Pose le téléphone"] },
+      "surmenage": { "title": "Tu es en surmenage mental", "validation": "Ton cerveau tourne en boucle.", "free": ["Note 3 pensées qui tournent", "Pose le téléphone"], "locked": ["Respire 5 fois", "Ferme les yeux"] },
+      "survie": { "title": "Tu es en mode survie", "validation": "Ton système nerveux est bloqué en alerte permanente.", "free": ["Inspire 3 secondes", "Expire 8 secondes"], "locked": ["Répète 4 fois", "Relâche tout ton corps"] },
+      "stable": { "title": "Tu te sens stable", "validation": "Ton système nerveux est au centre.", "free": ["Pose tes pieds au sol", "Sens ton corps"], "locked": ["Dis « je suis là »", "Reste un instant"] },
+      "mieux": { "title": "Tu te sens légèrement mieux", "validation": "Même un petit mieux, c'est un signal énorme.", "free": ["Dis-toi « je vais mieux »", "Respire"], "locked": ["Note ce progrès", "Souris"] },
+      "soulagee": { "title": "Tu te sens soulagée", "validation": "Le soulagement arrive quand la pression redescend.", "free": ["Un grand soupir", "Laisse tout sortir"], "locked": ["Recommence", "Respire profondément"] },
+      "claire": { "title": "Tu te sens plus claire", "validation": "La clarté mentale revient.", "free": ["Note une chose à faire aujourd'hui", "Juste une"], "locked": ["Respire", "Ancre cette clarté"] },
+      "securite": { "title": "Tu te sens en sécurité", "validation": "Se sentir en sécurité, c'est le signal le plus profond de régulation.", "free": ["Ne fais rien", "Juste respire"], "locked": ["Profite", "Reste ici un instant"] },
+      "connectee": { "title": "Tu te sens connectée à toi", "validation": "Tu entends tes besoins sans les juger.", "free": ["Scanne ton corps de la tête aux pieds", "Où sens-tu du bien ?"], "locked": ["Reste avec cette sensation", "Respire"] },
+      "presente": { "title": "Tu es présente", "validation": "Être présente, c'est le contraire de la dissociation.", "free": ["Nomme 3 choses belles autour de toi", "Souris"], "locked": ["Respire", "Savoure l'instant"] }
+    }
+  },
   "contextual_faq": {
     "back": "Retour aux états",
     "continue": "Accéder à l'outil",
@@ -80,24 +177,53 @@
   },
   "post_flow": {
     "title": "Tu viens de faire quelque chose pour toi.",
-    "back_dashboard": "Retour à l'espace",
-    "back_home": "Retour à l'accueil"
+    "subtitle": "Imagine si tu pouvais te sentir comme ça plus souvent.",
+    "back_dashboard": "Retour à mon espace",
+    "ritual_waiting": "Ton rituel t'attend",
+    "go_further": "Aller plus loin",
+    "go_further_sub": "Être accompagnée chaque jour"
   },
   "auth": {
-    "title": "Bienvenue",
+    "title_login": "Bon retour 💛",
+    "title_forgot": "Mot de passe oublié",
+    "subtitle_login": "Connecte-toi pour retrouver ton parcours",
+    "subtitle_forgot": "Entre ton email pour recevoir un lien de réinitialisation",
     "email": "Email",
+    "email_placeholder": "ton@email.com",
     "password": "Mot de passe",
     "submit_login": "Se connecter",
-    "submit_signup": "Créer un compte",
-    "switch_to_signup": "Pas encore de compte ? Inscris-toi",
-    "switch_to_login": "Déjà un compte ? Connecte-toi",
-    "forgot": "Mot de passe oublié ?"
+    "submit_send_link": "Envoyer le lien",
+    "loading_dots": "...",
+    "forgot": "Mot de passe oublié ?",
+    "back_to_login": "Retour à la connexion",
+    "or": "ou",
+    "google": "Continuer avec Google",
+    "google_error": "Erreur avec Google",
+    "reset_sent": "Un email de réinitialisation t'a été envoyé 💌",
+    "generic_error": "Une erreur est survenue",
+    "legal_intro": "En créant un compte ou en te connectant, tu acceptes nos",
+    "legal_cgv": "CGV",
+    "legal_and": ", notre",
+    "legal_privacy": "Politique de confidentialité",
+    "legal_and2": " et nos",
+    "legal_legal": "Mentions légales"
   },
   "paywall": {
-    "title": "Accès complet à Ancrage",
-    "price": "39€ — paiement unique",
-    "cta": "Obtenir l'accès",
+    "breadcrumb": "Accès complet",
+    "header_title_l1": "Un seul accès.",
+    "header_title_l2": "Pour toute ta vie.",
+    "header_p1": "Tu viens de faire quelque chose pour toi.",
+    "header_p2": "Imagine si tu pouvais te sentir comme ça plus souvent.",
+    "badge": "ACCÈS À VIE",
+    "brand": "ANCRAGE",
+    "amount": "39€",
+    "amount_note": "Paiement unique · Accès à vie",
+    "cta": "Je veux me sentir mieux — 39€",
     "loading": "Chargement…",
+    "secure_short": "Paiement unique. Accès à vie. 100% sécurisé via Mollie.",
+    "secure_long": "Paiement 100% sécurisé via Mollie",
+    "legal": "En cliquant sur « Je veux me sentir mieux — 39€ », j'accepte les <cgv>Conditions générales de vente</cgv> et reconnais que l'accès au contenu numérique débute immédiatement après le paiement, ce qui entraîne la renonciation expresse à mon droit de rétractation. Voir aussi la <privacy>Politique de confidentialité</privacy> et les <legal>Mentions légales</legal>.",
+    "continue_alone": "Continuer seule",
     "features": {
       "ritual": "Rituel quotidien complet",
       "emergency": "Bouton urgence « Ça déborde »",
@@ -108,6 +234,25 @@
       "journey": "Parcours 4 phases",
       "lifetime": "Accès à vie — aucun abonnement"
     }
+  },
+  "emergency": {
+    "today_count": "{{remaining}} / {{limit}} aujourd'hui",
+    "blocked_title": "Tu as utilisé tes 3 accès du jour",
+    "blocked_text": "Avec ton accès unique, tu peux ouvrir le bouton urgence 3 fois par jour. Ça redescend toujours — reviens demain, ou passe à l'abonnement pour un accès illimité.",
+    "blocked_cta": "Passer à l'abonnement",
+    "back_dashboard": "Retour à mon espace",
+    "breathe_title": "On ralentit ensemble.",
+    "breathe_subtitle": "Inspire… expire… doucement.",
+    "breathe_start": "Je respire",
+    "breathe_again": "Encore… ({{count}}/4)",
+    "message_title": "Je suis là.",
+    "message_subtitle": "On ralentit ensemble. Tu n'as rien à faire de plus.",
+    "message_quote": "Ça va redescendre. Ça redescend toujours.",
+    "message_cta": "Ça va un peu mieux",
+    "done_title": "Tu viens de faire quelque chose pour toi.",
+    "done_subtitle": "Imagine si tu pouvais te sentir comme ça plus souvent.",
+    "done_back": "Retour à mon espace",
+    "done_upgrade": "Aller plus loin"
   },
   "common": {
     "loading": "Chargement…",
