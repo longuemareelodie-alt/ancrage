@@ -129,6 +129,7 @@ const Paywall = () => {
           </Link>
         </div>
       </motion.div>
+      </div>
     </div>
   );
 };
