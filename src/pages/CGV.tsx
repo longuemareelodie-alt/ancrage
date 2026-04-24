@@ -141,41 +141,59 @@ const CGV = () => (
             </p>
             <ol className="list-decimal pl-5 space-y-1">
               <li>
-                <strong>T0 — Validation de la commande :</strong> le client coche
-                la case d'acceptation des CGV et de renonciation expresse au
-                droit de rétractation (voir article 8), puis valide le paiement
-                sur la page sécurisée du prestataire <strong>Mollie</strong>.
+                <strong>T0 — Validation de la commande :</strong> sur la page de
+                paiement <code>/paywall</code>, le client prend connaissance de
+                la mention d'acceptation affichée sous le bouton de paiement
+                (reproduite à l'article 8) puis clique sur le bouton{" "}
+                <strong>« Je veux me sentir mieux — 39€ »</strong>. Ce clic
+                vaut <strong>acceptation expresse des présentes CGV</strong> et{" "}
+                <strong>renonciation expresse au droit de rétractation</strong>.
+                Le client est ensuite redirigé vers la page sécurisée du
+                prestataire <strong>Mollie</strong> pour finaliser le paiement.
               </li>
               <li>
                 <strong>T0 + quelques secondes — Confirmation du paiement :</strong>{" "}
-                Mollie notifie l'éditeur du succès de la transaction via un
-                webhook sécurisé. Cette notification est horodatée et conservée.
+                Mollie horodate la transaction (champ <code>paidAt</code> au
+                format ISO 8601 UTC) et notifie l'éditeur du succès du paiement
+                via un webhook serveur-à-serveur sécurisé. La requête webhook
+                est journalisée côté serveur (date, heure, identifiant de
+                transaction Mollie commençant par <code>tr_</code>).
               </li>
               <li>
                 <strong>T0 + immédiat — Activation de l'accès :</strong> dès
-                réception de la confirmation Mollie, l'accès aux fonctionnalités
-                payantes est <strong>activé automatiquement</strong> sur le
-                compte utilisateur ayant initié la commande. L'activation est
-                horodatée côté serveur (date, heure, identifiant de transaction).
+                réception de la confirmation Mollie, le webhook met à jour le
+                profil utilisateur en base de données (<code>is_premium = true</code>,{" "}
+                <code>plan_type</code> renseigné). Cette mise à jour est
+                horodatée automatiquement par la base de données via le champ{" "}
+                <code>updated_at</code>. L'accès aux fonctionnalités payantes
+                est <strong>activé immédiatement</strong> sur le compte ayant
+                initié la commande.
               </li>
               <li>
-                <strong>T0 + immédiat — E-mail de confirmation :</strong> un
-                e-mail de confirmation de commande est envoyé automatiquement à
-                l'adresse e-mail du compte. Cet e-mail mentionne la date et
-                l'heure exactes de la commande, le montant payé, la référence de
-                transaction Mollie, ainsi que le rappel de la renonciation
-                expresse au droit de rétractation. Il tient lieu de{" "}
-                <strong>justificatif d'achat</strong> et de{" "}
-                <strong>preuve de l'exécution immédiate du contrat</strong>.
+                <strong>T0 + immédiat — E-mail de bienvenue premium :</strong>{" "}
+                un e-mail transactionnel est envoyé automatiquement à l'adresse
+                e-mail du compte, avec une clé d'idempotence basée sur
+                l'identifiant de transaction Mollie (<code>welcome-premium-&lt;tr_…&gt;</code>).
+                Cet e-mail a pour objet{" "}
+                <strong>« Ton accès premium ANCRAGE est activé 💛 »</strong>{" "}
+                et confirme l'activation effective du Service ainsi que les
+                fonctionnalités débloquées. Il vaut{" "}
+                <strong>confirmation de la prise en compte de la commande</strong>{" "}
+                et <strong>preuve de l'exécution immédiate du contrat</strong>.
               </li>
             </ol>
             <p>
-              L'éditeur conserve, à des fins probatoires, l'horodatage de la
-              transaction Mollie, l'horodatage d'activation de l'accès côté
-              serveur, ainsi que la copie technique de l'e-mail de confirmation
-              envoyé. Ces éléments sont conservés pendant la durée légale
-              applicable et peuvent être communiqués au client sur simple
-              demande à l'adresse de contact figurant dans les Mentions légales.
+              <strong>Éléments de preuve conservés.</strong> L'éditeur conserve,
+              à des fins probatoires : (i) l'horodatage de la transaction côté
+              Mollie et son identifiant <code>tr_…</code>, accessibles depuis
+              l'espace marchand Mollie ; (ii) les journaux de la fonction
+              webhook (requête entrante, identifiants extraits, mise à jour du
+              profil) ; (iii) la date de mise à jour du profil utilisateur
+              (<code>updated_at</code>) en base de données ; (iv) la trace
+              d'envoi de l'e-mail de bienvenue premium et sa clé d'idempotence.
+              Ces éléments sont conservés pendant la durée légale applicable et
+              peuvent être communiqués au client sur simple demande à l'adresse
+              de contact figurant dans les Mentions légales.
             </p>
           </section>
 
@@ -193,17 +211,27 @@ const CGV = () => (
               <strong>renoncement exprès</strong> à son droit de rétractation.
             </p>
             <p>
-              <strong>Recueil du consentement.</strong> Avant la validation du
-              paiement, le client doit obligatoirement cocher une case
-              comportant la mention :
+              <strong>Recueil du consentement.</strong> Le consentement est
+              recueilli sur la page <code>/paywall</code> selon le mécanisme
+              dit du <em>« click-wrap »</em> : la mention d'acceptation est
+              affichée de manière lisible et permanente directement sous le
+              bouton de paiement, dans la formulation suivante (texte affiché
+              mot pour mot dans l'application) :
             </p>
             <blockquote className="border-l-2 border-primary/40 pl-4 italic text-foreground/80">
-              « J'accepte les Conditions générales de vente et je demande
-              expressément que l'exécution du Service débute immédiatement après
-              le paiement. Je reconnais en conséquence renoncer expressément à
-              mon droit de rétractation de 14 jours, conformément à l'article
-              L221-28 13° du Code de la consommation. »
+              « En cliquant sur "Je veux me sentir mieux — 39€", j'accepte les
+              Conditions générales de vente et reconnais que l'accès au contenu
+              numérique débute immédiatement après le paiement, ce qui entraîne
+              la renonciation expresse à mon droit de rétractation. »
             </blockquote>
+            <p>
+              Le clic sur le bouton <strong>« Je veux me sentir mieux — 39€ »</strong>{" "}
+              vaut donc, de manière indissociable et simultanée, (i) acceptation
+              expresse des présentes CGV, (ii) demande expresse d'exécution
+              immédiate du Service après paiement, et (iii) renonciation
+              expresse au droit de rétractation de 14 jours prévu aux articles
+              L221-18 et suivants du Code de la consommation.
+            </p>
             <p>
               <strong>Chronologie probante.</strong> La renonciation expresse au
               droit de rétractation est justifiée par la chronologie décrite à
@@ -211,25 +239,31 @@ const CGV = () => (
             </p>
             <ul className="list-disc pl-5 space-y-1">
               <li>
-                la case d'acceptation est cochée <strong>avant</strong> la
-                validation du paiement (preuve de l'accord préalable exprès) ;
+                la mention d'acceptation est affichée à l'écran et lue par le
+                client <strong>avant</strong> son clic sur le bouton de
+                paiement (preuve de l'accord préalable exprès et du
+                renoncement exprès) ;
               </li>
               <li>
-                l'exécution du contrat (activation de l'accès au contenu
-                numérique) commence <strong>immédiatement</strong> après la
-                confirmation du paiement par Mollie, ce qui est horodaté côté
-                serveur ;
+                l'exécution du contrat (mise à jour du profil en{" "}
+                <code>is_premium = true</code> et déblocage des fonctionnalités
+                payantes) commence <strong>immédiatement</strong> après la
+                confirmation du paiement par Mollie, comme l'attestent
+                l'horodatage Mollie (<code>paidAt</code>) et l'horodatage de
+                mise à jour du profil (<code>updated_at</code>) ;
               </li>
               <li>
-                l'e-mail de confirmation envoyé automatiquement matérialise et{" "}
-                <strong>prouve la date et l'heure du début d'exécution</strong>{" "}
-                ainsi que le rappel de la renonciation au droit de rétractation.
+                l'e-mail de bienvenue premium, envoyé automatiquement avec une
+                clé d'idempotence liée à l'identifiant de transaction Mollie,{" "}
+                <strong>matérialise l'activation effective du Service</strong>{" "}
+                et constitue, conjointement avec les horodatages serveur et les
+                journaux Mollie, la preuve du début d'exécution.
               </li>
             </ul>
             <p>
               En conséquence, dès l'activation de l'accès — laquelle intervient
-              immédiatement après le paiement et est attestée par l'e-mail de
-              confirmation —, le client{" "}
+              immédiatement après la confirmation du paiement par Mollie et est
+              attestée par l'e-mail de bienvenue premium —, le client{" "}
               <strong>ne dispose plus du droit de rétractation</strong> et
               aucune demande à ce titre ne pourra être accueillie.
             </p>
