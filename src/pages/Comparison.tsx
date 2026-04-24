@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Check, Lock } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
+import Breadcrumb from "@/components/Breadcrumb";
 
 const Comparison = () => {
   const { user } = useAuth();
@@ -28,7 +29,9 @@ const Comparison = () => {
   ];
 
   return (
-    <div className="flex min-h-screen flex-col bg-background px-5 py-8">
+    <div className="min-h-screen bg-background">
+      <Breadcrumb items={[{ label: "Comparer les options" }]} />
+      <div className="flex flex-col px-5 py-8">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -85,6 +88,7 @@ const Comparison = () => {
           </div>
         </div>
       </motion.div>
+      </div>
     </div>
   );
 };

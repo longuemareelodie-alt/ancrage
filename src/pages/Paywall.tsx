@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Lock, Check } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
+import Breadcrumb from "@/components/Breadcrumb";
 
 const Paywall = () => {
   const { user } = useAuth();
@@ -28,7 +29,9 @@ const Paywall = () => {
   ];
 
   return (
-    <div className="flex min-h-screen flex-col bg-background px-5 py-8">
+    <div className="min-h-screen bg-background">
+      <Breadcrumb items={[{ label: "Accès complet" }]} />
+      <div className="flex flex-col px-5 py-8">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -126,6 +129,7 @@ const Paywall = () => {
           </Link>
         </div>
       </motion.div>
+      </div>
     </div>
   );
 };
