@@ -29,7 +29,9 @@ const Paywall = () => {
   ];
 
   return (
-    <div className="flex min-h-screen flex-col bg-background px-5 py-8">
+    <div className="min-h-screen bg-background">
+      <Breadcrumb items={[{ label: "Accès complet" }]} />
+      <div className="flex flex-col px-5 py-8">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
