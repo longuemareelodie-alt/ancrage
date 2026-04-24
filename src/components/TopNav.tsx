@@ -90,6 +90,14 @@ const TopNav = () => {
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70">
+      {showDuplicateBadge && (
+        <div
+          role="alert"
+          className="flex items-center justify-center gap-2 bg-destructive px-3 py-1 text-[11px] font-semibold text-destructive-foreground"
+        >
+          ⚠️ DEV : {mountCount} barres TopNav montées simultanément
+        </div>
+      )}
       <nav
         aria-label={t("nav.main")}
         className="mx-auto flex h-14 w-full max-w-5xl items-center justify-between px-4"
