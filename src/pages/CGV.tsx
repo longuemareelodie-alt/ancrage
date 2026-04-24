@@ -249,7 +249,58 @@ const CGV = () => (
 
           <section>
             <h2 className="text-lg font-semibold text-foreground">
-              16. Droit applicable et juridiction compétente
+              16. Contact & support
+            </h2>
+            <p>
+              Pour toute question relative à ta commande, à un{" "}
+              <strong>problème de paiement</strong> (échec de transaction,
+              double débit, accès non activé après paiement) ou à une{" "}
+              <strong>demande au titre des garanties légales</strong> (article
+              9), tu peux contacter le service client :
+            </p>
+            <ul className="list-disc pl-5 space-y-1">
+              <li>
+                par e-mail :{" "}
+                <a
+                  href="mailto:contact@digitalmamanlibre.com"
+                  className="underline hover:text-primary"
+                >
+                  contact@digitalmamanlibre.com
+                </a>
+              </li>
+              <li>
+                délai de réponse indicatif : sous{" "}
+                <strong>5 jours ouvrés</strong>.
+              </li>
+            </ul>
+            <p>
+              Pour un traitement rapide, merci d'indiquer dans ton message :
+            </p>
+            <ul className="list-disc pl-5 space-y-1">
+              <li>l'adresse e-mail utilisée lors de la commande ;</li>
+              <li>la date et le montant du paiement ;</li>
+              <li>
+                la référence de transaction Mollie (visible sur l'e-mail de
+                confirmation ou sur le relevé bancaire) ;
+              </li>
+              <li>une description précise du problème rencontré.</li>
+            </ul>
+            <p>
+              <strong>Demande de remboursement.</strong> Conformément à
+              l'article 9, aucun remboursement à titre commercial n'est accordé
+              après activation de l'accès au Service. Toute demande fondée sur
+              les garanties légales (défaut de conformité, vice caché) ou sur
+              un dysfonctionnement technique avéré sera néanmoins examinée. En
+              cas d'éligibilité, le remboursement est effectué sur le moyen de
+              paiement utilisé lors de la commande, sous un délai maximum de{" "}
+              <strong>14 jours</strong> à compter de l'accord du service
+              client.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-lg font-semibold text-foreground">
+              17. Droit applicable et juridiction compétente
             </h2>
             <p>
               Les présentes CGV sont soumises au <strong>droit français</strong>.
