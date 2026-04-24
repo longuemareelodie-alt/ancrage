@@ -134,12 +134,48 @@ const CGV = () => (
           </section>
 
           <section id="livraison" className="scroll-mt-24">
-            <h2 className="text-lg font-semibold text-foreground">7. Livraison du contenu numérique</h2>
+            <h2 className="text-lg font-semibold text-foreground">7. Livraison du contenu numérique — chronologie</h2>
             <p>
-              L'accès aux fonctionnalités payantes est activé{" "}
-              <strong>immédiatement</strong> après confirmation du paiement, sur
-              le compte utilisateur ayant initié la commande. Une confirmation
-              de commande est envoyée par e-mail et tient lieu de justificatif.
+              La fourniture du contenu numérique suit une chronologie précise,
+              automatisée et horodatée :
+            </p>
+            <ol className="list-decimal pl-5 space-y-1">
+              <li>
+                <strong>T0 — Validation de la commande :</strong> le client coche
+                la case d'acceptation des CGV et de renonciation expresse au
+                droit de rétractation (voir article 8), puis valide le paiement
+                sur la page sécurisée du prestataire <strong>Mollie</strong>.
+              </li>
+              <li>
+                <strong>T0 + quelques secondes — Confirmation du paiement :</strong>{" "}
+                Mollie notifie l'éditeur du succès de la transaction via un
+                webhook sécurisé. Cette notification est horodatée et conservée.
+              </li>
+              <li>
+                <strong>T0 + immédiat — Activation de l'accès :</strong> dès
+                réception de la confirmation Mollie, l'accès aux fonctionnalités
+                payantes est <strong>activé automatiquement</strong> sur le
+                compte utilisateur ayant initié la commande. L'activation est
+                horodatée côté serveur (date, heure, identifiant de transaction).
+              </li>
+              <li>
+                <strong>T0 + immédiat — E-mail de confirmation :</strong> un
+                e-mail de confirmation de commande est envoyé automatiquement à
+                l'adresse e-mail du compte. Cet e-mail mentionne la date et
+                l'heure exactes de la commande, le montant payé, la référence de
+                transaction Mollie, ainsi que le rappel de la renonciation
+                expresse au droit de rétractation. Il tient lieu de{" "}
+                <strong>justificatif d'achat</strong> et de{" "}
+                <strong>preuve de l'exécution immédiate du contrat</strong>.
+              </li>
+            </ol>
+            <p>
+              L'éditeur conserve, à des fins probatoires, l'horodatage de la
+              transaction Mollie, l'horodatage d'activation de l'accès côté
+              serveur, ainsi que la copie technique de l'e-mail de confirmation
+              envoyé. Ces éléments sont conservés pendant la durée légale
+              applicable et peuvent être communiqués au client sur simple
+              demande à l'adresse de contact figurant dans les Mentions légales.
             </p>
           </section>
 
@@ -149,18 +185,53 @@ const CGV = () => (
             </h2>
             <p>
               Conformément à l'article <strong>L221-28 13°</strong> du Code de la
-              consommation, le droit de rétractation ne peut être exercé pour
-              les contrats de fourniture d'un contenu numérique non fourni sur
-              un support matériel dont l'exécution a commencé après accord
-              préalable exprès du consommateur et renoncement exprès à son
-              droit de rétractation.
+              consommation, le droit de rétractation de 14 jours{" "}
+              <strong>ne peut être exercé</strong> pour les contrats de
+              fourniture d'un contenu numérique non fourni sur un support
+              matériel dont l'exécution a commencé après{" "}
+              <strong>accord préalable exprès</strong> du consommateur et{" "}
+              <strong>renoncement exprès</strong> à son droit de rétractation.
             </p>
             <p>
-              En validant sa commande et en cochant la case prévue à cet effet,
-              le client <strong>donne expressément son accord</strong> pour que
-              l'exécution du Service débute immédiatement après le paiement, et
-              <strong> reconnaît expressément renoncer à son droit de
-              rétractation</strong> de 14 jours dès l'activation de l'accès.
+              <strong>Recueil du consentement.</strong> Avant la validation du
+              paiement, le client doit obligatoirement cocher une case
+              comportant la mention :
+            </p>
+            <blockquote className="border-l-2 border-primary/40 pl-4 italic text-foreground/80">
+              « J'accepte les Conditions générales de vente et je demande
+              expressément que l'exécution du Service débute immédiatement après
+              le paiement. Je reconnais en conséquence renoncer expressément à
+              mon droit de rétractation de 14 jours, conformément à l'article
+              L221-28 13° du Code de la consommation. »
+            </blockquote>
+            <p>
+              <strong>Chronologie probante.</strong> La renonciation expresse au
+              droit de rétractation est justifiée par la chronologie décrite à
+              l'article 7 :
+            </p>
+            <ul className="list-disc pl-5 space-y-1">
+              <li>
+                la case d'acceptation est cochée <strong>avant</strong> la
+                validation du paiement (preuve de l'accord préalable exprès) ;
+              </li>
+              <li>
+                l'exécution du contrat (activation de l'accès au contenu
+                numérique) commence <strong>immédiatement</strong> après la
+                confirmation du paiement par Mollie, ce qui est horodaté côté
+                serveur ;
+              </li>
+              <li>
+                l'e-mail de confirmation envoyé automatiquement matérialise et{" "}
+                <strong>prouve la date et l'heure du début d'exécution</strong>{" "}
+                ainsi que le rappel de la renonciation au droit de rétractation.
+              </li>
+            </ul>
+            <p>
+              En conséquence, dès l'activation de l'accès — laquelle intervient
+              immédiatement après le paiement et est attestée par l'e-mail de
+              confirmation —, le client{" "}
+              <strong>ne dispose plus du droit de rétractation</strong> et
+              aucune demande à ce titre ne pourra être accueillie.
             </p>
           </section>
 
