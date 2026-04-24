@@ -24,8 +24,6 @@ const Profil = () => {
   const { user, loading, signOut } = useAuth();
   const navigate = useNavigate();
   const { isSupported, isSubscribed, subscribe, unsubscribe, loading: pushLoading } = usePushNotifications();
-  const { cancelSubscription, cancelLoading } = useMolliePayment();
-  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [profile, setProfile] = useState<{ first_name: string; email: string | null; is_premium: boolean; current_streak: number; longest_streak: number } | null>(null);
   const [completedPhases, setCompletedPhases] = useState<number[]>([]);
   const [earnedBadges, setEarnedBadges] = useState<string[]>([]);
@@ -381,48 +379,6 @@ const Profil = () => {
                   </button>
                 )}
 
-                {/* Cancel subscription */}
-                {profile?.is_premium && (
-                  <div className="rounded-xl border border-border bg-card p-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-semibold">Abonnement Premium</p>
-                        <p className="text-xs text-muted-foreground">Tu as accès à tout le contenu</p>
-                      </div>
-                      {!showCancelConfirm ? (
-                        <button
-                          onClick={() => setShowCancelConfirm(true)}
-                          className="text-xs text-muted-foreground underline hover:text-destructive"
-                        >
-                          Annuler
-                        </button>
-                      ) : (
-                        <div className="flex items-center gap-2">
-                          <button
-                            onClick={async () => {
-                              const success = await cancelSubscription();
-                              if (success) {
-                                setShowCancelConfirm(false);
-                                setProfile((prev) => prev ? { ...prev, is_premium: false } : prev);
-                              }
-                            }}
-                            disabled={cancelLoading}
-                            className="flex items-center gap-1 rounded-lg bg-destructive px-3 py-1.5 text-xs font-medium text-destructive-foreground disabled:opacity-50"
-                          >
-                            <XCircle className="h-3.5 w-3.5" />
-                            {cancelLoading ? "..." : "Confirmer"}
-                          </button>
-                          <button
-                            onClick={() => setShowCancelConfirm(false)}
-                            className="rounded-lg bg-secondary px-3 py-1.5 text-xs font-medium"
-                          >
-                            Non
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
               </div>
             </motion.div>
           )}

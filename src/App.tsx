@@ -7,7 +7,6 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { AnimatePresence } from "framer-motion";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import PremiumRoute from "@/components/PremiumRoute";
-import SubscriptionRoute from "@/components/SubscriptionRoute";
 import PaidRoute from "@/components/PaidRoute";
 import PageTransition from "@/components/PageTransition";
 import BottomNav from "@/components/BottomNav";
@@ -54,9 +53,9 @@ const AnimatedRoutes = () => {
         <Route path="/emotions" element={<ProtectedRoute><PageTransition><Emotions /></PageTransition></ProtectedRoute>} />
         <Route path="/emotion/:emotion" element={<ProtectedRoute><PageTransition><EmotionDetail /></PageTransition></ProtectedRoute>} />
         <Route path="/checkin" element={<PremiumRoute><PageTransition><Checkin /></PageTransition></PremiumRoute>} />
-        <Route path="/historique" element={<SubscriptionRoute><PageTransition><Historique /></PageTransition></SubscriptionRoute>} />
-        <Route path="/comprendre" element={<SubscriptionRoute><PageTransition><Comprendre /></PageTransition></SubscriptionRoute>} />
-        <Route path="/avancer" element={<SubscriptionRoute><PageTransition><Avancer /></PageTransition></SubscriptionRoute>} />
+        <Route path="/historique" element={<PaidRoute><PageTransition><Historique /></PageTransition></PaidRoute>} />
+        <Route path="/comprendre" element={<PaidRoute><PageTransition><Comprendre /></PageTransition></PaidRoute>} />
+        <Route path="/avancer" element={<PaidRoute><PageTransition><Avancer /></PageTransition></PaidRoute>} />
         <Route path="/aller-plus-loin" element={<PageTransition><AllerPlusLoin /></PageTransition>} />
         <Route path="/parcours" element={<PremiumRoute><PageTransition><Parcours /></PageTransition></PremiumRoute>} />
         <Route path="/post-flow" element={<ProtectedRoute><PageTransition><PostFlow /></PageTransition></ProtectedRoute>} />
@@ -71,9 +70,9 @@ const AnimatedRoutes = () => {
         <Route path="/mentions-legales" element={<PageTransition><MentionsLegales /></PageTransition>} />
         <Route path="/urgence" element={<ProtectedRoute><PageTransition><Emergency /></PageTransition></ProtectedRoute>} />
         <Route path="/sante" element={<PaidRoute><PageTransition><Sante /></PageTransition></PaidRoute>} />
-        <Route path="/sante/rendez-vous" element={<SubscriptionRoute><PageTransition><SanteRendezVous /></PageTransition></SubscriptionRoute>} />
-        <Route path="/sante/medicaments" element={<SubscriptionRoute><PageTransition><SanteMedicaments /></PageTransition></SubscriptionRoute>} />
-        <Route path="/sante/fiche-medicale" element={<SubscriptionRoute><PageTransition><SanteFicheMedicale /></PageTransition></SubscriptionRoute>} />
+        <Route path="/sante/rendez-vous" element={<PaidRoute><PageTransition><SanteRendezVous /></PageTransition></PaidRoute>} />
+        <Route path="/sante/medicaments" element={<PaidRoute><PageTransition><SanteMedicaments /></PageTransition></PaidRoute>} />
+        <Route path="/sante/fiche-medicale" element={<PaidRoute><PageTransition><SanteFicheMedicale /></PageTransition></PaidRoute>} />
         <Route path="/sante/ressources" element={<PaidRoute><PageTransition><SanteRessources /></PageTransition></PaidRoute>} />
         <Route path="/fiche-urgence/:token" element={<PageTransition><FicheUrgencePublique /></PageTransition>} />
         <Route path="/unsubscribe" element={<PageTransition><Unsubscribe /></PageTransition>} />
