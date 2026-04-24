@@ -1,6 +1,27 @@
 import SectionBlock from "@/components/SectionBlock";
 import Footer from "@/components/Footer";
+import BackToTop from "@/components/BackToTop";
 import { Link } from "react-router-dom";
+
+const sections = [
+  { id: "objet", title: "1. Objet" },
+  { id: "editeur-contact", title: "2. Éditeur et contact" },
+  { id: "description", title: "3. Description du Service" },
+  { id: "capacite-juridique", title: "4. Capacité juridique" },
+  { id: "prix", title: "5. Prix" },
+  { id: "modalites-paiement", title: "6. Modalités de paiement" },
+  { id: "livraison", title: "7. Livraison du contenu numérique" },
+  { id: "retractation", title: "8. Droit de rétractation — renonciation expresse" },
+  { id: "remboursement-garanties", title: "9. Absence de remboursement commercial — garanties légales" },
+  { id: "compte-utilisateur", title: "10. Compte utilisateur" },
+  { id: "propriete-intellectuelle", title: "11. Propriété intellectuelle" },
+  { id: "responsabilite", title: "12. Responsabilité" },
+  { id: "donnees-personnelles", title: "13. Données personnelles" },
+  { id: "modification-cgv", title: "14. Modification des CGV" },
+  { id: "mediation", title: "15. Médiation de la consommation" },
+  { id: "contact-support", title: "16. Contact & support" },
+  { id: "droit-juridiction", title: "17. Droit applicable et juridiction compétente" },
+];
 
 const CGV = () => (
   <div className="min-h-screen bg-background">
@@ -9,12 +30,31 @@ const CGV = () => (
         <h1 className="text-2xl md:text-3xl font-bold mb-2 text-foreground">
           Conditions Générales de Vente
         </h1>
-        <p className="text-sm text-muted-foreground mb-8">
+        <p className="text-sm text-muted-foreground mb-6">
           Dernière mise à jour : {new Date().toLocaleDateString("fr-FR")}
         </p>
 
+        <nav
+          aria-label="Sommaire"
+          className="rounded-xl border border-border bg-card/50 p-4 md:p-5 mb-8"
+        >
+          <p className="text-sm font-semibold text-foreground mb-3">Sommaire</p>
+          <ol className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1.5 text-sm list-none p-0 m-0">
+            {sections.map((s) => (
+              <li key={s.id}>
+                <a
+                  href={`#${s.id}`}
+                  className="text-muted-foreground hover:text-primary hover:underline transition-colors"
+                >
+                  {s.title}
+                </a>
+              </li>
+            ))}
+          </ol>
+        </nav>
+
         <div className="prose prose-sm md:prose-base max-w-none text-foreground/90 space-y-6">
-          <section>
+          <section id="objet" className="scroll-mt-24">
             <h2 className="text-lg font-semibold text-foreground">1. Objet</h2>
             <p>
               Les présentes Conditions Générales de Vente (« CGV ») régissent la
