@@ -1,0 +1,120 @@
+{
+  "nav": {
+    "home": "Startseite",
+    "faq": "FAQ",
+    "tool": "Zum Tool",
+    "menu": "Menü",
+    "main": "Hauptnavigation",
+    "back_home": "Zurück zur Startseite",
+    "back_faq": "Zurück zur FAQ",
+    "language": "Sprache",
+    "my_space": "Mein Bereich",
+    "login": "Anmelden"
+  },
+  "footer": {
+    "tagline": "Ein Wohlfühl-Tool, kein Ersatz für medizinische Versorgung.",
+    "legal": "Impressum",
+    "privacy": "Datenschutz",
+    "terms": "AGB"
+  },
+  "faq": {
+    "title": "Häufige Fragen",
+    "intro": "Bevor du loslegst, hier die Antworten auf die häufigsten Fragen.",
+    "items": {
+      "what_is": {
+        "q": "Was genau ist Ancrage?",
+        "a": "Ein Wohlfühl-Tool, das deinem Körper hilft, runterzukommen, wenn dein Nervensystem auf Alarm steht. Keine Therapie, keine Diagnose – nur einfache, kurze Übungen, die du allein in deinem Tempo machen kannst."
+      },
+      "price": {
+        "q": "Ist es kostenlos oder kostenpflichtig?",
+        "a": "Du kannst die Emotions-Screens und das Basis-Ritual kostenlos und ohne Konto ausprobieren. Vollzugang für 39 € – einmalige Zahlung, kein Abo."
+      },
+      "subscription": {
+        "q": "Ist es ein Abonnement?",
+        "a": "Nein. Einmalige Zahlung von 39 €, lebenslanger Zugang zu den beim Kauf verfügbaren Premium-Funktionen."
+      },
+      "medical": {
+        "q": "Ersetzt es medizinische Betreuung oder eine:n Therapeut:in?",
+        "a": "Nein, niemals. Ancrage ist ein Wohlfühl-Tool: keine Diagnosen, kein Ersatz für Fachpersonal."
+      },
+      "privacy": {
+        "q": "Sind meine Daten privat?",
+        "a": "Ja. Deine Notizen und Emotionszustände werden sicher gespeichert und gehören dir allein. Du kannst alles in deinem Profil exportieren oder löschen."
+      },
+      "duration": {
+        "q": "Wie viel Zeit braucht es pro Tag?",
+        "a": "Wenige Minuten reichen. Die meisten Übungen dauern 1 bis 5 Minuten."
+      },
+      "devices": {
+        "q": "Auf welchen Geräten funktioniert es?",
+        "a": "Auf jedem aktuellen Smartphone, Tablet oder Computer, direkt im Browser. Keine Installation nötig."
+      },
+      "refund": {
+        "q": "Kann ich eine Rückerstattung erhalten?",
+        "a": "Da der digitale Zugang sofort erfolgt, verzichtest du beim Kauf auf dein Widerrufsrecht. Details in den AGB."
+      }
+    }
+  },
+  "emotions": {
+    "title": "Wie geht es dir gerade?",
+    "subtitle": "Dein Körper darf jetzt runterkommen",
+    "hint": "Wähle ohne nachzudenken",
+    "section_negative": "Was in dir hochkommt",
+    "section_positive": "Was sich besser anfühlt",
+    "list": {
+      "panique": { "label": "Ich gerate in Panik", "hook": "Dein Körper versucht, dich zu schützen" },
+      "hypervigilance": { "label": "Hypervigilanz", "hook": "Dein System ist in Alarmbereitschaft geblieben" },
+      "rumination": { "label": "Grübeln", "hook": "Dein Kopf sucht einen Ausweg" },
+      "explosion": { "label": "Explosion", "hook": "Der Druck ist zu groß" },
+      "vide": { "label": "Leere", "hook": "Dein System hat dichtgemacht, um durchzuhalten" },
+      "epuisee": { "label": "Erschöpft", "hook": "Du hast zu viel gegeben" },
+      "calme": { "label": "Ruhiger", "hook": "Du darfst diesen Moment genießen" },
+      "apaisee": { "label": "Beruhigt", "hook": "Halte ihn in dir" },
+      "fiere": { "label": "Stolz auf mich", "hook": "Du verdienst es, das zu spüren" }
+    }
+  },
+  "contextual_faq": {
+    "back": "Zurück zu den Zuständen",
+    "continue": "Zum Tool",
+    "close": "Schließen"
+  },
+  "post_flow": {
+    "title": "Du hast gerade etwas für dich getan.",
+    "back_dashboard": "Zurück zu meinem Bereich",
+    "back_home": "Zurück zur Startseite"
+  },
+  "auth": {
+    "title": "Willkommen",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "submit_login": "Anmelden",
+    "submit_signup": "Konto erstellen",
+    "switch_to_signup": "Noch kein Konto? Registrieren",
+    "switch_to_login": "Schon registriert? Anmelden",
+    "forgot": "Passwort vergessen?"
+  },
+  "paywall": {
+    "title": "Voller Zugang zu Ancrage",
+    "price": "39 € — einmalige Zahlung",
+    "cta": "Zugang freischalten",
+    "loading": "Lädt…",
+    "features": {
+      "ritual": "Vollständiges Tagesritual",
+      "emergency": "Notfall-Knopf „Es wird zu viel“",
+      "health": "Gesundheitsbereich (Termine, Medikamente, Notfallkarte)",
+      "resources": "Ressourcen Frankreich",
+      "notes": "Private Notizen",
+      "badges": "Abzeichen und Fortschritt",
+      "journey": "4-Phasen-Reise",
+      "lifetime": "Lebenslanger Zugang — kein Abo"
+    }
+  },
+  "common": {
+    "loading": "Lädt…",
+    "error": "Ein Fehler ist aufgetreten",
+    "retry": "Erneut versuchen",
+    "cancel": "Abbrechen",
+    "confirm": "Bestätigen",
+    "close": "Schließen"
+  }
+}

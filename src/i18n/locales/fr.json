@@ -1,0 +1,120 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "faq": "FAQ",
+    "tool": "Accéder à l'outil",
+    "menu": "Menu",
+    "main": "Navigation principale",
+    "back_home": "Retour à l'accueil",
+    "back_faq": "Retour à la FAQ",
+    "language": "Langue",
+    "my_space": "Mon espace",
+    "login": "Connexion"
+  },
+  "footer": {
+    "tagline": "Un outil de bien-être, pas un substitut médical.",
+    "legal": "Mentions légales",
+    "privacy": "Confidentialité",
+    "terms": "CGV"
+  },
+  "faq": {
+    "title": "Questions fréquentes",
+    "intro": "Avant de commencer, voici les réponses aux questions qu'on me pose le plus souvent.",
+    "items": {
+      "what_is": {
+        "q": "Ancrage, c'est quoi exactement ?",
+        "a": "Un outil de bien-être pensé pour t'aider à faire redescendre ton corps quand ton système nerveux est en alerte. Pas une thérapie, pas un diagnostic : des actions simples, courtes, à faire seule, à ton rythme."
+      },
+      "price": {
+        "q": "C'est gratuit ou payant ?",
+        "a": "Tu peux essayer gratuitement les écrans émotion et le rituel de base, sans créer de compte. L'accès complet est à 39€ en paiement unique, sans abonnement."
+      },
+      "subscription": {
+        "q": "Est-ce que c'est un abonnement ?",
+        "a": "Non. Paiement unique de 39€, accès à vie aux fonctionnalités payantes existantes au moment de l'achat."
+      },
+      "medical": {
+        "q": "Est-ce que ça remplace un suivi médical ou un thérapeute ?",
+        "a": "Non, jamais. Ancrage est un outil de bien-être : il ne pose pas de diagnostic et ne remplace pas un professionnel de santé."
+      },
+      "privacy": {
+        "q": "Mes données sont-elles privées ?",
+        "a": "Oui. Tes notes et tes états émotionnels sont stockés de façon sécurisée et restent strictement les tiens. Tu peux tout exporter ou supprimer depuis ton profil."
+      },
+      "duration": {
+        "q": "Combien de temps faut-il par jour ?",
+        "a": "Quelques minutes suffisent. La plupart des actions durent entre 1 et 5 minutes."
+      },
+      "devices": {
+        "q": "Sur quels appareils ça marche ?",
+        "a": "Sur n'importe quel téléphone, tablette ou ordinateur récent, directement depuis ton navigateur."
+      },
+      "refund": {
+        "q": "Puis-je être remboursée ?",
+        "a": "L'accès au contenu numérique étant immédiat, tu renonces à ton droit de rétractation au moment du clic. Voir les CGV pour les détails."
+      }
+    }
+  },
+  "emotions": {
+    "title": "Comment tu te sens là maintenant ?",
+    "subtitle": "Ton corps peut redescendre maintenant",
+    "hint": "Choisis sans réfléchir",
+    "section_negative": "Ce qui monte en toi",
+    "section_positive": "Ce qui va mieux",
+    "list": {
+      "panique": { "label": "Je panique", "hook": "Ton corps essaie de te protéger" },
+      "hypervigilance": { "label": "Hypervigilance", "hook": "Ton système est resté en alerte" },
+      "rumination": { "label": "Rumination", "hook": "Ton cerveau cherche une sortie" },
+      "explosion": { "label": "Explosion", "hook": "La pression est trop forte" },
+      "vide": { "label": "Vide", "hook": "Ton système s'est coupé pour tenir" },
+      "epuisee": { "label": "Épuisée", "hook": "Tu as trop donné" },
+      "calme": { "label": "Plus calme", "hook": "Tu peux profiter de ce moment" },
+      "apaisee": { "label": "Apaisée", "hook": "Garde-le en toi" },
+      "fiere": { "label": "Fière de moi", "hook": "Tu mérites de le ressentir" }
+    }
+  },
+  "contextual_faq": {
+    "back": "Retour aux états",
+    "continue": "Accéder à l'outil",
+    "close": "Fermer"
+  },
+  "post_flow": {
+    "title": "Tu viens de faire quelque chose pour toi.",
+    "back_dashboard": "Retour à l'espace",
+    "back_home": "Retour à l'accueil"
+  },
+  "auth": {
+    "title": "Bienvenue",
+    "email": "Email",
+    "password": "Mot de passe",
+    "submit_login": "Se connecter",
+    "submit_signup": "Créer un compte",
+    "switch_to_signup": "Pas encore de compte ? Inscris-toi",
+    "switch_to_login": "Déjà un compte ? Connecte-toi",
+    "forgot": "Mot de passe oublié ?"
+  },
+  "paywall": {
+    "title": "Accès complet à Ancrage",
+    "price": "39€ — paiement unique",
+    "cta": "Obtenir l'accès",
+    "loading": "Chargement…",
+    "features": {
+      "ritual": "Rituel quotidien complet",
+      "emergency": "Bouton urgence « Ça déborde »",
+      "health": "Espace santé (RDV, médicaments, fiche urgence)",
+      "resources": "Ressources France",
+      "notes": "Notes privées",
+      "badges": "Badges et progression",
+      "journey": "Parcours 4 phases",
+      "lifetime": "Accès à vie — aucun abonnement"
+    }
+  },
+  "common": {
+    "loading": "Chargement…",
+    "error": "Une erreur est survenue",
+    "retry": "Réessayer",
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "close": "Fermer"
+  }
+}

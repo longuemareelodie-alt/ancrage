@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Heart } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import QuickBackLinks from "@/components/QuickBackLinks";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEffect, useState } from "react";
@@ -8,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 const PostFlow = () => {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [isPremium, setIsPremium] = useState(false);
 
   useEffect(() => {
@@ -41,7 +43,7 @@ const PostFlow = () => {
         </motion.span>
 
         <div className="space-y-3">
-          <h1 className="text-2xl font-bold">Tu viens de faire quelque chose pour toi.</h1>
+          <h1 className="text-2xl font-bold">{t("post_flow.title")}</h1>
           <p className="text-sm text-muted-foreground">
             Imagine si tu pouvais te sentir comme ça plus souvent.
           </p>
@@ -50,13 +52,13 @@ const PostFlow = () => {
         <div className="space-y-4">
           <Link
             to="/dashboard"
-            className="flex w-full items-center gap-4 rounded-2xl bg-card p-5 text-left shadow-sm transition-transform hover:scale-[1.02] active:scale-[0.98]"
+            className="flex w-full items-center gap-4 rounded-2xl bg-card p-5 text-start shadow-sm transition-transform hover:scale-[1.02] active:scale-[0.98]"
           >
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-secondary">
               <Heart className="h-6 w-6 text-primary" />
             </div>
             <div>
-              <p className="font-bold">Retour à mon espace</p>
+              <p className="font-bold">{t("post_flow.back_dashboard")}</p>
               <p className="mt-1 text-sm text-muted-foreground">Ton rituel t'attend</p>
             </div>
           </Link>

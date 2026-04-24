@@ -1,6 +1,8 @@
 import { Link, useLocation } from "react-router-dom";
 import { Home, HelpCircle, Sparkles } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 /**
  * Top navigation for public pages.
@@ -22,8 +24,10 @@ const PUBLIC_PATHS = new Set<string>([
   "/unsubscribe",
 ]);
 
+type NavKey = "home" | "faq" | "tool";
+
 type NavItem = {
-  label: string;
+  key: NavKey;
   to: string;
   icon: typeof Home;
   match: (pathname: string, hash: string) => boolean;
@@ -31,19 +35,19 @@ type NavItem = {
 
 const items: NavItem[] = [
   {
-    label: "Accueil",
+    key: "home",
     to: "/",
     icon: Home,
     match: (p, h) => p === "/" && h !== "#faq",
   },
   {
-    label: "FAQ",
+    key: "faq",
     to: "/#faq",
     icon: HelpCircle,
     match: (p, h) => p === "/" && h === "#faq",
   },
   {
-    label: "Accéder à l'outil",
+    key: "tool",
     to: "/emotions",
     icon: Sparkles,
     match: (p) => p.startsWith("/emotions") || p.startsWith("/emotion/"),
@@ -53,19 +57,20 @@ const items: NavItem[] = [
 const TopNav = () => {
   const location = useLocation();
   const [open, setOpen] = useState(false);
+  const { t } = useTranslation();
 
   if (!PUBLIC_PATHS.has(location.pathname)) return null;
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70">
       <nav
-        aria-label="Navigation principale"
+        aria-label={t("nav.main")}
         className="mx-auto flex h-14 w-full max-w-5xl items-center justify-between px-4"
       >
         <Link
           to="/"
           className="text-sm font-semibold tracking-tight"
-          aria-label="Retour à l'accueil"
+          aria-label={t("nav.back_home")}
         >
           Ancrage
         </Link>
@@ -75,7 +80,7 @@ const TopNav = () => {
           {items.map((item) => {
             const active = item.match(location.pathname, location.hash);
             const Icon = item.icon;
-            const isCTA = item.label === "Accéder à l'outil";
+            const isCTA = item.key === "tool";
             return (
               <li key={item.to}>
                 <Link
@@ -93,23 +98,29 @@ const TopNav = () => {
                   ].join(" ")}
                 >
                   <Icon className="h-4 w-4" aria-hidden="true" />
-                  <span>{item.label}</span>
+                  <span>{t(`nav.${item.key}`)}</span>
                 </Link>
               </li>
             );
           })}
+          <li className="ms-1">
+            <LanguageSwitcher />
+          </li>
         </ul>
 
-        {/* Mobile toggle */}
-        <button
-          type="button"
-          onClick={() => setOpen((v) => !v)}
-          aria-expanded={open}
-          aria-controls="topnav-mobile"
-          className="inline-flex items-center rounded-md px-2 py-1 text-sm text-muted-foreground hover:bg-muted hover:text-foreground sm:hidden"
-        >
-          Menu
-        </button>
+        {/* Mobile: language + menu */}
+        <div className="flex items-center gap-2 sm:hidden">
+          <LanguageSwitcher />
+          <button
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            aria-expanded={open}
+            aria-controls="topnav-mobile"
+            className="inline-flex items-center rounded-md px-2 py-1 text-sm text-muted-foreground hover:bg-muted hover:text-foreground"
+          >
+            {t("nav.menu")}
+          </button>
+        </div>
       </nav>
 
       {/* Mobile menu */}
@@ -135,7 +146,7 @@ const TopNav = () => {
                   ].join(" ")}
                 >
                   <Icon className="h-4 w-4" aria-hidden="true" />
-                  {item.label}
+                  {t(`nav.${item.key}`)}
                 </Link>
               </li>
             );

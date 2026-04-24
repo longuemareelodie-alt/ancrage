@@ -1,0 +1,120 @@
+{
+  "nav": {
+    "home": "Home",
+    "faq": "FAQ",
+    "tool": "Open the tool",
+    "menu": "Menu",
+    "main": "Main navigation",
+    "back_home": "Back to home",
+    "back_faq": "Back to FAQ",
+    "language": "Language",
+    "my_space": "My space",
+    "login": "Sign in"
+  },
+  "footer": {
+    "tagline": "A wellbeing tool, not a medical substitute.",
+    "legal": "Legal notice",
+    "privacy": "Privacy",
+    "terms": "Terms"
+  },
+  "faq": {
+    "title": "Frequently asked questions",
+    "intro": "Before you start, here are the answers to the questions I get the most.",
+    "items": {
+      "what_is": {
+        "q": "What exactly is Ancrage?",
+        "a": "A wellbeing tool designed to help your body settle when your nervous system is on alert. Not a therapy, not a diagnosis — just simple, short actions you can do on your own, at your own pace."
+      },
+      "price": {
+        "q": "Is it free or paid?",
+        "a": "You can freely try the emotion screens and the basic ritual without an account. Full access is €39 — a one-time payment, no subscription."
+      },
+      "subscription": {
+        "q": "Is it a subscription?",
+        "a": "No. One-time €39 payment, lifetime access to the paid features available at the time of purchase."
+      },
+      "medical": {
+        "q": "Does it replace medical care or a therapist?",
+        "a": "No, never. Ancrage is a wellbeing tool: it doesn't diagnose and doesn't replace a healthcare professional."
+      },
+      "privacy": {
+        "q": "Is my data private?",
+        "a": "Yes. Your notes and emotional states are securely stored and remain strictly yours. You can export or delete everything from your profile."
+      },
+      "duration": {
+        "q": "How much time does it take per day?",
+        "a": "A few minutes is enough. Most actions take between 1 and 5 minutes."
+      },
+      "devices": {
+        "q": "Which devices does it work on?",
+        "a": "Any recent phone, tablet or computer, straight from your browser. No installation."
+      },
+      "refund": {
+        "q": "Can I get a refund?",
+        "a": "Because digital access is immediate, you waive your withdrawal right at checkout. See the Terms for details."
+      }
+    }
+  },
+  "emotions": {
+    "title": "How do you feel right now?",
+    "subtitle": "Your body can settle now",
+    "hint": "Pick without overthinking",
+    "section_negative": "What's coming up",
+    "section_positive": "What feels better",
+    "list": {
+      "panique": { "label": "I'm panicking", "hook": "Your body is trying to protect you" },
+      "hypervigilance": { "label": "Hypervigilance", "hook": "Your system stayed on alert" },
+      "rumination": { "label": "Rumination", "hook": "Your mind is looking for a way out" },
+      "explosion": { "label": "Explosion", "hook": "The pressure is too much" },
+      "vide": { "label": "Empty", "hook": "Your system shut down to hold on" },
+      "epuisee": { "label": "Exhausted", "hook": "You've given too much" },
+      "calme": { "label": "Calmer", "hook": "You can enjoy this moment" },
+      "apaisee": { "label": "Soothed", "hook": "Keep it inside you" },
+      "fiere": { "label": "Proud of myself", "hook": "You deserve to feel it" }
+    }
+  },
+  "contextual_faq": {
+    "back": "Back to states",
+    "continue": "Open the tool",
+    "close": "Close"
+  },
+  "post_flow": {
+    "title": "You just did something for yourself.",
+    "back_dashboard": "Back to my space",
+    "back_home": "Back to home"
+  },
+  "auth": {
+    "title": "Welcome",
+    "email": "Email",
+    "password": "Password",
+    "submit_login": "Sign in",
+    "submit_signup": "Create an account",
+    "switch_to_signup": "No account yet? Sign up",
+    "switch_to_login": "Already registered? Sign in",
+    "forgot": "Forgot password?"
+  },
+  "paywall": {
+    "title": "Full access to Ancrage",
+    "price": "€39 — one-time payment",
+    "cta": "Get access",
+    "loading": "Loading…",
+    "features": {
+      "ritual": "Full daily ritual",
+      "emergency": "\"It's too much\" emergency button",
+      "health": "Health space (appointments, meds, emergency card)",
+      "resources": "France resources",
+      "notes": "Private notes",
+      "badges": "Badges and progress",
+      "journey": "4-phase journey",
+      "lifetime": "Lifetime access — no subscription"
+    }
+  },
+  "common": {
+    "loading": "Loading…",
+    "error": "Something went wrong",
+    "retry": "Try again",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "close": "Close"
+  }
+}
