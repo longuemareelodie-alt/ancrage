@@ -1,8 +1,13 @@
 import { Link, useLocation } from "react-router-dom";
 import { Home, HelpCircle, Sparkles } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+
+// Dev-only: detect if multiple <TopNav /> instances are mounted simultaneously.
+let __topNavMountCount = 0;
+const __listeners = new Set<(n: number) => void>();
+const __notify = () => __listeners.forEach((l) => l(__topNavMountCount));
 
 /**
  * Top navigation for public pages.
@@ -58,11 +63,41 @@ const TopNav = () => {
   const location = useLocation();
   const [open, setOpen] = useState(false);
   const { t } = useTranslation();
+  const [mountCount, setMountCount] = useState(0);
+
+  useEffect(() => {
+    __topNavMountCount += 1;
+    __notify();
+    const listener = (n: number) => setMountCount(n);
+    __listeners.add(listener);
+    listener(__topNavMountCount);
+    if (__topNavMountCount > 1) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        `[TopNav] ⚠️ ${__topNavMountCount} instances montées simultanément — il ne devrait y en avoir qu'une.`,
+      );
+    }
+    return () => {
+      __topNavMountCount -= 1;
+      __listeners.delete(listener);
+      __notify();
+    };
+  }, []);
 
   if (!PUBLIC_PATHS.has(location.pathname)) return null;
 
+  const showDuplicateBadge = import.meta.env.DEV && mountCount > 1;
+
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70">
+      {showDuplicateBadge && (
+        <div
+          role="alert"
+          className="flex items-center justify-center gap-2 bg-destructive px-3 py-1 text-[11px] font-semibold text-destructive-foreground"
+        >
+          ⚠️ DEV : {mountCount} barres TopNav montées simultanément
+        </div>
+      )}
       <nav
         aria-label={t("nav.main")}
         className="mx-auto flex h-14 w-full max-w-5xl items-center justify-between px-4"
