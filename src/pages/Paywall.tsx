@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Lock, Check } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
+import Breadcrumb from "@/components/Breadcrumb";
 
 const Paywall = () => {
   const { user } = useAuth();

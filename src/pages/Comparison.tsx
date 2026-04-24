@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Check, Lock } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
+import Breadcrumb from "@/components/Breadcrumb";
 
 const Comparison = () => {
   const { user } = useAuth();
