@@ -66,7 +66,7 @@ const CGV = () => (
             </p>
           </section>
 
-          <section>
+          <section id="editeur-contact" className="scroll-mt-24">
             <h2 className="text-lg font-semibold text-foreground">2. Éditeur et contact</h2>
             <p>
               Le Service est édité par Digital Maman Libre. Les informations
@@ -80,7 +80,7 @@ const CGV = () => (
             </p>
           </section>
 
-          <section>
+          <section id="description" className="scroll-mt-24">
             <h2 className="text-lg font-semibold text-foreground">3. Description du Service</h2>
             <p>
               Le Service propose des outils numériques d'accompagnement au
@@ -94,7 +94,7 @@ const CGV = () => (
             </p>
           </section>
 
-          <section>
+          <section id="capacite-juridique" className="scroll-mt-24">
             <h2 className="text-lg font-semibold text-foreground">4. Capacité juridique</h2>
             <p>
               Le client déclare être majeur (18 ans révolus) et disposer de la
@@ -103,7 +103,7 @@ const CGV = () => (
             </p>
           </section>
 
-          <section>
+          <section id="prix" className="scroll-mt-24">
             <h2 className="text-lg font-semibold text-foreground">5. Prix</h2>
             <p>
               L'accès complet au Service est proposé sous forme d'un{" "}
@@ -121,7 +121,7 @@ const CGV = () => (
             </p>
           </section>
 
-          <section>
+          <section id="modalites-paiement" className="scroll-mt-24">
             <h2 className="text-lg font-semibold text-foreground">6. Modalités de paiement</h2>
             <p>
               Le paiement s'effectue en ligne, en une seule fois, par carte
@@ -133,7 +133,7 @@ const CGV = () => (
             </p>
           </section>
 
-          <section>
+          <section id="livraison" className="scroll-mt-24">
             <h2 className="text-lg font-semibold text-foreground">7. Livraison du contenu numérique</h2>
             <p>
               L'accès aux fonctionnalités payantes est activé{" "}
@@ -143,7 +143,7 @@ const CGV = () => (
             </p>
           </section>
 
-          <section>
+          <section id="retractation" className="scroll-mt-24">
             <h2 className="text-lg font-semibold text-foreground">
               8. Droit de rétractation — renonciation expresse
             </h2>
@@ -164,7 +164,7 @@ const CGV = () => (
             </p>
           </section>
 
-          <section>
+          <section id="remboursement-garanties" className="scroll-mt-24">
             <h2 className="text-lg font-semibold text-foreground">
               9. Absence de remboursement commercial — garanties légales
             </h2>
@@ -196,7 +196,7 @@ const CGV = () => (
             </p>
           </section>
 
-          <section>
+          <section id="compte-utilisateur" className="scroll-mt-24">
             <h2 className="text-lg font-semibold text-foreground">10. Compte utilisateur</h2>
             <p>
               Le client est responsable de la confidentialité de ses
@@ -205,7 +205,7 @@ const CGV = () => (
             </p>
           </section>
 
-          <section>
+          <section id="propriete-intellectuelle" className="scroll-mt-24">
             <h2 className="text-lg font-semibold text-foreground">11. Propriété intellectuelle</h2>
             <p>
               L'ensemble des contenus du Service (textes, visuels, parcours,
@@ -216,7 +216,7 @@ const CGV = () => (
             </p>
           </section>
 
-          <section>
+          <section id="responsabilite" className="scroll-mt-24">
             <h2 className="text-lg font-semibold text-foreground">12. Responsabilité</h2>
             <p>
               Le Service est fourni dans la limite des moyens techniques
@@ -230,7 +230,7 @@ const CGV = () => (
             </p>
           </section>
 
-          <section>
+          <section id="donnees-personnelles" className="scroll-mt-24">
             <h2 className="text-lg font-semibold text-foreground">13. Données personnelles</h2>
             <p>
               Les traitements de données personnelles mis en œuvre dans le
@@ -246,7 +246,7 @@ const CGV = () => (
             </p>
           </section>
 
-          <section>
+          <section id="modification-cgv" className="scroll-mt-24">
             <h2 className="text-lg font-semibold text-foreground">14. Modification des CGV</h2>
             <p>
               L'éditeur se réserve le droit de modifier les présentes CGV à
@@ -255,7 +255,7 @@ const CGV = () => (
             </p>
           </section>
 
-          <section>
+          <section id="mediation" className="scroll-mt-24">
             <h2 className="text-lg font-semibold text-foreground">
               15. Médiation de la consommation
             </h2>
@@ -287,7 +287,7 @@ const CGV = () => (
             </p>
           </section>
 
-          <section>
+          <section id="contact-support" className="scroll-mt-24">
             <h2 className="text-lg font-semibold text-foreground">
               16. Contact & support
             </h2>
@@ -338,7 +338,7 @@ const CGV = () => (
             </p>
           </section>
 
-          <section>
+          <section id="droit-juridiction" className="scroll-mt-24">
             <h2 className="text-lg font-semibold text-foreground">
               17. Droit applicable et juridiction compétente
             </h2>
