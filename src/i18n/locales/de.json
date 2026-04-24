@@ -7,15 +7,72 @@
     "main": "Hauptnavigation",
     "back_home": "Zurück zur Startseite",
     "back_faq": "Zurück zur FAQ",
+    "back_dashboard": "Zurück zum Dashboard",
     "language": "Sprache",
     "my_space": "Mein Bereich",
     "login": "Anmelden"
   },
   "footer": {
-    "tagline": "Ein Wohlfühl-Tool, kein Ersatz für medizinische Versorgung.",
+    "tagline": "Dieses Tool ersetzt keine medizinische, juristische oder psychologische Begleitung.",
     "legal": "Impressum",
     "privacy": "Datenschutz",
     "terms": "AGB"
+  },
+  "home": {
+    "hero": {
+      "line1": "Du denkst zu viel nach.",
+      "line2": "Du erschöpfst dich, ohne zu verstehen.",
+      "line3": "Und dein Körper kommt nicht runter.",
+      "rea1": "Es liegt nicht an dir.",
+      "rea2": "👉 Dein Nervensystem ist im Alarm­modus.",
+      "cta": "Kostenlos ausprobieren"
+    },
+    "mechanism": {
+      "title": "Es ist kein Willens­problem",
+      "subtitle": "👉 Du steckst in dauer­haftem Alarm",
+      "p1": "Dein Gehirn versucht, dich zu schützen",
+      "p2": "Aber es weiß nicht, dass es vorbei ist"
+    },
+    "how": {
+      "title": "Hier musst du nicht denken",
+      "subtitle": "👉 du wirkst direkt auf deinen Körper",
+      "step1": "Du benennst deinen Zustand",
+      "step2": "Du machst eine einfache Übung",
+      "step3": "Dein System kommt runter"
+    },
+    "urgency": {
+      "title": "Je länger du wartest…",
+      "subtitle": "desto länger bleibt dein Körper in diesem Zustand",
+      "p1": "👉 dein System gewöhnt sich an den Alarm",
+      "p2": "👉 es wird zu deinem „Normal“",
+      "p3": "Und es geht nicht von allein weg."
+    },
+    "projection": {
+      "title": "In wenigen Minuten:",
+      "i1": "dein Körper kommt runter",
+      "i2": "dein Kopf wird langsamer",
+      "i3": "du atmest endlich"
+    },
+    "social": {
+      "p1": "Du bist nicht die Einzige, die das spürt.",
+      "p2": "Frauen nutzen Ancrage genau für solche Momente.",
+      "p3": "Ich habe das gebaut, weil ich es selbst gebraucht habe."
+    },
+    "price": {
+      "access": "Zugang",
+      "amount": "39 €",
+      "subtitle": "Einmalige Zahlung · Lebenslanger Zugang",
+      "cta": "Ich will mich besser fühlen — 39 €",
+      "note": "Einmalige Zahlung. Lebenslanger Zugang. 100 % sicher über Mollie.",
+      "secure": "Zahlung 100 % sicher über Mollie"
+    },
+    "final": {
+      "title": "Du kannst jetzt anfangen",
+      "p1": "👉 ohne dich zu rechtfertigen",
+      "p2": "👉 ohne dich zu zwingen",
+      "p3": "👉 in deinem Tempo",
+      "cta": "Kostenlos ausprobieren"
+    }
   },
   "faq": {
     "title": "Häufige Fragen",
@@ -39,7 +96,7 @@
       },
       "privacy": {
         "q": "Sind meine Daten privat?",
-        "a": "Ja. Deine Notizen und Emotionszustände werden sicher gespeichert und gehören dir allein. Du kannst alles in deinem Profil exportieren oder löschen."
+        "a": "Ja. Deine Notizen und Emotionszustände werden sicher gespeichert und gehören dir allein. Du kannst alles in deinem Profil exportieren oder löschen. Details in der <lnk>Datenschutz­erklärung</lnk>."
       },
       "duration": {
         "q": "Wie viel Zeit braucht es pro Tag?",
@@ -51,7 +108,7 @@
       },
       "refund": {
         "q": "Kann ich eine Rückerstattung erhalten?",
-        "a": "Da der digitale Zugang sofort erfolgt, verzichtest du beim Kauf auf dein Widerrufsrecht. Details in den AGB."
+        "a": "Da der digitale Zugang sofort erfolgt, verzichtest du beim Kauf auf dein Widerrufsrecht. Details in den <lnk>AGB</lnk>."
       }
     }
   },
@@ -73,6 +130,46 @@
       "fiere": { "label": "Stolz auf mich", "hook": "Du verdienst es, das zu spüren" }
     }
   },
+  "emotion_detail": {
+    "not_found": "Emotion nicht gefunden",
+    "intro1": "Dein Gehirn versucht, dich zu schützen",
+    "intro2": "Aber gerade … schießt es übers Ziel hinaus",
+    "intro3": "👉 Was du spürst, ist normal",
+    "intro4": "Du bist gerade nicht in Gefahr",
+    "intro5": "Wir bringen es einfach runter",
+    "do_with_me": "Mach das jetzt mit mir",
+    "duration_30s": "(30 Sekunden)",
+    "after_title": "Du hast deinen Körper gerade runtergebracht",
+    "after_p1": "Auch nur ein bisschen → das ist schon eine Veränderung",
+    "after_p2": "👉 und das verändert schon alles",
+    "next": "Und jetzt?",
+    "data": {
+      "panique": { "title": "Du gerätst in Panik", "validation": "Dein Körper versucht, dich zu schützen.", "free": ["Schau dich um", "Benenne 5 Gegenstände"], "locked": ["Lege eine Hand auf dein Herz", "Atme langsam ein", "Atme länger aus"] },
+      "hypervigilance": { "title": "Dein Körper ist hyperwachsam", "validation": "Dein System ist in Alarm geblieben.", "free": ["Schau auf 3 Dinge", "Höre auf 2 Geräusche"], "locked": ["Berühre einen Gegenstand", "Lass die Schultern fallen", "Atme langsam"] },
+      "rumination": { "title": "Dein Kopf dreht sich im Kreis", "validation": "Dein Gehirn sucht einen Ausweg.", "free": ["Schau auf einen festen Punkt", "Atme langsam"], "locked": ["Sag innerlich „Stopp“"] },
+      "explosion": { "title": "Der Druck ist zu groß", "validation": "Der Druck ist zu groß.", "free": ["Balle die Fäuste", "Lass los"], "locked": ["Drücke die Füße fest auf den Boden", "Atme tief"] },
+      "vide": { "title": "Du fühlst dich leer", "validation": "Dein System hat dichtgemacht, um durchzuhalten.", "free": ["Bewege deine Hände", "Berühre eine Oberfläche"], "locked": ["Trinke Wasser", "Atme"] },
+      "epuisee": { "title": "Du bist erschöpft", "validation": "Dein Nervensystem hat zu viel gegeben.", "free": ["Lege deine Hand aufs Herz", "Spüre deinen Atem"], "locked": ["Schließe die Augen", "Entspanne jeden Muskel", "Bleibe 1 Minute"] },
+      "calme": { "title": "Du fühlst dich ruhiger", "validation": "Dein Nervensystem kommt runter.", "free": ["Schließe die Augen", "Atme 3-mal langsam"], "locked": ["Lächle leicht", "Genieße diesen Moment"] },
+      "apaisee": { "title": "Du fühlst dich beruhigt", "validation": "Dein Körper hat einen sicheren Raum gefunden.", "free": ["Atme tief ein", "Denke an etwas Positives"], "locked": ["Atme dankbar aus", "Bleibe in diesem Moment"] },
+      "fiere": { "title": "Du bist stolz auf dich", "validation": "Dein System erkennt, dass du etwas Schweres geschafft hast.", "free": ["Lächle", "Lege deine Hand aufs Herz"], "locked": ["Sag „bravo“", "Feiere im Stillen"] },
+      "anxieuse": { "title": "Du bist ängstlich", "validation": "Dein Nervensystem ist in Alarm.", "free": ["Atme 4 Sekunden ein", "Atme 6 Sekunden aus"], "locked": ["Wiederhole 5-mal", "Stelle die Füße fest auf den Boden", "Spüre den Kontakt"] },
+      "oppressee": { "title": "Du fühlst dich bedrückt", "validation": "Dein Körper trägt eine Last, die er nicht mehr halten kann.", "free": ["Öffne die Arme weit", "Strecke dich"], "locked": ["Atme 5-mal tief", "Lass die Schultern fallen"] },
+      "submergee": { "title": "Du fühlst dich überfordert", "validation": "Zu viele Infos, zu viel Last.", "free": ["Stelle beide Füße auf den Boden", "Benenne 3 Dinge, die du siehst"], "locked": ["Atme langsam", "Schließe die Augen 30 Sekunden"] },
+      "triste": { "title": "Du bist traurig", "validation": "Traurigkeit ist eine gesunde Emotion.", "free": ["Verschränke die Arme über der Brust", "Drücke sanft"], "locked": ["Atme", "Lass die Emotion vorbeiziehen"] },
+      "colere": { "title": "Du fühlst Wut", "validation": "Wut schützt eine Verletzung.", "free": ["Balle die Fäuste fest 5 Sekunden", "Lass los"], "locked": ["Wiederhole 5-mal", "Atme lang aus"] },
+      "perdue": { "title": "Du fühlst dich verloren", "validation": "Dein Gehirn sucht eine Richtung, aber es ist zu viel Lärm.", "free": ["Schau auf einen festen Punkt", "Atme langsam"], "locked": ["Schreibe einen Gedanken auf", "Lege das Handy weg"] },
+      "surmenage": { "title": "Du bist mental überlastet", "validation": "Dein Kopf dreht sich im Kreis.", "free": ["Notiere 3 kreisende Gedanken", "Lege das Handy weg"], "locked": ["Atme 5-mal", "Schließe die Augen"] },
+      "survie": { "title": "Du bist im Überlebensmodus", "validation": "Dein Nervensystem steckt im Dauer-Alarm.", "free": ["Atme 3 Sekunden ein", "Atme 8 Sekunden aus"], "locked": ["Wiederhole 4-mal", "Entspanne den ganzen Körper"] },
+      "stable": { "title": "Du fühlst dich stabil", "validation": "Dein Nervensystem ist zentriert.", "free": ["Stelle die Füße fest auf", "Spüre deinen Körper"], "locked": ["Sag „ich bin hier“", "Bleibe einen Moment"] },
+      "mieux": { "title": "Du fühlst dich etwas besser", "validation": "Auch ein bisschen besser ist ein riesiges Signal.", "free": ["Sag dir „mir geht es besser“", "Atme"], "locked": ["Notiere diesen Fortschritt", "Lächle"] },
+      "soulagee": { "title": "Du fühlst Erleichterung", "validation": "Erleichterung kommt, wenn der Druck nachlässt.", "free": ["Ein großer Seufzer", "Lass alles raus"], "locked": ["Wiederhole es", "Atme tief"] },
+      "claire": { "title": "Du fühlst dich klarer", "validation": "Mentale Klarheit kehrt zurück.", "free": ["Notiere eine Aufgabe für heute", "Nur eine"], "locked": ["Atme", "Verankere diese Klarheit"] },
+      "securite": { "title": "Du fühlst dich sicher", "validation": "Sicherheit zu fühlen, ist das tiefste Regulationssignal.", "free": ["Tu nichts", "Atme einfach"], "locked": ["Genieße", "Bleibe einen Moment"] },
+      "connectee": { "title": "Du fühlst dich mit dir verbunden", "validation": "Du hörst deine Bedürfnisse, ohne zu urteilen.", "free": ["Scanne deinen Körper von Kopf bis Fuß", "Wo fühlst du Wohlsein?"], "locked": ["Bleibe bei diesem Gefühl", "Atme"] },
+      "presente": { "title": "Du bist präsent", "validation": "Präsent zu sein ist das Gegenteil von Dissoziation.", "free": ["Benenne 3 schöne Dinge um dich", "Lächle"], "locked": ["Atme", "Genieße den Moment"] }
+    }
+  },
   "contextual_faq": {
     "back": "Zurück zu den Zuständen",
     "continue": "Zum Tool",
@@ -80,24 +177,53 @@
   },
   "post_flow": {
     "title": "Du hast gerade etwas für dich getan.",
+    "subtitle": "Stell dir vor, du könntest dich öfter so fühlen.",
     "back_dashboard": "Zurück zu meinem Bereich",
-    "back_home": "Zurück zur Startseite"
+    "ritual_waiting": "Dein Ritual wartet auf dich",
+    "go_further": "Weitergehen",
+    "go_further_sub": "Jeden Tag begleitet werden"
   },
   "auth": {
-    "title": "Willkommen",
+    "title_login": "Willkommen zurück 💛",
+    "title_forgot": "Passwort vergessen",
+    "subtitle_login": "Melde dich an, um deinen Weg fortzusetzen",
+    "subtitle_forgot": "Gib deine E-Mail ein, um einen Reset-Link zu erhalten",
     "email": "E-Mail",
+    "email_placeholder": "du@email.com",
     "password": "Passwort",
     "submit_login": "Anmelden",
-    "submit_signup": "Konto erstellen",
-    "switch_to_signup": "Noch kein Konto? Registrieren",
-    "switch_to_login": "Schon registriert? Anmelden",
-    "forgot": "Passwort vergessen?"
+    "submit_send_link": "Link senden",
+    "loading_dots": "...",
+    "forgot": "Passwort vergessen?",
+    "back_to_login": "Zurück zur Anmeldung",
+    "or": "oder",
+    "google": "Mit Google fortfahren",
+    "google_error": "Google-Fehler",
+    "reset_sent": "Eine Reset-E-Mail wurde gesendet 💌",
+    "generic_error": "Ein Fehler ist aufgetreten",
+    "legal_intro": "Mit dem Erstellen eines Kontos oder der Anmeldung akzeptierst du unsere",
+    "legal_cgv": "AGB",
+    "legal_and": ", unsere",
+    "legal_privacy": "Datenschutz­erklärung",
+    "legal_and2": " und unser",
+    "legal_legal": "Impressum"
   },
   "paywall": {
-    "title": "Voller Zugang zu Ancrage",
-    "price": "39 € — einmalige Zahlung",
-    "cta": "Zugang freischalten",
+    "breadcrumb": "Voller Zugang",
+    "header_title_l1": "Ein einziger Zugang.",
+    "header_title_l2": "Für dein ganzes Leben.",
+    "header_p1": "Du hast gerade etwas für dich getan.",
+    "header_p2": "Stell dir vor, du könntest dich öfter so fühlen.",
+    "badge": "LEBENSLANGER ZUGANG",
+    "brand": "ANCRAGE",
+    "amount": "39 €",
+    "amount_note": "Einmalige Zahlung · Lebenslanger Zugang",
+    "cta": "Ich will mich besser fühlen — 39 €",
     "loading": "Lädt…",
+    "secure_short": "Einmalige Zahlung. Lebenslanger Zugang. 100 % sicher über Mollie.",
+    "secure_long": "Zahlung 100 % sicher über Mollie",
+    "legal": "Mit Klick auf „Ich will mich besser fühlen — 39 €“ akzeptiere ich die <cgv>AGB</cgv> und bestätige, dass der Zugang zum digitalen Inhalt sofort nach Zahlung beginnt, was den ausdrücklichen Verzicht auf mein Widerrufsrecht bedeutet. Siehe auch die <privacy>Datenschutz­erklärung</privacy> und das <legal>Impressum</legal>.",
+    "continue_alone": "Allein weitermachen",
     "features": {
       "ritual": "Vollständiges Tagesritual",
       "emergency": "Notfall-Knopf „Es wird zu viel“",
@@ -108,6 +234,25 @@
       "journey": "4-Phasen-Reise",
       "lifetime": "Lebenslanger Zugang — kein Abo"
     }
+  },
+  "emergency": {
+    "today_count": "{{remaining}} / {{limit}} heute",
+    "blocked_title": "Du hast deine 3 Nutzungen heute aufgebraucht",
+    "blocked_text": "Mit deinem Einmal-Zugang kannst du den Notfall-Knopf 3-mal pro Tag öffnen. Es kommt immer runter — komm morgen wieder oder wechsle ins Abo für unbegrenzten Zugang.",
+    "blocked_cta": "Ins Abo wechseln",
+    "back_dashboard": "Zurück zu meinem Bereich",
+    "breathe_title": "Wir werden zusammen langsamer.",
+    "breathe_subtitle": "Einatmen … ausatmen … sanft.",
+    "breathe_start": "Ich atme",
+    "breathe_again": "Nochmal… ({{count}}/4)",
+    "message_title": "Ich bin da.",
+    "message_subtitle": "Wir werden zusammen langsamer. Du musst nichts weiter tun.",
+    "message_quote": "Es kommt runter. Es kommt immer runter.",
+    "message_cta": "Es geht ein bisschen besser",
+    "done_title": "Du hast gerade etwas für dich getan.",
+    "done_subtitle": "Stell dir vor, du könntest dich öfter so fühlen.",
+    "done_back": "Zurück zu meinem Bereich",
+    "done_upgrade": "Weitergehen"
   },
   "common": {
     "loading": "Lädt…",
