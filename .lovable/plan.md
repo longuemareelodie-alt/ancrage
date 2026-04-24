@@ -1,66 +1,43 @@
-# Améliorer la lecture des CGV — table des matières + retour en haut
+# Renforcer la chronologie d'activation et la preuve dans les CGV
 
 ## Objectif
 
-Rendre la page `/cgv` (17 sections, ~327 lignes) navigable rapidement :
-- une **table des matières** cliquable en haut de page, qui amène à la section correspondante via une ancre ;
-- un **bouton flottant « ↑ Haut de page »** qui apparaît après quelques centaines de pixels de scroll.
+Bétonner juridiquement la **renonciation au droit de rétractation** (art. L221-28 13° C. conso) en explicitant, dans les CGV, la **chronologie d'exécution** et les **éléments de preuve** (horodatages serveur + e-mail de confirmation Mollie).
 
 ## Ce qui change pour l'utilisateur
 
-- En arrivant sur la page, juste sous le titre et la date de mise à jour, un encadré « Sommaire » liste les 17 sections. Un clic fait défiler en douceur jusqu'à la section visée.
-- Pendant la lecture, un petit bouton rond apparaît en bas à droite dès que l'on a scrollé. Un clic ramène en haut de la page (avec un défilement fluide).
-- Sur mobile, le sommaire reste lisible (liste compacte sur une colonne), sur desktop il s'affiche sur deux colonnes pour limiter la hauteur.
-- L'URL reflète la section consultée (ex. `/cgv#contact-support`), ce qui permet de partager un lien direct vers une section.
+Deux sections des CGV (`/cgv`) sont enrichies, sans changement de numérotation ni de structure visuelle (mêmes classes typographiques, sommaire et ancres conservés) :
+
+- **Article 7 — Livraison du contenu numérique → « Livraison du contenu numérique — chronologie »**
+  Devient une chronologie en 4 étapes horodatées :
+  1. **T0** — validation : case CGV + renonciation cochée, paiement validé sur Mollie.
+  2. **T0 + qq sec.** — webhook Mollie confirmant la transaction (horodaté).
+  3. **T0 + immédiat** — activation automatique de l'accès côté serveur (horodatée).
+  4. **T0 + immédiat** — envoi automatique de l'**e-mail de confirmation** mentionnant date/heure, montant, référence Mollie et rappel de la renonciation : valeur de **justificatif d'achat** et de **preuve de l'exécution immédiate**.
+  
+  Ajout d'un paragraphe sur la **conservation des éléments probatoires** (horodatage Mollie, horodatage activation, copie technique de l'e-mail) communicables sur demande.
+
+- **Article 8 — Droit de rétractation — renonciation expresse**
+  - Rappel renforcé du fondement légal (L221-28 13°) : la rétractation **ne peut être exercée**.
+  - Bloc citation (`<blockquote>`) reproduisant **mot pour mot la mention de la case à cocher** au paiement, avec accord préalable exprès + renonciation expresse.
+  - Liste à puces démontrant la **chaîne probante** : case cochée AVANT paiement → exécution démarre immédiatement (horodatée) → e-mail de confirmation prouvant la date/heure du début d'exécution.
+  - Conclusion explicite : dès activation, le client **ne dispose plus** du droit de rétractation.
 
 ## Détails techniques
 
-### 1. Structure des sections (`src/pages/CGV.tsx`)
+- Fichier modifié : `src/pages/CGV.tsx` uniquement.
+- Bornes de l'édition : lignes 136 → 165 (sections 7 et 8 actuelles).
+- Aucun nouvel `id`, aucun changement de numérotation : le sommaire (TOC) déjà en place reste valide. Les ancres `#livraison` et `#retractation` continuent de fonctionner.
+- Mêmes classes Tailwind que le reste de la page (`prose`, `text-lg font-semibold`, `list-disc/list-decimal pl-5 space-y-1`).
+- Ajout d'un seul élément stylistique nouveau, déjà courant en prose : `<blockquote className="border-l-2 border-primary/40 pl-4 italic text-foreground/80">` pour mettre en avant la formule exacte de la case à cocher.
+- Aucune modification de logique applicative, de routes, ou d'autres pages.
 
-- Extraire la liste des 17 sections dans une constante `sections` en haut du fichier :
-  ```ts
-  const sections = [
-    { id: "objet", title: "1. Objet" },
-    { id: "editeur-contact", title: "2. Éditeur et contact" },
-    // … jusqu'à 17. Droit applicable et juridiction compétente
-  ];
-  ```
-- Ajouter `id={section.id}` sur chaque balise `<section>` existante + `scroll-mt-24` (Tailwind) pour compenser tout offset visuel lors d'un saut d'ancre.
-- Conserver les classes typographiques actuelles (cohérence avec Mentions légales déjà alignée).
+## Cohérence avec le reste du produit
 
-### 2. Composant Table des matières (inline dans `CGV.tsx`)
-
-- Encadré `rounded-xl border border-border bg-card/50 p-4 md:p-5 mb-8`.
-- Titre « Sommaire » (`text-sm font-semibold text-foreground mb-3`).
-- Liste `<ol>` en `grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1.5 text-sm`.
-- Chaque item : `<a href={`#${id}`} className="text-muted-foreground hover:text-primary hover:underline transition-colors">`.
-- Cliquer sur un lien laisse le navigateur gérer l'ancre native ; le défilement fluide est obtenu via CSS global `html { scroll-behavior: smooth; }` (à ajouter dans `src/index.css` s'il n'y est pas déjà).
-
-### 3. Bouton « Retour en haut »
-
-- Nouveau composant léger `src/components/BackToTop.tsx` (réutilisable) :
-  - State `visible` mis à jour via un listener `scroll` passif.
-  - Apparaît dès `window.scrollY > 400`.
-  - Bouton rond `fixed bottom-6 right-6 z-40 size-11 rounded-full bg-primary text-primary-foreground shadow-lg hover:scale-105 transition-transform`.
-  - Icône `ArrowUp` de `lucide-react`.
-  - `aria-label="Retour en haut de page"`.
-  - `onClick` : `window.scrollTo({ top: 0, behavior: "smooth" })`.
-  - Respect de `prefers-reduced-motion` : si actif, `behavior: "auto"`.
-- Importé et monté dans `CGV.tsx` (et réutilisable plus tard sur `MentionsLegales` / `Confidentialite` si souhaité).
-
-### 4. Accessibilité & perfs
-
-- Liens ancres = navigation native, fonctionne sans JS.
-- `scroll-behavior: smooth` global, désactivé automatiquement via `@media (prefers-reduced-motion: reduce)` dans `index.css`.
-- Listener `scroll` en `{ passive: true }` pour ne pas bloquer le scroll.
-
-## Fichiers touchés
-
-- `src/pages/CGV.tsx` — ajout des `id`, du sommaire, import du bouton.
-- `src/components/BackToTop.tsx` — nouveau composant.
-- `src/index.css` — ajout de `html { scroll-behavior: smooth; }` + override `prefers-reduced-motion` (si pas déjà présent).
+- La **case à cocher** mentionnée existe déjà dans le tunnel de paiement (`Paywall.tsx`) sous forme de mention sous le bouton « 39€ ». Le texte cité dans le `<blockquote>` reprend exactement la même formulation pour garantir la cohérence juridique entre la promesse d'UI et les CGV.
+- L'**e-mail de confirmation** est cohérent avec le flux Mollie déjà en place (`useMolliePayment` + edge function). Aucun changement backend nécessaire dans cette itération : on ne fait qu'**affirmer juridiquement** ce que le système fait déjà.
 
 ## Hors-scope
 
-- Pas de mise en surbrillance dynamique de la section active dans le sommaire (scroll-spy) — non demandé, ajout possible plus tard.
-- Pas d'application au sommaire de Mentions légales / Confidentialité dans cette itération (peut être fait ensuite avec le même composant).
+- Pas de modification de l'edge function Mollie ni du template de l'e-mail de confirmation. Si le contenu actuel de l'e-mail ne mentionne pas explicitement la renonciation à la rétractation, ce sera l'objet d'une itération séparée (le plan peut l'inclure si tu le souhaites).
+- Pas de modification de la case à cocher du Paywall (déjà alignée sur la formulation citée).
