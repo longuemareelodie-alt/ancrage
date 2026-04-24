@@ -9,7 +9,7 @@ const MentionsLegales = () => (
         <h1 className="text-2xl md:text-3xl font-bold mb-2 text-foreground">
           Mentions légales
         </h1>
-        <p className="text-sm text-muted-foreground mb-8">
+        <p className="text-sm text-muted-foreground mb-6">
           Dernière mise à jour : {new Date().toLocaleDateString("fr-FR")}
         </p>
 
