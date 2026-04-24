@@ -11,6 +11,7 @@ import SubscriptionRoute from "@/components/SubscriptionRoute";
 import PaidRoute from "@/components/PaidRoute";
 import PageTransition from "@/components/PageTransition";
 import BottomNav from "@/components/BottomNav";
+import TopNav from "@/components/TopNav";
 import ScrollToHash from "@/components/ScrollToHash";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
@@ -50,6 +51,7 @@ const AnimatedRoutes = () => {
   return (
     <AnimatePresence mode="wait">
       <ScrollToHash />
+      <TopNav />
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<PageTransition><Index /></PageTransition>} />
         <Route path="/dashboard" element={<ProtectedRoute><PageTransition><Dashboard /></PageTransition></ProtectedRoute>} />
