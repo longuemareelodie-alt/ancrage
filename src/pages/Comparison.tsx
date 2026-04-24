@@ -88,6 +88,7 @@ const Comparison = () => {
           </div>
         </div>
       </motion.div>
+      </div>
     </div>
   );
 };
