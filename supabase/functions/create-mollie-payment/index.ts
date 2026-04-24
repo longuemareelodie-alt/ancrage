@@ -60,7 +60,7 @@ Deno.serve(async (req) => {
 
     // Create Mollie payment with user metadata
     const molliePayload = {
-      amount: { currency: "EUR", value: "29.00" },
+      amount: { currency: "EUR", value: "39.00" },
       description: "ANCRAGE — Accès Premium",
       redirectUrl,
       webhookUrl,
