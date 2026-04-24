@@ -144,8 +144,8 @@ const Dashboard = () => {
             </motion.div>
           )}
 
-          {/* History link for subscribers only */}
-          {planType === "subscription" && (
+          {/* History link for paying users */}
+          {(planType === "subscription" || planType === "lifetime") && (
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
@@ -160,26 +160,6 @@ const Dashboard = () => {
                   <p className="text-sm font-bold">📊 Mon historique</p>
                   <p className="text-xs text-muted-foreground">Tendances sur 30 jours</p>
                 </div>
-              </Link>
-            </motion.div>
-          )}
-
-          {/* Upsell for lifetime (29€) users → upgrade to subscription */}
-          {planType === "lifetime" && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              className="rounded-2xl bg-card p-5 text-center shadow-sm space-y-3 border border-primary/20"
-            >
-              <p className="text-sm font-medium">
-                Débloque l'historique, les messages quotidiens et les sections Comprendre & Avancer.
-              </p>
-              <Link
-                to="/paywall?upgrade=subscription"
-                className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25"
-              >
-                Passer à l'abonnement
               </Link>
             </motion.div>
           )}

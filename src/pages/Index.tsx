@@ -147,52 +147,34 @@ const Index = () => {
           <p className="text-sm font-medium text-muted-foreground">Accéder à</p>
           <p className="mt-1 text-2xl font-bold text-primary">ANCRAGE</p>
 
-          {/* Premium subscription */}
           <div className="mt-4 rounded-xl bg-primary/5 border border-primary/10 p-4 space-y-2">
-            <p className="text-2xl font-bold">9€<span className="text-sm font-normal text-muted-foreground">/mois</span></p>
-            <p className="text-xs text-muted-foreground">ou 59€/an · Annulable à tout moment</p>
-            <div className="space-y-1 text-sm text-muted-foreground">
-              <p>✔ Accompagnement quotidien</p>
-              <p>✔ Messages personnalisés</p>
-              <p>✔ Suivi émotionnel</p>
+            <p className="text-3xl font-bold">39€</p>
+            <p className="text-xs text-muted-foreground">Paiement unique · Accès à vie</p>
+            <div className="space-y-1 text-sm text-muted-foreground text-left pt-2">
+              <p>✔ Rituel quotidien complet</p>
+              <p>✔ Bouton urgence “Ça déborde”</p>
+              <p>✔ Espace santé (RDV, médicaments, fiche urgence)</p>
+              <p>✔ Ressources France</p>
+              <p>✔ Notes privées</p>
+              <p>✔ Badges et progression</p>
+              <p>✔ Parcours 4 phases</p>
+              <p>✔ Accès à vie — aucun abonnement</p>
             </div>
           </div>
 
           <div className="mt-4">
-            <CTAButton to="/paywall">Je veux me sentir mieux</CTAButton>
+            <CTAButton to="#" onClick={handlePayment} loading={paymentLoading}>
+              Je veux me sentir mieux — 39€
+            </CTAButton>
           </div>
 
-          {/* One-time */}
-          <div className="mt-4 pt-4 border-t border-border">
-            <p className="text-lg font-bold">29€</p>
-            <div className="mt-2 space-y-1 text-sm text-muted-foreground">
-              <p>✔ Accès immédiat</p>
-              <p>✔ Utilisable à vie</p>
-              <p>✔ Aucun abonnement</p>
-            </div>
-            <div className="mt-3">
-              <CTAButton to="#" onClick={handlePayment} loading={paymentLoading} variant="secondary">Accès unique — 29€</CTAButton>
-            </div>
-          </div>
+          <p className="mt-3 text-xs text-muted-foreground">
+            Paiement unique. Accès à vie. 100% sécurisé via Mollie.
+          </p>
 
-          <div className="mt-4 flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
+          <div className="mt-3 flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
             <Lock className="h-3.5 w-3.5" />
             <span>Paiement 100% sécurisé via Mollie</span>
-          </div>
-        </div>
-      </SectionBlock>
-
-      {/* RASSURANCE FINALE */}
-      <SectionBlock>
-        <div className="space-y-4 text-center">
-          <p className="font-semibold">Tu peux commencer maintenant</p>
-          <div className="space-y-1 text-sm text-muted-foreground">
-            <p>👉 sans te justifier</p>
-            <p>👉 sans te forcer</p>
-            <p>👉 à ton rythme</p>
-          </div>
-          <div className="mt-4">
-            <CTAButton to="/emotions">Essayer gratuitement</CTAButton>
           </div>
         </div>
       </SectionBlock>
