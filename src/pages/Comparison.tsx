@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Check, Heart, Lock } from "lucide-react";
+import { Check, Lock } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
 
@@ -16,78 +16,63 @@ const Comparison = () => {
     startPayment();
   };
 
+  const features = [
+    "Rituel quotidien complet",
+    "Bouton urgence \u201CÇa déborde\u201D",
+    "Espace santé (RDV, médicaments, fiche urgence)",
+    "Ressources France",
+    "Notes privées",
+    "Badges et progression",
+    "Parcours 4 phases",
+    "Accès à vie — aucun abonnement",
+  ];
+
   return (
     <div className="flex min-h-screen flex-col bg-background px-5 py-8">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="mx-auto w-full max-w-lg space-y-8"
+        className="mx-auto w-full max-w-md space-y-8"
       >
         <div className="text-center space-y-2">
           <h1 className="text-xl font-bold">
-            Tu peux avancer seule…
+            Un seul accès.
             <br />
-            <span className="text-primary">ou être accompagnée chaque jour</span>
+            <span className="text-primary">Pour toute ta vie.</span>
           </h1>
         </div>
 
-        {/* Comparison cards */}
-        <div className="grid grid-cols-2 gap-3">
-          {/* Left — 29€ */}
-          <div className="rounded-xl bg-card p-4 shadow-sm space-y-3">
-            <div className="text-center">
-              <p className="text-lg font-bold">29€</p>
-              <p className="text-[10px] text-muted-foreground">Paiement unique</p>
-            </div>
-            <ul className="space-y-2">
-              {[
-                "Je m'apaise quand ça ne va pas",
-                "J'avance seule",
-                "J'utilise les exercices",
-              ].map((item) => (
-                <li key={item} className="flex items-start gap-1.5 text-xs text-muted-foreground">
-                  <Check className="h-3 w-3 shrink-0 mt-0.5" />
-                  {item}
-                </li>
-              ))}
-            </ul>
+        <div className="rounded-2xl bg-card p-6 shadow-md ring-2 ring-primary/30 space-y-5 relative">
+          <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-1 text-[10px] font-bold text-primary-foreground">
+            ACCÈS À VIE
           </div>
-
-          {/* Right — Premium */}
-          <div className="rounded-xl bg-card p-4 shadow-md ring-2 ring-primary/30 space-y-3 relative">
-            <div className="absolute -top-2 left-1/2 -translate-x-1/2 rounded-full bg-primary px-2 py-0.5 text-[9px] font-bold text-primary-foreground whitespace-nowrap">
-              RECOMMANDÉ
-            </div>
-            <div className="text-center">
-              <p className="text-lg font-bold text-primary">9€<span className="text-xs font-normal">/mois</span></p>
-              <p className="text-[10px] text-muted-foreground">ou 59€/an</p>
-            </div>
-            <ul className="space-y-2">
-              {[
-                "Je suis accompagnée chaque jour",
-                "L'app s'adapte à moi",
-                "Je ne me sens plus seule",
-                "Je vois mon évolution",
-              ].map((item) => (
-                <li key={item} className="flex items-start gap-1.5 text-xs">
-                  <Heart className="h-3 w-3 shrink-0 text-primary mt-0.5" />
-                  <span className="font-medium">{item}</span>
-                </li>
-              ))}
-            </ul>
+          <div className="text-center pt-2">
+            <p className="text-sm font-medium text-muted-foreground">ANCRAGE</p>
+            <p className="mt-2 text-4xl font-bold">39€</p>
+            <p className="text-xs text-muted-foreground mt-1">Paiement unique · Accès à vie</p>
           </div>
+          <ul className="space-y-2">
+            {features.map((item) => (
+              <li key={item} className="flex items-start gap-2 text-sm">
+                <Check className="h-4 w-4 shrink-0 text-primary mt-0.5" />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
         </div>
 
-        {/* CTA */}
         <div className="space-y-3">
           <button
             onClick={handlePayment}
             disabled={paymentLoading}
             className="w-full rounded-xl bg-primary py-3.5 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 transition-transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60"
           >
-            {paymentLoading ? "Chargement…" : "Je veux être accompagnée"}
+            {paymentLoading ? "Chargement…" : "Je veux me sentir mieux — 39€"}
           </button>
+          <p className="text-center text-xs text-muted-foreground">
+            Paiement unique. Accès à vie. 100% sécurisé via Mollie.
+          </p>
           <Link
             to="/dashboard"
             className="block text-center text-sm text-muted-foreground underline underline-offset-4"

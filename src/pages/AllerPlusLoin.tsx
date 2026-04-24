@@ -77,9 +77,9 @@ const AllerPlusLoin = () => {
               <p>👉 sans te mettre en danger</p>
             </div>
           </div>
-          <div className="mt-4 space-y-3">
-            <CTAButton to="/paywall">Je veux être accompagnée — 9€/mois</CTAButton>
-            <CTAButton to="#" onClick={handlePayment} loading={paymentLoading} variant="secondary">Accès unique — 29€</CTAButton>
+          <div className="mt-4 space-y-2">
+            <CTAButton to="#" onClick={handlePayment} loading={paymentLoading}>Je veux me sentir mieux — 39€</CTAButton>
+            <p className="text-xs text-muted-foreground">Paiement unique. Accès à vie. 100% sécurisé via Mollie.</p>
           </div>
         </div>
       </SectionBlock>

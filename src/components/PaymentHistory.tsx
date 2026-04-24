@@ -13,9 +13,10 @@ interface Subscription {
 }
 
 const planLabels: Record<string, string> = {
-  monthly: "Abonnement mensuel",
-  yearly: "Abonnement annuel",
-  one_time: "Accès unique",
+  monthly: "Accès à vie",
+  yearly: "Accès à vie",
+  one_time: "Accès à vie",
+  lifetime: "Accès à vie",
 };
 
 const statusLabels: Record<string, { label: string; className: string }> = {
