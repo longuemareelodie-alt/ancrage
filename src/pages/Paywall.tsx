@@ -93,6 +93,23 @@ const Paywall = () => {
           <p className="text-center text-xs text-muted-foreground">
             Paiement unique. Accès à vie. 100% sécurisé via Mollie.
           </p>
+          <p className="text-center text-[11px] leading-relaxed text-muted-foreground">
+            En cliquant sur « Je veux me sentir mieux — 39€ », j'accepte les{" "}
+            <Link to="/cgv" className="underline hover:text-primary">
+              Conditions générales de vente
+            </Link>{" "}
+            et reconnais que l'accès au contenu numérique débute immédiatement
+            après le paiement, ce qui entraîne la renonciation expresse à mon
+            droit de rétractation. Voir aussi la{" "}
+            <Link to="/confidentialite" className="underline hover:text-primary">
+              Politique de confidentialité
+            </Link>{" "}
+            et les{" "}
+            <Link to="/mentions-legales" className="underline hover:text-primary">
+              Mentions légales
+            </Link>
+            .
+          </p>
         </motion.div>
 
         {/* Security + back */}
