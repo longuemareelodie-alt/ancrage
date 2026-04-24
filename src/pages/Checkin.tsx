@@ -9,6 +9,7 @@ import { emotions, type EmotionData } from "@/data/emotions";
 import { getStreakLabel } from "@/data/streakLabels";
 import BadgeCelebration from "@/components/BadgeCelebration";
 import MicroRewardPopup from "@/components/MicroRewardPopup";
+import QuickBackLinks from "@/components/QuickBackLinks";
 
 type Step = "select" | "response" | "action" | "after" | "evolution" | "validation" | "summary";
 
