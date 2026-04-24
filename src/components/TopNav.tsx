@@ -63,8 +63,30 @@ const TopNav = () => {
   const location = useLocation();
   const [open, setOpen] = useState(false);
   const { t } = useTranslation();
+  const [mountCount, setMountCount] = useState(0);
+
+  useEffect(() => {
+    __topNavMountCount += 1;
+    __notify();
+    const listener = (n: number) => setMountCount(n);
+    __listeners.add(listener);
+    listener(__topNavMountCount);
+    if (__topNavMountCount > 1) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        `[TopNav] ⚠️ ${__topNavMountCount} instances montées simultanément — il ne devrait y en avoir qu'une.`,
+      );
+    }
+    return () => {
+      __topNavMountCount -= 1;
+      __listeners.delete(listener);
+      __notify();
+    };
+  }, []);
 
   if (!PUBLIC_PATHS.has(location.pathname)) return null;
+
+  const showDuplicateBadge = import.meta.env.DEV && mountCount > 1;
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70">
