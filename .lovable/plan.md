@@ -1,48 +1,45 @@
-# Sitemap XML pour l'indexation
+# Aligner le rendu visuel de Mentions légales sur CGV
 
-## Objectif
+## Constat
 
-Faciliter l'indexation par Google/Bing des pages publiques de l'app, en particulier les pages légales demandées (`/cgv`, `/confidentialite`, `/mentions-legales`).
+Après comparaison ligne par ligne des classes Tailwind utilisées dans `src/pages/CGV.tsx` et `src/pages/MentionsLegales.tsx`, les deux pages utilisent **déjà les mêmes classes** pour tous les éléments communs :
 
-## Approche
+| Élément | Classes (identiques sur les deux pages) |
+|---|---|
+| Wrapper page | `min-h-screen bg-background` |
+| Container | `max-w-3xl mx-auto` (dans `SectionBlock`) |
+| H1 | `text-2xl md:text-3xl font-bold mb-2 text-foreground` |
+| Date | `text-sm text-muted-foreground` |
+| Container prose | `prose prose-sm md:prose-base max-w-none text-foreground/90 space-y-6` |
+| H2 sections | `text-lg font-semibold text-foreground` |
+| Listes `<ul>` | `list-disc pl-5 space-y-1` |
+| Listes `<ol>` | `list-decimal pl-5 space-y-1` |
+| Liens | `underline hover:text-primary` |
+| Blockquote | `border-l-2 border-primary/40 pl-4 italic text-foreground/80` |
+| Footer | `<Footer />` présent sur les deux |
 
-Sitemap **statique** servi depuis `public/sitemap.xml` (route automatique `/sitemap.xml` avec Vite, aucune config serveur nécessaire). Plus simple et plus performant qu'une route React (les crawlers ont besoin de XML brut, pas d'une SPA).
+## Seule différence détectée
 
-Domaine canonique utilisé : `https://www.digitalmamanlibre.com`.
+La marge sous la date :
+- **CGV** : `mb-6`
+- **MentionsLegales** : `mb-8`
 
-## Modifications
+CGV utilise `mb-6` parce qu'un bloc sommaire (`mb-8`) suit juste après et apporte le spacing supplémentaire. MentionsLegales a `mb-8` pour compenser l'absence de sommaire — ce qui est en réalité **correct visuellement** : le rendu actuel est cohérent.
 
-### 1. Création de `public/sitemap.xml`
+## Modification proposée
 
-Liste les pages **publiques et indexables** uniquement (on exclut les pages protégées par auth comme `/dashboard`, `/profil`, `/sante/*`, `/checkin`, etc., qui n'apportent rien à un crawler).
+Pour une **stricte uniformité de classes** (ce que tu demandes), une seule ligne à corriger dans `src/pages/MentionsLegales.tsx` :
 
-URLs incluses :
-- `/` (priorité 1.0)
-- `/comparaison` (0.8)
-- `/aller-plus-loin` (0.7)
-- `/paywall` (0.7)
-- `/auth` (0.5)
-- `/cgv` (0.4)
-- `/confidentialite` (0.4)
-- `/mentions-legales` (0.4)
-
-Format XML standard `sitemaps.org` avec `<lastmod>` à la date du jour, `<changefreq>` et `<priority>`.
-
-### 2. Mise à jour de `public/robots.txt`
-
-Ajout de la ligne :
+```diff
+- <p className="text-sm text-muted-foreground mb-8">
++ <p className="text-sm text-muted-foreground mb-6">
 ```
-Sitemap: https://www.digitalmamanlibre.com/sitemap.xml
-```
 
-## Détails techniques
+Aucune autre modification n'est nécessaire — wrappers, tailles, couleurs, spacing, listes, titres, liens et blockquotes sont déjà alignés.
 
-- Vite sert automatiquement tout le contenu de `public/` à la racine → `/sitemap.xml` sera accessible sans configuration de route.
-- Pas besoin de toucher à `App.tsx` ni à `index.html`.
-- Pas de génération dynamique : la liste de pages publiques est stable, un fichier statique suffit. Si on ajoute une page publique plus tard, il faudra mettre à jour le sitemap manuellement (mention dans le commentaire en tête du fichier).
+## Note
 
-## Hors scope
+Si tu préfères conserver un spacing visuellement équilibré (la date en `mb-8` quand il n'y a pas de sommaire), on peut au contraire **garder `mb-8`** : le rendu reste harmonieux, c'est juste une classe différente. Dis-moi laquelle des deux options tu veux :
 
-- Pas de soumission automatique à Google Search Console (à faire par l'utilisateur).
-- Pas de sitemap multilingue (à voir quand l'i18n EN sera en place).
-- Pas d'inclusion des pages authentifiées (non pertinent SEO).
+- **Option A** (par défaut, ce que je vais appliquer) : aligner sur `mb-6` pour une uniformité stricte des classes.
+- **Option B** : garder `mb-8` sur Mentions légales pour compenser visuellement l'absence de sommaire.
