@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Heart } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import QuickBackLinks from "@/components/QuickBackLinks";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEffect, useState } from "react";
