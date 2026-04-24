@@ -179,6 +179,21 @@ const Index = () => {
         </div>
       </SectionBlock>
 
+      {/* RASSURANCE FINALE */}
+      <SectionBlock>
+        <div className="space-y-4 text-center">
+          <p className="font-semibold">Tu peux commencer maintenant</p>
+          <div className="space-y-1 text-sm text-muted-foreground">
+            <p>👉 sans te justifier</p>
+            <p>👉 sans te forcer</p>
+            <p>👉 à ton rythme</p>
+          </div>
+          <div className="mt-4">
+            <CTAButton to="/emotions">Essayer gratuitement</CTAButton>
+          </div>
+        </div>
+      </SectionBlock>
+
       <Footer />
     </div>
   );
