@@ -1,6 +1,7 @@
 import SectionBlock from "@/components/SectionBlock";
 import CTAButton from "@/components/CTAButton";
 import Footer from "@/components/Footer";
+import HomeFAQ from "@/components/HomeFAQ";
 import { motion } from "framer-motion";
 import { Check, User, Lock } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -140,6 +141,9 @@ const Index = () => {
           </p>
         </div>
       </SectionBlock>
+
+      {/* FAQ — répond aux objections avant l'achat */}
+      <HomeFAQ />
 
       {/* PRIX + CTA */}
       <SectionBlock variant="blue">
