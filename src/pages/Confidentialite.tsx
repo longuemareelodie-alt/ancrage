@@ -1,8 +1,10 @@
 import SectionBlock from "@/components/SectionBlock";
 import Footer from "@/components/Footer";
+import Breadcrumb from "@/components/Breadcrumb";
 
 const Confidentialite = () => (
   <div className="min-h-screen bg-background">
+    <Breadcrumb items={[{ label: "Politique de confidentialité" }]} />
     <SectionBlock>
       <h1 className="text-2xl font-bold mb-6">Politique de Confidentialité</h1>
       <div className="prose prose-sm text-muted-foreground space-y-4">

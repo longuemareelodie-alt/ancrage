@@ -1,5 +1,6 @@
 import SectionBlock from "@/components/SectionBlock";
 import CTAButton from "@/components/CTAButton";
+import Breadcrumb from "@/components/Breadcrumb";
 import { useAuth } from "@/contexts/AuthContext";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
 
@@ -17,6 +18,7 @@ const AllerPlusLoin = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Breadcrumb items={[{ label: "Aller plus loin" }]} />
       <SectionBlock variant="blue">
         <div className="space-y-4 text-center">
           <h1 className="text-2xl font-bold">Tu peux continuer seule…</h1>

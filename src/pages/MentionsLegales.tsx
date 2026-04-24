@@ -1,9 +1,11 @@
 import SectionBlock from "@/components/SectionBlock";
 import Footer from "@/components/Footer";
+import Breadcrumb from "@/components/Breadcrumb";
 import { Link } from "react-router-dom";
 
 const MentionsLegales = () => (
   <div className="min-h-screen bg-background">
+    <Breadcrumb items={[{ label: "Mentions légales" }]} />
     <SectionBlock>
       <div className="max-w-3xl mx-auto">
         <h1 className="text-2xl md:text-3xl font-bold mb-2 text-foreground">
