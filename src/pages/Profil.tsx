@@ -5,13 +5,13 @@ import { supabase } from "@/integrations/supabase/client";
 import SectionBlock from "@/components/SectionBlock";
 import CTAButton from "@/components/CTAButton";
 import { motion, AnimatePresence } from "framer-motion";
-import { LogOut, Plus, Trash2, Save, User, BookOpen, StickyNote, Lock, Pencil, Check, Bell, BellOff, Flame, Trophy, Download, Share, XCircle, CreditCard } from "lucide-react";
+import { LogOut, Plus, Trash2, Save, User, BookOpen, StickyNote, Lock, Pencil, Check, Bell, BellOff, Flame, Trophy, Download, Share, CreditCard } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { Switch } from "@/components/ui/switch";
 import { BADGES } from "@/lib/streaks";
 import StreakCalendar from "@/components/StreakCalendar";
-import { useMolliePayment } from "@/hooks/useMolliePayment";
+
 import PaymentHistory from "@/components/PaymentHistory";
 interface Note {
   id: string;
