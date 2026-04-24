@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ChevronDown, ArrowRight, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -100,6 +101,7 @@ interface ContextualFAQProps {
 const ContextualFAQ = ({ emotion, onContinue, onClose }: ContextualFAQProps) => {
   const data = FAQ_BY_EMOTION[emotion] ?? FAQ_BY_EMOTION.default;
   const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const { t } = useTranslation();
 
   return (
     <motion.div
@@ -170,11 +172,11 @@ const ContextualFAQ = ({ emotion, onContinue, onClose }: ContextualFAQProps) => 
 
         <div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
           <Button variant="ghost" onClick={onClose} className="sm:w-auto">
-            Retour aux états
+            {t("contextual_faq.back")}
           </Button>
           <Button onClick={onContinue} className="sm:w-auto">
-            Accéder à l'outil
-            <ArrowRight className="ml-2 h-4 w-4" />
+            {t("contextual_faq.continue")}
+            <ArrowRight className="ms-2 h-4 w-4" />
           </Button>
         </div>
       </motion.div>
