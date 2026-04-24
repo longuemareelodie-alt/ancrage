@@ -1,43 +1,40 @@
-# Renforcer la chronologie d'activation et la preuve dans les CGV
+# Renforcer la clause de juridiction compétente (article 17 des CGV)
 
-## Objectif
+## Audit de la clause actuelle
 
-Bétonner juridiquement la **renonciation au droit de rétractation** (art. L221-28 13° C. conso) en explicitant, dans les CGV, la **chronologie d'exécution** et les **éléments de preuve** (horodatages serveur + e-mail de confirmation Mollie).
+La clause actuelle (art. 17) est **déjà conforme dans son fond** à l'article R. 631-3 du Code de la consommation : elle laisse au consommateur le choix entre les juridictions de droit commun (CPC) et celles prévues par R. 631-3, sans clause attributive abusive.
+
+Trois améliorations restent souhaitables pour la rendre **irréprochable** :
+
+1. **Médiation préalable** — la formulation actuelle « les parties s'efforceront de trouver une solution amiable **avant** toute action judiciaire » peut être lue comme une **clause limitative d'accès au juge**, potentiellement abusive (art. R. 212-1 10° C. conso). À reformuler en démarche **facultative** et **sans préjudice** du droit de saisir directement le juge.
+
+2. **Juridictions du CPC à expliciter** — rappeler que le consommateur peut aussi saisir le tribunal du domicile du défendeur (art. 42 CPC) ou du lieu d'exécution de la prestation de service (art. 46 CPC), pour éviter qu'une omission soit interprétée comme une exclusion.
+
+3. **Litiges transfrontaliers** — ajouter un renvoi au Règlement (UE) n° 1215/2012 « Bruxelles I bis » (art. 18) qui permet au consommateur résidant dans un autre État membre de l'UE de saisir les juridictions de son propre État. Pertinent vu que le service est accessible en ligne dans toute l'UE.
 
 ## Ce qui change pour l'utilisateur
 
-Deux sections des CGV (`/cgv`) sont enrichies, sans changement de numérotation ni de structure visuelle (mêmes classes typographiques, sommaire et ancres conservés) :
+L'article 17 (`#droit-juridiction`) est restructuré en 4 paragraphes clairs, sans changement de numérotation ni d'ancre :
 
-- **Article 7 — Livraison du contenu numérique → « Livraison du contenu numérique — chronologie »**
-  Devient une chronologie en 4 étapes horodatées :
-  1. **T0** — validation : case CGV + renonciation cochée, paiement validé sur Mollie.
-  2. **T0 + qq sec.** — webhook Mollie confirmant la transaction (horodaté).
-  3. **T0 + immédiat** — activation automatique de l'accès côté serveur (horodatée).
-  4. **T0 + immédiat** — envoi automatique de l'**e-mail de confirmation** mentionnant date/heure, montant, référence Mollie et rappel de la renonciation : valeur de **justificatif d'achat** et de **preuve de l'exécution immédiate**.
+- **Droit applicable** : droit français (inchangé).
+- **Résolution amiable** : reformulée en démarche **facultative**, renvoyant à la médiation prévue à l'article 15, et **sans préjudice** du droit de saisir directement le juge.
+- **Juridiction compétente** (R. 631-3) : choix explicite du consommateur entre :
+  - les juridictions du CPC (lieu du défendeur art. 42, lieu d'exécution art. 46) ;
+  - le lieu où il demeurait à la conclusion du contrat ;
+  - le lieu de survenance du fait dommageable.
   
-  Ajout d'un paragraphe sur la **conservation des éléments probatoires** (horodatage Mollie, horodatage activation, copie technique de l'e-mail) communicables sur demande.
-
-- **Article 8 — Droit de rétractation — renonciation expresse**
-  - Rappel renforcé du fondement légal (L221-28 13°) : la rétractation **ne peut être exercée**.
-  - Bloc citation (`<blockquote>`) reproduisant **mot pour mot la mention de la case à cocher** au paiement, avec accord préalable exprès + renonciation expresse.
-  - Liste à puces démontrant la **chaîne probante** : case cochée AVANT paiement → exécution démarre immédiatement (horodatée) → e-mail de confirmation prouvant la date/heure du début d'exécution.
-  - Conclusion explicite : dès activation, le client **ne dispose plus** du droit de rétractation.
+  Avec une phrase de fermeture : « Aucune clause [...] ne saurait être interprétée comme limitant ce choix ou comme imposant la compétence exclusive d'une juridiction au consommateur. »
+- **Litiges transfrontaliers** : nouveau paragraphe rappelant le bénéfice de l'art. 18 du Règlement Bruxelles I bis pour les consommateurs résidant dans un autre État membre de l'UE.
 
 ## Détails techniques
 
 - Fichier modifié : `src/pages/CGV.tsx` uniquement.
-- Bornes de l'édition : lignes 136 → 165 (sections 7 et 8 actuelles).
-- Aucun nouvel `id`, aucun changement de numérotation : le sommaire (TOC) déjà en place reste valide. Les ancres `#livraison` et `#retractation` continuent de fonctionner.
-- Mêmes classes Tailwind que le reste de la page (`prose`, `text-lg font-semibold`, `list-disc/list-decimal pl-5 space-y-1`).
-- Ajout d'un seul élément stylistique nouveau, déjà courant en prose : `<blockquote className="border-l-2 border-primary/40 pl-4 italic text-foreground/80">` pour mettre en avant la formule exacte de la case à cocher.
-- Aucune modification de logique applicative, de routes, ou d'autres pages.
-
-## Cohérence avec le reste du produit
-
-- La **case à cocher** mentionnée existe déjà dans le tunnel de paiement (`Paywall.tsx`) sous forme de mention sous le bouton « 39€ ». Le texte cité dans le `<blockquote>` reprend exactement la même formulation pour garantir la cohérence juridique entre la promesse d'UI et les CGV.
-- L'**e-mail de confirmation** est cohérent avec le flux Mollie déjà en place (`useMolliePayment` + edge function). Aucun changement backend nécessaire dans cette itération : on ne fait qu'**affirmer juridiquement** ce que le système fait déjà.
+- Bornes : lignes 412–430 (article 17 actuel).
+- Mêmes classes Tailwind que le reste de la page (`text-lg font-semibold`, `list-disc pl-5 space-y-1`).
+- Ancre `#droit-juridiction` et entrée du sommaire conservées.
+- Aucune autre section, route ou fichier modifié.
 
 ## Hors-scope
 
-- Pas de modification de l'edge function Mollie ni du template de l'e-mail de confirmation. Si le contenu actuel de l'e-mail ne mentionne pas explicitement la renonciation à la rétractation, ce sera l'objet d'une itération séparée (le plan peut l'inclure si tu le souhaites).
-- Pas de modification de la case à cocher du Paywall (déjà alignée sur la formulation citée).
+- Pas de modification des autres articles des CGV.
+- Pas de modification de la section médiation (art. 15) — référencée mais inchangée dans cette itération.

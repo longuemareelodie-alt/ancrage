@@ -415,17 +415,50 @@ const CGV = () => (
             </h2>
             <p>
               Les présentes CGV sont soumises au <strong>droit français</strong>.
-              En cas de litige, les parties s'efforceront de trouver une
-              solution amiable avant toute action judiciaire.
             </p>
             <p>
-              À défaut de résolution amiable, et conformément à l'article{" "}
+              <strong>Résolution amiable.</strong> En cas de litige, les
+              parties pourront rechercher une solution amiable, notamment par
+              le recours à la médiation de la consommation prévue à l'article
+              15. Cette démarche est <strong>facultative</strong> et{" "}
+              <strong>
+                sans préjudice du droit du client consommateur de saisir
+                directement la juridiction compétente
+              </strong>{" "}
+              à tout moment.
+            </p>
+            <p>
+              <strong>Juridiction compétente.</strong> Conformément à l'article{" "}
               <strong>R. 631-3</strong> du Code de la consommation, le client
-              consommateur pourra saisir, à son choix, outre l'une des
-              juridictions territorialement compétentes en vertu du Code de
-              procédure civile, la juridiction du lieu où il demeurait au
-              moment de la conclusion du contrat ou de la survenance du fait
-              dommageable.
+              consommateur peut saisir, <strong>à son choix</strong>, outre
+              l'une des juridictions territorialement compétentes en
+              application du Code de procédure civile (notamment la juridiction
+              du lieu où demeure le défendeur, art. 42 CPC, ou celle du lieu
+              de l'exécution de la prestation de service, art. 46 CPC) :
+            </p>
+            <ul className="list-disc pl-5 space-y-1">
+              <li>
+                la juridiction du lieu où il <strong>demeurait au moment de
+                la conclusion du contrat</strong> ;
+              </li>
+              <li>
+                ou la juridiction du lieu de la{" "}
+                <strong>survenance du fait dommageable</strong>.
+              </li>
+            </ul>
+            <p>
+              Aucune clause des présentes CGV ne saurait être interprétée
+              comme limitant ce choix ou comme imposant la compétence
+              exclusive d'une juridiction au consommateur.
+            </p>
+            <p>
+              <strong>Litiges transfrontaliers.</strong> Si le client
+              consommateur réside dans un autre État membre de l'Union
+              européenne, il conserve par ailleurs le bénéfice des règles de
+              compétence prévues par le Règlement (UE) n° 1215/2012 du 12
+              décembre 2012 (« Bruxelles I bis »), notamment la faculté de
+              saisir les juridictions de l'État membre de son domicile (art.
+              18 du Règlement).
             </p>
           </section>
         </div>
