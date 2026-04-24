@@ -1,8 +1,13 @@
 import { Link, useLocation } from "react-router-dom";
 import { Home, HelpCircle, Sparkles } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+
+// Dev-only: detect if multiple <TopNav /> instances are mounted simultaneously.
+let __topNavMountCount = 0;
+const __listeners = new Set<(n: number) => void>();
+const __notify = () => __listeners.forEach((l) => l(__topNavMountCount));
 
 /**
  * Top navigation for public pages.
