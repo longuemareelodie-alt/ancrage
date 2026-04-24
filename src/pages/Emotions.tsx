@@ -1,5 +1,7 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import ContextualFAQ, { EmotionKey } from "@/components/ContextualFAQ";
 
 const emotions = [
   { emoji: "😰", label: "Je panique", path: "/emotion/panique", hook: "Ton corps essaie de te protéger" },
@@ -16,8 +18,31 @@ const positiveEmotions = [
   { emoji: "✨", label: "Fière de moi", path: "/emotion/fiere", hook: "Tu mérites de le ressentir" },
 ];
 
+const KNOWN_EMOTIONS: EmotionKey[] = [
+  "panique", "hypervigilance", "rumination", "explosion", "vide", "epuisee",
+  "calme", "apaisee", "fiere",
+];
+
+const extractEmotionKey = (path: string): EmotionKey => {
+  const slug = path.split("/").pop() ?? "";
+  return (KNOWN_EMOTIONS as string[]).includes(slug) ? (slug as EmotionKey) : "default";
+};
+
 const Emotions = () => {
   const navigate = useNavigate();
+  const [selected, setSelected] = useState<{ path: string; key: EmotionKey } | null>(null);
+
+  const handleSelect = (path: string) => {
+    setSelected({ path, key: extractEmotionKey(path) });
+  };
+
+  const handleContinue = () => {
+    if (selected) {
+      const target = selected.path;
+      setSelected(null);
+      navigate(target);
+    }
+  };
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background px-6 py-12">
@@ -44,7 +69,7 @@ const Emotions = () => {
               transition={{ duration: 0.4, delay: i * 0.06 }}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => navigate(emotion.path)}
+              onClick={() => handleSelect(emotion.path)}
               className="flex w-full items-center gap-4 rounded-xl bg-card p-5 text-left shadow-sm transition-shadow hover:shadow-md"
             >
               <span className="text-2xl">{emotion.emoji}</span>
@@ -67,7 +92,7 @@ const Emotions = () => {
               transition={{ duration: 0.4, delay: 0.4 + i * 0.06 }}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => navigate(emotion.path)}
+              onClick={() => handleSelect(emotion.path)}
               className="flex w-full items-center gap-4 rounded-xl bg-card p-5 text-left shadow-sm transition-shadow hover:shadow-md border border-primary/10"
             >
               <span className="text-2xl">{emotion.emoji}</span>
@@ -79,6 +104,16 @@ const Emotions = () => {
           ))}
         </div>
       </motion.div>
+
+      <AnimatePresence>
+        {selected && (
+          <ContextualFAQ
+            emotion={selected.key}
+            onContinue={handleContinue}
+            onClose={() => setSelected(null)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 };
