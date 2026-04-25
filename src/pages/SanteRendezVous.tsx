@@ -3,8 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import SectionBlock from "@/components/SectionBlock";
-import { ArrowLeft, Plus, Trash2, Calendar, MapPin, Bell, Save } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Calendar, MapPin, Bell, Save, CalendarPlus, Download } from "lucide-react";
 import { toast } from "sonner";
+import { buildGoogleCalendarUrl, downloadICS } from "@/lib/calendarExport";
 
 interface Appointment {
   id: string;
@@ -160,6 +161,39 @@ const SanteRendezVous = () => {
                     {!past && (
                       <div className="mt-2 inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] text-primary">
                         <Bell className="h-3 w-3" /> Rappels actifs
+                      </div>
+                    )}
+                    {!past && (
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        <a
+                          href={buildGoogleCalendarUrl({
+                            title: a.title,
+                            startISO: a.appointment_at,
+                            location: a.location,
+                            notes: a.notes,
+                          })}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 rounded-lg bg-secondary px-2.5 py-1 text-[11px] font-medium text-secondary-foreground hover:bg-secondary/80"
+                        >
+                          <CalendarPlus className="h-3 w-3" /> Google Agenda
+                        </a>
+                        <button
+                          onClick={() =>
+                            downloadICS(
+                              {
+                                title: a.title,
+                                startISO: a.appointment_at,
+                                location: a.location,
+                                notes: a.notes,
+                              },
+                              `${a.title.replace(/[^a-z0-9]+/gi, "-").toLowerCase()}.ics`,
+                            )
+                          }
+                          className="inline-flex items-center gap-1 rounded-lg bg-secondary px-2.5 py-1 text-[11px] font-medium text-secondary-foreground hover:bg-secondary/80"
+                        >
+                          <Download className="h-3 w-3" /> .ics (Apple/Outlook)
+                        </button>
                       </div>
                     )}
                   </div>
