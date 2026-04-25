@@ -163,6 +163,39 @@ const SanteRendezVous = () => {
                         <Bell className="h-3 w-3" /> Rappels actifs
                       </div>
                     )}
+                    {!past && (
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        <a
+                          href={buildGoogleCalendarUrl({
+                            title: a.title,
+                            startISO: a.appointment_at,
+                            location: a.location,
+                            notes: a.notes,
+                          })}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 rounded-lg bg-secondary px-2.5 py-1 text-[11px] font-medium text-secondary-foreground hover:bg-secondary/80"
+                        >
+                          <CalendarPlus className="h-3 w-3" /> Google Agenda
+                        </a>
+                        <button
+                          onClick={() =>
+                            downloadICS(
+                              {
+                                title: a.title,
+                                startISO: a.appointment_at,
+                                location: a.location,
+                                notes: a.notes,
+                              },
+                              `${a.title.replace(/[^a-z0-9]+/gi, "-").toLowerCase()}.ics`,
+                            )
+                          }
+                          className="inline-flex items-center gap-1 rounded-lg bg-secondary px-2.5 py-1 text-[11px] font-medium text-secondary-foreground hover:bg-secondary/80"
+                        >
+                          <Download className="h-3 w-3" /> .ics (Apple/Outlook)
+                        </button>
+                      </div>
+                    )}
                   </div>
                   <button
                     onClick={() => remove(a.id)}
