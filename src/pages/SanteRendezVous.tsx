@@ -3,8 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import SectionBlock from "@/components/SectionBlock";
-import { ArrowLeft, Plus, Trash2, Calendar, MapPin, Bell, Save } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Calendar, MapPin, Bell, Save, CalendarPlus, Download } from "lucide-react";
 import { toast } from "sonner";
+import { buildGoogleCalendarUrl, downloadICS } from "@/lib/calendarExport";
 
 interface Appointment {
   id: string;
