@@ -339,6 +339,181 @@ const CalmeEnClair = () => {
             </div>
           </section>
 
+          {/* Personalized actions */}
+          <section className="space-y-4">
+            <div>
+              <h2 className="font-serif text-2xl font-semibold">Pour toi, maintenant</h2>
+              <p className="text-sm text-muted-foreground mt-1">
+                4 micro-actions choisies selon ton score et tes habitudes.
+              </p>
+            </div>
+            {(() => {
+              const isLow = calmScore < 50;
+              const isMid = calmScore >= 50 && calmScore < 75;
+              const fewCheckins = checkins14d < 3;
+              const noStreak = streak === 0;
+              const isOverflow = mood === "overflow" || mood === "tense";
+              const hour = new Date().getHours();
+              const isMorning = hour < 14;
+
+              type Action = {
+                icon: typeof Heart;
+                title: string;
+                desc: string;
+                to: string;
+                cta: string;
+                tone: "primary" | "destructive" | "soft";
+              };
+
+              const all: Action[] = [];
+
+              if (isOverflow || isLow) {
+                all.push({
+                  icon: AlertCircle,
+                  title: "Sors du mode survie",
+                  desc: "60 secondes guidées pour calmer ton système nerveux.",
+                  to: "/urgence",
+                  cta: "Faire maintenant",
+                  tone: "destructive",
+                });
+              }
+
+              all.push({
+                icon: Wind,
+                title: isLow ? "Régule en 30 secondes" : "Ancre ce moment",
+                desc: isLow
+                  ? "Une respiration courte pour redescendre tout de suite."
+                  : "Un check-in rapide pour entretenir ton calme.",
+                to: "/checkin",
+                cta: "Faire maintenant",
+                tone: "primary",
+              });
+
+              if (fewCheckins) {
+                all.push({
+                  icon: Sparkles,
+                  title: "Reprends le rythme",
+                  desc: `Tu n'as fait que ${checkins14d} check-in${checkins14d > 1 ? "s" : ""} en 14 jours. Un par jour suffit.`,
+                  to: "/checkin",
+                  cta: "Faire maintenant",
+                  tone: "soft",
+                });
+              } else if (noStreak) {
+                all.push({
+                  icon: Flame,
+                  title: "Démarre une nouvelle série",
+                  desc: "Reviens aujourd'hui pour relancer ton compteur.",
+                  to: "/checkin",
+                  cta: "Faire maintenant",
+                  tone: "soft",
+                });
+              } else {
+                all.push({
+                  icon: Flame,
+                  title: `Protège ta série de ${streak} jour${streak > 1 ? "s" : ""}`,
+                  desc: "Un mini check-in aujourd'hui pour ne rien perdre.",
+                  to: "/checkin",
+                  cta: "Faire maintenant",
+                  tone: "soft",
+                });
+              }
+
+              if (isMid) {
+                all.push({
+                  icon: TrendingUp,
+                  title: "Regarde tes 7 derniers jours",
+                  desc: "Visualise ce qui te fait du bien — et ce qui pèse.",
+                  to: "/historique",
+                  cta: "Voir mes données",
+                  tone: "soft",
+                });
+              } else if (calmScore >= 75) {
+                all.push({
+                  icon: Heart,
+                  title: "Capitalise sur ton élan",
+                  desc: "Profite de cet état pour explorer un nouveau ressource.",
+                  to: "/aller-plus-loin",
+                  cta: "Explorer",
+                  tone: "soft",
+                });
+              } else {
+                all.push({
+                  icon: Heart,
+                  title: "Note ce que tu ressens",
+                  desc: "Mettre des mots libère 30 % de la charge émotionnelle.",
+                  to: "/checkin",
+                  cta: "Faire maintenant",
+                  tone: "soft",
+                });
+              }
+
+              all.push({
+                icon: isMorning ? Sun : Moon,
+                title: isMorning ? "Pose ton intention du jour" : "Dépose ta journée",
+                desc: isMorning
+                  ? "Une phrase douce pour orienter ta journée."
+                  : "Relâche ce que tu as porté avant la nuit.",
+                to: "/checkin",
+                cta: "Faire maintenant",
+                tone: "soft",
+              });
+
+              const actions = all.slice(0, 4);
+
+              return (
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  {actions.map((a, i) => {
+                    const Icon = a.icon;
+                    const toneCard =
+                      a.tone === "destructive"
+                        ? "bg-destructive/10 border-destructive/20"
+                        : a.tone === "primary"
+                        ? "bg-gradient-to-br from-primary/15 to-secondary/30 border-primary/20"
+                        : "bg-card border-border";
+                    const toneIcon =
+                      a.tone === "destructive"
+                        ? "bg-destructive/15 text-destructive"
+                        : "bg-primary/10 text-primary";
+                    const toneBtn =
+                      a.tone === "destructive"
+                        ? "bg-destructive text-destructive-foreground"
+                        : "bg-primary text-primary-foreground";
+                    return (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: i * 0.06 }}
+                        className={`flex flex-col rounded-2xl border p-5 shadow-soft ${toneCard}`}
+                      >
+                        <div className="flex items-start gap-3 mb-3">
+                          <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${toneIcon}`}>
+                            <Icon className="h-5 w-5" />
+                          </div>
+                          <div className="flex-1">
+                            <p className="font-serif text-lg font-semibold leading-tight">
+                              {a.title}
+                            </p>
+                          </div>
+                        </div>
+                        <p className="text-sm text-muted-foreground flex-1 mb-4">
+                          {a.desc}
+                        </p>
+                        <Link
+                          to={a.to}
+                          className={`inline-flex items-center justify-center gap-1.5 rounded-xl px-4 py-2.5 text-sm font-semibold transition-transform hover:scale-[1.02] ${toneBtn}`}
+                        >
+                          {a.cta}
+                          <ArrowRight className="h-4 w-4" />
+                        </Link>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+              );
+            })()}
+          </section>
+
           {/* Important note */}
           <div className="rounded-2xl border border-primary/20 bg-primary/5 p-5 text-center">
             <p className="text-sm text-muted-foreground">
