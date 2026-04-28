@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useMemo, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { User, Heart, Flame, BarChart3, AlertCircle } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -9,6 +9,15 @@ import { getStreakLabel } from "@/data/streakLabels";
 import logo from "@/assets/logo-ancrage.png";
 import InstallPWAPrompt from "@/components/InstallPWAPrompt";
 
+type MoodKey = "calm" | "ok" | "tense" | "overflow";
+const MOOD_OPTIONS: { key: MoodKey; emoji: string; label: string; adjust: number }[] = [
+  { key: "calm",     emoji: "🌿", label: "Sereine",  adjust: +10 },
+  { key: "ok",       emoji: "🙂", label: "Ça va",    adjust: +3  },
+  { key: "tense",    emoji: "😣", label: "Tendue",   adjust: -8  },
+  { key: "overflow", emoji: "🌊", label: "Débordée", adjust: -15 },
+];
+const todayKey = () => new Date().toISOString().slice(0, 10);
+
 const Dashboard = () => {
   const { user } = useAuth();
   const [isPremium, setIsPremium] = useState<boolean | null>(null);
@@ -16,6 +25,7 @@ const Dashboard = () => {
   const [streak, setStreak] = useState(0);
   const [firstName, setFirstName] = useState("");
   const [calmScore, setCalmScore] = useState<number>(50);
+  const [mood, setMood] = useState<MoodKey | null>(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -42,9 +52,48 @@ const Dashboard = () => {
       const checkins = count ?? 0;
       const score = Math.max(20, Math.min(98, 40 + Math.min(s, 20) * 2 + Math.min(checkins, 14) * 1.5));
       setCalmScore(Math.round(score));
+
+      // Today's mood (cross-device via Supabase, optimistic from cache)
+      const cached = localStorage.getItem(`calm_mood_${user.id}_${todayKey()}`);
+      if (cached && MOOD_OPTIONS.some((m) => m.key === cached)) {
+        setMood(cached as MoodKey);
+      }
+      const { data: mr } = await supabase
+        .from("mood_responses")
+        .select("mood")
+        .eq("user_id", user.id)
+        .eq("response_date", todayKey())
+        .maybeSingle();
+      if (mr?.mood && MOOD_OPTIONS.some((m) => m.key === mr.mood)) {
+        setMood(mr.mood as MoodKey);
+        localStorage.setItem(`calm_mood_${user.id}_${todayKey()}`, mr.mood);
+      }
     };
     fetchProfile();
   }, [user]);
+
+  const moodAdjust = useMemo(
+    () => MOOD_OPTIONS.find((m) => m.key === mood)?.adjust ?? 0,
+    [mood],
+  );
+  const adjustedScore = Math.max(20, Math.min(98, calmScore + moodAdjust));
+
+  const selectMood = async (key: MoodKey) => {
+    setMood(key);
+    if (!user) return;
+    localStorage.setItem(`calm_mood_${user.id}_${todayKey()}`, key);
+    const adjust = MOOD_OPTIONS.find((m) => m.key === key)?.adjust ?? 0;
+    const { error } = await supabase.from("mood_responses").upsert(
+      {
+        user_id: user.id,
+        response_date: todayKey(),
+        mood: key,
+        adjust,
+      },
+      { onConflict: "user_id,response_date" },
+    );
+    if (error) console.error("mood upsert failed", error);
+  };
 
   const dailyMsg = getDailyMessage();
   const streakInfo = getStreakLabel(streak);
@@ -82,12 +131,65 @@ const Dashboard = () => {
               to="/calme"
               className="inline-block text-base font-medium text-primary/80 underline-offset-4 hover:underline"
             >
-              Ton calme aujourd'hui : {calmScore}%
+              Ton calme aujourd'hui : {adjustedScore}%
+              {mood && (
+                <span className="ml-1 text-xs text-muted-foreground">
+                  ({moodAdjust >= 0 ? "+" : ""}{moodAdjust})
+                </span>
+              )}
             </Link>
             <p className="text-sm text-muted-foreground">
               {isMorning ? "Comment tu commences ta journée ?" : "Comment s'est passée ta journée ?"}
             </p>
           </div>
+
+          {/* Mini check-in : Je suis plutôt… */}
+          <motion.section
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.05 }}
+            className="rounded-2xl bg-card p-5 shadow-soft space-y-3"
+          >
+            <div className="text-center space-y-0.5">
+              <p className="font-serif text-base font-semibold">Je suis plutôt…</p>
+              <p className="text-[11px] text-muted-foreground">
+                Ajuste ton score de calme en un geste.
+              </p>
+            </div>
+            <div className="grid grid-cols-4 gap-2">
+              {MOOD_OPTIONS.map((m) => {
+                const active = mood === m.key;
+                return (
+                  <button
+                    key={m.key}
+                    onClick={() => selectMood(m.key)}
+                    className={`flex flex-col items-center gap-0.5 rounded-xl border px-2 py-2.5 text-xs transition-all ${
+                      active
+                        ? "border-primary bg-primary/10 shadow-soft scale-[1.03]"
+                        : "border-border bg-background hover:border-primary/40"
+                    }`}
+                  >
+                    <span className="text-xl leading-none">{m.emoji}</span>
+                    <span className={`font-medium leading-tight ${active ? "text-primary" : ""}`}>
+                      {m.label}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+            <AnimatePresence>
+              {mood && (
+                <motion.p
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  className="text-center text-[11px] text-muted-foreground"
+                >
+                  Pris en compte. <Link to="/calme" className="text-primary underline-offset-2 hover:underline">Voir le détail →</Link>
+                </motion.p>
+              )}
+            </AnimatePresence>
+          </motion.section>
 
           {/* Main ritual CTA */}
           <motion.div
