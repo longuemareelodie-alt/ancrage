@@ -133,7 +133,7 @@ const Dashboard = () => {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="rounded-2xl bg-card p-5 shadow-sm text-center space-y-2"
+            className="rounded-2xl bg-card p-5 shadow-soft text-center space-y-2"
           >
             <p className="text-xs text-muted-foreground font-medium">Un message t'attend</p>
             <p className="text-sm font-medium">
@@ -170,7 +170,7 @@ const Dashboard = () => {
             >
               <Link
                 to="/historique"
-                className="flex w-full items-center gap-4 rounded-2xl bg-card p-4 text-left shadow-sm transition-transform hover:scale-[1.02] active:scale-[0.98]"
+                className="flex w-full items-center gap-4 rounded-2xl bg-card p-5 text-left shadow-soft transition-transform hover:scale-[1.02] active:scale-[0.98]"
               >
                 <BarChart3 className="h-5 w-5 text-primary" />
                 <div>
@@ -187,7 +187,7 @@ const Dashboard = () => {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
-              className="rounded-2xl bg-card p-5 text-center shadow-sm space-y-3"
+              className="rounded-2xl bg-card p-6 text-center shadow-soft space-y-3"
             >
               <p className="text-sm font-medium text-muted-foreground">
                 Imagine si tu pouvais te sentir comme ça plus souvent.
