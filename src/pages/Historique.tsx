@@ -75,12 +75,17 @@ const Historique = () => {
     fetchHistory();
   }, [user]);
 
-  const handleExport = async () => {
+  const handleExport = async (format: "pdf" | "csv" = "pdf") => {
     if (!data.length || exporting) return;
     setExporting(true);
     try {
-      exportCheckinsToPdf(data, profile, exportOpts);
-      toast({ title: "PDF prêt 📄", description: "Ton suivi a été téléchargé." });
+      if (format === "csv") {
+        exportCheckinsToCsv(data, profile, exportOpts);
+        toast({ title: "CSV prêt 📊", description: "Tes check-ins ont été téléchargés." });
+      } else {
+        exportCheckinsToPdf(data, profile, exportOpts);
+        toast({ title: "PDF prêt 📄", description: "Ton suivi a été téléchargé." });
+      }
     } catch (err) {
       console.error(err);
       toast({
