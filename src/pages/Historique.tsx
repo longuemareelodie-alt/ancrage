@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowLeft, TrendingUp, Calendar, BarChart3, Smile, Frown, Download, Settings2 } from "lucide-react";
+import { ArrowLeft, TrendingUp, Calendar, BarChart3, Smile, Frown, Download, Settings2, FileSpreadsheet } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { emotions } from "@/data/emotions";
 import { exportCheckinsToPdf, type ExportOptions } from "@/lib/exportCheckinsPdf";
+import { exportCheckinsToCsv } from "@/lib/exportCheckinsCsv";
 import { toast } from "@/hooks/use-toast";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -74,12 +75,17 @@ const Historique = () => {
     fetchHistory();
   }, [user]);
 
-  const handleExport = async () => {
+  const handleExport = async (format: "pdf" | "csv" = "pdf") => {
     if (!data.length || exporting) return;
     setExporting(true);
     try {
-      exportCheckinsToPdf(data, profile, exportOpts);
-      toast({ title: "PDF prêt 📄", description: "Ton suivi a été téléchargé." });
+      if (format === "csv") {
+        exportCheckinsToCsv(data, profile, exportOpts);
+        toast({ title: "CSV prêt 📊", description: "Tes check-ins ont été téléchargés." });
+      } else {
+        exportCheckinsToPdf(data, profile, exportOpts);
+        toast({ title: "PDF prêt 📄", description: "Ton suivi a été téléchargé." });
+      }
     } catch (err) {
       console.error(err);
       toast({
@@ -238,7 +244,17 @@ const Historique = () => {
             </Popover>
 
             <button
-              onClick={handleExport}
+              onClick={() => handleExport("csv")}
+              disabled={exporting}
+              aria-label="Exporter en CSV"
+              className="flex items-center gap-1.5 rounded-full bg-secondary px-3 py-2 text-xs font-semibold text-foreground shadow-soft transition-transform hover:scale-[1.03] disabled:opacity-60"
+            >
+              <FileSpreadsheet className="h-3.5 w-3.5" />
+              CSV
+            </button>
+
+            <button
+              onClick={() => handleExport("pdf")}
               disabled={exporting}
               className="flex items-center gap-1.5 rounded-full bg-primary px-3.5 py-2 text-xs font-semibold text-primary-foreground shadow-soft transition-transform hover:scale-[1.03] disabled:opacity-60"
             >
