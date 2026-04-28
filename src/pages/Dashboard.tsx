@@ -131,12 +131,65 @@ const Dashboard = () => {
               to="/calme"
               className="inline-block text-base font-medium text-primary/80 underline-offset-4 hover:underline"
             >
-              Ton calme aujourd'hui : {calmScore}%
+              Ton calme aujourd'hui : {adjustedScore}%
+              {mood && (
+                <span className="ml-1 text-xs text-muted-foreground">
+                  ({moodAdjust >= 0 ? "+" : ""}{moodAdjust})
+                </span>
+              )}
             </Link>
             <p className="text-sm text-muted-foreground">
               {isMorning ? "Comment tu commences ta journée ?" : "Comment s'est passée ta journée ?"}
             </p>
           </div>
+
+          {/* Mini check-in : Je suis plutôt… */}
+          <motion.section
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.05 }}
+            className="rounded-2xl bg-card p-5 shadow-soft space-y-3"
+          >
+            <div className="text-center space-y-0.5">
+              <p className="font-serif text-base font-semibold">Je suis plutôt…</p>
+              <p className="text-[11px] text-muted-foreground">
+                Ajuste ton score de calme en un geste.
+              </p>
+            </div>
+            <div className="grid grid-cols-4 gap-2">
+              {MOOD_OPTIONS.map((m) => {
+                const active = mood === m.key;
+                return (
+                  <button
+                    key={m.key}
+                    onClick={() => selectMood(m.key)}
+                    className={`flex flex-col items-center gap-0.5 rounded-xl border px-2 py-2.5 text-xs transition-all ${
+                      active
+                        ? "border-primary bg-primary/10 shadow-soft scale-[1.03]"
+                        : "border-border bg-background hover:border-primary/40"
+                    }`}
+                  >
+                    <span className="text-xl leading-none">{m.emoji}</span>
+                    <span className={`font-medium leading-tight ${active ? "text-primary" : ""}`}>
+                      {m.label}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+            <AnimatePresence>
+              {mood && (
+                <motion.p
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  className="text-center text-[11px] text-muted-foreground"
+                >
+                  Pris en compte. <Link to="/calme" className="text-primary underline-offset-2 hover:underline">Voir le détail →</Link>
+                </motion.p>
+              )}
+            </AnimatePresence>
+          </motion.section>
 
           {/* Main ritual CTA */}
           <motion.div
