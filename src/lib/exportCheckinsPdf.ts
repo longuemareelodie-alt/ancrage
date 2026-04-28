@@ -13,6 +13,12 @@ export interface ExportMeta {
   currentStreak?: number;
 }
 
+export interface ExportOptions {
+  includeFirstName?: boolean;
+  includeEmail?: boolean;
+  anonymize?: boolean; // when true, ignore firstName/email entirely
+}
+
 const PRIMARY: [number, number, number] = [121, 62, 207]; // ~ hsl(258 70% 52%)
 const MUTED: [number, number, number] = [110, 110, 125];
 const TEXT: [number, number, number] = [30, 30, 40];
