@@ -135,6 +135,21 @@ const CalmeEnClair = () => {
   const [last7, setLast7] = useState<{ date: Date; count: number }[]>([]);
   const [last14Scores, setLast14Scores] = useState<{ date: Date; score: number; count: number }[]>([]);
   const [selectedDayIdx, setSelectedDayIdx] = useState<number | null>(null);
+  const [actionStyle, setActionStyleState] = useState<ActionStyle>(() => getActionStyle());
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent<ActionStyle>).detail;
+      if (detail) setActionStyleState(detail);
+    };
+    window.addEventListener("calm-action-style-change", handler);
+    return () => window.removeEventListener("calm-action-style-change", handler);
+  }, []);
+
+  const updateStyle = (s: ActionStyle) => {
+    setActionStyleState(s);
+    setActionStyle(s);
+  };
 
   // Load today's saved mood (Supabase first with local cache fallback)
   useEffect(() => {
