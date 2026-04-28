@@ -44,6 +44,7 @@ import SanteFicheMedicale from "./pages/SanteFicheMedicale";
 import SanteRessources from "./pages/SanteRessources";
 import FicheUrgencePublique from "./pages/FicheUrgencePublique";
 import CalmeEnClair from "./pages/CalmeEnClair";
+import Danger from "./pages/Danger";
 
 const queryClient = new QueryClient();
 
