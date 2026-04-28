@@ -26,13 +26,33 @@ const CalmeEnClair = () => {
   const [last14Scores, setLast14Scores] = useState<{ date: Date; score: number; count: number }[]>([]);
   const [selectedDayIdx, setSelectedDayIdx] = useState<number | null>(null);
 
-  // Load today's saved mood
+  // Load today's saved mood (Supabase first with local cache fallback)
   useEffect(() => {
     if (!user) return;
-    const saved = localStorage.getItem(`calm_mood_${user.id}_${todayKey()}`);
-    if (saved && MOOD_OPTIONS.some((m) => m.key === saved)) {
-      setMood(saved as MoodKey);
+    // Optimistic from local cache
+    const cached = localStorage.getItem(`calm_mood_${user.id}_${todayKey()}`);
+    if (cached && MOOD_OPTIONS.some((m) => m.key === cached)) {
+      setMood(cached as MoodKey);
     }
+    // Authoritative from DB
+    (async () => {
+      const { data, error } = await supabase
+        .from("mood_responses")
+        .select("mood")
+        .eq("user_id", user.id)
+        .eq("response_date", todayKey())
+        .maybeSingle();
+      if (!error && data?.mood && MOOD_OPTIONS.some((m) => m.key === data.mood)) {
+        setMood(data.mood as MoodKey);
+        localStorage.setItem(`calm_mood_${user.id}_${todayKey()}`, data.mood);
+      } else if (!error && !data) {
+        // No remote answer for today — clear stale local cache
+        if (cached) {
+          localStorage.removeItem(`calm_mood_${user.id}_${todayKey()}`);
+          setMood(null);
+        }
+      }
+    })();
   }, [user]);
 
   useEffect(() => {
