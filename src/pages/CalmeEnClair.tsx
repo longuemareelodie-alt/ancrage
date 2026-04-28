@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Heart, Flame, Sparkles, TrendingUp, Smile, Wind, AlertCircle, Sun, Moon, ArrowRight, Check, X } from "lucide-react";
+import { ArrowLeft, Heart, Flame, Sparkles, TrendingUp, Smile, Wind, AlertCircle, Sun, Moon, ArrowRight, Check, X, Hand } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { getActionStyle, setActionStyle, type ActionStyle } from "@/lib/actionStyle";
 
 type MoodKey = "calm" | "ok" | "tense" | "overflow";
 
@@ -24,50 +25,104 @@ type MicroAction = {
   why: string;
 };
 
-const MICRO_ACTIONS: Record<MoodKey, MicroAction> = {
+type ActionVariants = { breathing: MicroAction; sensory: MicroAction };
+
+const MICRO_ACTIONS: Record<MoodKey, ActionVariants> = {
   calm: {
-    emoji: "🌿",
-    title: "Ancrer ce calme",
-    duration: "2 min",
-    steps: [
-      "Pose une main sur ton cœur, une sur ton ventre.",
-      "Inspire 4 sec, expire 6 sec — 6 fois.",
-      "Note mentalement : « Ce calme m'appartient. »",
-    ],
-    why: "Pour graver la sensation et la retrouver plus tard.",
+    breathing: {
+      emoji: "🌿",
+      title: "Ancrer ce calme — souffle long",
+      duration: "2 min",
+      steps: [
+        "Pose une main sur ton cœur, une sur ton ventre.",
+        "Inspire 4 sec, expire 6 sec — 8 fois.",
+        "Note mentalement : « Ce calme m'appartient. »",
+      ],
+      why: "Le souffle long imprime la sensation de calme.",
+    },
+    sensory: {
+      emoji: "🌿",
+      title: "Ancrer ce calme — par les sens",
+      duration: "2 min",
+      steps: [
+        "Pose tes mains sur une surface : note la texture, la température.",
+        "Repère 3 sons agréables autour de toi.",
+        "Choisis 1 image mentale à garder de ce moment.",
+      ],
+      why: "Tes sens gravent la mémoire du calme.",
+    },
   },
   ok: {
-    emoji: "🙂",
-    title: "Renforcer ton équilibre",
-    duration: "2 min",
-    steps: [
-      "Étire doucement ta nuque (3 cercles de chaque côté).",
-      "Bois un grand verre d'eau lentement.",
-      "Cite 1 chose qui va, là, maintenant.",
-    ],
-    why: "Petit geste qui consolide ton « ça va ».",
+    breathing: {
+      emoji: "🙂",
+      title: "Renforcer ton équilibre — respiration douce",
+      duration: "2 min",
+      steps: [
+        "Inspire 4 sec, expire 4 sec — 6 fois, calmement.",
+        "À chaque expiration, relâche les épaules.",
+        "Cite 1 chose qui va, là, maintenant.",
+      ],
+      why: "Petit souffle pour consolider ton « ça va ».",
+    },
+    sensory: {
+      emoji: "🙂",
+      title: "Renforcer ton équilibre — par les sens",
+      duration: "2 min",
+      steps: [
+        "Étire doucement ta nuque (3 cercles de chaque côté).",
+        "Bois un grand verre d'eau lentement, sens-la descendre.",
+        "Cite 1 chose qui va, là, maintenant.",
+      ],
+      why: "Le corps confirme : « ça va, vraiment ».",
+    },
   },
   tense: {
-    emoji: "😣",
-    title: "Relâcher la tension (hypervigilance)",
-    duration: "2 min",
-    steps: [
-      "Décroche les épaules — laisse-les tomber 3 fois.",
-      "Respire en carré : 4 sec inspire, 4 sec pause, 4 sec expire, 4 sec pause (×4).",
-      "Regarde autour : nomme 3 objets que tu vois.",
-    ],
-    why: "Sortir du mode « alerte » sans te brusquer.",
+    breathing: {
+      emoji: "😣",
+      title: "Relâcher la tension — respiration carrée",
+      duration: "2 min",
+      steps: [
+        "Décroche les épaules — laisse-les tomber 3 fois.",
+        "Respire en carré : 4 sec inspire, 4 sec pause, 4 sec expire, 4 sec pause (×6).",
+        "Sens ta mâchoire se desserrer.",
+      ],
+      why: "La respiration carrée sort du mode « alerte ».",
+    },
+    sensory: {
+      emoji: "😣",
+      title: "Relâcher la tension — ancrage par les sens",
+      duration: "2 min",
+      steps: [
+        "Pose les pieds au sol : sens leur poids.",
+        "Regarde autour : nomme 3 objets que tu vois, 2 sons que tu entends.",
+        "Passe une main fraîche sur ton visage ou ta nuque.",
+      ],
+      why: "Tes sens te ramènent ici, hors de la vigilance.",
+    },
   },
   overflow: {
-    emoji: "🌊",
-    title: "Revenir dans ton corps (panique / débordement)",
-    duration: "2 min",
-    steps: [
-      "Pose les pieds bien à plat. Sens le sol.",
-      "5-4-3-2-1 : 5 choses vues, 4 entendues, 3 touchées, 2 senties, 1 goûtée.",
-      "Dis-toi : « La vague passe. Je suis là. »",
-    ],
-    why: "Ancrage sensoriel pour calmer le système nerveux.",
+    breathing: {
+      emoji: "🌊",
+      title: "Calmer la vague — souffle d'urgence",
+      duration: "2 min",
+      steps: [
+        "Inspire 4 sec par le nez, expire 8 sec par la bouche (×6).",
+        "À chaque expiration, dis tout bas : « ça passe ».",
+        "Pose une main sur ton ventre, sens-le bouger.",
+      ],
+      why: "L'expiration longue freine la panique en 1 minute.",
+    },
+    sensory: {
+      emoji: "🌊",
+      title: "Revenir dans ton corps — 5-4-3-2-1",
+      duration: "2 min",
+      steps: [
+        "Pose les pieds bien à plat. Sens le sol.",
+        "5-4-3-2-1 : 5 choses vues, 4 entendues, 3 touchées, 2 senties, 1 goûtée.",
+        "Dis-toi : « La vague passe. Je suis là. »",
+      ],
+      why: "Ancrage sensoriel pour sortir du débordement.",
+    },
   },
 };
 
@@ -80,6 +135,21 @@ const CalmeEnClair = () => {
   const [last7, setLast7] = useState<{ date: Date; count: number }[]>([]);
   const [last14Scores, setLast14Scores] = useState<{ date: Date; score: number; count: number }[]>([]);
   const [selectedDayIdx, setSelectedDayIdx] = useState<number | null>(null);
+  const [actionStyle, setActionStyleState] = useState<ActionStyle>(() => getActionStyle());
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent<ActionStyle>).detail;
+      if (detail) setActionStyleState(detail);
+    };
+    window.addEventListener("calm-action-style-change", handler);
+    return () => window.removeEventListener("calm-action-style-change", handler);
+  }, []);
+
+  const updateStyle = (s: ActionStyle) => {
+    setActionStyleState(s);
+    setActionStyle(s);
+  };
 
   // Load today's saved mood (Supabase first with local cache fallback)
   useEffect(() => {
@@ -314,10 +384,17 @@ const CalmeEnClair = () => {
           {/* Micro-action 2 min adaptée au mood */}
           <AnimatePresence mode="wait">
             {mood && (() => {
-              const action = MICRO_ACTIONS[mood];
+              const variants = MICRO_ACTIONS[mood];
+              // If user has no preference, default to sensory for overflow (panic),
+              // breathing for tense, and breathing for calm/ok.
+              const fallback: "breathing" | "sensory" =
+                mood === "overflow" ? "sensory" : "breathing";
+              const variantKey: "breathing" | "sensory" =
+                actionStyle === "any" ? fallback : actionStyle;
+              const action = variants[variantKey];
               return (
                 <motion.section
-                  key={mood}
+                  key={`${mood}-${variantKey}`}
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
@@ -350,6 +427,40 @@ const CalmeEnClair = () => {
                       </li>
                     ))}
                   </ol>
+
+                  {/* Style preference selector */}
+                  <div className="rounded-xl border border-primary/15 bg-background/60 p-3 space-y-2">
+                    <p className="text-[11px] font-medium text-muted-foreground">
+                      Mon style préféré pour ces exercices
+                    </p>
+                    <div className="grid grid-cols-3 gap-1.5">
+                      {([
+                        { key: "breathing", label: "Respiration", icon: Wind },
+                        { key: "sensory", label: "Sensoriel", icon: Hand },
+                        { key: "any", label: "Au choix", icon: Sparkles },
+                      ] as const).map((opt) => {
+                        const Icon = opt.icon;
+                        const active = actionStyle === opt.key;
+                        return (
+                          <button
+                            key={opt.key}
+                            onClick={() => updateStyle(opt.key)}
+                            className={`flex items-center justify-center gap-1 rounded-lg border px-2 py-1.5 text-[11px] font-medium transition-all ${
+                              active
+                                ? "border-primary bg-primary/10 text-primary"
+                                : "border-border bg-background text-muted-foreground hover:border-primary/40"
+                            }`}
+                          >
+                            <Icon className="h-3 w-3" />
+                            {opt.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <p className="text-[10px] text-muted-foreground italic">
+                      Tes prochaines micro-actions s'adapteront à ce style.
+                    </p>
+                  </div>
 
                   <p className="text-center text-[11px] text-muted-foreground italic">
                     Suggérée parce que tu te sens « {MOOD_OPTIONS.find((m) => m.key === mood)?.label.toLowerCase()} » aujourd'hui.
