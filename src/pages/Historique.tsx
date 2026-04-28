@@ -32,6 +32,8 @@ const Historique = () => {
   const { user } = useAuth();
   const [data, setData] = useState<CheckinEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [exporting, setExporting] = useState(false);
+  const [profile, setProfile] = useState<{ first_name?: string; email?: string; current_streak?: number }>({});
 
   useEffect(() => {
     if (!user) return;
