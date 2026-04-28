@@ -25,6 +25,7 @@ const Dashboard = () => {
   const [streak, setStreak] = useState(0);
   const [firstName, setFirstName] = useState("");
   const [calmScore, setCalmScore] = useState<number>(50);
+  const [mood, setMood] = useState<MoodKey | null>(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -51,9 +52,48 @@ const Dashboard = () => {
       const checkins = count ?? 0;
       const score = Math.max(20, Math.min(98, 40 + Math.min(s, 20) * 2 + Math.min(checkins, 14) * 1.5));
       setCalmScore(Math.round(score));
+
+      // Today's mood (cross-device via Supabase, optimistic from cache)
+      const cached = localStorage.getItem(`calm_mood_${user.id}_${todayKey()}`);
+      if (cached && MOOD_OPTIONS.some((m) => m.key === cached)) {
+        setMood(cached as MoodKey);
+      }
+      const { data: mr } = await supabase
+        .from("mood_responses")
+        .select("mood")
+        .eq("user_id", user.id)
+        .eq("response_date", todayKey())
+        .maybeSingle();
+      if (mr?.mood && MOOD_OPTIONS.some((m) => m.key === mr.mood)) {
+        setMood(mr.mood as MoodKey);
+        localStorage.setItem(`calm_mood_${user.id}_${todayKey()}`, mr.mood);
+      }
     };
     fetchProfile();
   }, [user]);
+
+  const moodAdjust = useMemo(
+    () => MOOD_OPTIONS.find((m) => m.key === mood)?.adjust ?? 0,
+    [mood],
+  );
+  const adjustedScore = Math.max(20, Math.min(98, calmScore + moodAdjust));
+
+  const selectMood = async (key: MoodKey) => {
+    setMood(key);
+    if (!user) return;
+    localStorage.setItem(`calm_mood_${user.id}_${todayKey()}`, key);
+    const adjust = MOOD_OPTIONS.find((m) => m.key === key)?.adjust ?? 0;
+    const { error } = await supabase.from("mood_responses").upsert(
+      {
+        user_id: user.id,
+        response_date: todayKey(),
+        mood: key,
+        adjust,
+      },
+      { onConflict: "user_id,response_date" },
+    );
+    if (error) console.error("mood upsert failed", error);
+  };
 
   const dailyMsg = getDailyMessage();
   const streakInfo = getStreakLabel(streak);
