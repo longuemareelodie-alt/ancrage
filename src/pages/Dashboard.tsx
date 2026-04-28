@@ -71,13 +71,16 @@ const Dashboard = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="w-full max-w-lg space-y-6"
+          className="w-full max-w-lg space-y-8"
         >
           {/* Greeting */}
-          <div className="text-center space-y-1">
-            <h1 className="text-xl font-bold">
+          <div className="text-center space-y-2">
+            <h1 className="font-serif text-3xl font-semibold tracking-tight">
               {firstName ? `Ton moment, ${firstName}` : "Ton moment pour toi"}
             </h1>
+            <p className="text-base font-medium text-primary/80">
+              Ton calme aujourd'hui : {calmScore}%
+            </p>
             <p className="text-sm text-muted-foreground">
               {isMorning ? "Comment tu commences ta journée ?" : "Comment s'est passée ta journée ?"}
             </p>
@@ -91,15 +94,15 @@ const Dashboard = () => {
           >
             <Link
               to={isPremium ? "/checkin" : "/emotions"}
-              className="flex w-full items-center gap-4 rounded-2xl bg-gradient-to-r from-primary to-primary/80 p-6 text-left text-primary-foreground shadow-lg shadow-primary/25 transition-transform hover:scale-[1.02] active:scale-[0.98]"
+              className="flex w-full items-center gap-4 rounded-2xl bg-gradient-to-r from-primary to-primary/80 p-7 text-left text-primary-foreground shadow-soft-lg transition-transform hover:scale-[1.02] active:scale-[0.98]"
             >
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary-foreground/20">
                 <Heart className="h-6 w-6" />
               </div>
               <div>
-                <p className="text-lg font-bold">Je prends 30 secondes</p>
-                <p className="mt-1 text-sm opacity-80">
-                  {isMorning ? "Mon rituel du matin" : "Mon rituel du soir"}
+                <p className="font-serif text-xl font-semibold">Je régule mon système (30 sec)</p>
+                <p className="mt-1 text-sm opacity-85">
+                  Reprends le contrôle maintenant
                 </p>
               </div>
             </Link>
@@ -113,14 +116,14 @@ const Dashboard = () => {
           >
             <Link
               to="/urgence"
-              className="flex w-full items-center gap-4 rounded-2xl bg-destructive/10 border border-destructive/20 p-5 text-left transition-transform hover:scale-[1.02] active:scale-[0.98]"
+              className="flex w-full items-center gap-4 rounded-2xl bg-destructive/10 border border-destructive/20 p-6 text-left shadow-soft transition-transform hover:scale-[1.02] active:scale-[0.98]"
             >
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-destructive/20">
                 <AlertCircle className="h-5 w-5 text-destructive" />
               </div>
               <div>
-                <p className="font-bold text-destructive">Ça déborde</p>
-                <p className="mt-0.5 text-xs text-muted-foreground">Aide immédiate</p>
+                <p className="font-bold text-destructive tracking-wide">MODE SURVIE → OFF</p>
+                <p className="mt-0.5 text-xs text-muted-foreground">Sortir du mode survie en 60 secondes</p>
               </div>
             </Link>
           </motion.div>
