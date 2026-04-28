@@ -323,6 +323,36 @@ export type Database = {
         }
         Relationships: []
       }
+      mood_responses: {
+        Row: {
+          adjust: number
+          created_at: string
+          id: string
+          mood: string
+          response_date: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          adjust?: number
+          created_at?: string
+          id?: string
+          mood: string
+          response_date?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          adjust?: number
+          created_at?: string
+          id?: string
+          mood?: string
+          response_date?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
