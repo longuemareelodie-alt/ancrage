@@ -16,6 +16,61 @@ const MOOD_OPTIONS: { key: MoodKey; emoji: string; label: string; adjust: number
 
 const todayKey = () => new Date().toISOString().slice(0, 10);
 
+type MicroAction = {
+  emoji: string;
+  title: string;
+  duration: string;
+  steps: string[];
+  why: string;
+};
+
+const MICRO_ACTIONS: Record<MoodKey, MicroAction> = {
+  calm: {
+    emoji: "🌿",
+    title: "Ancrer ce calme",
+    duration: "2 min",
+    steps: [
+      "Pose une main sur ton cœur, une sur ton ventre.",
+      "Inspire 4 sec, expire 6 sec — 6 fois.",
+      "Note mentalement : « Ce calme m'appartient. »",
+    ],
+    why: "Pour graver la sensation et la retrouver plus tard.",
+  },
+  ok: {
+    emoji: "🙂",
+    title: "Renforcer ton équilibre",
+    duration: "2 min",
+    steps: [
+      "Étire doucement ta nuque (3 cercles de chaque côté).",
+      "Bois un grand verre d'eau lentement.",
+      "Cite 1 chose qui va, là, maintenant.",
+    ],
+    why: "Petit geste qui consolide ton « ça va ».",
+  },
+  tense: {
+    emoji: "😣",
+    title: "Relâcher la tension (hypervigilance)",
+    duration: "2 min",
+    steps: [
+      "Décroche les épaules — laisse-les tomber 3 fois.",
+      "Respire en carré : 4 sec inspire, 4 sec pause, 4 sec expire, 4 sec pause (×4).",
+      "Regarde autour : nomme 3 objets que tu vois.",
+    ],
+    why: "Sortir du mode « alerte » sans te brusquer.",
+  },
+  overflow: {
+    emoji: "🌊",
+    title: "Revenir dans ton corps (panique / débordement)",
+    duration: "2 min",
+    steps: [
+      "Pose les pieds bien à plat. Sens le sol.",
+      "5-4-3-2-1 : 5 choses vues, 4 entendues, 3 touchées, 2 senties, 1 goûtée.",
+      "Dis-toi : « La vague passe. Je suis là. »",
+    ],
+    why: "Ancrage sensoriel pour calmer le système nerveux.",
+  },
+};
+
 const CalmeEnClair = () => {
   const { user } = useAuth();
   const [streak, setStreak] = useState(0);
