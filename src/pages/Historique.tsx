@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowLeft, TrendingUp, Calendar, BarChart3, Smile, Frown } from "lucide-react";
+import { ArrowLeft, TrendingUp, Calendar, BarChart3, Smile, Frown, Download } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { emotions } from "@/data/emotions";
+import { exportCheckinsToPdf } from "@/lib/exportCheckinsPdf";
+import { toast } from "@/hooks/use-toast";
 import {
   AreaChart,
   Area,
