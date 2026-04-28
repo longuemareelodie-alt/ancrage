@@ -122,9 +122,18 @@ const CalmeEnClair = () => {
   );
   const calmScore = Math.max(20, Math.min(98, baseScore + moodAdjust));
 
+  const [skipped, setSkipped] = useState(false);
+
   const selectMood = (key: MoodKey) => {
     setMood(key);
+    setSkipped(false);
     if (user) localStorage.setItem(`calm_mood_${user.id}_${todayKey()}`, key);
+  };
+
+  const skipMood = () => {
+    setMood(null);
+    setSkipped(true);
+    if (user) localStorage.removeItem(`calm_mood_${user.id}_${todayKey()}`);
   };
 
   const streakBonus = Math.min(streak, 20) * 2;
