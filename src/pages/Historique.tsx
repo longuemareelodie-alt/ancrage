@@ -175,14 +175,77 @@ const Historique = () => {
         </Link>
         <h1 className="flex-1 text-lg font-bold">Mon historique émotionnel</h1>
         {totalCheckins > 0 && (
-          <button
-            onClick={handleExport}
-            disabled={exporting}
-            className="flex items-center gap-1.5 rounded-full bg-primary px-3.5 py-2 text-xs font-semibold text-primary-foreground shadow-soft transition-transform hover:scale-[1.03] disabled:opacity-60"
-          >
-            <Download className="h-3.5 w-3.5" />
-            {exporting ? "Export…" : "PDF"}
-          </button>
+          <div className="flex items-center gap-1.5">
+            <Popover>
+              <PopoverTrigger asChild>
+                <button
+                  aria-label="Options d'export"
+                  className="flex items-center justify-center rounded-full bg-secondary p-2 text-foreground shadow-soft transition-transform hover:scale-[1.05]"
+                >
+                  <Settings2 className="h-3.5 w-3.5" />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent align="end" className="w-72 space-y-4">
+                <div className="space-y-1">
+                  <p className="text-sm font-semibold">Options d'export PDF</p>
+                  <p className="text-xs text-muted-foreground">
+                    Choisis ce qui apparaît dans le document.
+                  </p>
+                </div>
+
+                <div className="flex items-start justify-between gap-3 rounded-lg border border-border p-3">
+                  <div>
+                    <p className="text-sm font-medium">Masquer mes données</p>
+                    <p className="text-xs text-muted-foreground">
+                      Aucun prénom ni email dans le PDF.
+                    </p>
+                  </div>
+                  <Switch
+                    checked={!!exportOpts.anonymize}
+                    onCheckedChange={(v) =>
+                      setExportOpts((o) => ({ ...o, anonymize: v }))
+                    }
+                  />
+                </div>
+
+                <div className={`space-y-2 ${exportOpts.anonymize ? "opacity-50 pointer-events-none" : ""}`}>
+                  <label className="flex items-center gap-2.5 text-sm">
+                    <Checkbox
+                      checked={!!exportOpts.includeFirstName}
+                      onCheckedChange={(v) =>
+                        setExportOpts((o) => ({ ...o, includeFirstName: !!v }))
+                      }
+                    />
+                    Inclure mon prénom
+                    {profile.first_name && (
+                      <span className="text-xs text-muted-foreground">({profile.first_name})</span>
+                    )}
+                  </label>
+                  <label className="flex items-center gap-2.5 text-sm">
+                    <Checkbox
+                      checked={!!exportOpts.includeEmail}
+                      onCheckedChange={(v) =>
+                        setExportOpts((o) => ({ ...o, includeEmail: !!v }))
+                      }
+                    />
+                    Inclure mon email
+                    {profile.email && (
+                      <span className="truncate text-xs text-muted-foreground">({profile.email})</span>
+                    )}
+                  </label>
+                </div>
+              </PopoverContent>
+            </Popover>
+
+            <button
+              onClick={handleExport}
+              disabled={exporting}
+              className="flex items-center gap-1.5 rounded-full bg-primary px-3.5 py-2 text-xs font-semibold text-primary-foreground shadow-soft transition-transform hover:scale-[1.03] disabled:opacity-60"
+            >
+              <Download className="h-3.5 w-3.5" />
+              {exporting ? "Export…" : "PDF"}
+            </button>
+          </div>
         )}
       </div>
 
