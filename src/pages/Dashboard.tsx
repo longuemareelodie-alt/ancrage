@@ -78,9 +78,12 @@ const Dashboard = () => {
             <h1 className="font-serif text-3xl font-semibold tracking-tight">
               {firstName ? `Ton moment, ${firstName}` : "Ton moment pour toi"}
             </h1>
-            <p className="text-base font-medium text-primary/80">
+            <Link
+              to="/calme"
+              className="inline-block text-base font-medium text-primary/80 underline-offset-4 hover:underline"
+            >
               Ton calme aujourd'hui : {calmScore}%
-            </p>
+            </Link>
             <p className="text-sm text-muted-foreground">
               {isMorning ? "Comment tu commences ta journée ?" : "Comment s'est passée ta journée ?"}
             </p>

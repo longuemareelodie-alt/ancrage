@@ -43,6 +43,7 @@ import SanteMedicaments from "./pages/SanteMedicaments";
 import SanteFicheMedicale from "./pages/SanteFicheMedicale";
 import SanteRessources from "./pages/SanteRessources";
 import FicheUrgencePublique from "./pages/FicheUrgencePublique";
+import CalmeEnClair from "./pages/CalmeEnClair";
 
 const queryClient = new QueryClient();
 
@@ -75,6 +76,7 @@ const AnimatedRoutes = () => {
           <Routes location={location}>
         <Route path="/" element={<PageTransition><Index /></PageTransition>} />
         <Route path="/dashboard" element={<ProtectedRoute><PageTransition><Dashboard /></PageTransition></ProtectedRoute>} />
+        <Route path="/calme" element={<ProtectedRoute><PageTransition><CalmeEnClair /></PageTransition></ProtectedRoute>} />
         <Route path="/emotions" element={<ProtectedRoute><PageTransition><Emotions /></PageTransition></ProtectedRoute>} />
         <Route path="/emotion/:emotion" element={<ProtectedRoute><PageTransition><EmotionDetail /></PageTransition></ProtectedRoute>} />
         <Route path="/checkin" element={<PremiumRoute><PageTransition><Checkin /></PageTransition></PremiumRoute>} />
