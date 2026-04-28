@@ -23,6 +23,8 @@ const CalmeEnClair = () => {
   const [baseScore, setBaseScore] = useState(50);
   const [mood, setMood] = useState<MoodKey | null>(null);
   const [last7, setLast7] = useState<{ date: Date; count: number }[]>([]);
+  const [last14Scores, setLast14Scores] = useState<{ date: Date; score: number; count: number }[]>([]);
+  const [selectedDayIdx, setSelectedDayIdx] = useState<number | null>(null);
 
   // Load today's saved mood
   useEffect(() => {
@@ -54,26 +56,59 @@ const CalmeEnClair = () => {
       const c = count ?? 0;
       setCheckins14d(c);
 
-      // 7-day rolling window with daily counts
-      const start7 = new Date();
-      start7.setHours(0, 0, 0, 0);
-      start7.setDate(start7.getDate() - 6);
+      // 28-day window: needed to compute 14-day rolling count for each of last 14 days
+      const startWindow = new Date();
+      startWindow.setHours(0, 0, 0, 0);
+      startWindow.setDate(startWindow.getDate() - 27);
       const { data: rows } = await supabase
         .from("emotion_checkins")
         .select("created_at")
         .eq("user_id", user.id)
-        .gte("created_at", start7.toISOString());
-      const buckets = Array.from({ length: 7 }).map((_, i) => {
-        const d = new Date(start7);
-        d.setDate(start7.getDate() + i);
-        return { date: d, count: 0 };
-      });
+        .gte("created_at", startWindow.toISOString());
+
+      // Daily counts over 28 days
+      const dayCounts = Array.from({ length: 28 }).map(() => 0);
       (rows ?? []).forEach((r: { created_at: string }) => {
         const d = new Date(r.created_at);
-        const idx = Math.floor((d.getTime() - start7.getTime()) / 86400000);
-        if (idx >= 0 && idx < 7) buckets[idx].count += 1;
+        const idx = Math.floor((d.getTime() - startWindow.getTime()) / 86400000);
+        if (idx >= 0 && idx < 28) dayCounts[idx] += 1;
       });
-      setLast7(buckets);
+
+      // 7-day mini chart (last 7 days)
+      const last7Buckets = Array.from({ length: 7 }).map((_, i) => {
+        const dayIdx = 21 + i; // last 7 of 28
+        const d = new Date(startWindow);
+        d.setDate(startWindow.getDate() + dayIdx);
+        return { date: d, count: dayCounts[dayIdx] };
+      });
+      setLast7(last7Buckets);
+
+      // 14-day score evolution: for each of the last 14 days, compute score using
+      // streak (approximated by consecutive non-zero days ending that day, capped 20)
+      // and 14-day rolling check-in count up to that day.
+      const series = Array.from({ length: 14 }).map((_, i) => {
+        const dayIdx = 14 + i; // last 14 of 28
+        const d = new Date(startWindow);
+        d.setDate(startWindow.getDate() + dayIdx);
+
+        // rolling 14-day count ending this day
+        let rolling = 0;
+        for (let k = dayIdx - 13; k <= dayIdx; k++) {
+          if (k >= 0) rolling += dayCounts[k];
+        }
+        // approximate streak ending this day
+        let approxStreak = 0;
+        for (let k = dayIdx; k >= 0; k--) {
+          if (dayCounts[k] > 0) approxStreak += 1;
+          else break;
+        }
+        const score = Math.max(
+          20,
+          Math.min(98, 40 + Math.min(approxStreak, 20) * 2 + Math.min(rolling, 14) * 1.5),
+        );
+        return { date: d, score: Math.round(score), count: dayCounts[dayIdx] };
+      });
+      setLast14Scores(series);
 
       const score = 40 + Math.min(s, 20) * 2 + Math.min(c, 14) * 1.5;
       setBaseScore(Math.round(score));
@@ -237,6 +272,151 @@ const CalmeEnClair = () => {
             <p className="text-center text-xs text-muted-foreground">
               Chaque jour où tu reviens nourrit ton calme.
             </p>
+          </section>
+
+          {/* 14-day calm score evolution */}
+          <section className="rounded-2xl bg-card p-6 shadow-soft space-y-4">
+            <div className="flex items-baseline justify-between gap-2">
+              <h2 className="font-serif text-xl font-semibold">Évolution sur 14 jours</h2>
+              <span className="text-xs text-muted-foreground">Touche un point</span>
+            </div>
+            {(() => {
+              const W = 320;
+              const H = 120;
+              const padX = 14;
+              const padY = 18;
+              const n = last14Scores.length;
+              if (n === 0) {
+                return (
+                  <p className="text-center text-sm text-muted-foreground py-6">
+                    Pas encore assez d'historique pour afficher la courbe.
+                  </p>
+                );
+              }
+              const minS = 20;
+              const maxS = 100;
+              const x = (i: number) => padX + (i * (W - padX * 2)) / Math.max(1, n - 1);
+              const y = (s: number) =>
+                padY + (1 - (s - minS) / (maxS - minS)) * (H - padY * 2);
+
+              const linePath = last14Scores
+                .map((d, i) => `${i === 0 ? "M" : "L"}${x(i).toFixed(1)},${y(d.score).toFixed(1)}`)
+                .join(" ");
+              const areaPath = `${linePath} L${x(n - 1).toFixed(1)},${H - padY} L${x(0).toFixed(1)},${H - padY} Z`;
+
+              const selected =
+                selectedDayIdx !== null ? last14Scores[selectedDayIdx] : null;
+
+              return (
+                <>
+                  <div className="relative">
+                    <svg
+                      viewBox={`0 0 ${W} ${H}`}
+                      className="w-full h-32"
+                      preserveAspectRatio="none"
+                    >
+                      <defs>
+                        <linearGradient id="calmGrad" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.35" />
+                          <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0" />
+                        </linearGradient>
+                      </defs>
+                      {[0, 0.5, 1].map((t) => (
+                        <line
+                          key={t}
+                          x1={padX}
+                          x2={W - padX}
+                          y1={padY + t * (H - padY * 2)}
+                          y2={padY + t * (H - padY * 2)}
+                          stroke="hsl(var(--border))"
+                          strokeDasharray="2 3"
+                        />
+                      ))}
+                      <path d={areaPath} fill="url(#calmGrad)" />
+                      <path
+                        d={linePath}
+                        fill="none"
+                        stroke="hsl(var(--primary))"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      {last14Scores.map((d, i) => {
+                        const isSel = selectedDayIdx === i;
+                        const isToday = i === n - 1;
+                        return (
+                          <g key={i}>
+                            <circle
+                              cx={x(i)}
+                              cy={y(d.score)}
+                              r={12}
+                              fill="transparent"
+                              onClick={() => setSelectedDayIdx(i)}
+                              style={{ cursor: "pointer" }}
+                            />
+                            <circle
+                              cx={x(i)}
+                              cy={y(d.score)}
+                              r={isSel ? 5 : isToday ? 4 : 3}
+                              fill={isSel || isToday ? "hsl(var(--primary))" : "hsl(var(--card))"}
+                              stroke="hsl(var(--primary))"
+                              strokeWidth={2}
+                              style={{ pointerEvents: "none" }}
+                            />
+                          </g>
+                        );
+                      })}
+                    </svg>
+                    <div className="flex justify-between text-[10px] text-muted-foreground px-1 -mt-1">
+                      <span>
+                        {last14Scores[0].date.toLocaleDateString("fr-FR", { day: "numeric", month: "short" })}
+                      </span>
+                      <span>
+                        {last14Scores[Math.floor(n / 2)].date.toLocaleDateString("fr-FR", { day: "numeric", month: "short" })}
+                      </span>
+                      <span className="font-semibold text-primary">Aujourd'hui</span>
+                    </div>
+                  </div>
+
+                  <motion.div
+                    key={selectedDayIdx ?? "default"}
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="rounded-xl bg-primary/5 border border-primary/15 p-4"
+                  >
+                    {selected ? (
+                      <div className="flex items-center justify-between gap-3">
+                        <div>
+                          <p className="text-xs uppercase tracking-wider text-muted-foreground">
+                            {selected.date.toLocaleDateString("fr-FR", {
+                              weekday: "long",
+                              day: "numeric",
+                              month: "long",
+                            })}
+                          </p>
+                          <p className="font-serif text-2xl font-semibold text-primary">
+                            {selected.score}%
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-serif text-xl font-semibold">
+                            {selected.count}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            check-in{selected.count > 1 ? "s" : ""} ce jour-là
+                          </p>
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="text-center text-xs text-muted-foreground">
+                        Touche un point pour voir le détail d'un jour.
+                      </p>
+                    )}
+                  </motion.div>
+                </>
+              );
+            })()}
           </section>
 
           {/* Composition */}
