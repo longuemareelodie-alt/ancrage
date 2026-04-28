@@ -239,6 +239,7 @@ export function exportCheckinsToPdf(
     doc.text(`${p} / ${pageCount}`, pageWidth - margin, pageHeight - 20, { align: "right" });
   }
 
-  const filename = `ancrage-checkins-${new Date().toISOString().slice(0, 10)}.pdf`;
+  const suffix = anonymize ? "-anonyme" : "";
+  const filename = `ancrage-checkins${suffix}-${new Date().toISOString().slice(0, 10)}.pdf`;
   doc.save(filename);
 }
