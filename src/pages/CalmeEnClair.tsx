@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Heart, Flame, Sparkles, TrendingUp, Smile, Wind, AlertCircle, Sun, Moon, ArrowRight, Check, X } from "lucide-react";
+import { ArrowLeft, Heart, Flame, Sparkles, TrendingUp, Smile, Wind, AlertCircle, Sun, Moon, ArrowRight, Check, X, Hand } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { getActionStyle, setActionStyle, type ActionStyle } from "@/lib/actionStyle";
 
 type MoodKey = "calm" | "ok" | "tense" | "overflow";
 
