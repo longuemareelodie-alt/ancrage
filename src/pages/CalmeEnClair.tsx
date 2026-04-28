@@ -23,6 +23,8 @@ const CalmeEnClair = () => {
   const [baseScore, setBaseScore] = useState(50);
   const [mood, setMood] = useState<MoodKey | null>(null);
   const [last7, setLast7] = useState<{ date: Date; count: number }[]>([]);
+  const [last14Scores, setLast14Scores] = useState<{ date: Date; score: number; count: number }[]>([]);
+  const [selectedDayIdx, setSelectedDayIdx] = useState<number | null>(null);
 
   // Load today's saved mood
   useEffect(() => {
