@@ -24,50 +24,104 @@ type MicroAction = {
   why: string;
 };
 
-const MICRO_ACTIONS: Record<MoodKey, MicroAction> = {
+type ActionVariants = { breathing: MicroAction; sensory: MicroAction };
+
+const MICRO_ACTIONS: Record<MoodKey, ActionVariants> = {
   calm: {
-    emoji: "🌿",
-    title: "Ancrer ce calme",
-    duration: "2 min",
-    steps: [
-      "Pose une main sur ton cœur, une sur ton ventre.",
-      "Inspire 4 sec, expire 6 sec — 6 fois.",
-      "Note mentalement : « Ce calme m'appartient. »",
-    ],
-    why: "Pour graver la sensation et la retrouver plus tard.",
+    breathing: {
+      emoji: "🌿",
+      title: "Ancrer ce calme — souffle long",
+      duration: "2 min",
+      steps: [
+        "Pose une main sur ton cœur, une sur ton ventre.",
+        "Inspire 4 sec, expire 6 sec — 8 fois.",
+        "Note mentalement : « Ce calme m'appartient. »",
+      ],
+      why: "Le souffle long imprime la sensation de calme.",
+    },
+    sensory: {
+      emoji: "🌿",
+      title: "Ancrer ce calme — par les sens",
+      duration: "2 min",
+      steps: [
+        "Pose tes mains sur une surface : note la texture, la température.",
+        "Repère 3 sons agréables autour de toi.",
+        "Choisis 1 image mentale à garder de ce moment.",
+      ],
+      why: "Tes sens gravent la mémoire du calme.",
+    },
   },
   ok: {
-    emoji: "🙂",
-    title: "Renforcer ton équilibre",
-    duration: "2 min",
-    steps: [
-      "Étire doucement ta nuque (3 cercles de chaque côté).",
-      "Bois un grand verre d'eau lentement.",
-      "Cite 1 chose qui va, là, maintenant.",
-    ],
-    why: "Petit geste qui consolide ton « ça va ».",
+    breathing: {
+      emoji: "🙂",
+      title: "Renforcer ton équilibre — respiration douce",
+      duration: "2 min",
+      steps: [
+        "Inspire 4 sec, expire 4 sec — 6 fois, calmement.",
+        "À chaque expiration, relâche les épaules.",
+        "Cite 1 chose qui va, là, maintenant.",
+      ],
+      why: "Petit souffle pour consolider ton « ça va ».",
+    },
+    sensory: {
+      emoji: "🙂",
+      title: "Renforcer ton équilibre — par les sens",
+      duration: "2 min",
+      steps: [
+        "Étire doucement ta nuque (3 cercles de chaque côté).",
+        "Bois un grand verre d'eau lentement, sens-la descendre.",
+        "Cite 1 chose qui va, là, maintenant.",
+      ],
+      why: "Le corps confirme : « ça va, vraiment ».",
+    },
   },
   tense: {
-    emoji: "😣",
-    title: "Relâcher la tension (hypervigilance)",
-    duration: "2 min",
-    steps: [
-      "Décroche les épaules — laisse-les tomber 3 fois.",
-      "Respire en carré : 4 sec inspire, 4 sec pause, 4 sec expire, 4 sec pause (×4).",
-      "Regarde autour : nomme 3 objets que tu vois.",
-    ],
-    why: "Sortir du mode « alerte » sans te brusquer.",
+    breathing: {
+      emoji: "😣",
+      title: "Relâcher la tension — respiration carrée",
+      duration: "2 min",
+      steps: [
+        "Décroche les épaules — laisse-les tomber 3 fois.",
+        "Respire en carré : 4 sec inspire, 4 sec pause, 4 sec expire, 4 sec pause (×6).",
+        "Sens ta mâchoire se desserrer.",
+      ],
+      why: "La respiration carrée sort du mode « alerte ».",
+    },
+    sensory: {
+      emoji: "😣",
+      title: "Relâcher la tension — ancrage par les sens",
+      duration: "2 min",
+      steps: [
+        "Pose les pieds au sol : sens leur poids.",
+        "Regarde autour : nomme 3 objets que tu vois, 2 sons que tu entends.",
+        "Passe une main fraîche sur ton visage ou ta nuque.",
+      ],
+      why: "Tes sens te ramènent ici, hors de la vigilance.",
+    },
   },
   overflow: {
-    emoji: "🌊",
-    title: "Revenir dans ton corps (panique / débordement)",
-    duration: "2 min",
-    steps: [
-      "Pose les pieds bien à plat. Sens le sol.",
-      "5-4-3-2-1 : 5 choses vues, 4 entendues, 3 touchées, 2 senties, 1 goûtée.",
-      "Dis-toi : « La vague passe. Je suis là. »",
-    ],
-    why: "Ancrage sensoriel pour calmer le système nerveux.",
+    breathing: {
+      emoji: "🌊",
+      title: "Calmer la vague — souffle d'urgence",
+      duration: "2 min",
+      steps: [
+        "Inspire 4 sec par le nez, expire 8 sec par la bouche (×6).",
+        "À chaque expiration, dis tout bas : « ça passe ».",
+        "Pose une main sur ton ventre, sens-le bouger.",
+      ],
+      why: "L'expiration longue freine la panique en 1 minute.",
+    },
+    sensory: {
+      emoji: "🌊",
+      title: "Revenir dans ton corps — 5-4-3-2-1",
+      duration: "2 min",
+      steps: [
+        "Pose les pieds bien à plat. Sens le sol.",
+        "5-4-3-2-1 : 5 choses vues, 4 entendues, 3 touchées, 2 senties, 1 goûtée.",
+        "Dis-toi : « La vague passe. Je suis là. »",
+      ],
+      why: "Ancrage sensoriel pour sortir du débordement.",
+    },
   },
 };
 
