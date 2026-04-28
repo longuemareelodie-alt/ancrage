@@ -35,7 +35,7 @@ const Dashboard = () => {
       const since = new Date();
       since.setDate(since.getDate() - 14);
       const { count } = await supabase
-        .from("checkins" as any)
+        .from("emotion_checkins")
         .select("id", { count: "exact", head: true })
         .eq("user_id", user.id)
         .gte("created_at", since.toISOString());
