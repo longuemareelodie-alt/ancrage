@@ -122,9 +122,18 @@ const CalmeEnClair = () => {
   );
   const calmScore = Math.max(20, Math.min(98, baseScore + moodAdjust));
 
+  const [skipped, setSkipped] = useState(false);
+
   const selectMood = (key: MoodKey) => {
     setMood(key);
+    setSkipped(false);
     if (user) localStorage.setItem(`calm_mood_${user.id}_${todayKey()}`, key);
+  };
+
+  const skipMood = () => {
+    setMood(null);
+    setSkipped(true);
+    if (user) localStorage.removeItem(`calm_mood_${user.id}_${todayKey()}`);
   };
 
   const streakBonus = Math.min(streak, 20) * 2;
@@ -185,10 +194,25 @@ const CalmeEnClair = () => {
                 );
               })}
             </div>
+            <button
+              onClick={skipMood}
+              className={`block w-full rounded-xl border border-dashed px-4 py-3 text-sm transition-colors ${
+                skipped
+                  ? "border-primary/40 bg-primary/5 text-primary"
+                  : "border-border bg-background text-muted-foreground hover:border-primary/40 hover:text-foreground"
+              }`}
+            >
+              Je ne sais pas / Pas maintenant
+            </button>
             {mood && (
               <p className="text-center text-xs text-muted-foreground">
                 Merci. Ton ressenti ajuste le score de {moodAdjust >= 0 ? "+" : ""}
                 {moodAdjust} point{Math.abs(moodAdjust) > 1 ? "s" : ""}.
+              </p>
+            )}
+            {skipped && !mood && (
+              <p className="text-center text-xs text-muted-foreground">
+                Pas de souci 💛 Ton score reste basé sur ton activité — tu peux revenir plus tard.
               </p>
             )}
           </section>
