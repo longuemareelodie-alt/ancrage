@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Heart, Flame, Sparkles, TrendingUp, Smile, Wind, AlertCircle, Sun, Moon, ArrowRight } from "lucide-react";
+import { ArrowLeft, Heart, Flame, Sparkles, TrendingUp, Smile, Wind, AlertCircle, Sun, Moon, ArrowRight, Check, X } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -306,6 +306,95 @@ const CalmeEnClair = () => {
                 </div>
               </div>
             )}
+          </section>
+
+          {/* What counts / What doesn't */}
+          <section className="space-y-4">
+            <div>
+              <h2 className="font-serif text-2xl font-semibold">Ce qui compte, ce qui ne compte pas</h2>
+              <p className="text-sm text-muted-foreground mt-1">
+                Ton score n'est pas une note. C'est juste un repère vivant.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+              {/* Counts */}
+              <div className="rounded-2xl border border-primary/20 bg-primary/5 p-5 shadow-soft space-y-3">
+                <div className="flex items-center gap-2">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/15">
+                    <Check className="h-4 w-4 text-primary" />
+                  </div>
+                  <p className="font-serif text-lg font-semibold text-primary">
+                    Ce qui compte
+                  </p>
+                </div>
+                <ul className="space-y-2.5 text-sm">
+                  <li className="flex gap-2">
+                    <span className="text-primary mt-0.5">·</span>
+                    <span>Tes <strong>check-ins émotionnels</strong>, positifs comme négatifs.</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-primary mt-0.5">·</span>
+                    <span>Le <strong>fait de revenir</strong>, même 30 secondes.</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-primary mt-0.5">·</span>
+                    <span>Tes <strong>jours de suite</strong> (jusqu'à 20).</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-primary mt-0.5">·</span>
+                    <span>Ton <strong>ressenti du jour</strong> via la question rapide.</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-primary mt-0.5">·</span>
+                    <span>L'utilisation du mode <strong>« Sors du mode survie »</strong>.</span>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Doesn't count */}
+              <div className="rounded-2xl border border-border bg-muted/40 p-5 shadow-soft space-y-3">
+                <div className="flex items-center gap-2">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted">
+                    <X className="h-4 w-4 text-muted-foreground" />
+                  </div>
+                  <p className="font-serif text-lg font-semibold text-muted-foreground">
+                    Ce qui ne compte pas
+                  </p>
+                </div>
+                <ul className="space-y-2.5 text-sm text-muted-foreground">
+                  <li className="flex gap-2">
+                    <span className="mt-0.5">·</span>
+                    <span><strong>La nature</strong> de ton émotion. Triste ou joyeuse, c'est pareil.</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="mt-0.5">·</span>
+                    <span><strong>Le temps passé</strong> dans l'app. Pas besoin de "performer".</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="mt-0.5">·</span>
+                    <span><strong>Les jours manqués</strong> ne te font pas reculer.</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="mt-0.5">·</span>
+                    <span><strong>Comparer</strong> ton score à celui d'hier — ou de quelqu'un d'autre.</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="mt-0.5">·</span>
+                    <span>L'objectif <strong>n'est pas 100 %</strong>. Il n'existe pas.</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="rounded-2xl bg-gradient-to-r from-secondary/40 to-primary/10 p-5 text-center shadow-soft">
+              <p className="text-sm font-medium">
+                💛 Le score est un <span className="text-primary font-semibold">miroir</span>, pas un juge.
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Si tu ne sais pas quoi cocher, tape même "je ne sais pas". Ça compte aussi.
+              </p>
+            </div>
           </section>
 
           {/* How to improve */}
