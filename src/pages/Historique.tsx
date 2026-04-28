@@ -37,6 +37,11 @@ const Historique = () => {
   const [loading, setLoading] = useState(true);
   const [exporting, setExporting] = useState(false);
   const [profile, setProfile] = useState<{ first_name?: string; email?: string; current_streak?: number }>({});
+  const [exportOpts, setExportOpts] = useState<ExportOptions>({
+    includeFirstName: true,
+    includeEmail: false,
+    anonymize: false,
+  });
 
   useEffect(() => {
     if (!user) return;
