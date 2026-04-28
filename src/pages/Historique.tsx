@@ -165,7 +165,17 @@ const Historique = () => {
         <Link to="/dashboard" className="rounded-full p-2 hover:bg-secondary">
           <ArrowLeft className="h-5 w-5" />
         </Link>
-        <h1 className="text-lg font-bold">Mon historique émotionnel</h1>
+        <h1 className="flex-1 text-lg font-bold">Mon historique émotionnel</h1>
+        {totalCheckins > 0 && (
+          <button
+            onClick={handleExport}
+            disabled={exporting}
+            className="flex items-center gap-1.5 rounded-full bg-primary px-3.5 py-2 text-xs font-semibold text-primary-foreground shadow-soft transition-transform hover:scale-[1.03] disabled:opacity-60"
+          >
+            <Download className="h-3.5 w-3.5" />
+            {exporting ? "Export…" : "PDF"}
+          </button>
+        )}
       </div>
 
       <div className="space-y-6 px-4">
