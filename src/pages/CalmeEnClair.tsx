@@ -16,6 +16,61 @@ const MOOD_OPTIONS: { key: MoodKey; emoji: string; label: string; adjust: number
 
 const todayKey = () => new Date().toISOString().slice(0, 10);
 
+type MicroAction = {
+  emoji: string;
+  title: string;
+  duration: string;
+  steps: string[];
+  why: string;
+};
+
+const MICRO_ACTIONS: Record<MoodKey, MicroAction> = {
+  calm: {
+    emoji: "🌿",
+    title: "Ancrer ce calme",
+    duration: "2 min",
+    steps: [
+      "Pose une main sur ton cœur, une sur ton ventre.",
+      "Inspire 4 sec, expire 6 sec — 6 fois.",
+      "Note mentalement : « Ce calme m'appartient. »",
+    ],
+    why: "Pour graver la sensation et la retrouver plus tard.",
+  },
+  ok: {
+    emoji: "🙂",
+    title: "Renforcer ton équilibre",
+    duration: "2 min",
+    steps: [
+      "Étire doucement ta nuque (3 cercles de chaque côté).",
+      "Bois un grand verre d'eau lentement.",
+      "Cite 1 chose qui va, là, maintenant.",
+    ],
+    why: "Petit geste qui consolide ton « ça va ».",
+  },
+  tense: {
+    emoji: "😣",
+    title: "Relâcher la tension (hypervigilance)",
+    duration: "2 min",
+    steps: [
+      "Décroche les épaules — laisse-les tomber 3 fois.",
+      "Respire en carré : 4 sec inspire, 4 sec pause, 4 sec expire, 4 sec pause (×4).",
+      "Regarde autour : nomme 3 objets que tu vois.",
+    ],
+    why: "Sortir du mode « alerte » sans te brusquer.",
+  },
+  overflow: {
+    emoji: "🌊",
+    title: "Revenir dans ton corps (panique / débordement)",
+    duration: "2 min",
+    steps: [
+      "Pose les pieds bien à plat. Sens le sol.",
+      "5-4-3-2-1 : 5 choses vues, 4 entendues, 3 touchées, 2 senties, 1 goûtée.",
+      "Dis-toi : « La vague passe. Je suis là. »",
+    ],
+    why: "Ancrage sensoriel pour calmer le système nerveux.",
+  },
+};
+
 const CalmeEnClair = () => {
   const { user } = useAuth();
   const [streak, setStreak] = useState(0);
@@ -255,6 +310,55 @@ const CalmeEnClair = () => {
               </p>
             )}
           </section>
+
+          {/* Micro-action 2 min adaptée au mood */}
+          <AnimatePresence mode="wait">
+            {mood && (() => {
+              const action = MICRO_ACTIONS[mood];
+              return (
+                <motion.section
+                  key={mood}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.3 }}
+                  className="rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/10 to-secondary/20 p-6 shadow-soft space-y-4"
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="text-3xl leading-none">{action.emoji}</div>
+                    <div className="flex-1 space-y-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="inline-flex items-center gap-1 rounded-full bg-primary/15 px-2.5 py-0.5 text-[11px] font-medium text-primary">
+                          <Sparkles className="h-3 w-3" />
+                          Micro-action · {action.duration}
+                        </span>
+                      </div>
+                      <h3 className="font-serif text-lg font-semibold leading-tight">
+                        {action.title}
+                      </h3>
+                      <p className="text-xs text-muted-foreground">{action.why}</p>
+                    </div>
+                  </div>
+
+                  <ol className="space-y-2 pl-1">
+                    {action.steps.map((s, i) => (
+                      <li key={i} className="flex gap-3 text-sm text-foreground/90">
+                        <span className="flex h-6 w-6 flex-none items-center justify-center rounded-full bg-primary/15 text-[11px] font-semibold text-primary">
+                          {i + 1}
+                        </span>
+                        <span className="pt-0.5">{s}</span>
+                      </li>
+                    ))}
+                  </ol>
+
+                  <p className="text-center text-[11px] text-muted-foreground italic">
+                    Suggérée parce que tu te sens « {MOOD_OPTIONS.find((m) => m.key === mood)?.label.toLowerCase()} » aujourd'hui.
+                  </p>
+                </motion.section>
+              );
+            })()}
+          </AnimatePresence>
+
 
           {/* Current score card */}
           <div className="rounded-2xl bg-gradient-to-br from-primary/15 to-secondary/30 p-7 text-center shadow-soft-lg">
