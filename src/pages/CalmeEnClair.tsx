@@ -144,16 +144,35 @@ const CalmeEnClair = () => {
 
   const [skipped, setSkipped] = useState(false);
 
-  const selectMood = (key: MoodKey) => {
+  const selectMood = async (key: MoodKey) => {
     setMood(key);
     setSkipped(false);
-    if (user) localStorage.setItem(`calm_mood_${user.id}_${todayKey()}`, key);
+    if (!user) return;
+    localStorage.setItem(`calm_mood_${user.id}_${todayKey()}`, key);
+    const adjust = MOOD_OPTIONS.find((m) => m.key === key)?.adjust ?? 0;
+    const { error } = await supabase.from("mood_responses").upsert(
+      {
+        user_id: user.id,
+        response_date: todayKey(),
+        mood: key,
+        adjust,
+      },
+      { onConflict: "user_id,response_date" },
+    );
+    if (error) console.error("mood upsert failed", error);
   };
 
-  const skipMood = () => {
+  const skipMood = async () => {
     setMood(null);
     setSkipped(true);
-    if (user) localStorage.removeItem(`calm_mood_${user.id}_${todayKey()}`);
+    if (!user) return;
+    localStorage.removeItem(`calm_mood_${user.id}_${todayKey()}`);
+    const { error } = await supabase
+      .from("mood_responses")
+      .delete()
+      .eq("user_id", user.id)
+      .eq("response_date", todayKey());
+    if (error) console.error("mood delete failed", error);
   };
 
   const streakBonus = Math.min(streak, 20) * 2;
