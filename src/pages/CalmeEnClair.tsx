@@ -1,15 +1,36 @@
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useMemo, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Heart, Flame, Sparkles, TrendingUp } from "lucide-react";
+import { ArrowLeft, Heart, Flame, Sparkles, TrendingUp, Smile } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+
+type MoodKey = "calm" | "ok" | "tense" | "overflow";
+
+const MOOD_OPTIONS: { key: MoodKey; emoji: string; label: string; adjust: number }[] = [
+  { key: "calm",     emoji: "🌿", label: "Sereine",     adjust: +10 },
+  { key: "ok",       emoji: "🙂", label: "Ça va",       adjust: +3  },
+  { key: "tense",    emoji: "😣", label: "Tendue",      adjust: -8  },
+  { key: "overflow", emoji: "🌊", label: "Débordée",    adjust: -15 },
+];
+
+const todayKey = () => new Date().toISOString().slice(0, 10);
 
 const CalmeEnClair = () => {
   const { user } = useAuth();
   const [streak, setStreak] = useState(0);
   const [checkins14d, setCheckins14d] = useState(0);
-  const [calmScore, setCalmScore] = useState(50);
+  const [baseScore, setBaseScore] = useState(50);
+  const [mood, setMood] = useState<MoodKey | null>(null);
+
+  // Load today's saved mood
+  useEffect(() => {
+    if (!user) return;
+    const saved = localStorage.getItem(`calm_mood_${user.id}_${todayKey()}`);
+    if (saved && MOOD_OPTIONS.some((m) => m.key === saved)) {
+      setMood(saved as MoodKey);
+    }
+  }, [user]);
 
   useEffect(() => {
     const load = async () => {
@@ -32,11 +53,22 @@ const CalmeEnClair = () => {
       const c = count ?? 0;
       setCheckins14d(c);
 
-      const score = Math.max(20, Math.min(98, 40 + Math.min(s, 20) * 2 + Math.min(c, 14) * 1.5));
-      setCalmScore(Math.round(score));
+      const score = 40 + Math.min(s, 20) * 2 + Math.min(c, 14) * 1.5;
+      setBaseScore(Math.round(score));
     };
     load();
   }, [user]);
+
+  const moodAdjust = useMemo(
+    () => MOOD_OPTIONS.find((m) => m.key === mood)?.adjust ?? 0,
+    [mood],
+  );
+  const calmScore = Math.max(20, Math.min(98, baseScore + moodAdjust));
+
+  const selectMood = (key: MoodKey) => {
+    setMood(key);
+    if (user) localStorage.setItem(`calm_mood_${user.id}_${todayKey()}`, key);
+  };
 
   const streakBonus = Math.min(streak, 20) * 2;
   const checkinBonus = Math.round(Math.min(checkins14d, 14) * 1.5);
@@ -67,16 +99,64 @@ const CalmeEnClair = () => {
             </p>
           </div>
 
+          {/* Quick mood check-in */}
+          <section className="rounded-2xl bg-card p-6 shadow-soft space-y-4">
+            <div className="text-center space-y-1">
+              <p className="font-serif text-xl font-semibold">Je suis plutôt…</p>
+              <p className="text-xs text-muted-foreground">
+                Une réponse rapide pour ajuster ton score du moment.
+              </p>
+            </div>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              {MOOD_OPTIONS.map((m) => {
+                const active = mood === m.key;
+                return (
+                  <button
+                    key={m.key}
+                    onClick={() => selectMood(m.key)}
+                    className={`flex flex-col items-center gap-1 rounded-xl border px-3 py-4 text-sm transition-all ${
+                      active
+                        ? "border-primary bg-primary/10 shadow-soft scale-[1.02]"
+                        : "border-border bg-background hover:border-primary/40"
+                    }`}
+                  >
+                    <span className="text-2xl">{m.emoji}</span>
+                    <span className={`font-medium ${active ? "text-primary" : ""}`}>
+                      {m.label}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+            {mood && (
+              <p className="text-center text-xs text-muted-foreground">
+                Merci. Ton ressenti ajuste le score de {moodAdjust >= 0 ? "+" : ""}
+                {moodAdjust} point{Math.abs(moodAdjust) > 1 ? "s" : ""}.
+              </p>
+            )}
+          </section>
+
           {/* Current score card */}
           <div className="rounded-2xl bg-gradient-to-br from-primary/15 to-secondary/30 p-7 text-center shadow-soft-lg">
             <p className="text-xs uppercase tracking-wider text-muted-foreground">
               Aujourd'hui
             </p>
-            <p className="font-serif text-5xl font-semibold text-primary mt-2">
-              {calmScore}%
-            </p>
+            <AnimatePresence mode="wait">
+              <motion.p
+                key={calmScore}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.25 }}
+                className="font-serif text-5xl font-semibold text-primary mt-2"
+              >
+                {calmScore}%
+              </motion.p>
+            </AnimatePresence>
             <p className="text-sm text-muted-foreground mt-3">
-              Ton calme évolue chaque jour. Pas de note. Juste un repère doux.
+              {mood
+                ? "Ce score tient compte de ton ressenti d'aujourd'hui."
+                : "Réponds à la question au-dessus pour affiner ton score du jour."}
             </p>
           </div>
 
@@ -128,6 +208,25 @@ const CalmeEnClair = () => {
                 </p>
               </div>
             </div>
+
+            {mood && (
+              <div className="rounded-2xl bg-card p-5 shadow-soft flex items-start gap-4">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10">
+                  <Smile className="h-5 w-5 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-baseline justify-between gap-2">
+                    <p className="font-semibold">Ton ressenti d'aujourd'hui</p>
+                    <span className="text-sm font-medium text-primary">
+                      {moodAdjust >= 0 ? "+" : ""}{moodAdjust}
+                    </span>
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Tu te sens {MOOD_OPTIONS.find((m) => m.key === mood)?.label.toLowerCase()}. Ton score reflète ce moment précis.
+                  </p>
+                </div>
+              </div>
+            )}
           </section>
 
           {/* How to improve */}
