@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useMemo, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { User, Heart, Flame, BarChart3, AlertCircle } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -8,6 +8,15 @@ import { getDailyMessage } from "@/data/dailyMessages";
 import { getStreakLabel } from "@/data/streakLabels";
 import logo from "@/assets/logo-ancrage.png";
 import InstallPWAPrompt from "@/components/InstallPWAPrompt";
+
+type MoodKey = "calm" | "ok" | "tense" | "overflow";
+const MOOD_OPTIONS: { key: MoodKey; emoji: string; label: string; adjust: number }[] = [
+  { key: "calm",     emoji: "🌿", label: "Sereine",  adjust: +10 },
+  { key: "ok",       emoji: "🙂", label: "Ça va",    adjust: +3  },
+  { key: "tense",    emoji: "😣", label: "Tendue",   adjust: -8  },
+  { key: "overflow", emoji: "🌊", label: "Débordée", adjust: -15 },
+];
+const todayKey = () => new Date().toISOString().slice(0, 10);
 
 const Dashboard = () => {
   const { user } = useAuth();
