@@ -26,13 +26,33 @@ const CalmeEnClair = () => {
   const [last14Scores, setLast14Scores] = useState<{ date: Date; score: number; count: number }[]>([]);
   const [selectedDayIdx, setSelectedDayIdx] = useState<number | null>(null);
 
-  // Load today's saved mood
+  // Load today's saved mood (Supabase first with local cache fallback)
   useEffect(() => {
     if (!user) return;
-    const saved = localStorage.getItem(`calm_mood_${user.id}_${todayKey()}`);
-    if (saved && MOOD_OPTIONS.some((m) => m.key === saved)) {
-      setMood(saved as MoodKey);
+    // Optimistic from local cache
+    const cached = localStorage.getItem(`calm_mood_${user.id}_${todayKey()}`);
+    if (cached && MOOD_OPTIONS.some((m) => m.key === cached)) {
+      setMood(cached as MoodKey);
     }
+    // Authoritative from DB
+    (async () => {
+      const { data, error } = await supabase
+        .from("mood_responses")
+        .select("mood")
+        .eq("user_id", user.id)
+        .eq("response_date", todayKey())
+        .maybeSingle();
+      if (!error && data?.mood && MOOD_OPTIONS.some((m) => m.key === data.mood)) {
+        setMood(data.mood as MoodKey);
+        localStorage.setItem(`calm_mood_${user.id}_${todayKey()}`, data.mood);
+      } else if (!error && !data) {
+        // No remote answer for today — clear stale local cache
+        if (cached) {
+          localStorage.removeItem(`calm_mood_${user.id}_${todayKey()}`);
+          setMood(null);
+        }
+      }
+    })();
   }, [user]);
 
   useEffect(() => {
@@ -124,16 +144,35 @@ const CalmeEnClair = () => {
 
   const [skipped, setSkipped] = useState(false);
 
-  const selectMood = (key: MoodKey) => {
+  const selectMood = async (key: MoodKey) => {
     setMood(key);
     setSkipped(false);
-    if (user) localStorage.setItem(`calm_mood_${user.id}_${todayKey()}`, key);
+    if (!user) return;
+    localStorage.setItem(`calm_mood_${user.id}_${todayKey()}`, key);
+    const adjust = MOOD_OPTIONS.find((m) => m.key === key)?.adjust ?? 0;
+    const { error } = await supabase.from("mood_responses").upsert(
+      {
+        user_id: user.id,
+        response_date: todayKey(),
+        mood: key,
+        adjust,
+      },
+      { onConflict: "user_id,response_date" },
+    );
+    if (error) console.error("mood upsert failed", error);
   };
 
-  const skipMood = () => {
+  const skipMood = async () => {
     setMood(null);
     setSkipped(true);
-    if (user) localStorage.removeItem(`calm_mood_${user.id}_${todayKey()}`);
+    if (!user) return;
+    localStorage.removeItem(`calm_mood_${user.id}_${todayKey()}`);
+    const { error } = await supabase
+      .from("mood_responses")
+      .delete()
+      .eq("user_id", user.id)
+      .eq("response_date", todayKey());
+    if (error) console.error("mood delete failed", error);
   };
 
   const streakBonus = Math.min(streak, 20) * 2;
