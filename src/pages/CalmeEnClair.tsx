@@ -311,6 +311,55 @@ const CalmeEnClair = () => {
             )}
           </section>
 
+          {/* Micro-action 2 min adaptée au mood */}
+          <AnimatePresence mode="wait">
+            {mood && (() => {
+              const action = MICRO_ACTIONS[mood];
+              return (
+                <motion.section
+                  key={mood}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.3 }}
+                  className="rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/10 to-secondary/20 p-6 shadow-soft space-y-4"
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="text-3xl leading-none">{action.emoji}</div>
+                    <div className="flex-1 space-y-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="inline-flex items-center gap-1 rounded-full bg-primary/15 px-2.5 py-0.5 text-[11px] font-medium text-primary">
+                          <Sparkles className="h-3 w-3" />
+                          Micro-action · {action.duration}
+                        </span>
+                      </div>
+                      <h3 className="font-serif text-lg font-semibold leading-tight">
+                        {action.title}
+                      </h3>
+                      <p className="text-xs text-muted-foreground">{action.why}</p>
+                    </div>
+                  </div>
+
+                  <ol className="space-y-2 pl-1">
+                    {action.steps.map((s, i) => (
+                      <li key={i} className="flex gap-3 text-sm text-foreground/90">
+                        <span className="flex h-6 w-6 flex-none items-center justify-center rounded-full bg-primary/15 text-[11px] font-semibold text-primary">
+                          {i + 1}
+                        </span>
+                        <span className="pt-0.5">{s}</span>
+                      </li>
+                    ))}
+                  </ol>
+
+                  <p className="text-center text-[11px] text-muted-foreground italic">
+                    Suggérée parce que tu te sens « {MOOD_OPTIONS.find((m) => m.key === mood)?.label.toLowerCase()} » aujourd'hui.
+                  </p>
+                </motion.section>
+              );
+            })()}
+          </AnimatePresence>
+
+
           {/* Current score card */}
           <div className="rounded-2xl bg-gradient-to-br from-primary/15 to-secondary/30 p-7 text-center shadow-soft-lg">
             <p className="text-xs uppercase tracking-wider text-muted-foreground">
