@@ -179,6 +179,100 @@ export function exportCheckinsToPdf(
     }
   };
 
+  // ---- Recap table by emotion (ranked) ----
+  const recap = Object.entries(freq)
+    .map(([id, count]) => {
+      const em = emotions.find((e) => e.id === id);
+      return {
+        id,
+        label: em?.label ?? id,
+        type: (em?.type ?? "negative") as "positive" | "negative",
+        count,
+        pct: total ? Math.round((count / total) * 100) : 0,
+      };
+    })
+    .sort((a, b) => b.count - a.count);
+
+  if (recap.length) {
+    ensureSpace(40);
+    doc.setTextColor(...TEXT);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(12);
+    doc.text("Récapitulatif par émotion", margin, y);
+    y += 16;
+
+    const tableW = pageWidth - margin * 2;
+    // Columns: # | Émotion | Type | Nombre | %
+    const colRankX = margin + 8;
+    const colLabelX = margin + 36;
+    const colTypeX = margin + 230;
+    const colCountX = pageWidth - margin - 90;
+    const colPctX = pageWidth - margin - 12;
+
+    // Header row
+    doc.setFillColor(245, 240, 255);
+    doc.rect(margin, y, tableW, 22, "F");
+    doc.setTextColor(...MUTED);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(9);
+    doc.text("#", colRankX, y + 14);
+    doc.text("ÉMOTION", colLabelX, y + 14);
+    doc.text("TYPE", colTypeX, y + 14);
+    doc.text("NOMBRE", colCountX, y + 14, { align: "right" });
+    doc.text("%", colPctX, y + 14, { align: "right" });
+    y += 22;
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    recap.forEach((r, i) => {
+      ensureSpace(22);
+      if (i % 2 === 1) {
+        doc.setFillColor(250, 248, 253);
+        doc.rect(margin, y, tableW, 22, "F");
+      }
+      doc.setTextColor(...MUTED);
+      doc.setFont("helvetica", "bold");
+      doc.text(String(i + 1), colRankX, y + 15);
+
+      doc.setTextColor(...TEXT);
+      doc.setFont("helvetica", "normal");
+      // Truncate label if too long for the column
+      const maxLabelW = colTypeX - colLabelX - 8;
+      let label = r.label;
+      while (doc.getTextWidth(label) > maxLabelW && label.length > 3) {
+        label = label.slice(0, -2) + "…";
+      }
+      doc.text(label, colLabelX, y + 15);
+
+      // Type pill
+      const isPos = r.type === "positive";
+      const pillLabel = isPos ? "Positif" : "Négatif";
+      const pillW = doc.getTextWidth(pillLabel) + 14;
+      if (isPos) {
+        doc.setFillColor(235, 226, 255);
+        doc.roundedRect(colTypeX - 2, y + 5, pillW, 14, 7, 7, "F");
+        doc.setTextColor(...PRIMARY);
+      } else {
+        doc.setFillColor(252, 232, 234);
+        doc.roundedRect(colTypeX - 2, y + 5, pillW, 14, 7, 7, "F");
+        doc.setTextColor(200, 70, 80);
+      }
+      doc.setFontSize(9);
+      doc.text(pillLabel, colTypeX + 5, y + 15);
+
+      doc.setFontSize(10);
+      doc.setTextColor(...TEXT);
+      doc.setFont("helvetica", "bold");
+      doc.text(String(r.count), colCountX, y + 15, { align: "right" });
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(...MUTED);
+      doc.text(`${r.pct}%`, colPctX, y + 15, { align: "right" });
+      y += 22;
+    });
+    y += 12;
+  }
+
+
   ensureSpace(40);
   doc.setTextColor(...TEXT);
   doc.setFont("helvetica", "bold");
