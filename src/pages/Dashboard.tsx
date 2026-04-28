@@ -218,6 +218,7 @@ const Dashboard = () => {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
+            className="space-y-2"
           >
             <Link
               to="/urgence"
@@ -230,6 +231,13 @@ const Dashboard = () => {
                 <p className="font-bold text-destructive tracking-wide">MODE SURVIE → OFF</p>
                 <p className="mt-0.5 text-xs text-muted-foreground">Sortir du mode survie en 60 secondes</p>
               </div>
+            </Link>
+            <Link
+              to="/danger"
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-destructive px-4 py-2.5 text-sm font-bold text-destructive-foreground shadow-md shadow-destructive/20 transition-transform hover:scale-[1.01] active:scale-[0.99]"
+            >
+              <AlertCircle className="h-4 w-4" />
+              Je suis en danger — numéros & étapes
             </Link>
           </motion.div>
 

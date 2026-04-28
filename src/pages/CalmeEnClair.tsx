@@ -942,6 +942,15 @@ const CalmeEnClair = () => {
                           {a.cta}
                           <ArrowRight className="h-4 w-4" />
                         </Link>
+                        {a.tone === "destructive" && (
+                          <Link
+                            to="/danger"
+                            className="mt-2 inline-flex items-center justify-center gap-1.5 rounded-xl border border-destructive/40 bg-destructive/5 px-4 py-2 text-xs font-semibold text-destructive transition-colors hover:bg-destructive/10"
+                          >
+                            <AlertCircle className="h-3.5 w-3.5" />
+                            Je suis en danger
+                          </Link>
+                        )}
                       </motion.div>
                     );
                   })}
