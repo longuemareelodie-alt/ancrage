@@ -41,18 +41,48 @@ const Historique = () => {
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-      const { data: checkins } = await supabase
-        .from("emotion_checkins")
-        .select("emotion, emotion_type, created_at")
-        .eq("user_id", user.id)
-        .gte("created_at", thirtyDaysAgo.toISOString())
-        .order("created_at", { ascending: true });
+      const [{ data: checkins }, { data: prof }] = await Promise.all([
+        supabase
+          .from("emotion_checkins")
+          .select("emotion, emotion_type, created_at")
+          .eq("user_id", user.id)
+          .gte("created_at", thirtyDaysAgo.toISOString())
+          .order("created_at", { ascending: true }),
+        supabase
+          .from("profiles")
+          .select("first_name, email, current_streak")
+          .eq("user_id", user.id)
+          .single(),
+      ]);
 
       setData(checkins || []);
+      setProfile({
+        first_name: prof?.first_name ?? undefined,
+        email: prof?.email ?? undefined,
+        current_streak: prof?.current_streak ?? 0,
+      });
       setLoading(false);
     };
     fetchHistory();
   }, [user]);
+
+  const handleExport = async () => {
+    if (!data.length || exporting) return;
+    setExporting(true);
+    try {
+      exportCheckinsToPdf(data, profile);
+      toast({ title: "PDF prêt 📄", description: "Ton suivi a été téléchargé." });
+    } catch (err) {
+      console.error(err);
+      toast({
+        title: "Export impossible",
+        description: "Une erreur est survenue. Réessaie dans un instant.",
+        variant: "destructive",
+      });
+    } finally {
+      setExporting(false);
+    }
+  };
 
   if (loading) {
     return (
