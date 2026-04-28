@@ -384,10 +384,17 @@ const CalmeEnClair = () => {
           {/* Micro-action 2 min adaptée au mood */}
           <AnimatePresence mode="wait">
             {mood && (() => {
-              const action = MICRO_ACTIONS[mood];
+              const variants = MICRO_ACTIONS[mood];
+              // If user has no preference, default to sensory for overflow (panic),
+              // breathing for tense, and breathing for calm/ok.
+              const fallback: "breathing" | "sensory" =
+                mood === "overflow" ? "sensory" : "breathing";
+              const variantKey: "breathing" | "sensory" =
+                actionStyle === "any" ? fallback : actionStyle;
+              const action = variants[variantKey];
               return (
                 <motion.section
-                  key={mood}
+                  key={`${mood}-${variantKey}`}
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
@@ -420,6 +427,40 @@ const CalmeEnClair = () => {
                       </li>
                     ))}
                   </ol>
+
+                  {/* Style preference selector */}
+                  <div className="rounded-xl border border-primary/15 bg-background/60 p-3 space-y-2">
+                    <p className="text-[11px] font-medium text-muted-foreground">
+                      Mon style préféré pour ces exercices
+                    </p>
+                    <div className="grid grid-cols-3 gap-1.5">
+                      {([
+                        { key: "breathing", label: "Respiration", icon: Wind },
+                        { key: "sensory", label: "Sensoriel", icon: Hand },
+                        { key: "any", label: "Au choix", icon: Sparkles },
+                      ] as const).map((opt) => {
+                        const Icon = opt.icon;
+                        const active = actionStyle === opt.key;
+                        return (
+                          <button
+                            key={opt.key}
+                            onClick={() => updateStyle(opt.key)}
+                            className={`flex items-center justify-center gap-1 rounded-lg border px-2 py-1.5 text-[11px] font-medium transition-all ${
+                              active
+                                ? "border-primary bg-primary/10 text-primary"
+                                : "border-border bg-background text-muted-foreground hover:border-primary/40"
+                            }`}
+                          >
+                            <Icon className="h-3 w-3" />
+                            {opt.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <p className="text-[10px] text-muted-foreground italic">
+                      Tes prochaines micro-actions s'adapteront à ce style.
+                    </p>
+                  </div>
 
                   <p className="text-center text-[11px] text-muted-foreground italic">
                     Suggérée parce que tu te sens « {MOOD_OPTIONS.find((m) => m.key === mood)?.label.toLowerCase()} » aujourd'hui.
