@@ -54,6 +54,27 @@ const CalmeEnClair = () => {
       const c = count ?? 0;
       setCheckins14d(c);
 
+      // 7-day rolling window with daily counts
+      const start7 = new Date();
+      start7.setHours(0, 0, 0, 0);
+      start7.setDate(start7.getDate() - 6);
+      const { data: rows } = await supabase
+        .from("emotion_checkins")
+        .select("created_at")
+        .eq("user_id", user.id)
+        .gte("created_at", start7.toISOString());
+      const buckets = Array.from({ length: 7 }).map((_, i) => {
+        const d = new Date(start7);
+        d.setDate(start7.getDate() + i);
+        return { date: d, count: 0 };
+      });
+      (rows ?? []).forEach((r: { created_at: string }) => {
+        const d = new Date(r.created_at);
+        const idx = Math.floor((d.getTime() - start7.getTime()) / 86400000);
+        if (idx >= 0 && idx < 7) buckets[idx].count += 1;
+      });
+      setLast7(buckets);
+
       const score = 40 + Math.min(s, 20) * 2 + Math.min(c, 14) * 1.5;
       setBaseScore(Math.round(score));
     };
