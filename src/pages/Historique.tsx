@@ -78,7 +78,7 @@ const Historique = () => {
     if (!data.length || exporting) return;
     setExporting(true);
     try {
-      exportCheckinsToPdf(data, profile);
+      exportCheckinsToPdf(data, profile, exportOpts);
       toast({ title: "PDF prêt 📄", description: "Ton suivi a été téléchargé." });
     } catch (err) {
       console.error(err);
