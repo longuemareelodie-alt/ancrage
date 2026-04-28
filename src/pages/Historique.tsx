@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowLeft, TrendingUp, Calendar, BarChart3, Smile, Frown, Download, Settings2 } from "lucide-react";
+import { ArrowLeft, TrendingUp, Calendar, BarChart3, Smile, Frown, Download, Settings2, FileSpreadsheet } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { emotions } from "@/data/emotions";
 import { exportCheckinsToPdf, type ExportOptions } from "@/lib/exportCheckinsPdf";
+import { exportCheckinsToCsv } from "@/lib/exportCheckinsCsv";
 import { toast } from "@/hooks/use-toast";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
