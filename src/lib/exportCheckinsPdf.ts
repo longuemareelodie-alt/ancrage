@@ -38,7 +38,15 @@ const fmtTime = (iso: string) =>
 
 const emotionLabel = (id: string) => emotions.find((e) => e.id === id)?.label ?? id;
 
-export function exportCheckinsToPdf(checkins: CheckinExport[], meta: ExportMeta = {}) {
+export function exportCheckinsToPdf(
+  checkins: CheckinExport[],
+  meta: ExportMeta = {},
+  options: ExportOptions = { includeFirstName: true, includeEmail: false, anonymize: false },
+) {
+  const { anonymize = false } = options;
+  const showFirstName = !anonymize && (options.includeFirstName ?? true) && !!meta.firstName;
+  const showEmail = !anonymize && (options.includeEmail ?? false) && !!meta.email;
+
   const doc = new jsPDF({ unit: "pt", format: "a4" });
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
@@ -73,13 +81,21 @@ export function exportCheckinsToPdf(checkins: CheckinExport[], meta: ExportMeta 
   doc.setTextColor(...TEXT);
   doc.setFont("helvetica", "bold");
   doc.setFontSize(14);
-  doc.text(meta.firstName ? `Bonjour ${meta.firstName}` : "Ton suivi", margin, y);
+  if (anonymize) {
+    doc.text("Suivi anonyme", margin, y);
+  } else {
+    doc.text(showFirstName ? `Bonjour ${meta.firstName}` : "Ton suivi", margin, y);
+  }
   y += 18;
   doc.setFont("helvetica", "normal");
   doc.setFontSize(10);
   doc.setTextColor(...MUTED);
-  if (meta.email) {
-    doc.text(meta.email, margin, y);
+  if (showEmail) {
+    doc.text(meta.email!, margin, y);
+    y += 14;
+  }
+  if (anonymize) {
+    doc.text("Aucune donnée personnelle incluse dans ce document.", margin, y);
     y += 14;
   }
   y += 8;
