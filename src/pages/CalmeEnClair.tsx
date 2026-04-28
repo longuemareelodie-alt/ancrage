@@ -208,6 +208,25 @@ const CalmeEnClair = () => {
                 </p>
               </div>
             </div>
+
+            {mood && (
+              <div className="rounded-2xl bg-card p-5 shadow-soft flex items-start gap-4">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10">
+                  <Smile className="h-5 w-5 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-baseline justify-between gap-2">
+                    <p className="font-semibold">Ton ressenti d'aujourd'hui</p>
+                    <span className="text-sm font-medium text-primary">
+                      {moodAdjust >= 0 ? "+" : ""}{moodAdjust}
+                    </span>
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Tu te sens {MOOD_OPTIONS.find((m) => m.key === mood)?.label.toLowerCase()}. Ton score reflète ce moment précis.
+                  </p>
+                </div>
+              </div>
+            )}
           </section>
 
           {/* How to improve */}
