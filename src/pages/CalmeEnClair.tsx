@@ -99,16 +99,64 @@ const CalmeEnClair = () => {
             </p>
           </div>
 
+          {/* Quick mood check-in */}
+          <section className="rounded-2xl bg-card p-6 shadow-soft space-y-4">
+            <div className="text-center space-y-1">
+              <p className="font-serif text-xl font-semibold">Je suis plutôt…</p>
+              <p className="text-xs text-muted-foreground">
+                Une réponse rapide pour ajuster ton score du moment.
+              </p>
+            </div>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              {MOOD_OPTIONS.map((m) => {
+                const active = mood === m.key;
+                return (
+                  <button
+                    key={m.key}
+                    onClick={() => selectMood(m.key)}
+                    className={`flex flex-col items-center gap-1 rounded-xl border px-3 py-4 text-sm transition-all ${
+                      active
+                        ? "border-primary bg-primary/10 shadow-soft scale-[1.02]"
+                        : "border-border bg-background hover:border-primary/40"
+                    }`}
+                  >
+                    <span className="text-2xl">{m.emoji}</span>
+                    <span className={`font-medium ${active ? "text-primary" : ""}`}>
+                      {m.label}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+            {mood && (
+              <p className="text-center text-xs text-muted-foreground">
+                Merci. Ton ressenti ajuste le score de {moodAdjust >= 0 ? "+" : ""}
+                {moodAdjust} point{Math.abs(moodAdjust) > 1 ? "s" : ""}.
+              </p>
+            )}
+          </section>
+
           {/* Current score card */}
           <div className="rounded-2xl bg-gradient-to-br from-primary/15 to-secondary/30 p-7 text-center shadow-soft-lg">
             <p className="text-xs uppercase tracking-wider text-muted-foreground">
               Aujourd'hui
             </p>
-            <p className="font-serif text-5xl font-semibold text-primary mt-2">
-              {calmScore}%
-            </p>
+            <AnimatePresence mode="wait">
+              <motion.p
+                key={calmScore}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.25 }}
+                className="font-serif text-5xl font-semibold text-primary mt-2"
+              >
+                {calmScore}%
+              </motion.p>
+            </AnimatePresence>
             <p className="text-sm text-muted-foreground mt-3">
-              Ton calme évolue chaque jour. Pas de note. Juste un repère doux.
+              {mood
+                ? "Ce score tient compte de ton ressenti d'aujourd'hui."
+                : "Réponds à la question au-dessus pour affiner ton score du jour."}
             </p>
           </div>
 
