@@ -244,7 +244,17 @@ const Historique = () => {
             </Popover>
 
             <button
-              onClick={handleExport}
+              onClick={() => handleExport("csv")}
+              disabled={exporting}
+              aria-label="Exporter en CSV"
+              className="flex items-center gap-1.5 rounded-full bg-secondary px-3 py-2 text-xs font-semibold text-foreground shadow-soft transition-transform hover:scale-[1.03] disabled:opacity-60"
+            >
+              <FileSpreadsheet className="h-3.5 w-3.5" />
+              CSV
+            </button>
+
+            <button
+              onClick={() => handleExport("pdf")}
               disabled={exporting}
               className="flex items-center gap-1.5 rounded-full bg-primary px-3.5 py-2 text-xs font-semibold text-primary-foreground shadow-soft transition-transform hover:scale-[1.03] disabled:opacity-60"
             >
