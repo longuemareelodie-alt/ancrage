@@ -56,26 +56,59 @@ const CalmeEnClair = () => {
       const c = count ?? 0;
       setCheckins14d(c);
 
-      // 7-day rolling window with daily counts
-      const start7 = new Date();
-      start7.setHours(0, 0, 0, 0);
-      start7.setDate(start7.getDate() - 6);
+      // 28-day window: needed to compute 14-day rolling count for each of last 14 days
+      const startWindow = new Date();
+      startWindow.setHours(0, 0, 0, 0);
+      startWindow.setDate(startWindow.getDate() - 27);
       const { data: rows } = await supabase
         .from("emotion_checkins")
         .select("created_at")
         .eq("user_id", user.id)
-        .gte("created_at", start7.toISOString());
-      const buckets = Array.from({ length: 7 }).map((_, i) => {
-        const d = new Date(start7);
-        d.setDate(start7.getDate() + i);
-        return { date: d, count: 0 };
-      });
+        .gte("created_at", startWindow.toISOString());
+
+      // Daily counts over 28 days
+      const dayCounts = Array.from({ length: 28 }).map(() => 0);
       (rows ?? []).forEach((r: { created_at: string }) => {
         const d = new Date(r.created_at);
-        const idx = Math.floor((d.getTime() - start7.getTime()) / 86400000);
-        if (idx >= 0 && idx < 7) buckets[idx].count += 1;
+        const idx = Math.floor((d.getTime() - startWindow.getTime()) / 86400000);
+        if (idx >= 0 && idx < 28) dayCounts[idx] += 1;
       });
-      setLast7(buckets);
+
+      // 7-day mini chart (last 7 days)
+      const last7Buckets = Array.from({ length: 7 }).map((_, i) => {
+        const dayIdx = 21 + i; // last 7 of 28
+        const d = new Date(startWindow);
+        d.setDate(startWindow.getDate() + dayIdx);
+        return { date: d, count: dayCounts[dayIdx] };
+      });
+      setLast7(last7Buckets);
+
+      // 14-day score evolution: for each of the last 14 days, compute score using
+      // streak (approximated by consecutive non-zero days ending that day, capped 20)
+      // and 14-day rolling check-in count up to that day.
+      const series = Array.from({ length: 14 }).map((_, i) => {
+        const dayIdx = 14 + i; // last 14 of 28
+        const d = new Date(startWindow);
+        d.setDate(startWindow.getDate() + dayIdx);
+
+        // rolling 14-day count ending this day
+        let rolling = 0;
+        for (let k = dayIdx - 13; k <= dayIdx; k++) {
+          if (k >= 0) rolling += dayCounts[k];
+        }
+        // approximate streak ending this day
+        let approxStreak = 0;
+        for (let k = dayIdx; k >= 0; k--) {
+          if (dayCounts[k] > 0) approxStreak += 1;
+          else break;
+        }
+        const score = Math.max(
+          20,
+          Math.min(98, 40 + Math.min(approxStreak, 20) * 2 + Math.min(rolling, 14) * 1.5),
+        );
+        return { date: d, score: Math.round(score), count: dayCounts[dayIdx] };
+      });
+      setLast14Scores(series);
 
       const score = 40 + Math.min(s, 20) * 2 + Math.min(c, 14) * 1.5;
       setBaseScore(Math.round(score));
