@@ -15,6 +15,7 @@ const Dashboard = () => {
   const [planType, setPlanType] = useState<string>("none");
   const [streak, setStreak] = useState(0);
   const [firstName, setFirstName] = useState("");
+  const [calmScore, setCalmScore] = useState<number>(50);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -26,8 +27,21 @@ const Dashboard = () => {
         .single();
       setIsPremium(data?.is_premium ?? false);
       setPlanType((data as any)?.plan_type ?? "none");
-      setStreak(data?.current_streak ?? 0);
+      const s = data?.current_streak ?? 0;
+      setStreak(s);
       setFirstName(data?.first_name ?? "");
+
+      // Compute calm score: base 40 + streak bonus + recent check-ins
+      const since = new Date();
+      since.setDate(since.getDate() - 14);
+      const { count } = await supabase
+        .from("checkins" as any)
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", user.id)
+        .gte("created_at", since.toISOString());
+      const checkins = count ?? 0;
+      const score = Math.max(20, Math.min(98, 40 + Math.min(s, 20) * 2 + Math.min(checkins, 14) * 1.5));
+      setCalmScore(Math.round(score));
     };
     fetchProfile();
   }, [user]);
