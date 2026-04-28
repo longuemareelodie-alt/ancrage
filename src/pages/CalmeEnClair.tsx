@@ -182,6 +182,63 @@ const CalmeEnClair = () => {
             </p>
           </div>
 
+          {/* 7-day mini chart */}
+          <section className="rounded-2xl bg-card p-6 shadow-soft space-y-4">
+            <div className="flex items-baseline justify-between gap-2">
+              <h2 className="font-serif text-xl font-semibold">Tes 7 derniers jours</h2>
+              <span className="text-xs text-muted-foreground">
+                {last7.reduce((a, b) => a + b.count, 0)} check-in
+                {last7.reduce((a, b) => a + b.count, 0) > 1 ? "s" : ""}
+              </span>
+            </div>
+            {(() => {
+              const max = Math.max(1, ...last7.map((d) => d.count));
+              const dayLabels = ["D", "L", "M", "M", "J", "V", "S"];
+              return (
+                <div className="flex items-end justify-between gap-2 h-28">
+                  {last7.map((d, i) => {
+                    const heightPct = (d.count / max) * 100;
+                    const isToday = i === last7.length - 1;
+                    return (
+                      <div key={i} className="flex flex-1 flex-col items-center gap-1.5">
+                        <div className="relative flex w-full flex-1 items-end">
+                          <motion.div
+                            initial={{ height: 0 }}
+                            animate={{ height: `${heightPct}%` }}
+                            transition={{ duration: 0.5, delay: i * 0.05 }}
+                            className={`w-full rounded-t-md ${
+                              d.count === 0
+                                ? "bg-muted"
+                                : isToday
+                                ? "bg-primary"
+                                : "bg-primary/50"
+                            }`}
+                            style={{ minHeight: d.count > 0 ? "6px" : "2px" }}
+                          />
+                          {d.count > 0 && (
+                            <span className="absolute -top-5 left-1/2 -translate-x-1/2 text-[10px] font-medium text-primary">
+                              {d.count}
+                            </span>
+                          )}
+                        </div>
+                        <span
+                          className={`text-[11px] ${
+                            isToday ? "font-bold text-primary" : "text-muted-foreground"
+                          }`}
+                        >
+                          {dayLabels[d.date.getDay()]}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            })()}
+            <p className="text-center text-xs text-muted-foreground">
+              Chaque jour où tu reviens nourrit ton calme.
+            </p>
+          </section>
+
           {/* Composition */}
           <section className="space-y-4">
             <h2 className="font-serif text-2xl font-semibold">D'où vient ton score</h2>
