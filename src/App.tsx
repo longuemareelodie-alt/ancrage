@@ -97,6 +97,7 @@ const AnimatedRoutes = () => {
         <Route path="/confidentialite" element={<PageTransition><Confidentialite /></PageTransition>} />
         <Route path="/mentions-legales" element={<PageTransition><MentionsLegales /></PageTransition>} />
         <Route path="/urgence" element={<ProtectedRoute><PageTransition><Emergency /></PageTransition></ProtectedRoute>} />
+        <Route path="/danger" element={<PageTransition><Danger /></PageTransition>} />
         <Route path="/sante" element={<PaidRoute><PageTransition><Sante /></PageTransition></PaidRoute>} />
         <Route path="/sante/rendez-vous" element={<SubscriptionRoute><PageTransition><SanteRendezVous /></PageTransition></SubscriptionRoute>} />
         <Route path="/sante/medicaments" element={<SubscriptionRoute><PageTransition><SanteMedicaments /></PageTransition></SubscriptionRoute>} />
