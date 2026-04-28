@@ -15,6 +15,7 @@ const Dashboard = () => {
   const [planType, setPlanType] = useState<string>("none");
   const [streak, setStreak] = useState(0);
   const [firstName, setFirstName] = useState("");
+  const [calmScore, setCalmScore] = useState<number>(50);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -26,8 +27,21 @@ const Dashboard = () => {
         .single();
       setIsPremium(data?.is_premium ?? false);
       setPlanType((data as any)?.plan_type ?? "none");
-      setStreak(data?.current_streak ?? 0);
+      const s = data?.current_streak ?? 0;
+      setStreak(s);
       setFirstName(data?.first_name ?? "");
+
+      // Compute calm score: base 40 + streak bonus + recent check-ins
+      const since = new Date();
+      since.setDate(since.getDate() - 14);
+      const { count } = await supabase
+        .from("emotion_checkins")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", user.id)
+        .gte("created_at", since.toISOString());
+      const checkins = count ?? 0;
+      const score = Math.max(20, Math.min(98, 40 + Math.min(s, 20) * 2 + Math.min(checkins, 14) * 1.5));
+      setCalmScore(Math.round(score));
     };
     fetchProfile();
   }, [user]);
@@ -57,13 +71,16 @@ const Dashboard = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="w-full max-w-lg space-y-6"
+          className="w-full max-w-lg space-y-8"
         >
           {/* Greeting */}
-          <div className="text-center space-y-1">
-            <h1 className="text-xl font-bold">
+          <div className="text-center space-y-2">
+            <h1 className="font-serif text-3xl font-semibold tracking-tight">
               {firstName ? `Ton moment, ${firstName}` : "Ton moment pour toi"}
             </h1>
+            <p className="text-base font-medium text-primary/80">
+              Ton calme aujourd'hui : {calmScore}%
+            </p>
             <p className="text-sm text-muted-foreground">
               {isMorning ? "Comment tu commences ta journée ?" : "Comment s'est passée ta journée ?"}
             </p>
@@ -77,15 +94,15 @@ const Dashboard = () => {
           >
             <Link
               to={isPremium ? "/checkin" : "/emotions"}
-              className="flex w-full items-center gap-4 rounded-2xl bg-gradient-to-r from-primary to-primary/80 p-6 text-left text-primary-foreground shadow-lg shadow-primary/25 transition-transform hover:scale-[1.02] active:scale-[0.98]"
+              className="flex w-full items-center gap-4 rounded-2xl bg-gradient-to-r from-primary to-primary/80 p-7 text-left text-primary-foreground shadow-soft-lg transition-transform hover:scale-[1.02] active:scale-[0.98]"
             >
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary-foreground/20">
                 <Heart className="h-6 w-6" />
               </div>
               <div>
-                <p className="text-lg font-bold">Je prends 30 secondes</p>
-                <p className="mt-1 text-sm opacity-80">
-                  {isMorning ? "Mon rituel du matin" : "Mon rituel du soir"}
+                <p className="font-serif text-xl font-semibold">Je régule mon système (30 sec)</p>
+                <p className="mt-1 text-sm opacity-85">
+                  Reprends le contrôle maintenant
                 </p>
               </div>
             </Link>
@@ -99,14 +116,14 @@ const Dashboard = () => {
           >
             <Link
               to="/urgence"
-              className="flex w-full items-center gap-4 rounded-2xl bg-destructive/10 border border-destructive/20 p-5 text-left transition-transform hover:scale-[1.02] active:scale-[0.98]"
+              className="flex w-full items-center gap-4 rounded-2xl bg-destructive/10 border border-destructive/20 p-6 text-left shadow-soft transition-transform hover:scale-[1.02] active:scale-[0.98]"
             >
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-destructive/20">
                 <AlertCircle className="h-5 w-5 text-destructive" />
               </div>
               <div>
-                <p className="font-bold text-destructive">Ça déborde</p>
-                <p className="mt-0.5 text-xs text-muted-foreground">Aide immédiate</p>
+                <p className="font-bold text-destructive tracking-wide">MODE SURVIE → OFF</p>
+                <p className="mt-0.5 text-xs text-muted-foreground">Sortir du mode survie en 60 secondes</p>
               </div>
             </Link>
           </motion.div>
@@ -116,7 +133,7 @@ const Dashboard = () => {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="rounded-2xl bg-card p-5 shadow-sm text-center space-y-2"
+            className="rounded-2xl bg-card p-5 shadow-soft text-center space-y-2"
           >
             <p className="text-xs text-muted-foreground font-medium">Un message t'attend</p>
             <p className="text-sm font-medium">
@@ -153,7 +170,7 @@ const Dashboard = () => {
             >
               <Link
                 to="/historique"
-                className="flex w-full items-center gap-4 rounded-2xl bg-card p-4 text-left shadow-sm transition-transform hover:scale-[1.02] active:scale-[0.98]"
+                className="flex w-full items-center gap-4 rounded-2xl bg-card p-5 text-left shadow-soft transition-transform hover:scale-[1.02] active:scale-[0.98]"
               >
                 <BarChart3 className="h-5 w-5 text-primary" />
                 <div>
@@ -170,7 +187,7 @@ const Dashboard = () => {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
-              className="rounded-2xl bg-card p-5 text-center shadow-sm space-y-3"
+              className="rounded-2xl bg-card p-6 text-center shadow-soft space-y-3"
             >
               <p className="text-sm font-medium text-muted-foreground">
                 Imagine si tu pouvais te sentir comme ça plus souvent.
