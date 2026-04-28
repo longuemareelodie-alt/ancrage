@@ -1,15 +1,36 @@
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useMemo, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Heart, Flame, Sparkles, TrendingUp } from "lucide-react";
+import { ArrowLeft, Heart, Flame, Sparkles, TrendingUp, Smile } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+
+type MoodKey = "calm" | "ok" | "tense" | "overflow";
+
+const MOOD_OPTIONS: { key: MoodKey; emoji: string; label: string; adjust: number }[] = [
+  { key: "calm",     emoji: "🌿", label: "Sereine",     adjust: +10 },
+  { key: "ok",       emoji: "🙂", label: "Ça va",       adjust: +3  },
+  { key: "tense",    emoji: "😣", label: "Tendue",      adjust: -8  },
+  { key: "overflow", emoji: "🌊", label: "Débordée",    adjust: -15 },
+];
+
+const todayKey = () => new Date().toISOString().slice(0, 10);
 
 const CalmeEnClair = () => {
   const { user } = useAuth();
   const [streak, setStreak] = useState(0);
   const [checkins14d, setCheckins14d] = useState(0);
-  const [calmScore, setCalmScore] = useState(50);
+  const [baseScore, setBaseScore] = useState(50);
+  const [mood, setMood] = useState<MoodKey | null>(null);
+
+  // Load today's saved mood
+  useEffect(() => {
+    if (!user) return;
+    const saved = localStorage.getItem(`calm_mood_${user.id}_${todayKey()}`);
+    if (saved && MOOD_OPTIONS.some((m) => m.key === saved)) {
+      setMood(saved as MoodKey);
+    }
+  }, [user]);
 
   useEffect(() => {
     const load = async () => {
@@ -32,11 +53,22 @@ const CalmeEnClair = () => {
       const c = count ?? 0;
       setCheckins14d(c);
 
-      const score = Math.max(20, Math.min(98, 40 + Math.min(s, 20) * 2 + Math.min(c, 14) * 1.5));
-      setCalmScore(Math.round(score));
+      const score = 40 + Math.min(s, 20) * 2 + Math.min(c, 14) * 1.5;
+      setBaseScore(Math.round(score));
     };
     load();
   }, [user]);
+
+  const moodAdjust = useMemo(
+    () => MOOD_OPTIONS.find((m) => m.key === mood)?.adjust ?? 0,
+    [mood],
+  );
+  const calmScore = Math.max(20, Math.min(98, baseScore + moodAdjust));
+
+  const selectMood = (key: MoodKey) => {
+    setMood(key);
+    if (user) localStorage.setItem(`calm_mood_${user.id}_${todayKey()}`, key);
+  };
 
   const streakBonus = Math.min(streak, 20) * 2;
   const checkinBonus = Math.round(Math.min(checkins14d, 14) * 1.5);
