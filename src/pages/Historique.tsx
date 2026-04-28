@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowLeft, TrendingUp, Calendar, BarChart3, Smile, Frown } from "lucide-react";
+import { ArrowLeft, TrendingUp, Calendar, BarChart3, Smile, Frown, Download } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { emotions } from "@/data/emotions";
+import { exportCheckinsToPdf } from "@/lib/exportCheckinsPdf";
+import { toast } from "@/hooks/use-toast";
 import {
   AreaChart,
   Area,
@@ -30,6 +32,8 @@ const Historique = () => {
   const { user } = useAuth();
   const [data, setData] = useState<CheckinEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [exporting, setExporting] = useState(false);
+  const [profile, setProfile] = useState<{ first_name?: string; email?: string; current_streak?: number }>({});
 
   useEffect(() => {
     if (!user) return;
@@ -37,18 +41,48 @@ const Historique = () => {
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-      const { data: checkins } = await supabase
-        .from("emotion_checkins")
-        .select("emotion, emotion_type, created_at")
-        .eq("user_id", user.id)
-        .gte("created_at", thirtyDaysAgo.toISOString())
-        .order("created_at", { ascending: true });
+      const [{ data: checkins }, { data: prof }] = await Promise.all([
+        supabase
+          .from("emotion_checkins")
+          .select("emotion, emotion_type, created_at")
+          .eq("user_id", user.id)
+          .gte("created_at", thirtyDaysAgo.toISOString())
+          .order("created_at", { ascending: true }),
+        supabase
+          .from("profiles")
+          .select("first_name, email, current_streak")
+          .eq("user_id", user.id)
+          .single(),
+      ]);
 
       setData(checkins || []);
+      setProfile({
+        first_name: prof?.first_name ?? undefined,
+        email: prof?.email ?? undefined,
+        current_streak: prof?.current_streak ?? 0,
+      });
       setLoading(false);
     };
     fetchHistory();
   }, [user]);
+
+  const handleExport = async () => {
+    if (!data.length || exporting) return;
+    setExporting(true);
+    try {
+      exportCheckinsToPdf(data, profile);
+      toast({ title: "PDF prêt 📄", description: "Ton suivi a été téléchargé." });
+    } catch (err) {
+      console.error(err);
+      toast({
+        title: "Export impossible",
+        description: "Une erreur est survenue. Réessaie dans un instant.",
+        variant: "destructive",
+      });
+    } finally {
+      setExporting(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -131,7 +165,17 @@ const Historique = () => {
         <Link to="/dashboard" className="rounded-full p-2 hover:bg-secondary">
           <ArrowLeft className="h-5 w-5" />
         </Link>
-        <h1 className="text-lg font-bold">Mon historique émotionnel</h1>
+        <h1 className="flex-1 text-lg font-bold">Mon historique émotionnel</h1>
+        {totalCheckins > 0 && (
+          <button
+            onClick={handleExport}
+            disabled={exporting}
+            className="flex items-center gap-1.5 rounded-full bg-primary px-3.5 py-2 text-xs font-semibold text-primary-foreground shadow-soft transition-transform hover:scale-[1.03] disabled:opacity-60"
+          >
+            <Download className="h-3.5 w-3.5" />
+            {exporting ? "Export…" : "PDF"}
+          </button>
+        )}
       </div>
 
       <div className="space-y-6 px-4">
