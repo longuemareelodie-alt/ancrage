@@ -10,6 +10,7 @@ import {
   ActionStyle,
   getActionStyle,
   setActionStyle,
+  recordLastUsedStyle,
 } from "@/lib/actionStyle";
 import {
   getStyleVariant,
