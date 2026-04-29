@@ -267,35 +267,40 @@ const EmotionDetail = () => {
                   </p>
                 )}
               </div>
-              {supportsVariants && (
-                <div
-                  role="radiogroup"
-                  aria-label="Style d'exercice"
-                  className="flex shrink-0 gap-1"
-                >
-                  {STYLE_OPTIONS.map(({ value, label, Icon }) => {
-                    const active = style === value;
-                    return (
-                      <button
-                        key={value}
-                        type="button"
-                        role="radio"
-                        aria-checked={active}
-                        aria-label={label}
-                        title={label}
-                        onClick={() => handleStyleChange(value)}
-                        className={`flex h-7 w-7 items-center justify-center rounded-full border transition-colors ${
-                          active
-                            ? "border-primary bg-primary text-primary-foreground"
-                            : "border-border bg-background text-muted-foreground hover:bg-muted"
-                        }`}
-                      >
-                        <Icon className="h-3.5 w-3.5" />
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
+              <div className="flex shrink-0 items-center gap-1">
+                <SpeakButton
+                  text={step.hint ? `${step.text}. ${step.hint}` : step.text}
+                />
+                {supportsVariants && (
+                  <div
+                    role="radiogroup"
+                    aria-label="Style d'exercice"
+                    className="flex shrink-0 gap-1"
+                  >
+                    {STYLE_OPTIONS.map(({ value, label, Icon }) => {
+                      const active = style === value;
+                      return (
+                        <button
+                          key={value}
+                          type="button"
+                          role="radio"
+                          aria-checked={active}
+                          aria-label={label}
+                          title={label}
+                          onClick={() => handleStyleChange(value)}
+                          className={`flex h-7 w-7 items-center justify-center rounded-full border transition-colors ${
+                            active
+                              ? "border-primary bg-primary text-primary-foreground"
+                              : "border-border bg-background text-muted-foreground hover:bg-muted"
+                          }`}
+                        >
+                          <Icon className="h-3.5 w-3.5" />
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
             </motion.div>
           ))}
         </div>
