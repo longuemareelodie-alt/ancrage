@@ -26,7 +26,8 @@ const progressLabels: Record<Step, string> = {
 };
 
 const Checkin = () => {
-  const { user } = useAuth();
+  const { user, isPaid } = useAuth();
+  const { startPayment, loading: paymentLoading } = useMolliePayment();
   const navigate = useNavigate();
   const [step, setStep] = useState<Step>("select");
   const [selected, setSelected] = useState<EmotionData | null>(null);
