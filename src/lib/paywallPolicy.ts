@@ -12,10 +12,33 @@
  */
 export const PAYWALL_ENFORCEMENT_CUTOFF_ISO = "2026-04-29T00:00:00Z";
 
+export type ProfileCreatedAtStatus = "valid" | "missing" | "invalid";
+
+/**
+ * Classify a profile.created_at value before using it for paywall decisions.
+ * - "missing"  → null/undefined/empty (profile row missing or column unset)
+ * - "invalid"  → present but not a parseable date (data corruption)
+ * - "valid"    → safe to compare against the cutoff
+ *
+ * Both "missing" and "invalid" are anomalies and should be logged by callers
+ * so the underlying profile row can be repaired.
+ */
+export const classifyProfileCreatedAt = (
+  createdAt: string | null | undefined,
+): ProfileCreatedAtStatus => {
+  if (!createdAt) return "missing";
+  const t = new Date(createdAt).getTime();
+  if (Number.isNaN(t)) return "invalid";
+  return "valid";
+};
+
 export const isGrandfatheredAccount = (createdAt: string | null | undefined): boolean => {
-  if (!createdAt) return false;
-  const created = new Date(createdAt).getTime();
+  // Conservative fallback: any anomaly (missing/invalid) → NOT grandfathered.
+  // This preserves revenue safety; callers are expected to log the anomaly
+  // separately so admins can repair the affected profile.
+  if (classifyProfileCreatedAt(createdAt) !== "valid") return false;
+  const created = new Date(createdAt as string).getTime();
   const cutoff = new Date(PAYWALL_ENFORCEMENT_CUTOFF_ISO).getTime();
-  if (Number.isNaN(created) || Number.isNaN(cutoff)) return false;
+  if (Number.isNaN(cutoff)) return false;
   return created < cutoff;
 };
