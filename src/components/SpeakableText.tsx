@@ -382,6 +382,9 @@ const SpeakableText = ({
       );
     }
     setState("paused");
+    // Persist immediately so a reload right after pause still resumes here.
+    persistCurrentProgress();
+    setSavedProgress(getProgress(fullText));
   };
 
   const handleResume = () => {
