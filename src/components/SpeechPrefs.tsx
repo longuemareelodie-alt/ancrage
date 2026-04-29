@@ -114,7 +114,7 @@ const SpeechPrefs = ({ className = "" }: SpeechPrefsProps) => {
   const handleVoiceChange = (uri: string) => {
     const next = uri === "__default__" ? null : uri;
     setVoiceURI(next);
-    setSpeechVoiceURI(next);
+    setSpeechVoiceURI(next, lang);
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
       window.speechSynthesis.cancel();
       const u = new SpeechSynthesisUtterance(PREVIEW_TEXT[lang]);
