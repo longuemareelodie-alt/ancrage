@@ -15,6 +15,9 @@ const Paywall = () => {
   const { startPayment, loading: paymentLoading } = useMolliePayment();
   const [isPaid, setIsPaid] = useState(false);
   const [statusLoading, setStatusLoading] = useState<boolean>(!!user);
+  const location = useLocation();
+  const fromPath = (location.state as { from?: string } | null)?.from ?? null;
+  const resumeBtnRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
     if (!user) {
