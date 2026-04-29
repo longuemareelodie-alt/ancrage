@@ -171,6 +171,59 @@ const PaymentPending = () => {
             </div>
           </>
         )}
+
+        {status === "not_found" && (() => {
+          const subject = t(
+            "payment_pending.not_found.support_subject",
+            "Profil introuvable après paiement",
+          );
+          const body = [
+            t(
+              "payment_pending.not_found.support_body",
+              "Bonjour, mon profil semble introuvable après le paiement.",
+            ),
+            "",
+            `User ID : ${user?.id ?? "—"}`,
+            `Email : ${user?.email ?? "—"}`,
+            `Date : ${new Date().toISOString()}`,
+          ].join("\n");
+          const mailto = `mailto:contact@digitalmamanlibre.com?subject=${encodeURIComponent(
+            subject,
+          )}&body=${encodeURIComponent(body)}`;
+          return (
+            <>
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-amber-500/10">
+                <UserX className="h-8 w-8 text-amber-600" />
+              </div>
+              <div className="space-y-2">
+                <h1 className="text-xl font-bold">
+                  {t("payment_pending.not_found.title", "Profil introuvable")}
+                </h1>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {t(
+                    "payment_pending.not_found.text",
+                    "Nous n'avons pas trouvé ton profil. Contacte le support pour qu'on active ton accès manuellement.",
+                  )}
+                </p>
+              </div>
+              <div className="space-y-2">
+                <a
+                  href={mailto}
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground"
+                >
+                  {t("payment_pending.not_found.contact_support", "Contacter le support")}
+                </a>
+                <Link
+                  to="/dashboard"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl border px-6 py-3 text-sm font-medium"
+                >
+                  {t("payment_pending.error.dashboard")}
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            </>
+          );
+        })()}
       </motion.div>
     </div>
   );
