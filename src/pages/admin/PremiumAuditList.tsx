@@ -205,40 +205,36 @@ const PremiumAuditList = () => {
   const logOne = async (a: Anomaly) => {
     if (loggedKeys.has(a.key)) return;
     setLogging(a.key);
-    const { data: auth } = await supabase.auth.getUser();
-    const adminId = auth.user?.id ?? null;
-    const ticketId = `AUDIT-${a.kind.toUpperCase().slice(0, 3)}-${(a.user_id ?? "anon").slice(0, 6).toUpperCase()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
-    const { error } = await supabase.from("support_logs").insert([
-      {
-        user_id: adminId,
-        source: `admin_audit:${a.kind}`,
-        ticket_id: ticketId,
-        error_code: a.kind,
-        error_message: `Premium audit anomaly: ${a.kind}`,
-        last_state: JSON.stringify(a.raw).slice(0, 500),
-        url: typeof window !== "undefined" ? window.location.href : null,
-        user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
-        metadata: {
-          kind: a.kind,
-          ticket_id: ticketId,
-          target_user_id: a.user_id,
-          payment_id: a.payment_id,
-          is_premium: a.is_premium,
-          log_status: a.log_status,
-          timestamps: { event_at: a.timestamp, audited_at: data?.generated_at ?? null },
-          snapshot: a.raw,
-          logged_by_admin: adminId,
-          logged_at: new Date().toISOString(),
-        } as any,
-      },
-    ]);
+    const payload = {
+      ...a.raw,
+      kind: a.kind,
+      is_premium: a.is_premium,
+      log_status: a.log_status,
+      timestamps: { event_at: a.timestamp, audited_at: data?.generated_at ?? null },
+      url: typeof window !== "undefined" ? window.location.href : null,
+      user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
+    };
+    const { data: res, error } = await supabase.rpc("log_audit_anomaly", {
+      _kind: a.kind,
+      _target_user_id: a.user_id,
+      _payment_id: a.payment_id,
+      _payload: payload as any,
+      _window_minutes: dedupWindowMin,
+    });
     setLogging(null);
     if (error) {
       toast.error(`Diagnostic non enregistré: ${error.message}`);
       return;
     }
+    const r = res as any;
     setLoggedKeys((prev) => new Set(prev).add(a.key));
-    toast.success(`Diagnostic enregistré (${ticketId})`);
+    if (r?.inserted === false) {
+      toast.message(
+        `Alerte ignorée (anti-spam): ${r.existing_ticket} déjà émis il y a moins de ${r.window_minutes} min`
+      );
+    } else {
+      toast.success(`Diagnostic enregistré (${r?.ticket_id ?? "OK"})`);
+    }
   };
 
   return (
