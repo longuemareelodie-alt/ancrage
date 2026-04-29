@@ -8,11 +8,13 @@ const SENTENCE_PAUSE_KEY = "calm_speech_sentence_pause"; // ms, 0-1500
 const COMMA_PAUSE_KEY = "calm_speech_comma_pause"; // ms, 0-800
 const PITCH_KEY = "calm_speech_pitch"; // 0.5-1.5
 const SLOW_KEYWORDS_KEY = "calm_speech_slow_keywords"; // "1" | "0"
+const SILENT_MODE_KEY = "calm_speech_silent_mode"; // "1" | "0" — surbrillance sans audio
 
 export const SENTENCE_PAUSE_DEFAULT = 400; // ms
 export const COMMA_PAUSE_DEFAULT = 150; // ms
 export const PITCH_DEFAULT = 1; // 0.5..1.5
 export const SLOW_KEYWORDS_DEFAULT = true;
+export const SILENT_MODE_DEFAULT = false;
 
 /** Mots-clés de respiration ralentis automatiquement (rate * 0.7). */
 export const BREATH_KEYWORDS = [
@@ -168,6 +170,18 @@ export function getSlowKeywords(): boolean {
 export function setSlowKeywords(enabled: boolean) {
   if (typeof window === "undefined") return;
   localStorage.setItem(SLOW_KEYWORDS_KEY, enabled ? "1" : "0");
+  window.dispatchEvent(new CustomEvent("calm-speech-prefs-change"));
+}
+
+export function getSilentMode(): boolean {
+  if (typeof window === "undefined") return SILENT_MODE_DEFAULT;
+  const v = localStorage.getItem(SILENT_MODE_KEY);
+  if (v === null) return SILENT_MODE_DEFAULT;
+  return v === "1";
+}
+export function setSilentMode(enabled: boolean) {
+  if (typeof window === "undefined") return;
+  localStorage.setItem(SILENT_MODE_KEY, enabled ? "1" : "0");
   window.dispatchEvent(new CustomEvent("calm-speech-prefs-change"));
 }
 

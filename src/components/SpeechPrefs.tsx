@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Volume2, Gauge, Languages, Music2, Pause as PauseIcon, Wind } from "lucide-react";
+import { Volume2, Gauge, Languages, Music2, Pause as PauseIcon, Wind, Eye } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -23,6 +23,8 @@ import {
   setSpeechPitch,
   getSlowKeywords,
   setSlowKeywords,
+  getSilentMode,
+  setSilentMode,
 } from "@/lib/speechPrefs";
 
 const RATE_OPTIONS: SpeechRate[] = ["slow", "normal", "fast"];
@@ -47,6 +49,7 @@ const SpeechPrefs = ({ className = "" }: SpeechPrefsProps) => {
   const [commaPause, setCommaPauseState] = useState<number>(() => getCommaPauseMs());
   const [pitch, setPitchState] = useState<number>(() => getSpeechPitch());
   const [slowKw, setSlowKwState] = useState<boolean>(() => getSlowKeywords());
+  const [silentMode, setSilentModeState] = useState<boolean>(() => getSilentMode());
 
   useEffect(() => {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) {
@@ -317,6 +320,28 @@ const SpeechPrefs = ({ className = "" }: SpeechPrefsProps) => {
             setSlowKeywords(c);
           }}
           aria-label="Ralentir les mots-clés de respiration"
+        />
+      </div>
+
+      {/* Mode surbrillance silencieuse */}
+      <div className="flex items-start justify-between gap-3 rounded-xl border border-primary/20 bg-primary/5 p-3">
+        <div className="flex items-start gap-2">
+          <Eye className="mt-0.5 h-4 w-4 text-primary" />
+          <div>
+            <p className="text-sm font-semibold">Surbrillance seule (sans audio)</p>
+            <p className="text-xs text-muted-foreground">
+              Quand tu appuies sur Lecture, la phrase en cours est mise en évidence
+              au rythme de la voix, mais aucun son n'est joué.
+            </p>
+          </div>
+        </div>
+        <Switch
+          checked={silentMode}
+          onCheckedChange={(c) => {
+            setSilentModeState(c);
+            setSilentMode(c);
+          }}
+          aria-label="Activer la surbrillance silencieuse"
         />
       </div>
 
