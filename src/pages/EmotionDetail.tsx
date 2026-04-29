@@ -1,15 +1,50 @@
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import SectionBlock from "@/components/SectionBlock";
 import CTAButton from "@/components/CTAButton";
 import QuickBackLinks from "@/components/QuickBackLinks";
 import { motion } from "framer-motion";
-import { Lock } from "lucide-react";
+import { Lock, Wind, Hand, Sparkles } from "lucide-react";
+import {
+  ActionStyle,
+  getActionStyle,
+  setActionStyle,
+} from "@/lib/actionStyle";
+import {
+  getStyleVariant,
+  hasStyleVariants,
+} from "@/data/emotionStyleVariants";
+
+const STYLE_OPTIONS: {
+  value: ActionStyle;
+  label: string;
+  Icon: typeof Wind;
+}[] = [
+  { value: "breathing", label: "Respiration", Icon: Wind },
+  { value: "sensory", label: "Sensoriel", Icon: Hand },
+  { value: "any", label: "Au choix", Icon: Sparkles },
+];
 
 const EmotionDetail = () => {
   const { emotion } = useParams<{ emotion: string }>();
   const { t, i18n } = useTranslation();
   const key = emotion || "";
+
+  const [style, setStyle] = useState<ActionStyle>(() => getActionStyle());
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent<ActionStyle>).detail;
+      if (detail) setStyle(detail);
+    };
+    window.addEventListener("calm-action-style-change", handler as EventListener);
+    return () =>
+      window.removeEventListener(
+        "calm-action-style-change",
+        handler as EventListener,
+      );
+  }, []);
 
   // Validate the emotion key against known translations.
   const titleKey = `emotion_detail.data.${key}.title`;
@@ -25,8 +60,23 @@ const EmotionDetail = () => {
 
   const title = t(titleKey);
   const validation = t(`emotion_detail.data.${key}.validation`);
-  const freeSteps = t(`emotion_detail.data.${key}.free`, { returnObjects: true }) as string[];
-  const lockedSteps = t(`emotion_detail.data.${key}.locked`, { returnObjects: true }) as string[];
+
+  const i18nFree = t(`emotion_detail.data.${key}.free`, {
+    returnObjects: true,
+  }) as string[];
+  const i18nLocked = t(`emotion_detail.data.${key}.locked`, {
+    returnObjects: true,
+  }) as string[];
+
+  const variant = getStyleVariant(key, style);
+  const freeSteps = variant?.free ?? i18nFree;
+  const lockedSteps = variant?.locked ?? i18nLocked;
+  const supportsVariants = hasStyleVariants(key);
+
+  const handleStyleChange = (value: ActionStyle) => {
+    setStyle(value);
+    setActionStyle(value);
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -49,14 +99,49 @@ const EmotionDetail = () => {
       </SectionBlock>
 
       <SectionBlock>
-        <h2 className="mb-6 text-lg font-bold">
+        <h2 className="mb-4 text-lg font-bold">
           {t("emotion_detail.do_with_me")}{" "}
           <span className="text-muted-foreground font-normal">{t("emotion_detail.duration_30s")}</span>
         </h2>
+
+        {supportsVariants && (
+          <div className="mb-5">
+            <p className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              Style d'exercice
+            </p>
+            <div
+              role="radiogroup"
+              aria-label="Style d'exercice"
+              className="flex flex-wrap gap-2"
+            >
+              {STYLE_OPTIONS.map(({ value, label, Icon }) => {
+                const active = style === value;
+                return (
+                  <button
+                    key={value}
+                    type="button"
+                    role="radio"
+                    aria-checked={active}
+                    onClick={() => handleStyleChange(value)}
+                    className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
+                      active
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : "border-border bg-card text-muted-foreground hover:bg-muted"
+                    }`}
+                  >
+                    <Icon className="h-3.5 w-3.5" />
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
         <div className="space-y-3">
           {freeSteps.map((step, i) => (
             <motion.div
-              key={step}
+              key={`${style}-${step}`}
               initial={{ opacity: 0, x: -15 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
@@ -75,7 +160,7 @@ const EmotionDetail = () => {
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/60 to-background z-10 rounded-xl" />
           {lockedSteps.map((step) => (
             <div
-              key={step}
+              key={`${style}-${step}`}
               className="flex items-center gap-4 rounded-xl bg-card p-4 shadow-sm opacity-40 blur-[2px]"
             >
               <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-bold text-muted-foreground">
