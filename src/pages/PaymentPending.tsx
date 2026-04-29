@@ -21,6 +21,7 @@ import {
   type CaptureResult,
 } from "@/lib/captureScreenshot";
 import { toast } from "sonner";
+import SupportContactDialog from "@/components/SupportContactDialog";
 
 type Status = "pending" | "confirmed" | "error" | "not_found";
 type LastState = "checking" | "retrying" | "error" | "not_found" | "confirmed";
