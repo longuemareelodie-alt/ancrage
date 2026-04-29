@@ -3,11 +3,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 
+interface StartPaymentOptions {
+  promoCode?: string | null;
+}
+
 export const useMolliePayment = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
 
-  const startPayment = async () => {
+  const startPayment = async (options: StartPaymentOptions = {}) => {
     if (!user) {
       toast.error("Tu dois être connectée pour accéder au paiement.");
       return;
@@ -20,13 +24,25 @@ export const useMolliePayment = () => {
         {
           body: {
             redirectUrl: `${window.location.origin}/payment-pending`,
+            promoCode: options.promoCode ?? null,
           },
         }
       );
 
       if (error) {
+        // Try to parse a structured error from the edge function
+        const ctx = (error as { context?: { error?: string } }).context;
+        if (ctx?.error === "invalid_promo_code") {
+          toast.error("Code promo invalide.");
+          return;
+        }
         console.error("Payment function error:", error);
         toast.error("Erreur lors de la création du paiement. Réessaie.");
+        return;
+      }
+
+      if (data?.error === "invalid_promo_code") {
+        toast.error("Code promo invalide.");
         return;
       }
 

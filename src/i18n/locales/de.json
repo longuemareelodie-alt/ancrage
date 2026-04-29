@@ -513,6 +513,16 @@
     "amount": "39 €",
     "amount_note": "Einmalige Zahlung · Lebenslanger Zugang",
     "cta": "Ich will mich besser fühlen — 39 €",
+    "cta_with_amount": "Ich will mich besser fühlen — {{amount}}",
+    "promo": {
+      "label": "Hast du einen Gutscheincode?",
+      "placeholder": "z. B. ANCRAGE15",
+      "apply": "Anwenden",
+      "remove": "Gutscheincode entfernen",
+      "applied": "{{code}} angewendet — {{amount}} Rabatt",
+      "invalid": "Ungültiger Gutscheincode.",
+      "empty": "Gib einen Gutscheincode ein."
+    },
     "loading": "Lädt…",
     "secure_short": "Einmalige Zahlung. Lebenslanger Zugang. 100 % sicher über Mollie.",
     "secure_long": "Zahlung 100 % sicher über Mollie",
