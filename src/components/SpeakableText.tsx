@@ -341,6 +341,38 @@ const SpeakableText = ({
         {stateAnnouncement}
       </div>
 
+      {supported && state !== "idle" && estimatedTotal > 0 && (() => {
+        const clamped = Math.min(elapsed, estimatedTotal);
+        const pct = Math.round((clamped / estimatedTotal) * 100);
+        const remaining = Math.max(0, estimatedTotal - clamped);
+        const fmt = (s: number) => {
+          const m = Math.floor(s / 60);
+          const sec = Math.floor(s % 60);
+          return `${m}:${sec.toString().padStart(2, "0")}`;
+        };
+        return (
+          <div className="mt-2" aria-label="Progression de la lecture audio">
+            <div
+              className="h-1 w-full overflow-hidden rounded-full bg-muted"
+              role="progressbar"
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={pct}
+              aria-valuetext={`${pct} pour cent lu, ${fmt(remaining)} restant`}
+            >
+              <div
+                className="h-full rounded-full bg-primary transition-[width] duration-200 ease-linear"
+                style={{ width: `${pct}%` }}
+              />
+            </div>
+            <div className="mt-1 flex justify-between text-[10px] tabular-nums text-muted-foreground">
+              <span>{fmt(clamped)}</span>
+              <span>-{fmt(remaining)}</span>
+            </div>
+          </div>
+        );
+      })()}
+
       {supported && (
         <div
           className="mt-2 flex items-center gap-1"
