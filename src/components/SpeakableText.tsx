@@ -66,15 +66,18 @@ const SpeakableText = ({
   const [state, setState] = useState<SpeechState>("idle");
   const [supported, setSupported] = useState(true);
   const [activeIndex, setActiveIndex] = useState<number>(-1);
+  const [elapsed, setElapsed] = useState(0); // seconds
+  const [estimatedTotal, setEstimatedTotal] = useState(0); // seconds
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const pauseTimerRef = useRef<number | null>(null);
   const playbackIdRef = useRef(0); // increments on each new playback to invalidate old chains
   const skipToSegmentRef = useRef<number | null>(null);
-  const segmentSentenceMapRef = useRef<number[]>([]); // sentence index per segment
-  const sentenceSegmentStartRef = useRef<number[]>([]); // first segment index per sentence
-  const cursorRef = useRef(0); // current segment index
+  const segmentSentenceMapRef = useRef<number[]>([]);
+  const sentenceSegmentStartRef = useRef<number[]>([]);
+  const cursorRef = useRef(0);
   const sentenceCursorRef = useRef(0);
   const playNextRef = useRef<(() => void) | null>(null);
+  const tickerRef = useRef<number | null>(null);
 
   const fullText = hint ? `${text}. ${hint}` : text;
   const sentences = splitSentences(fullText);
@@ -100,6 +103,29 @@ const SpeakableText = ({
       }
     };
   }, []);
+
+  // Tick elapsed time only while actively speaking.
+  useEffect(() => {
+    if (state !== "speaking") {
+      if (tickerRef.current !== null) {
+        window.clearInterval(tickerRef.current);
+        tickerRef.current = null;
+      }
+      return;
+    }
+    const start = Date.now();
+    const startElapsed = elapsed;
+    tickerRef.current = window.setInterval(() => {
+      setElapsed(startElapsed + (Date.now() - start) / 1000);
+    }, 250);
+    return () => {
+      if (tickerRef.current !== null) {
+        window.clearInterval(tickerRef.current);
+        tickerRef.current = null;
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state]);
 
   const cancelAll = () => {
     if (pauseTimerRef.current !== null) {
@@ -147,6 +173,17 @@ const SpeakableText = ({
     segmentSentenceMapRef.current = segMap;
     sentenceSegmentStartRef.current = sentStart;
 
+    // Estimate total duration: ~14 chars/second at rate 1, plus segment pauses.
+    let charCount = 0;
+    let pauseSeconds = 0;
+    for (const seg of segments) {
+      if (seg.pauseMs && seg.pauseMs > 0) pauseSeconds += seg.pauseMs / 1000;
+      else if (seg.text) charCount += seg.text.length;
+    }
+    const speechSeconds = charCount / (14 * Math.max(0.5, baseRate));
+    setEstimatedTotal(Math.max(1, speechSeconds + pauseSeconds));
+    setElapsed(0);
+
     setState("speaking");
     setActiveIndex(sentences.length > 0 ? 0 : -1);
     sentenceCursorRef.current = 0;
@@ -168,6 +205,7 @@ const SpeakableText = ({
       if (cursorRef.current >= segments.length) {
         setState("idle");
         setActiveIndex(-1);
+        setElapsed(estimatedTotal); // snap to 100% on natural completion
         return;
       }
       const seg = segments[cursorRef.current++];
@@ -225,6 +263,7 @@ const SpeakableText = ({
     cancelAll();
     setState("idle");
     setActiveIndex(-1);
+    setElapsed(0);
   };
 
   const handleSkipNext = () => {
@@ -301,6 +340,38 @@ const SpeakableText = ({
       <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
         {stateAnnouncement}
       </div>
+
+      {supported && state !== "idle" && estimatedTotal > 0 && (() => {
+        const clamped = Math.min(elapsed, estimatedTotal);
+        const pct = Math.round((clamped / estimatedTotal) * 100);
+        const remaining = Math.max(0, estimatedTotal - clamped);
+        const fmt = (s: number) => {
+          const m = Math.floor(s / 60);
+          const sec = Math.floor(s % 60);
+          return `${m}:${sec.toString().padStart(2, "0")}`;
+        };
+        return (
+          <div className="mt-2" aria-label="Progression de la lecture audio">
+            <div
+              className="h-1 w-full overflow-hidden rounded-full bg-muted"
+              role="progressbar"
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={pct}
+              aria-valuetext={`${pct} pour cent lu, ${fmt(remaining)} restant`}
+            >
+              <div
+                className="h-full rounded-full bg-primary transition-[width] duration-200 ease-linear"
+                style={{ width: `${pct}%` }}
+              />
+            </div>
+            <div className="mt-1 flex justify-between text-[10px] tabular-nums text-muted-foreground">
+              <span>{fmt(clamped)}</span>
+              <span>-{fmt(remaining)}</span>
+            </div>
+          </div>
+        );
+      })()}
 
       {supported && (
         <div
