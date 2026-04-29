@@ -16,6 +16,7 @@ import { useMolliePayment } from "@/hooks/useMolliePayment";
 import PaymentHistory from "@/components/PaymentHistory";
 import DataActions from "@/components/DataActions";
 import StyleSyncStatus from "@/components/StyleSyncStatus";
+import SpeechPrefs from "@/components/SpeechPrefs";
 interface Note {
   id: string;
   title: string;
