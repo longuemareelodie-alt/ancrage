@@ -87,6 +87,9 @@ const SpeechPrefs = ({ className = "" }: SpeechPrefsProps) => {
     setLang(l);
     setSpeechLang(l);
     setVoiceURI(null); // store cleared by setSpeechLang
+    // Load rate/pitch for the newly selected language.
+    setRate(getSpeechRate(l));
+    setPitchState(getSpeechPitch(l));
   };
 
   const handleVoiceChange = (uri: string) => {
@@ -106,7 +109,7 @@ const SpeechPrefs = ({ className = "" }: SpeechPrefsProps) => {
 
   const handleRateChange = (r: SpeechRate) => {
     setRate(r);
-    setSpeechRate(r);
+    setSpeechRate(r, lang);
   };
 
   const playPreview = async () => {
@@ -242,7 +245,7 @@ const SpeechPrefs = ({ className = "" }: SpeechPrefsProps) => {
           onValueChange={(v) => {
             const next = v[0];
             setPitchState(next);
-            setSpeechPitch(next);
+            setSpeechPitch(next, lang);
           }}
           aria-label="Hauteur de la voix"
         />
