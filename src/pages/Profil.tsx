@@ -17,6 +17,7 @@ import PaymentHistory from "@/components/PaymentHistory";
 import DataActions from "@/components/DataActions";
 import StyleSyncStatus from "@/components/StyleSyncStatus";
 import SpeechPrefs from "@/components/SpeechPrefs";
+import PronunciationLexicon from "@/components/PronunciationLexicon";
 interface Note {
   id: string;
   title: string;
@@ -471,6 +472,9 @@ const Profil = () => {
                   Guidage audio
                 </p>
                 <SpeechPrefs />
+                <div className="mt-3">
+                  <PronunciationLexicon />
+                </div>
               </div>
 
               {/* RGPD : export et suppression */}
