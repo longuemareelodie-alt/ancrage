@@ -78,6 +78,10 @@ const SpeakableText = ({
   const sentenceCursorRef = useRef(0);
   const playNextRef = useRef<(() => void) | null>(null);
   const tickerRef = useRef<number | null>(null);
+  // Frozen-pause support for silent pause segments (commas / sentence breaks).
+  const pauseDeadlineRef = useRef<number | null>(null); // when timer should fire
+  const pauseRemainingRef = useRef<number | null>(null); // remaining ms when paused
+  const pauseAfterRef = useRef<(() => void) | null>(null); // callback after the silent pause
 
   const fullText = hint ? `${text}. ${hint}` : text;
   const sentences = splitSentences(fullText);
@@ -132,6 +136,9 @@ const SpeakableText = ({
       window.clearTimeout(pauseTimerRef.current);
       pauseTimerRef.current = null;
     }
+    pauseDeadlineRef.current = null;
+    pauseRemainingRef.current = null;
+    pauseAfterRef.current = null;
     try {
       window.speechSynthesis.cancel();
     } catch {
@@ -212,8 +219,11 @@ const SpeakableText = ({
 
       if (seg.pauseMs && seg.pauseMs > 0) {
         const isSentenceBreak = seg.pauseMs >= 250;
-        pauseTimerRef.current = window.setTimeout(() => {
+        const after = () => {
           if (playbackId !== playbackIdRef.current) return;
+          pauseDeadlineRef.current = null;
+          pauseRemainingRef.current = null;
+          pauseAfterRef.current = null;
           if (isSentenceBreak) {
             sentenceCursorRef.current = Math.min(
               sentences.length - 1,
@@ -222,7 +232,11 @@ const SpeakableText = ({
             setActiveIndex(sentenceCursorRef.current);
           }
           playNext();
-        }, seg.pauseMs);
+        };
+        pauseAfterRef.current = after;
+        pauseDeadlineRef.current = Date.now() + seg.pauseMs;
+        pauseRemainingRef.current = null;
+        pauseTimerRef.current = window.setTimeout(after, seg.pauseMs);
         return;
       }
 
@@ -249,12 +263,43 @@ const SpeakableText = ({
   };
 
   const handlePause = () => {
-    window.speechSynthesis.pause();
+    // Pause the speech itself.
+    try {
+      window.speechSynthesis.pause();
+    } catch {
+      /* noop */
+    }
+    // Freeze any in-flight silent pause timer so activeIndex doesn't advance
+    // while the user is paused.
+    if (pauseTimerRef.current !== null && pauseDeadlineRef.current !== null) {
+      window.clearTimeout(pauseTimerRef.current);
+      pauseTimerRef.current = null;
+      pauseRemainingRef.current = Math.max(
+        0,
+        pauseDeadlineRef.current - Date.now(),
+      );
+    }
     setState("paused");
   };
 
   const handleResume = () => {
-    window.speechSynthesis.resume();
+    try {
+      window.speechSynthesis.resume();
+    } catch {
+      /* noop */
+    }
+    // Resume a frozen silent pause with its remaining time.
+    if (
+      pauseRemainingRef.current !== null &&
+      pauseAfterRef.current !== null &&
+      pauseTimerRef.current === null
+    ) {
+      const remaining = pauseRemainingRef.current;
+      const after = pauseAfterRef.current;
+      pauseDeadlineRef.current = Date.now() + remaining;
+      pauseRemainingRef.current = null;
+      pauseTimerRef.current = window.setTimeout(after, remaining);
+    }
     setState("speaking");
   };
 
