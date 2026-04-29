@@ -249,9 +249,19 @@ const PaymentPending = () => {
             "— Informations diagnostic (ne pas modifier) —",
           );
 
+          const screenshotNote = screenshotFilename
+            ? t(
+                "payment_pending.support.screenshot_attached_note",
+                "📎 Capture d'écran à joindre : {{filename}} (téléchargée sur ton appareil)",
+                { filename: screenshotFilename },
+              )
+            : null;
+
           const body = [
             intro,
             "",
+            screenshotNote,
+            screenshotNote ? "" : null,
             summaryHeader,
             `Ticket ID : ${ticketId}`,
             `Dernier état : ${stateLabels[lastState]} (${lastState})`,
@@ -264,7 +274,7 @@ const PaymentPending = () => {
             `User-Agent : ${typeof navigator !== "undefined" ? navigator.userAgent : "—"}`,
             `Date : ${new Date().toISOString()}`,
           ]
-            .filter(Boolean)
+            .filter((l) => l !== null && l !== undefined)
             .join("\n");
 
           const mailto = `mailto:contact@digitalmamanlibre.com?subject=${encodeURIComponent(
