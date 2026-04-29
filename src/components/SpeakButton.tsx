@@ -4,8 +4,10 @@ import {
   RATE_VALUES,
   getSpeechRate,
   getSpeechLang,
+  getSpeechPitch,
   loadVoices,
   resolveVoice,
+  buildUtteranceSegments,
 } from "@/lib/speechPrefs";
 
 type SpeechState = "idle" | "speaking" | "paused";
