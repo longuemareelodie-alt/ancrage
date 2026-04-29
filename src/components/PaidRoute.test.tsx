@@ -3,8 +3,9 @@ import { render, screen, waitFor, cleanup } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import PaidRoute from "@/components/PaidRoute";
 
+const STABLE_USER = { id: "user-123" };
 vi.mock("@/contexts/AuthContext", () => ({
-  useAuth: () => ({ user: { id: "user-123" }, loading: false }),
+  useAuth: () => ({ user: STABLE_USER, loading: false }),
 }));
 
 vi.mock("react-i18next", () => ({
