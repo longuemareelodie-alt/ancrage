@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Volume2, Pause, Play, Square } from "lucide-react";
+import { Volume2, Pause, Play, Square, RotateCcw } from "lucide-react";
 import {
   RATE_VALUES,
   getSpeechRate,
@@ -122,6 +122,15 @@ const SpeakButton = ({ text, lang = "fr-FR", className = "" }: SpeakButtonProps)
           <Play className="h-3.5 w-3.5" />
         </button>
       )}
+      <button
+        type="button"
+        onClick={handlePlay}
+        aria-label="Répéter depuis le début"
+        title="Répéter"
+        className={`${baseBtn} border-border bg-background text-muted-foreground hover:bg-muted`}
+      >
+        <RotateCcw className="h-3.5 w-3.5" />
+      </button>
       <button
         type="button"
         onClick={handleStop}
