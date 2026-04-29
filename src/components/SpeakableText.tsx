@@ -216,8 +216,11 @@ const SpeakableText = ({
 
       if (seg.pauseMs && seg.pauseMs > 0) {
         const isSentenceBreak = seg.pauseMs >= 250;
-        pauseTimerRef.current = window.setTimeout(() => {
+        const after = () => {
           if (playbackId !== playbackIdRef.current) return;
+          pauseDeadlineRef.current = null;
+          pauseRemainingRef.current = null;
+          pauseAfterRef.current = null;
           if (isSentenceBreak) {
             sentenceCursorRef.current = Math.min(
               sentences.length - 1,
@@ -226,7 +229,11 @@ const SpeakableText = ({
             setActiveIndex(sentenceCursorRef.current);
           }
           playNext();
-        }, seg.pauseMs);
+        };
+        pauseAfterRef.current = after;
+        pauseDeadlineRef.current = Date.now() + seg.pauseMs;
+        pauseRemainingRef.current = null;
+        pauseTimerRef.current = window.setTimeout(after, seg.pauseMs);
         return;
       }
 
