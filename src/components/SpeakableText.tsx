@@ -14,6 +14,12 @@ import {
 } from "@/lib/speechPrefs";
 import { splitSentences } from "@/lib/sentenceSplit";
 import { applyLexicon } from "@/lib/pronunciationLexicon";
+import {
+  getProgress,
+  saveProgress,
+  clearProgress,
+  type SpeechProgress,
+} from "@/lib/speechProgress";
 
 type SpeechState = "idle" | "speaking" | "paused";
 
