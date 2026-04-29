@@ -415,7 +415,13 @@ const SpeakableText = ({
               return (
                 <span
                   key={`${s.start}-${i}`}
-                  className={isActive ? activeClass : "transition-colors"}
+                  ref={(el) => {
+                    sentenceRefs.current[i] = el;
+                  }}
+                  tabIndex={-1}
+                  className={`${
+                    isActive ? activeClass : "transition-colors"
+                  } outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background rounded-md`}
                   aria-current={isActive ? (state === "paused" ? "false" : "true") : undefined}
                 >
                   {isActive && state === "paused" && (
