@@ -49,6 +49,7 @@ const PaymentPending = () => {
   const [ticketId] = useState<string>(() => generateTicketId());
   const [screenshotFilename, setScreenshotFilename] = useState<string | null>(null);
   const [capturing, setCapturing] = useState(false);
+  const [supportOpen, setSupportOpen] = useState(false);
   const screenshotsAvailable = isScreenshotSupported();
   const cancelled = useRef(false);
 
