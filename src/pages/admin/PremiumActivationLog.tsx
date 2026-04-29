@@ -389,6 +389,25 @@ const PremiumActivationLog = () => {
           </div>
         </div>
       </section>
+
+      <SupportContactDialog
+        open={supportOpen}
+        onOpenChange={setSupportOpen}
+        context={t(
+          "admin.premium_log.support_subject",
+          "Erreur d'accès au journal d'activations premium",
+        )}
+        ticketId={logTicketId}
+        diagnostics={[
+          `Source : admin/PremiumActivationLog`,
+          `Ticket : ${logTicketId}`,
+          `Filtre statut : ${statusFilter}`,
+          `Filtre payment_id : ${paymentIdFilter || "—"}`,
+          `Plage : ${fromDate ? format(fromDate, "yyyy-MM-dd") : "—"} → ${toDate ? format(toDate, "yyyy-MM-dd") : "—"}`,
+          `Erreur : ${error ?? "—"}`,
+          `URL : ${typeof window !== "undefined" ? window.location.href : "—"}`,
+        ].join("\n")}
+      />
     </main>
   );
 };
