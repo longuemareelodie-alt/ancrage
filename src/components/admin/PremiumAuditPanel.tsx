@@ -393,10 +393,14 @@ const PremiumAuditPanel = () => {
                       <TableHead>{t("admin.audit.col_payment_id")}</TableHead>
                       <TableHead>{t("admin.audit.col_amount")}</TableHead>
                       <TableHead>{t("admin.audit.col_message")}</TableHead>
+                      <TableHead className="text-right">Diagnostic</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {data.already_active.map((r) => (
+                    {data.already_active.map((r) => {
+                      const key = `aac:${r.id}`;
+                      const done = loggedKeys.has(key);
+                      return (
                       <TableRow key={r.id}>
                         <TableCell className="text-sm whitespace-nowrap">{fmtDate(r.created_at)}</TableCell>
                         <TableCell className="text-sm">{r.email ?? "—"}</TableCell>
@@ -406,8 +410,18 @@ const PremiumAuditPanel = () => {
                         <TableCell className="max-w-xs truncate" title={r.message ?? ""}>
                           {r.message ?? "—"}
                         </TableCell>
+                        <TableCell className="text-right">
+                          <Button size="sm" variant={done ? "secondary" : "outline"} disabled={done || logging === key}
+                            onClick={() => logAnomaly("already_active", key, {
+                              user_id: r.user_id, payment_id: r.payment_id, amount: r.amount, email: r.email,
+                              message: r.message, log_status: "already_active",
+                              timestamps: { event_at: r.created_at, audited_at: data.generated_at },
+                            })}>
+                            {logging === key ? <Loader2 className="h-3 w-3 animate-spin" /> : done ? <ClipboardCheck className="h-3 w-3" /> : "Enregistrer"}
+                          </Button>
+                        </TableCell>
                       </TableRow>
-                    ))}
+                    );})}
                   </TableBody>
                 </Table>
               </div>
