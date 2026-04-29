@@ -263,6 +263,7 @@ const SpeakableText = ({
     cancelAll();
     setState("idle");
     setActiveIndex(-1);
+    setElapsed(0);
   };
 
   const handleSkipNext = () => {
