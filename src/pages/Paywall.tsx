@@ -6,6 +6,7 @@ import { useTranslation, Trans } from "react-i18next";
 import { useAuth } from "@/contexts/AuthContext";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
 import { supabase } from "@/integrations/supabase/client";
+import { withRetry } from "@/lib/supabaseRetry";
 import Breadcrumb from "@/components/Breadcrumb";
 
 const Paywall = () => {
@@ -22,15 +23,24 @@ const Paywall = () => {
       return;
     }
     setStatusLoading(true);
-    supabase
-      .from("profiles")
-      .select("is_premium")
-      .eq("user_id", user.id)
-      .single()
-      .then(({ data }) => {
-        setIsPaid(!!data?.is_premium);
-        setStatusLoading(false);
-      });
+    let cancelled = false;
+    (async () => {
+      const { data } = await withRetry(
+        () =>
+          supabase
+            .from("profiles")
+            .select("is_premium")
+            .eq("user_id", user.id)
+            .single(),
+        { maxAttempts: 3, baseDelayMs: 400 },
+      );
+      if (cancelled) return;
+      setIsPaid(!!(data as any)?.is_premium);
+      setStatusLoading(false);
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, [user]);
 
   const handlePurchase = () => {
