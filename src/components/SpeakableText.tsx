@@ -6,6 +6,7 @@ import {
   getSpeechLang,
   getSpeechPitch,
   getSilentMode,
+  getFocusFollow,
   loadVoices,
   resolveVoice,
   buildUtteranceSegments,
@@ -52,6 +53,8 @@ const SpeakableText = ({
   const pauseDeadlineRef = useRef<number | null>(null); // when timer should fire
   const pauseRemainingRef = useRef<number | null>(null); // remaining ms when paused
   const pauseAfterRef = useRef<(() => void) | null>(null); // callback after the silent pause
+  const sentenceRefs = useRef<Array<HTMLSpanElement | null>>([]);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
 
   const fullText = hint ? `${text}. ${hint}` : text;
   const sentences = splitSentences(fullText);
