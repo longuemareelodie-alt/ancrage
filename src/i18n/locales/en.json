@@ -577,6 +577,12 @@
       "support": "If nothing changes after 10 minutes, please contact us."
     }
   },
+  "paid_route": {
+    "retrying": "Slow connection, retrying…",
+    "error_title": "Temporary error",
+    "error_text": "We couldn't check your access right now. Check your connection and try again.",
+    "retry": "Try again"
+  },
   "common": {
     "loading": "Loading…",
     "error": "Something went wrong",

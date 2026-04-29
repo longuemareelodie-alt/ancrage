@@ -577,6 +577,12 @@
       "support": "Si rien ne change après 10 minutes, contacte-nous."
     }
   },
+  "paid_route": {
+    "retrying": "Connexion lente, on réessaie…",
+    "error_title": "Erreur temporaire",
+    "error_text": "Impossible de vérifier ton accès pour le moment. Vérifie ta connexion et réessaie.",
+    "retry": "Réessayer"
+  },
   "common": {
     "loading": "Chargement…",
     "error": "Une erreur est survenue",

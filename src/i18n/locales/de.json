@@ -577,6 +577,12 @@
       "support": "Falls sich nach 10 Minuten nichts ändert, kontaktiere uns."
     }
   },
+  "paid_route": {
+    "retrying": "Langsame Verbindung, neuer Versuch…",
+    "error_title": "Vorübergehender Fehler",
+    "error_text": "Wir konnten deinen Zugang gerade nicht prüfen. Überprüfe deine Verbindung und versuche es erneut.",
+    "retry": "Erneut versuchen"
+  },
   "common": {
     "loading": "Lädt…",
     "error": "Ein Fehler ist aufgetreten",
