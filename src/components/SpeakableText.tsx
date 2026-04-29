@@ -468,8 +468,8 @@ const SpeakableText = ({
                   onClick={handleResume}
                   aria-label="Reprendre la lecture"
                   aria-pressed={true}
-                  title="Reprendre"
-                  className={`${baseBtn} border-primary bg-primary text-primary-foreground`}
+                  title="Reprendre la lecture"
+                  className={`${baseBtn} border-primary bg-primary text-primary-foreground animate-pulse`}
                 >
                   <Play className="h-3.5 w-3.5" aria-hidden="true" />
                 </button>
