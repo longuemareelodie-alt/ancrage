@@ -322,8 +322,11 @@ const SpeechPrefs = ({ className = "" }: SpeechPrefsProps) => {
             <PauseIcon className="h-3.5 w-3.5" />
             Pause entre phrases
           </span>
-          <span className="font-mono normal-case tracking-normal text-foreground">
-            {(sentencePause / 1000).toFixed(2)} s
+          <span className="flex items-center gap-2 normal-case tracking-normal">
+            <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] text-muted-foreground">
+              {LANG_LABELS[lang]}
+            </span>
+            <span className="font-mono text-foreground">{(sentencePause / 1000).toFixed(2)} s</span>
           </span>
         </div>
         <Slider
@@ -347,8 +350,11 @@ const SpeechPrefs = ({ className = "" }: SpeechPrefsProps) => {
             <PauseIcon className="h-3.5 w-3.5" />
             Pause sur les virgules
           </span>
-          <span className="font-mono normal-case tracking-normal text-foreground">
-            {(commaPause / 1000).toFixed(2)} s
+          <span className="flex items-center gap-2 normal-case tracking-normal">
+            <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] text-muted-foreground">
+              {LANG_LABELS[lang]}
+            </span>
+            <span className="font-mono text-foreground">{(commaPause / 1000).toFixed(2)} s</span>
           </span>
         </div>
         <Slider
