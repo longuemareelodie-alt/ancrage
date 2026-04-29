@@ -98,9 +98,14 @@ const SpeechPrefs = ({ className = "" }: SpeechPrefsProps) => {
     setLang(l);
     setSpeechLang(l);
     setVoiceURI(null); // store cleared by setSpeechLang
-    // Load rate/pitch for the newly selected language.
+    // Load all per-language preferences for the newly selected language.
     setRate(getSpeechRate(l));
     setPitchState(getSpeechPitch(l));
+    setSentencePauseState(getSentencePauseMs(l));
+    setCommaPauseState(getCommaPauseMs(l));
+    setSlowKwState(getSlowKeywords(l));
+    setSilentModeState(getSilentMode(l));
+    setFocusFollowState(getFocusFollow(l));
   };
 
   const handleVoiceChange = (uri: string) => {
