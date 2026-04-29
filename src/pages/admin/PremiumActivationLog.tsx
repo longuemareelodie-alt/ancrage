@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { format } from "date-fns";
-import { Calendar as CalendarIcon, Loader2, RefreshCw, Search } from "lucide-react";
+import { AlertCircle, Calendar as CalendarIcon, Inbox, Loader2, MessageCircle, RefreshCw, Search } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -30,6 +30,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import PremiumAuditPanel from "@/components/admin/PremiumAuditPanel";
+import SupportContactDialog from "@/components/SupportContactDialog";
 
 interface LogEntry {
   id: string;
@@ -78,6 +79,10 @@ const PremiumActivationLog = () => {
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [supportOpen, setSupportOpen] = useState(false);
+  const [logTicketId] = useState<string>(
+    () => `ADMIN-LOG-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`,
+  );
 
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [paymentIdFilter, setPaymentIdFilter] = useState("");
