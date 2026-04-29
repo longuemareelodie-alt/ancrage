@@ -435,7 +435,7 @@ const SpeakableText = ({
           {state === "idle" ? (
             <button
               type="button"
-              onClick={handlePlay}
+              onClick={() => handlePlay(0)}
               aria-label="Lire à voix haute"
               aria-pressed={false}
               title="Guidage audio"
