@@ -14,6 +14,7 @@ import { AlertTriangle, RefreshCw, Loader2, Mail } from "lucide-react";
 const PaidRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, loading, isPaid, eligibilityPhase, refreshEligibility } = useAuth();
   const { t } = useTranslation();
+  const location = useLocation();
 
   // Block ANY rendering until everything is resolved → no flash possible.
   if (loading) {
