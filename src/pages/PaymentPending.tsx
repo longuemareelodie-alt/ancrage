@@ -1,11 +1,25 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Loader2, CheckCircle2, AlertCircle, ArrowRight, RefreshCw, UserX } from "lucide-react";
+import {
+  Loader2,
+  CheckCircle2,
+  AlertCircle,
+  ArrowRight,
+  RefreshCw,
+  UserX,
+  Camera,
+  Check,
+} from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { withRetry } from "@/lib/supabaseRetry";
+import {
+  isScreenshotSupported,
+  captureAndDownloadScreenshot,
+} from "@/lib/captureScreenshot";
+import { toast } from "sonner";
 
 type Status = "pending" | "confirmed" | "error" | "not_found";
 type LastState = "checking" | "retrying" | "error" | "not_found" | "confirmed";
