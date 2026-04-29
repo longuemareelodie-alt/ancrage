@@ -575,6 +575,13 @@
       "retry": "Erneut prüfen",
       "dashboard": "Zu meinem Bereich",
       "support": "Falls sich nach 10 Minuten nichts ändert, kontaktiere uns."
+    },
+    "not_found": {
+      "title": "Profil nicht gefunden",
+      "text": "Wir konnten dein Profil nicht finden. Kontaktiere den Support, damit wir deinen Zugang manuell aktivieren.",
+      "contact_support": "Support kontaktieren",
+      "support_subject": "Profil nach Zahlung nicht gefunden",
+      "support_body": "Hallo, mein Profil scheint nach der Zahlung zu fehlen."
     }
   },
   "paid_route": {

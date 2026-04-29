@@ -575,6 +575,13 @@
       "retry": "Check again",
       "dashboard": "Go to my space",
       "support": "If nothing changes after 10 minutes, please contact us."
+    },
+    "not_found": {
+      "title": "Profile not found",
+      "text": "We couldn't find your profile. Contact support so we can activate your access manually.",
+      "contact_support": "Contact support",
+      "support_subject": "Profile not found after payment",
+      "support_body": "Hi, my profile seems to be missing after payment."
     }
   },
   "paid_route": {

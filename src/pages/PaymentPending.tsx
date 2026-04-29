@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Loader2, CheckCircle2, AlertCircle, ArrowRight, RefreshCw } from "lucide-react";
+import { Loader2, CheckCircle2, AlertCircle, ArrowRight, RefreshCw, UserX } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { withRetry } from "@/lib/supabaseRetry";
 
-type Status = "pending" | "confirmed" | "error";
+type Status = "pending" | "confirmed" | "error" | "not_found";
 
 const MAX_ATTEMPTS = 30; // ~60s at 2s intervals
 const POLL_INTERVAL_MS = 2000;
@@ -41,17 +41,25 @@ const PaymentPending = () => {
             .from("profiles")
             .select("is_premium")
             .eq("user_id", user.id)
-            .single(),
+            .maybeSingle(),
         { maxAttempts: 2, baseDelayMs: 400, timeoutMs: 6000 },
       );
 
       if (cancelled.current) return;
 
-      if (!error && data?.is_premium) {
+      // Confirm ONLY when the profile row exists AND is_premium is strictly true.
+      if (!error && data && data.is_premium === true) {
         setStatus("confirmed");
         setTimeout(() => {
           if (!cancelled.current) navigate("/payment-success", { replace: true });
         }, 1200);
+        return;
+      }
+
+      // Profile row genuinely missing (no error, no data): show a distinct state.
+      // Don't keep polling — the webhook can't activate a profile that doesn't exist.
+      if (!error && data === null) {
+        setStatus("not_found");
         return;
       }
 
@@ -163,6 +171,59 @@ const PaymentPending = () => {
             </div>
           </>
         )}
+
+        {status === "not_found" && (() => {
+          const subject = t(
+            "payment_pending.not_found.support_subject",
+            "Profil introuvable après paiement",
+          );
+          const body = [
+            t(
+              "payment_pending.not_found.support_body",
+              "Bonjour, mon profil semble introuvable après le paiement.",
+            ),
+            "",
+            `User ID : ${user?.id ?? "—"}`,
+            `Email : ${user?.email ?? "—"}`,
+            `Date : ${new Date().toISOString()}`,
+          ].join("\n");
+          const mailto = `mailto:contact@digitalmamanlibre.com?subject=${encodeURIComponent(
+            subject,
+          )}&body=${encodeURIComponent(body)}`;
+          return (
+            <>
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-amber-500/10">
+                <UserX className="h-8 w-8 text-amber-600" />
+              </div>
+              <div className="space-y-2">
+                <h1 className="text-xl font-bold">
+                  {t("payment_pending.not_found.title", "Profil introuvable")}
+                </h1>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {t(
+                    "payment_pending.not_found.text",
+                    "Nous n'avons pas trouvé ton profil. Contacte le support pour qu'on active ton accès manuellement.",
+                  )}
+                </p>
+              </div>
+              <div className="space-y-2">
+                <a
+                  href={mailto}
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground"
+                >
+                  {t("payment_pending.not_found.contact_support", "Contacter le support")}
+                </a>
+                <Link
+                  to="/dashboard"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl border px-6 py-3 text-sm font-medium"
+                >
+                  {t("payment_pending.error.dashboard")}
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            </>
+          );
+        })()}
       </motion.div>
     </div>
   );
