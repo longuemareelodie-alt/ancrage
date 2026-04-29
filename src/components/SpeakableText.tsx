@@ -355,6 +355,15 @@ const SpeakableText = ({
               </button>
               <button
                 type="button"
+                onClick={handleSkipNext}
+                aria-label="Aller à l'étape suivante"
+                title="Aller à l'étape suivante"
+                className={`${baseBtn} border-border bg-background text-muted-foreground hover:bg-muted`}
+              >
+                <SkipForward className="h-3.5 w-3.5" aria-hidden="true" />
+              </button>
+              <button
+                type="button"
                 onClick={handleStop}
                 aria-label="Arrêter la lecture audio"
                 title="Arrêter"
