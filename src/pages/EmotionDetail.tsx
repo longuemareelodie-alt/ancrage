@@ -88,12 +88,14 @@ const EmotionDetail = () => {
   const title = t(titleKey);
   const validation = t(`emotion_detail.data.${key}.validation`);
 
-  const i18nFree = t(`emotion_detail.data.${key}.free`, {
+  const i18nFreeRaw = t(`emotion_detail.data.${key}.free`, {
     returnObjects: true,
   }) as string[];
-  const i18nLocked = t(`emotion_detail.data.${key}.locked`, {
+  const i18nLockedRaw = t(`emotion_detail.data.${key}.locked`, {
     returnObjects: true,
   }) as string[];
+
+  const toSteps = (arr: string[]): Step[] => arr.map((text) => ({ text }));
 
   // Effective style: if user picked "any", use the auto-resolved one (or
   // fall back to i18n until it loads).
@@ -101,8 +103,8 @@ const EmotionDetail = () => {
     style === "any" ? (autoResolved ?? "any") : style;
 
   const variant = getStyleVariant(key, effectiveStyle);
-  const freeSteps = variant?.free ?? i18nFree;
-  const lockedSteps = variant?.locked ?? i18nLocked;
+  const freeSteps: Step[] = variant?.free ?? toSteps(i18nFreeRaw);
+  const lockedSteps: Step[] = variant?.locked ?? toSteps(i18nLockedRaw);
   const supportsVariants = hasStyleVariants(key);
 
   // Record the resolved style as the last one used (only when it's a real
