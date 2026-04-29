@@ -27,7 +27,7 @@ const BottomNav = () => {
     "/post-flow",
   ];
 
-  if (!ready) return null;
+  if (loading) return null;
   if (!user) return null;
   if (!isPaid) return null;
   if (hiddenRoutes.includes(location.pathname)) return null;
