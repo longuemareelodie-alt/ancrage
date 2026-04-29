@@ -15,6 +15,7 @@ import {
 import {
   getStyleVariant,
   hasStyleVariants,
+  type Step,
 } from "@/data/emotionStyleVariants";
 import {
   resolveAutoStyleFromToday,
