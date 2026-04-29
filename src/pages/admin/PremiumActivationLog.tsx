@@ -145,12 +145,20 @@ const PremiumActivationLog = () => {
             {t("admin.premium_log.subtitle")}
           </p>
         </div>
-        <Button variant="outline" asChild>
-          <a href="/admin/premium-audit">
-            <AlertCircle className="h-4 w-4 mr-2" />
-            Vue des incohérences
-          </a>
-        </Button>
+        <div className="flex gap-2 flex-wrap">
+          <Button variant="outline" asChild>
+            <a href="/admin/premium-audit">
+              <AlertCircle className="h-4 w-4 mr-2" />
+              Vue des incohérences
+            </a>
+          </Button>
+          <Button variant="outline" asChild>
+            <a href="/admin/webhook-anomalies">
+              <AlertCircle className="h-4 w-4 mr-2" />
+              Anomalies Webhook
+            </a>
+          </Button>
+        </div>
       </header>
 
       <PremiumAuditPanel />
