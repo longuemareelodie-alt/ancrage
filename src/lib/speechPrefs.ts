@@ -173,6 +173,18 @@ export function setSlowKeywords(enabled: boolean) {
   window.dispatchEvent(new CustomEvent("calm-speech-prefs-change"));
 }
 
+export function getSilentMode(): boolean {
+  if (typeof window === "undefined") return SILENT_MODE_DEFAULT;
+  const v = localStorage.getItem(SILENT_MODE_KEY);
+  if (v === null) return SILENT_MODE_DEFAULT;
+  return v === "1";
+}
+export function setSilentMode(enabled: boolean) {
+  if (typeof window === "undefined") return;
+  localStorage.setItem(SILENT_MODE_KEY, enabled ? "1" : "0");
+  window.dispatchEvent(new CustomEvent("calm-speech-prefs-change"));
+}
+
 /**
  * Découpe un texte en segments destinés à être prononcés séquentiellement,
  * en insérant des pauses (silences) et en ralentissant les mots-clés respiration.
