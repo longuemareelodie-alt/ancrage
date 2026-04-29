@@ -476,6 +476,12 @@ const Checkin = () => {
               {paymentLoading ? "Chargement…" : "Débloquer la suite"}
             </motion.button>
 
+            {user && !isPaid && (
+              <p className="text-[11px] text-muted-foreground max-w-xs">
+                Dès que ton paiement est confirmé, la suite se débloque ici automatiquement.
+              </p>
+            )}
+
             <button
               onClick={() => setStep("select")}
               className="text-xs text-muted-foreground underline underline-offset-4"
