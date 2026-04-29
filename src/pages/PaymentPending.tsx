@@ -53,7 +53,7 @@ const PaymentPending = () => {
   const handleCaptureScreenshot = async () => {
     setCapturing(true);
     try {
-      const result = await captureAndDownloadScreenshot(`ancrage-support-${ticketId}`);
+      const result: CaptureResult = await captureAndDownloadScreenshot(`ancrage-support-${ticketId}`);
       if (result.ok) {
         setScreenshotFilename(result.filename);
         toast.success(
