@@ -539,6 +539,51 @@ export type Database = {
         }
         Relationships: []
       }
+      support_logs: {
+        Row: {
+          attempts: number | null
+          created_at: string
+          error_code: string | null
+          error_message: string | null
+          id: string
+          last_state: string | null
+          metadata: Json | null
+          source: string
+          ticket_id: string
+          url: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          attempts?: number | null
+          created_at?: string
+          error_code?: string | null
+          error_message?: string | null
+          id?: string
+          last_state?: string | null
+          metadata?: Json | null
+          source?: string
+          ticket_id: string
+          url?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          attempts?: number | null
+          created_at?: string
+          error_code?: string | null
+          error_message?: string | null
+          id?: string
+          last_state?: string | null
+          metadata?: Json | null
+          source?: string
+          ticket_id?: string
+          url?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       suppressed_emails: {
         Row: {
           created_at: string
