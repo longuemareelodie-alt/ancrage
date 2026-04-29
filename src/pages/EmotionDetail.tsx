@@ -247,7 +247,6 @@ const EmotionDetail = () => {
                   <div className="min-w-0 flex-1">
                     <SpeakableText
                       text={step.text}
-                      hint={step.hint}
                       textClassName="pt-0.5"
                     />
                     {step.hint && (
