@@ -8,9 +8,17 @@ import { supabase } from "@/integrations/supabase/client";
 import { withRetry } from "@/lib/supabaseRetry";
 
 type Status = "pending" | "confirmed" | "error" | "not_found";
+type LastState = "checking" | "retrying" | "error" | "not_found" | "confirmed";
 
 const MAX_ATTEMPTS = 30; // ~60s at 2s intervals
 const POLL_INTERVAL_MS = 2000;
+
+/** Generate a short, human-readable support ticket ID. */
+const generateTicketId = (): string => {
+  const ts = Date.now().toString(36).toUpperCase();
+  const rand = Math.random().toString(36).slice(2, 6).toUpperCase();
+  return `PP-${ts}-${rand}`;
+};
 
 const PaymentPending = () => {
   const { user, loading: authLoading } = useAuth();
@@ -18,7 +26,17 @@ const PaymentPending = () => {
   const navigate = useNavigate();
   const [status, setStatus] = useState<Status>("pending");
   const [attempts, setAttempts] = useState(0);
+  const [lastState, setLastState] = useState<LastState>("checking");
+  const [lastStateAt, setLastStateAt] = useState<string>(() => new Date().toISOString());
+  const [lastError, setLastError] = useState<string | null>(null);
+  const [ticketId] = useState<string>(() => generateTicketId());
   const cancelled = useRef(false);
+
+  const updateLastState = (next: LastState, errorMsg?: string | null) => {
+    setLastState(next);
+    setLastStateAt(new Date().toISOString());
+    setLastError(errorMsg ?? null);
+  };
 
   useEffect(() => {
     if (authLoading) return;
@@ -34,6 +52,7 @@ const PaymentPending = () => {
       if (cancelled.current) return;
       attempt += 1;
       setAttempts(attempt);
+      updateLastState("checking");
 
       const { data, error } = await withRetry(
         () =>
@@ -50,6 +69,7 @@ const PaymentPending = () => {
       // Confirm ONLY when the profile row exists AND is_premium is strictly true.
       if (!error && data && data.is_premium === true) {
         setStatus("confirmed");
+        updateLastState("confirmed");
         setTimeout(() => {
           if (!cancelled.current) navigate("/payment-success", { replace: true });
         }, 1200);
@@ -60,14 +80,18 @@ const PaymentPending = () => {
       // Don't keep polling — the webhook can't activate a profile that doesn't exist.
       if (!error && data === null) {
         setStatus("not_found");
+        updateLastState("not_found");
         return;
       }
 
       if (attempt >= MAX_ATTEMPTS) {
         setStatus("error");
+        updateLastState("error", error?.message ?? "max_attempts_reached");
         return;
       }
 
+      // Still pending (or transient error) → will retry.
+      updateLastState("retrying", error?.message ?? null);
       setTimeout(poll, POLL_INTERVAL_MS);
     };
 
@@ -134,62 +158,110 @@ const PaymentPending = () => {
           </>
         )}
 
-        {status === "error" && (
-          <>
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10">
-              <AlertCircle className="h-8 w-8 text-destructive" />
-            </div>
-            <div className="space-y-2">
-              <h1 className="text-xl font-bold">{t("payment_pending.error.title")}</h1>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                {t("payment_pending.error.text")}
-              </p>
-            </div>
-            <div className="space-y-2">
-              <button
-                onClick={() => {
-                  setStatus("pending");
-                  setAttempts(0);
-                  // re-trigger effect by reloading the page state
-                  window.location.reload();
-                }}
-                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground"
-              >
-                <RefreshCw className="h-4 w-4" />
-                {t("payment_pending.error.retry")}
-              </button>
-              <Link
-                to="/dashboard"
-                className="inline-flex w-full items-center justify-center gap-2 rounded-xl border px-6 py-3 text-sm font-medium"
-              >
-                {t("payment_pending.error.dashboard")}
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-              <p className="text-[11px] text-muted-foreground">
-                {t("payment_pending.error.support")}
-              </p>
-            </div>
-          </>
-        )}
+        {(status === "error" || status === "not_found") && (() => {
+          const isNotFound = status === "not_found";
+          const subject = isNotFound
+            ? t(
+                "payment_pending.not_found.support_subject",
+                "Profil introuvable après paiement",
+              )
+            : t(
+                "payment_pending.error.support_subject",
+                "Problème de confirmation de paiement",
+              );
+          const intro = isNotFound
+            ? t(
+                "payment_pending.not_found.support_body",
+                "Bonjour, mon profil semble introuvable après le paiement.",
+              )
+            : t(
+                "payment_pending.error.support_body",
+                "Bonjour, ma confirmation de paiement n'aboutit pas.",
+              );
 
-        {status === "not_found" && (() => {
-          const subject = t(
-            "payment_pending.not_found.support_subject",
-            "Profil introuvable après paiement",
+          const stateLabels: Record<LastState, string> = {
+            checking: t("payment_pending.last_state.checking", "Vérification en cours"),
+            retrying: t("payment_pending.last_state.retrying", "Nouvelle tentative"),
+            error: t("payment_pending.last_state.error", "Erreur"),
+            not_found: t("payment_pending.last_state.not_found", "Profil introuvable"),
+            confirmed: t("payment_pending.last_state.confirmed", "Confirmé"),
+          };
+
+          const summaryHeader = t(
+            "payment_pending.support.summary_header",
+            "— Informations diagnostic (ne pas modifier) —",
           );
+
           const body = [
-            t(
-              "payment_pending.not_found.support_body",
-              "Bonjour, mon profil semble introuvable après le paiement.",
-            ),
+            intro,
             "",
+            summaryHeader,
+            `Ticket ID : ${ticketId}`,
+            `Dernier état : ${stateLabels[lastState]} (${lastState})`,
+            `Horodatage état : ${lastStateAt}`,
+            `Tentatives : ${attempts}/${MAX_ATTEMPTS}`,
+            lastError ? `Dernière erreur : ${lastError}` : null,
             `User ID : ${user?.id ?? "—"}`,
             `Email : ${user?.email ?? "—"}`,
+            `URL : ${typeof window !== "undefined" ? window.location.href : "—"}`,
+            `User-Agent : ${typeof navigator !== "undefined" ? navigator.userAgent : "—"}`,
             `Date : ${new Date().toISOString()}`,
-          ].join("\n");
+          ]
+            .filter(Boolean)
+            .join("\n");
+
           const mailto = `mailto:contact@digitalmamanlibre.com?subject=${encodeURIComponent(
-            subject,
+            `[${ticketId}] ${subject}`,
           )}&body=${encodeURIComponent(body)}`;
+
+          if (!isNotFound) {
+            return (
+              <>
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10">
+                  <AlertCircle className="h-8 w-8 text-destructive" />
+                </div>
+                <div className="space-y-2">
+                  <h1 className="text-xl font-bold">{t("payment_pending.error.title")}</h1>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {t("payment_pending.error.text")}
+                  </p>
+                  <p className="text-[11px] font-mono text-muted-foreground">
+                    {t("payment_pending.support.ticket_label", "Ticket")} : {ticketId}
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <button
+                    onClick={() => {
+                      setStatus("pending");
+                      setAttempts(0);
+                      window.location.reload();
+                    }}
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground"
+                  >
+                    <RefreshCw className="h-4 w-4" />
+                    {t("payment_pending.error.retry")}
+                  </button>
+                  <a
+                    href={mailto}
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-xl border px-6 py-3 text-sm font-medium"
+                  >
+                    {t("payment_pending.error.contact_support", "Contacter le support")}
+                  </a>
+                  <Link
+                    to="/dashboard"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-xl px-6 py-3 text-xs text-muted-foreground"
+                  >
+                    {t("payment_pending.error.dashboard")}
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                  <p className="text-[11px] text-muted-foreground">
+                    {t("payment_pending.error.support")}
+                  </p>
+                </div>
+              </>
+            );
+          }
+
           return (
             <>
               <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-amber-500/10">
@@ -204,6 +276,9 @@ const PaymentPending = () => {
                     "payment_pending.not_found.text",
                     "Nous n'avons pas trouvé ton profil. Contacte le support pour qu'on active ton accès manuellement.",
                   )}
+                </p>
+                <p className="text-[11px] font-mono text-muted-foreground">
+                  {t("payment_pending.support.ticket_label", "Ticket")} : {ticketId}
                 </p>
               </div>
               <div className="space-y-2">
