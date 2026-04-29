@@ -437,6 +437,31 @@ const Profil = () => {
                 )}
               </div>
 
+              {/* Style préféré */}
+              <div className="mt-4">
+                <Link
+                  to="/profil/style"
+                  className="flex items-center gap-3 rounded-2xl border border-border bg-card p-4 shadow-sm transition-colors hover:bg-muted/50"
+                >
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                    {actionStyle === "breathing" ? (
+                      <Wind className="h-5 w-5" />
+                    ) : actionStyle === "sensory" ? (
+                      <Hand className="h-5 w-5" />
+                    ) : (
+                      <Sparkles className="h-5 w-5" />
+                    )}
+                  </span>
+                  <div className="flex-1">
+                    <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                      Style préféré
+                    </p>
+                    <p className="font-semibold">{ACTION_STYLE_LABELS[actionStyle]}</p>
+                  </div>
+                  <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                </Link>
+              </div>
+
               {/* RGPD : export et suppression */}
               <div className="mt-4">
                 <DataActions />
