@@ -538,6 +538,11 @@
       "active_text": "You've already paid. All of Ancrage is unlocked in your account, for life.",
       "active_cta": "Go to my space"
     },
+    "blocked": {
+      "title": "Your full access isn't active yet 💛",
+      "text": "Your account was created after Ancrage's paid access launched. To unlock everything (ritual, emergency, health space, journey…), you need the one-time €39 payment.",
+      "cta": "Unlock Ancrage — €39"
+    },
     "redirected": {
       "title": "This page requires your full access 💛",
       "text": "To open this page, you need full access to Ancrage. You can resume your payment in one click.",

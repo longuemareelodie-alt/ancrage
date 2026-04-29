@@ -7,6 +7,10 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
 import { supabase } from "@/integrations/supabase/client";
 import { withRetry } from "@/lib/supabaseRetry";
+import {
+  PAYWALL_ENFORCEMENT_CUTOFF_ISO,
+  classifyProfileCreatedAt,
+} from "@/lib/paywallPolicy";
 import Breadcrumb from "@/components/Breadcrumb";
 
 const Paywall = () => {
@@ -15,6 +19,7 @@ const Paywall = () => {
   const { startPayment, loading: paymentLoading } = useMolliePayment();
   const [isPaid, setIsPaid] = useState(false);
   const [statusLoading, setStatusLoading] = useState<boolean>(!!user);
+  const [profileCreatedAt, setProfileCreatedAt] = useState<string | null>(null);
   const location = useLocation();
   const fromPath = (location.state as { from?: string } | null)?.from ?? null;
   const resumeBtnRef = useRef<HTMLButtonElement | null>(null);
@@ -22,6 +27,7 @@ const Paywall = () => {
   useEffect(() => {
     if (!user) {
       setIsPaid(false);
+      setProfileCreatedAt(null);
       setStatusLoading(false);
       return;
     }
@@ -32,13 +38,15 @@ const Paywall = () => {
         () =>
           supabase
             .from("profiles")
-            .select("is_premium")
+            .select("is_premium, created_at")
             .eq("user_id", user.id)
             .single(),
         { maxAttempts: 3, baseDelayMs: 400 },
       );
       if (cancelled) return;
-      setIsPaid(!!(data as any)?.is_premium);
+      const row = data as { is_premium?: boolean; created_at?: string } | null;
+      setIsPaid(!!row?.is_premium);
+      setProfileCreatedAt(row?.created_at ?? null);
       setStatusLoading(false);
     })();
     return () => {
@@ -82,7 +90,31 @@ const Paywall = () => {
     return "paywall.redirected.page.generic";
   })();
 
-  const showRedirectBanner = !!fromPath && !isPaid && !statusLoading;
+  // Compute the *reason* the user is blocked. Three buckets:
+  //  - "redirected" : came from a protected page (fromPath set)
+  //  - "after_cutoff" : logged-in, profile created on/after the enforcement
+  //                     cutoff and not premium → must pay to enter
+  //  - null         : nothing to highlight (already paid, anonymous visitor,
+  //                    or grandfathered account just browsing)
+  const cutoffMs = new Date(PAYWALL_ENFORCEMENT_CUTOFF_ISO).getTime();
+  const createdStatus = classifyProfileCreatedAt(profileCreatedAt);
+  const createdMs =
+    createdStatus === "valid" ? new Date(profileCreatedAt as string).getTime() : NaN;
+  const isAfterCutoff =
+    !!user &&
+    !isPaid &&
+    !statusLoading &&
+    // If we couldn't read the profile (missing/invalid), be conservative and
+    // show the message — they ARE blocked by PaidRoute anyway.
+    (createdStatus !== "valid" ||
+      (Number.isFinite(createdMs) && Number.isFinite(cutoffMs) && createdMs >= cutoffMs));
+
+  const blockReason: "redirected" | "after_cutoff" | null = (() => {
+    if (isPaid || statusLoading) return null;
+    if (fromPath) return "redirected";
+    if (isAfterCutoff) return "after_cutoff";
+    return null;
+  })();
 
   return (
     <div className="min-h-screen bg-background">
@@ -94,7 +126,7 @@ const Paywall = () => {
           transition={{ duration: 0.6 }}
           className="mx-auto w-full max-w-md space-y-8"
         >
-          {showRedirectBanner && (
+          {blockReason && (
             <motion.div
               initial={{ opacity: 0, y: -8 }}
               animate={{ opacity: 1, y: 0 }}
@@ -107,14 +139,18 @@ const Paywall = () => {
                 </span>
                 <div className="flex-1 space-y-2">
                   <p className="text-sm font-bold text-foreground">
-                    {t("paywall.redirected.title")}
+                    {blockReason === "after_cutoff"
+                      ? t("paywall.blocked.title")
+                      : t("paywall.redirected.title")}
                   </p>
                   <p className="text-xs leading-relaxed text-muted-foreground">
-                    {fromLabelKey
-                      ? t("paywall.redirected.text_with_page", {
-                          page: t(fromLabelKey),
-                        })
-                      : t("paywall.redirected.text")}
+                    {blockReason === "after_cutoff"
+                      ? t("paywall.blocked.text")
+                      : fromLabelKey
+                        ? t("paywall.redirected.text_with_page", {
+                            page: t(fromLabelKey),
+                          })
+                        : t("paywall.redirected.text")}
                   </p>
                   <button
                     ref={resumeBtnRef}
@@ -124,7 +160,9 @@ const Paywall = () => {
                   >
                     {paymentLoading
                       ? t("paywall.loading")
-                      : t("paywall.redirected.resume_cta")}
+                      : blockReason === "after_cutoff"
+                        ? t("paywall.blocked.cta")
+                        : t("paywall.redirected.resume_cta")}
                     <ArrowRight className="h-3.5 w-3.5" />
                   </button>
                 </div>

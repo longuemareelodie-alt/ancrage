@@ -538,6 +538,11 @@
       "active_text": "Tu as déjà payé. Tout Ancrage est débloqué dans ton compte, à vie.",
       "active_cta": "Aller à mon espace"
     },
+    "blocked": {
+      "title": "Ton accès complet n'est pas encore activé 💛",
+      "text": "Ton compte a été créé après l'ouverture de l'accès payant à Ancrage. Pour débloquer toutes les fonctionnalités (rituel, urgence, espace santé, parcours…), il te faut le paiement unique de 39€.",
+      "cta": "Débloquer Ancrage — 39€"
+    },
     "redirected": {
       "title": "Cette page nécessite ton accès complet 💛",
       "text": "Pour ouvrir cette page, il te faut l'accès complet à Ancrage. Tu peux reprendre ton paiement en un clic.",
