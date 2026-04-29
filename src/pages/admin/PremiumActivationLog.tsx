@@ -140,6 +140,8 @@ const PremiumActivationLog = () => {
         </p>
       </header>
 
+      <PremiumAuditPanel />
+
       <section className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 p-4 rounded-lg border bg-card">
         <div className="space-y-2">
           <Label>{t("admin.premium_log.filter_status")}</Label>
