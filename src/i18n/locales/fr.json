@@ -657,6 +657,11 @@
       "col_amount": "Montant",
       "col_message": "Message",
       "empty": "Aucune entrée",
+      "empty_hint": "Aucune activation premium n'a encore été enregistrée pour ces filtres. Modifie les filtres ou réessaie plus tard.",
+      "error_title": "Impossible de charger le journal",
+      "error_hint": "La récupération du journal a échoué. Vérifie ta connexion puis réessaie. Si le problème persiste, contacte le support.",
+      "contact_support": "Contacter le support",
+      "support_subject": "Erreur d'accès au journal d'activations premium",
       "pagination": "{{from}}–{{to}} sur {{total}}",
       "prev": "Précédent",
       "next": "Suivant"
