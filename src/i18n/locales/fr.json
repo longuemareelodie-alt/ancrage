@@ -537,6 +537,25 @@
       "active_title": "Ton accès à vie est actif 💛",
       "active_text": "Tu as déjà payé. Tout Ancrage est débloqué dans ton compte, à vie.",
       "active_cta": "Aller à mon espace"
+    },
+    "redirected": {
+      "title": "Cette page nécessite ton accès complet 💛",
+      "text": "Pour ouvrir cette page, il te faut l'accès complet à Ancrage. Tu peux reprendre ton paiement en un clic.",
+      "text_with_page": "Pour ouvrir « {{page}} », il te faut l'accès complet à Ancrage. Tu peux reprendre ton paiement en un clic.",
+      "resume_cta": "Reprendre le paiement",
+      "page": {
+        "dashboard": "Mon espace",
+        "calme": "Calme en clair",
+        "emotions": "Émotions",
+        "checkin": "Check-in",
+        "historique": "Historique",
+        "comprendre": "Comprendre",
+        "avancer": "Avancer",
+        "parcours": "Parcours",
+        "profil": "Profil",
+        "sante": "Espace santé",
+        "generic": "cette page"
+      }
     }
   },
   "emergency": {
