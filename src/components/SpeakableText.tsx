@@ -85,8 +85,22 @@ const SpeakableText = ({
     }
   }, []);
 
+  // Helper that captures the current playback position.
+  const persistCurrentProgress = () => {
+    if (stateRef.current === "idle") return;
+    const sentence = Math.max(0, sentenceCursorRef.current);
+    saveProgress(fullText, {
+      sentence,
+      elapsed: elapsedRef.current,
+      total: estimatedTotalRef.current,
+      lang: lang,
+    });
+  };
+
   useEffect(() => {
     return () => {
+      // Persist on unmount if still playing/paused.
+      persistCurrentProgress();
       if (pauseTimerRef.current !== null) {
         window.clearTimeout(pauseTimerRef.current);
         pauseTimerRef.current = null;
@@ -99,7 +113,31 @@ const SpeakableText = ({
         }
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Persist progress on tab hide / page unload so we don't lose position.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const onHide = () => persistCurrentProgress();
+    document.addEventListener("visibilitychange", onHide);
+    window.addEventListener("pagehide", onHide);
+    window.addEventListener("beforeunload", onHide);
+    return () => {
+      document.removeEventListener("visibilitychange", onHide);
+      window.removeEventListener("pagehide", onHide);
+      window.removeEventListener("beforeunload", onHide);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fullText, lang]);
+
+  // Throttled save while speaking (every ~3s) to keep storage fresh.
+  useEffect(() => {
+    if (state !== "speaking") return;
+    const id = window.setInterval(() => persistCurrentProgress(), 3000);
+    return () => window.clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state, fullText, lang]);
 
   // Tick elapsed time only while actively speaking.
   useEffect(() => {
