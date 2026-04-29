@@ -334,7 +334,7 @@ const SpeechPrefs = ({ className = "" }: SpeechPrefsProps) => {
           onValueChange={(v) => {
             const next = v[0];
             setSentencePauseState(next);
-            setSentencePauseMs(next);
+            setSentencePauseMs(next, lang);
           }}
           aria-label="Pause entre phrases"
         />
@@ -359,7 +359,7 @@ const SpeechPrefs = ({ className = "" }: SpeechPrefsProps) => {
           onValueChange={(v) => {
             const next = v[0];
             setCommaPauseState(next);
-            setCommaPauseMs(next);
+            setCommaPauseMs(next, lang);
           }}
           aria-label="Pause sur les virgules"
         />
@@ -380,7 +380,7 @@ const SpeechPrefs = ({ className = "" }: SpeechPrefsProps) => {
           checked={slowKw}
           onCheckedChange={(c) => {
             setSlowKwState(c);
-            setSlowKeywords(c);
+            setSlowKeywords(c, lang);
           }}
           aria-label="Ralentir les mots-clés de respiration"
         />
@@ -402,7 +402,7 @@ const SpeechPrefs = ({ className = "" }: SpeechPrefsProps) => {
           checked={silentMode}
           onCheckedChange={(c) => {
             setSilentModeState(c);
-            setSilentMode(c);
+            setSilentMode(c, lang);
           }}
           aria-label="Activer la surbrillance silencieuse"
         />
@@ -424,7 +424,7 @@ const SpeechPrefs = ({ className = "" }: SpeechPrefsProps) => {
           checked={focusFollow}
           onCheckedChange={(c) => {
             setFocusFollowState(c);
-            setFocusFollow(c);
+            setFocusFollow(c, lang);
           }}
           aria-label="Suivre la phrase active avec le focus clavier"
         />
