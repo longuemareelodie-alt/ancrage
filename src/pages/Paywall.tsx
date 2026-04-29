@@ -1,15 +1,38 @@
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Lock, Check } from "lucide-react";
+import { Lock, Check, Infinity as InfinityIcon, ArrowRight } from "lucide-react";
 import { useTranslation, Trans } from "react-i18next";
 import { useAuth } from "@/contexts/AuthContext";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
+import { supabase } from "@/integrations/supabase/client";
 import Breadcrumb from "@/components/Breadcrumb";
 
 const Paywall = () => {
   const { user } = useAuth();
   const { t } = useTranslation();
   const { startPayment, loading: paymentLoading } = useMolliePayment();
+  const [isPaid, setIsPaid] = useState(false);
+  const [statusLoading, setStatusLoading] = useState<boolean>(!!user);
+
+  useEffect(() => {
+    if (!user) {
+      setIsPaid(false);
+      setStatusLoading(false);
+      return;
+    }
+    setStatusLoading(true);
+    supabase
+      .from("profiles")
+      .select("is_premium, plan_type")
+      .eq("user_id", user.id)
+      .single()
+      .then(({ data }) => {
+        const paid = !!(data as any)?.is_premium || ((data as any)?.plan_type ?? "none") !== "none";
+        setIsPaid(paid);
+        setStatusLoading(false);
+      });
+  }, [user]);
 
   const handlePurchase = () => {
     if (!user) {
@@ -104,6 +127,61 @@ const Paywall = () => {
                 }}
               />
             </p>
+          </motion.div>
+
+          {/* Lifetime access explainer — also reflects current paid status */}
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.45 }}
+            className={`rounded-2xl border p-5 ${
+              isPaid
+                ? "border-primary/40 bg-primary/10"
+                : "border-primary/20 bg-primary/5"
+            }`}
+          >
+            <div className="flex items-start gap-3">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
+                <InfinityIcon className="h-5 w-5" />
+              </span>
+              <div className="flex-1 space-y-1">
+                <p className="text-sm font-bold">
+                  {isPaid
+                    ? t("paywall.lifetime_box.active_title")
+                    : t("paywall.lifetime_box.title")}
+                </p>
+                <p className="text-xs leading-relaxed text-muted-foreground">
+                  {isPaid
+                    ? t("paywall.lifetime_box.active_text")
+                    : t("paywall.lifetime_box.text")}
+                </p>
+                {!isPaid && !statusLoading && (
+                  <ul className="mt-2 space-y-1 text-xs text-muted-foreground">
+                    <li className="flex items-start gap-2">
+                      <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+                      <span>{t("paywall.lifetime_box.bullet_one_payment")}</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+                      <span>{t("paywall.lifetime_box.bullet_no_renewal")}</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+                      <span>{t("paywall.lifetime_box.bullet_all_devices")}</span>
+                    </li>
+                  </ul>
+                )}
+                {isPaid && (
+                  <Link
+                    to="/dashboard"
+                    className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground"
+                  >
+                    {t("paywall.lifetime_box.active_cta")}
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                )}
+              </div>
+            </div>
           </motion.div>
 
           <div className="space-y-3 text-center">

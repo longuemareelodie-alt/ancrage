@@ -119,15 +119,42 @@
     "section_negative": "Ce qui monte en toi",
     "section_positive": "Ce qui va mieux",
     "list": {
-      "panique": { "label": "Je panique", "hook": "Ton corps essaie de te protéger" },
-      "hypervigilance": { "label": "Hypervigilance", "hook": "Ton système est resté en alerte" },
-      "rumination": { "label": "Rumination", "hook": "Ton cerveau cherche une sortie" },
-      "explosion": { "label": "Explosion", "hook": "La pression est trop forte" },
-      "vide": { "label": "Vide", "hook": "Ton système s'est coupé pour tenir" },
-      "epuisee": { "label": "Épuisée", "hook": "Tu as trop donné" },
-      "calme": { "label": "Plus calme", "hook": "Tu peux profiter de ce moment" },
-      "apaisee": { "label": "Apaisée", "hook": "Garde-le en toi" },
-      "fiere": { "label": "Fière de moi", "hook": "Tu mérites de le ressentir" }
+      "panique": {
+        "label": "Je panique",
+        "hook": "Ton corps essaie de te protéger"
+      },
+      "hypervigilance": {
+        "label": "Hypervigilance",
+        "hook": "Ton système est resté en alerte"
+      },
+      "rumination": {
+        "label": "Rumination",
+        "hook": "Ton cerveau cherche une sortie"
+      },
+      "explosion": {
+        "label": "Explosion",
+        "hook": "La pression est trop forte"
+      },
+      "vide": {
+        "label": "Vide",
+        "hook": "Ton système s'est coupé pour tenir"
+      },
+      "epuisee": {
+        "label": "Épuisée",
+        "hook": "Tu as trop donné"
+      },
+      "calme": {
+        "label": "Plus calme",
+        "hook": "Tu peux profiter de ce moment"
+      },
+      "apaisee": {
+        "label": "Apaisée",
+        "hook": "Garde-le en toi"
+      },
+      "fiere": {
+        "label": "Fière de moi",
+        "hook": "Tu mérites de le ressentir"
+      }
     }
   },
   "emotion_detail": {
@@ -144,30 +171,297 @@
     "after_p2": "👉 et ça change déjà tout",
     "next": "Et maintenant ?",
     "data": {
-      "panique": { "title": "Tu paniques", "validation": "Ton corps essaie de te protéger.", "free": ["Regarde autour de toi", "Nomme 5 objets"], "locked": ["Pose une main sur ton cœur", "Inspire lentement", "Expire plus longtemps"] },
-      "hypervigilance": { "title": "Ton corps est en hypervigilance", "validation": "Ton système est resté en alerte.", "free": ["Regarde 3 choses", "Écoute 2 sons"], "locked": ["Touche un objet", "Relâche tes épaules", "Respire lentement"] },
-      "rumination": { "title": "Ton mental tourne en boucle", "validation": "Ton cerveau cherche une sortie.", "free": ["Regarde un point fixe", "Respire lentement"], "locked": ["Dis « stop » intérieurement"] },
-      "explosion": { "title": "La pression est trop forte", "validation": "La pression est trop forte.", "free": ["Serre tes poings", "Relâche"], "locked": ["Appuie tes pieds", "Respire profondément"] },
-      "vide": { "title": "Tu te sens vide", "validation": "Ton système s'est coupé pour tenir.", "free": ["Bouge tes mains", "Touche une surface"], "locked": ["Bois de l'eau", "Respire"] },
-      "epuisee": { "title": "Tu es épuisée", "validation": "Ton système nerveux a trop donné.", "free": ["Pose ta main sur ton cœur", "Sens ta respiration"], "locked": ["Ferme les yeux", "Relâche chaque muscle", "Reste 1 minute"] },
-      "calme": { "title": "Tu te sens plus calme", "validation": "Ton système nerveux redescend.", "free": ["Ferme les yeux", "Respire 3 fois lentement"], "locked": ["Souris légèrement", "Savoure ce moment"] },
-      "apaisee": { "title": "Tu te sens apaisée", "validation": "Ton corps a trouvé un espace de sécurité.", "free": ["Inspire profondément", "Pense à une chose positive"], "locked": ["Expire avec gratitude", "Reste dans ce moment"] },
-      "fiere": { "title": "Tu es fière de toi", "validation": "Ton système reconnaît que tu as fait quelque chose de difficile.", "free": ["Souris", "Pose ta main sur ton cœur"], "locked": ["Dis « bravo »", "Célèbre en silence"] },
-      "anxieuse": { "title": "Tu es anxieuse", "validation": "Ton système nerveux est en alerte.", "free": ["Inspire 4 secondes", "Expire 6 secondes"], "locked": ["Répète 5 fois", "Pose tes pieds au sol", "Sens le contact"] },
-      "oppressee": { "title": "Tu te sens oppressée", "validation": "Ton corps porte une charge qu'il n'arrive plus à contenir.", "free": ["Ouvre grand les bras", "Étire-toi"], "locked": ["Respire profondément 5 fois", "Relâche les épaules"] },
-      "submergee": { "title": "Tu te sens submergée", "validation": "Trop d'informations, trop de charge.", "free": ["Pose tes deux pieds au sol", "Nomme 3 choses que tu vois"], "locked": ["Respire lentement", "Ferme les yeux 30 secondes"] },
-      "triste": { "title": "Tu es triste", "validation": "La tristesse est une émotion saine.", "free": ["Croise tes bras sur ta poitrine", "Serre doucement"], "locked": ["Respire", "Laisse l'émotion passer"] },
-      "colere": { "title": "Tu ressens de la colère", "validation": "La colère protège une blessure.", "free": ["Serre fort tes poings 5 secondes", "Relâche"], "locked": ["Répète 5 fois", "Expire longuement"] },
-      "perdue": { "title": "Tu te sens perdue", "validation": "Ton cerveau cherche une direction mais il y a trop de bruit.", "free": ["Regarde un point fixe", "Respire lentement"], "locked": ["Écris une seule pensée", "Pose le téléphone"] },
-      "surmenage": { "title": "Tu es en surmenage mental", "validation": "Ton cerveau tourne en boucle.", "free": ["Note 3 pensées qui tournent", "Pose le téléphone"], "locked": ["Respire 5 fois", "Ferme les yeux"] },
-      "survie": { "title": "Tu es en mode survie", "validation": "Ton système nerveux est bloqué en alerte permanente.", "free": ["Inspire 3 secondes", "Expire 8 secondes"], "locked": ["Répète 4 fois", "Relâche tout ton corps"] },
-      "stable": { "title": "Tu te sens stable", "validation": "Ton système nerveux est au centre.", "free": ["Pose tes pieds au sol", "Sens ton corps"], "locked": ["Dis « je suis là »", "Reste un instant"] },
-      "mieux": { "title": "Tu te sens légèrement mieux", "validation": "Même un petit mieux, c'est un signal énorme.", "free": ["Dis-toi « je vais mieux »", "Respire"], "locked": ["Note ce progrès", "Souris"] },
-      "soulagee": { "title": "Tu te sens soulagée", "validation": "Le soulagement arrive quand la pression redescend.", "free": ["Un grand soupir", "Laisse tout sortir"], "locked": ["Recommence", "Respire profondément"] },
-      "claire": { "title": "Tu te sens plus claire", "validation": "La clarté mentale revient.", "free": ["Note une chose à faire aujourd'hui", "Juste une"], "locked": ["Respire", "Ancre cette clarté"] },
-      "securite": { "title": "Tu te sens en sécurité", "validation": "Se sentir en sécurité, c'est le signal le plus profond de régulation.", "free": ["Ne fais rien", "Juste respire"], "locked": ["Profite", "Reste ici un instant"] },
-      "connectee": { "title": "Tu te sens connectée à toi", "validation": "Tu entends tes besoins sans les juger.", "free": ["Scanne ton corps de la tête aux pieds", "Où sens-tu du bien ?"], "locked": ["Reste avec cette sensation", "Respire"] },
-      "presente": { "title": "Tu es présente", "validation": "Être présente, c'est le contraire de la dissociation.", "free": ["Nomme 3 choses belles autour de toi", "Souris"], "locked": ["Respire", "Savoure l'instant"] }
+      "panique": {
+        "title": "Tu paniques",
+        "validation": "Ton corps essaie de te protéger.",
+        "free": [
+          "Regarde autour de toi",
+          "Nomme 5 objets"
+        ],
+        "locked": [
+          "Pose une main sur ton cœur",
+          "Inspire lentement",
+          "Expire plus longtemps"
+        ]
+      },
+      "hypervigilance": {
+        "title": "Ton corps est en hypervigilance",
+        "validation": "Ton système est resté en alerte.",
+        "free": [
+          "Regarde 3 choses",
+          "Écoute 2 sons"
+        ],
+        "locked": [
+          "Touche un objet",
+          "Relâche tes épaules",
+          "Respire lentement"
+        ]
+      },
+      "rumination": {
+        "title": "Ton mental tourne en boucle",
+        "validation": "Ton cerveau cherche une sortie.",
+        "free": [
+          "Regarde un point fixe",
+          "Respire lentement"
+        ],
+        "locked": [
+          "Dis « stop » intérieurement"
+        ]
+      },
+      "explosion": {
+        "title": "La pression est trop forte",
+        "validation": "La pression est trop forte.",
+        "free": [
+          "Serre tes poings",
+          "Relâche"
+        ],
+        "locked": [
+          "Appuie tes pieds",
+          "Respire profondément"
+        ]
+      },
+      "vide": {
+        "title": "Tu te sens vide",
+        "validation": "Ton système s'est coupé pour tenir.",
+        "free": [
+          "Bouge tes mains",
+          "Touche une surface"
+        ],
+        "locked": [
+          "Bois de l'eau",
+          "Respire"
+        ]
+      },
+      "epuisee": {
+        "title": "Tu es épuisée",
+        "validation": "Ton système nerveux a trop donné.",
+        "free": [
+          "Pose ta main sur ton cœur",
+          "Sens ta respiration"
+        ],
+        "locked": [
+          "Ferme les yeux",
+          "Relâche chaque muscle",
+          "Reste 1 minute"
+        ]
+      },
+      "calme": {
+        "title": "Tu te sens plus calme",
+        "validation": "Ton système nerveux redescend.",
+        "free": [
+          "Ferme les yeux",
+          "Respire 3 fois lentement"
+        ],
+        "locked": [
+          "Souris légèrement",
+          "Savoure ce moment"
+        ]
+      },
+      "apaisee": {
+        "title": "Tu te sens apaisée",
+        "validation": "Ton corps a trouvé un espace de sécurité.",
+        "free": [
+          "Inspire profondément",
+          "Pense à une chose positive"
+        ],
+        "locked": [
+          "Expire avec gratitude",
+          "Reste dans ce moment"
+        ]
+      },
+      "fiere": {
+        "title": "Tu es fière de toi",
+        "validation": "Ton système reconnaît que tu as fait quelque chose de difficile.",
+        "free": [
+          "Souris",
+          "Pose ta main sur ton cœur"
+        ],
+        "locked": [
+          "Dis « bravo »",
+          "Célèbre en silence"
+        ]
+      },
+      "anxieuse": {
+        "title": "Tu es anxieuse",
+        "validation": "Ton système nerveux est en alerte.",
+        "free": [
+          "Inspire 4 secondes",
+          "Expire 6 secondes"
+        ],
+        "locked": [
+          "Répète 5 fois",
+          "Pose tes pieds au sol",
+          "Sens le contact"
+        ]
+      },
+      "oppressee": {
+        "title": "Tu te sens oppressée",
+        "validation": "Ton corps porte une charge qu'il n'arrive plus à contenir.",
+        "free": [
+          "Ouvre grand les bras",
+          "Étire-toi"
+        ],
+        "locked": [
+          "Respire profondément 5 fois",
+          "Relâche les épaules"
+        ]
+      },
+      "submergee": {
+        "title": "Tu te sens submergée",
+        "validation": "Trop d'informations, trop de charge.",
+        "free": [
+          "Pose tes deux pieds au sol",
+          "Nomme 3 choses que tu vois"
+        ],
+        "locked": [
+          "Respire lentement",
+          "Ferme les yeux 30 secondes"
+        ]
+      },
+      "triste": {
+        "title": "Tu es triste",
+        "validation": "La tristesse est une émotion saine.",
+        "free": [
+          "Croise tes bras sur ta poitrine",
+          "Serre doucement"
+        ],
+        "locked": [
+          "Respire",
+          "Laisse l'émotion passer"
+        ]
+      },
+      "colere": {
+        "title": "Tu ressens de la colère",
+        "validation": "La colère protège une blessure.",
+        "free": [
+          "Serre fort tes poings 5 secondes",
+          "Relâche"
+        ],
+        "locked": [
+          "Répète 5 fois",
+          "Expire longuement"
+        ]
+      },
+      "perdue": {
+        "title": "Tu te sens perdue",
+        "validation": "Ton cerveau cherche une direction mais il y a trop de bruit.",
+        "free": [
+          "Regarde un point fixe",
+          "Respire lentement"
+        ],
+        "locked": [
+          "Écris une seule pensée",
+          "Pose le téléphone"
+        ]
+      },
+      "surmenage": {
+        "title": "Tu es en surmenage mental",
+        "validation": "Ton cerveau tourne en boucle.",
+        "free": [
+          "Note 3 pensées qui tournent",
+          "Pose le téléphone"
+        ],
+        "locked": [
+          "Respire 5 fois",
+          "Ferme les yeux"
+        ]
+      },
+      "survie": {
+        "title": "Tu es en mode survie",
+        "validation": "Ton système nerveux est bloqué en alerte permanente.",
+        "free": [
+          "Inspire 3 secondes",
+          "Expire 8 secondes"
+        ],
+        "locked": [
+          "Répète 4 fois",
+          "Relâche tout ton corps"
+        ]
+      },
+      "stable": {
+        "title": "Tu te sens stable",
+        "validation": "Ton système nerveux est au centre.",
+        "free": [
+          "Pose tes pieds au sol",
+          "Sens ton corps"
+        ],
+        "locked": [
+          "Dis « je suis là »",
+          "Reste un instant"
+        ]
+      },
+      "mieux": {
+        "title": "Tu te sens légèrement mieux",
+        "validation": "Même un petit mieux, c'est un signal énorme.",
+        "free": [
+          "Dis-toi « je vais mieux »",
+          "Respire"
+        ],
+        "locked": [
+          "Note ce progrès",
+          "Souris"
+        ]
+      },
+      "soulagee": {
+        "title": "Tu te sens soulagée",
+        "validation": "Le soulagement arrive quand la pression redescend.",
+        "free": [
+          "Un grand soupir",
+          "Laisse tout sortir"
+        ],
+        "locked": [
+          "Recommence",
+          "Respire profondément"
+        ]
+      },
+      "claire": {
+        "title": "Tu te sens plus claire",
+        "validation": "La clarté mentale revient.",
+        "free": [
+          "Note une chose à faire aujourd'hui",
+          "Juste une"
+        ],
+        "locked": [
+          "Respire",
+          "Ancre cette clarté"
+        ]
+      },
+      "securite": {
+        "title": "Tu te sens en sécurité",
+        "validation": "Se sentir en sécurité, c'est le signal le plus profond de régulation.",
+        "free": [
+          "Ne fais rien",
+          "Juste respire"
+        ],
+        "locked": [
+          "Profite",
+          "Reste ici un instant"
+        ]
+      },
+      "connectee": {
+        "title": "Tu te sens connectée à toi",
+        "validation": "Tu entends tes besoins sans les juger.",
+        "free": [
+          "Scanne ton corps de la tête aux pieds",
+          "Où sens-tu du bien ?"
+        ],
+        "locked": [
+          "Reste avec cette sensation",
+          "Respire"
+        ]
+      },
+      "presente": {
+        "title": "Tu es présente",
+        "validation": "Être présente, c'est le contraire de la dissociation.",
+        "free": [
+          "Nomme 3 choses belles autour de toi",
+          "Souris"
+        ],
+        "locked": [
+          "Respire",
+          "Savoure l'instant"
+        ]
+      }
     }
   },
   "contextual_faq": {
@@ -233,6 +527,16 @@
       "badges": "Badges et progression",
       "journey": "Parcours 4 phases",
       "lifetime": "Accès à vie — aucun abonnement"
+    },
+    "lifetime_box": {
+      "title": "Accès à vie après ton paiement unique",
+      "text": "Tu paies 39€ une seule fois. À la confirmation du paiement, tout Ancrage est débloqué dans ton compte — pour toujours.",
+      "bullet_one_payment": "Un seul paiement de 39€",
+      "bullet_no_renewal": "Aucun abonnement, rien à renouveler",
+      "bullet_all_devices": "Sur tous tes appareils, à vie",
+      "active_title": "Ton accès à vie est actif 💛",
+      "active_text": "Tu as déjà payé. Tout Ancrage est débloqué dans ton compte, à vie.",
+      "active_cta": "Aller à mon espace"
     }
   },
   "emergency": {
