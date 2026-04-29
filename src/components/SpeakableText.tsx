@@ -11,7 +11,7 @@ import {
   buildUtteranceSegments,
   type UtteranceSegment,
 } from "@/lib/speechPrefs";
-import { splitSentences, type Sentence } from "@/lib/sentenceSplit";
+import { splitSentences } from "@/lib/sentenceSplit";
 
 type SpeechState = "idle" | "speaking" | "paused";
 
