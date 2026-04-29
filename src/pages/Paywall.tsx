@@ -95,7 +95,7 @@ const Paywall = () => {
       window.location.href = "/auth?redirect=/paywall&action=pay";
       return;
     }
-    startPayment();
+    startPayment({ promoCode: appliedPromo });
   };
 
   const features = [
