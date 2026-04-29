@@ -6,6 +6,7 @@ import {
   getSpeechLang,
   getSpeechPitch,
   getSilentMode,
+  getFocusFollow,
   loadVoices,
   resolveVoice,
   buildUtteranceSegments,
@@ -52,6 +53,8 @@ const SpeakableText = ({
   const pauseDeadlineRef = useRef<number | null>(null); // when timer should fire
   const pauseRemainingRef = useRef<number | null>(null); // remaining ms when paused
   const pauseAfterRef = useRef<(() => void) | null>(null); // callback after the silent pause
+  const sentenceRefs = useRef<Array<HTMLSpanElement | null>>([]);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
 
   const fullText = hint ? `${text}. ${hint}` : text;
   const sentences = splitSentences(fullText);
@@ -101,6 +104,27 @@ const SpeakableText = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state]);
 
+  // Move keyboard focus onto the active sentence span when the user opted-in.
+  // We only steal focus while actively speaking to avoid hijacking input.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!getFocusFollow()) return;
+    if (state !== "speaking") return;
+    if (activeIndex < 0) return;
+    const el = sentenceRefs.current[activeIndex];
+    if (!el) return;
+    // Don't steal focus if the user is currently interacting with a control
+    // (typing in a field, etc.).
+    const ae = document.activeElement as HTMLElement | null;
+    const tag = ae?.tagName;
+    if (tag === "INPUT" || tag === "TEXTAREA" || ae?.isContentEditable) return;
+    try {
+      el.focus({ preventScroll: false });
+    } catch {
+      /* noop */
+    }
+  }, [activeIndex, state]);
+
   const cancelAll = () => {
     if (pauseTimerRef.current !== null) {
       window.clearTimeout(pauseTimerRef.current);
@@ -116,9 +140,27 @@ const SpeakableText = ({
     }
   };
 
+  const restorePreviousFocus = () => {
+    const prev = previousFocusRef.current;
+    previousFocusRef.current = null;
+    if (!prev || !getFocusFollow()) return;
+    const ae = document.activeElement as HTMLElement | null;
+    if (ae && sentenceRefs.current.includes(ae as HTMLSpanElement)) {
+      try {
+        prev.focus({ preventScroll: true });
+      } catch {
+        /* noop */
+      }
+    }
+  };
+
   const handlePlay = async (fromSentence = 0) => {
     if (!supported) return;
     cancelAll();
+
+    if (typeof document !== "undefined" && getFocusFollow()) {
+      previousFocusRef.current = document.activeElement as HTMLElement | null;
+    }
 
     const playbackId = ++playbackIdRef.current;
     const synth = window.speechSynthesis;
@@ -193,6 +235,7 @@ const SpeakableText = ({
         setState("idle");
         setActiveIndex(-1);
         setElapsed(estimatedTotal); // snap to 100% on natural completion
+        restorePreviousFocus();
         return;
       }
       const seg = segments[cursorRef.current++];
@@ -251,6 +294,7 @@ const SpeakableText = ({
         if (playbackId !== playbackIdRef.current) return;
         setState("idle");
         setActiveIndex(-1);
+        restorePreviousFocus();
       };
       utteranceRef.current = u;
       synth.speak(u);
@@ -307,6 +351,7 @@ const SpeakableText = ({
     setState("idle");
     setActiveIndex(-1);
     setElapsed(0);
+    restorePreviousFocus();
   };
 
   const handleSkipNext = () => {
@@ -370,7 +415,13 @@ const SpeakableText = ({
               return (
                 <span
                   key={`${s.start}-${i}`}
-                  className={isActive ? activeClass : "transition-colors"}
+                  ref={(el) => {
+                    sentenceRefs.current[i] = el;
+                  }}
+                  tabIndex={-1}
+                  className={`${
+                    isActive ? activeClass : "transition-colors"
+                  } outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background rounded-md`}
                   aria-current={isActive ? (state === "paused" ? "false" : "true") : undefined}
                 >
                   {isActive && state === "paused" && (

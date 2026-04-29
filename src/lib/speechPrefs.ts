@@ -13,12 +13,14 @@ const rateKeyFor = (lang: SpeechLang) => `calm_speech_rate__${lang}`;
 const pitchKeyFor = (lang: SpeechLang) => `calm_speech_pitch__${lang}`;
 const SLOW_KEYWORDS_KEY = "calm_speech_slow_keywords"; // "1" | "0"
 const SILENT_MODE_KEY = "calm_speech_silent_mode"; // "1" | "0" — surbrillance sans audio
+const FOCUS_FOLLOW_KEY = "calm_speech_focus_follow"; // "1" | "0" — déplacer le focus clavier sur la phrase active
 
 export const SENTENCE_PAUSE_DEFAULT = 400; // ms
 export const COMMA_PAUSE_DEFAULT = 150; // ms
 export const PITCH_DEFAULT = 1; // 0.5..1.5
 export const SLOW_KEYWORDS_DEFAULT = true;
 export const SILENT_MODE_DEFAULT = false;
+export const FOCUS_FOLLOW_DEFAULT = false;
 
 /** Mots-clés de respiration ralentis automatiquement (rate * 0.7). */
 export const BREATH_KEYWORDS = [
@@ -209,6 +211,18 @@ export function getSilentMode(): boolean {
 export function setSilentMode(enabled: boolean) {
   if (typeof window === "undefined") return;
   localStorage.setItem(SILENT_MODE_KEY, enabled ? "1" : "0");
+  window.dispatchEvent(new CustomEvent("calm-speech-prefs-change"));
+}
+
+export function getFocusFollow(): boolean {
+  if (typeof window === "undefined") return FOCUS_FOLLOW_DEFAULT;
+  const v = localStorage.getItem(FOCUS_FOLLOW_KEY);
+  if (v === null) return FOCUS_FOLLOW_DEFAULT;
+  return v === "1";
+}
+export function setFocusFollow(enabled: boolean) {
+  if (typeof window === "undefined") return;
+  localStorage.setItem(FOCUS_FOLLOW_KEY, enabled ? "1" : "0");
   window.dispatchEvent(new CustomEvent("calm-speech-prefs-change"));
 }
 
