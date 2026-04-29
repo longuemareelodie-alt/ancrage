@@ -6,14 +6,22 @@ export type SpeechLang = "fr-FR" | "fr-CA" | "en-US";
 const VOICE_KEY = "calm_speech_voice";
 const RATE_KEY = "calm_speech_rate"; // legacy global rate (migrated per-lang)
 const LANG_KEY = "calm_speech_lang";
-const SENTENCE_PAUSE_KEY = "calm_speech_sentence_pause"; // ms, 0-1500
-const COMMA_PAUSE_KEY = "calm_speech_comma_pause"; // ms, 0-800
-const PITCH_KEY = "calm_speech_pitch"; // legacy global pitch (migrated per-lang)
+// Legacy global keys (kept as fallback during migration to per-lang values).
+const SENTENCE_PAUSE_KEY = "calm_speech_sentence_pause";
+const COMMA_PAUSE_KEY = "calm_speech_comma_pause";
+const PITCH_KEY = "calm_speech_pitch";
+const SLOW_KEYWORDS_KEY = "calm_speech_slow_keywords";
+const SILENT_MODE_KEY = "calm_speech_silent_mode";
+const FOCUS_FOLLOW_KEY = "calm_speech_focus_follow";
+
+// Per-language storage keys.
 const rateKeyFor = (lang: SpeechLang) => `calm_speech_rate__${lang}`;
 const pitchKeyFor = (lang: SpeechLang) => `calm_speech_pitch__${lang}`;
-const SLOW_KEYWORDS_KEY = "calm_speech_slow_keywords"; // "1" | "0"
-const SILENT_MODE_KEY = "calm_speech_silent_mode"; // "1" | "0" — surbrillance sans audio
-const FOCUS_FOLLOW_KEY = "calm_speech_focus_follow"; // "1" | "0" — déplacer le focus clavier sur la phrase active
+const sentencePauseKeyFor = (lang: SpeechLang) => `calm_speech_sentence_pause__${lang}`;
+const commaPauseKeyFor = (lang: SpeechLang) => `calm_speech_comma_pause__${lang}`;
+const slowKeywordsKeyFor = (lang: SpeechLang) => `calm_speech_slow_keywords__${lang}`;
+const silentModeKeyFor = (lang: SpeechLang) => `calm_speech_silent_mode__${lang}`;
+const focusFollowKeyFor = (lang: SpeechLang) => `calm_speech_focus_follow__${lang}`;
 
 export const SENTENCE_PAUSE_DEFAULT = 400; // ms
 export const COMMA_PAUSE_DEFAULT = 150; // ms
@@ -157,21 +165,44 @@ function readNumber(key: string, fallback: number, min: number, max: number): nu
   return Math.min(max, Math.max(min, n));
 }
 
-export function getSentencePauseMs(): number {
+function readBoolPerLang(
+  perLangKey: string,
+  legacyKey: string,
+  fallback: boolean,
+): boolean {
+  if (typeof window === "undefined") return fallback;
+  const v = localStorage.getItem(perLangKey);
+  if (v === "1") return true;
+  if (v === "0") return false;
+  const legacy = localStorage.getItem(legacyKey);
+  if (legacy === "1") return true;
+  if (legacy === "0") return false;
+  return fallback;
+}
+
+export function getSentencePauseMs(lang?: SpeechLang | string): number {
+  const target = lang ? normalizeSpeechLang(lang) : getSpeechLang();
+  const perLang = readNumber(sentencePauseKeyFor(target), Number.NaN, 0, 1500);
+  if (Number.isFinite(perLang)) return perLang;
   return readNumber(SENTENCE_PAUSE_KEY, SENTENCE_PAUSE_DEFAULT, 0, 1500);
 }
-export function setSentencePauseMs(ms: number) {
+export function setSentencePauseMs(ms: number, lang?: SpeechLang | string) {
   if (typeof window === "undefined") return;
-  localStorage.setItem(SENTENCE_PAUSE_KEY, String(Math.round(ms)));
+  const target = lang ? normalizeSpeechLang(lang) : getSpeechLang();
+  localStorage.setItem(sentencePauseKeyFor(target), String(Math.round(ms)));
   window.dispatchEvent(new CustomEvent("calm-speech-prefs-change"));
 }
 
-export function getCommaPauseMs(): number {
+export function getCommaPauseMs(lang?: SpeechLang | string): number {
+  const target = lang ? normalizeSpeechLang(lang) : getSpeechLang();
+  const perLang = readNumber(commaPauseKeyFor(target), Number.NaN, 0, 800);
+  if (Number.isFinite(perLang)) return perLang;
   return readNumber(COMMA_PAUSE_KEY, COMMA_PAUSE_DEFAULT, 0, 800);
 }
-export function setCommaPauseMs(ms: number) {
+export function setCommaPauseMs(ms: number, lang?: SpeechLang | string) {
   if (typeof window === "undefined") return;
-  localStorage.setItem(COMMA_PAUSE_KEY, String(Math.round(ms)));
+  const target = lang ? normalizeSpeechLang(lang) : getSpeechLang();
+  localStorage.setItem(commaPauseKeyFor(target), String(Math.round(ms)));
   window.dispatchEvent(new CustomEvent("calm-speech-prefs-change"));
 }
 
@@ -190,39 +221,36 @@ export function setSpeechPitch(pitch: number, lang?: SpeechLang | string) {
   window.dispatchEvent(new CustomEvent("calm-speech-prefs-change"));
 }
 
-export function getSlowKeywords(): boolean {
-  if (typeof window === "undefined") return SLOW_KEYWORDS_DEFAULT;
-  const v = localStorage.getItem(SLOW_KEYWORDS_KEY);
-  if (v === null) return SLOW_KEYWORDS_DEFAULT;
-  return v === "1";
+export function getSlowKeywords(lang?: SpeechLang | string): boolean {
+  const target = lang ? normalizeSpeechLang(lang) : getSpeechLang();
+  return readBoolPerLang(slowKeywordsKeyFor(target), SLOW_KEYWORDS_KEY, SLOW_KEYWORDS_DEFAULT);
 }
-export function setSlowKeywords(enabled: boolean) {
+export function setSlowKeywords(enabled: boolean, lang?: SpeechLang | string) {
   if (typeof window === "undefined") return;
-  localStorage.setItem(SLOW_KEYWORDS_KEY, enabled ? "1" : "0");
+  const target = lang ? normalizeSpeechLang(lang) : getSpeechLang();
+  localStorage.setItem(slowKeywordsKeyFor(target), enabled ? "1" : "0");
   window.dispatchEvent(new CustomEvent("calm-speech-prefs-change"));
 }
 
-export function getSilentMode(): boolean {
-  if (typeof window === "undefined") return SILENT_MODE_DEFAULT;
-  const v = localStorage.getItem(SILENT_MODE_KEY);
-  if (v === null) return SILENT_MODE_DEFAULT;
-  return v === "1";
+export function getSilentMode(lang?: SpeechLang | string): boolean {
+  const target = lang ? normalizeSpeechLang(lang) : getSpeechLang();
+  return readBoolPerLang(silentModeKeyFor(target), SILENT_MODE_KEY, SILENT_MODE_DEFAULT);
 }
-export function setSilentMode(enabled: boolean) {
+export function setSilentMode(enabled: boolean, lang?: SpeechLang | string) {
   if (typeof window === "undefined") return;
-  localStorage.setItem(SILENT_MODE_KEY, enabled ? "1" : "0");
+  const target = lang ? normalizeSpeechLang(lang) : getSpeechLang();
+  localStorage.setItem(silentModeKeyFor(target), enabled ? "1" : "0");
   window.dispatchEvent(new CustomEvent("calm-speech-prefs-change"));
 }
 
-export function getFocusFollow(): boolean {
-  if (typeof window === "undefined") return FOCUS_FOLLOW_DEFAULT;
-  const v = localStorage.getItem(FOCUS_FOLLOW_KEY);
-  if (v === null) return FOCUS_FOLLOW_DEFAULT;
-  return v === "1";
+export function getFocusFollow(lang?: SpeechLang | string): boolean {
+  const target = lang ? normalizeSpeechLang(lang) : getSpeechLang();
+  return readBoolPerLang(focusFollowKeyFor(target), FOCUS_FOLLOW_KEY, FOCUS_FOLLOW_DEFAULT);
 }
-export function setFocusFollow(enabled: boolean) {
+export function setFocusFollow(enabled: boolean, lang?: SpeechLang | string) {
   if (typeof window === "undefined") return;
-  localStorage.setItem(FOCUS_FOLLOW_KEY, enabled ? "1" : "0");
+  const target = lang ? normalizeSpeechLang(lang) : getSpeechLang();
+  localStorage.setItem(focusFollowKeyFor(target), enabled ? "1" : "0");
   window.dispatchEvent(new CustomEvent("calm-speech-prefs-change"));
 }
 
@@ -247,11 +275,12 @@ export function buildUtteranceSegments(
     commaPauseMs?: number;
     slowKeywords?: boolean;
     keywordRateMultiplier?: number;
+    lang?: SpeechLang | string;
   },
 ): UtteranceSegment[] {
-  const sentencePause = opts?.sentencePauseMs ?? getSentencePauseMs();
-  const commaPause = opts?.commaPauseMs ?? getCommaPauseMs();
-  const slowKeywords = opts?.slowKeywords ?? getSlowKeywords();
+  const sentencePause = opts?.sentencePauseMs ?? getSentencePauseMs(opts?.lang);
+  const commaPause = opts?.commaPauseMs ?? getCommaPauseMs(opts?.lang);
+  const slowKeywords = opts?.slowKeywords ?? getSlowKeywords(opts?.lang);
   const kwMul = opts?.keywordRateMultiplier ?? 0.7;
 
   // 1. Sentence split — FR-aware (handles abbreviations, decimals, etc.).

@@ -78,7 +78,7 @@ const SpeakButton = ({ text, lang, className = "" }: SpeakButtonProps) => {
     const baseRate = RATE_VALUES[getSpeechRate(effectiveLang)];
     const pitch = getSpeechPitch(effectiveLang);
 
-    const segments = buildUtteranceSegments(text);
+    const segments = buildUtteranceSegments(text, { lang: effectiveLang });
     setState("speaking");
 
     let i = 0;
@@ -96,7 +96,7 @@ const SpeakButton = ({ text, lang, className = "" }: SpeakButtonProps) => {
         }, seg.pauseMs);
         return;
       }
-      const u = new SpeechSynthesisUtterance(applyLexicon(seg.text ?? ""));
+      const u = new SpeechSynthesisUtterance(applyLexicon(seg.text ?? "", effectiveLang));
       u.lang = effectiveLang;
       if (voice) u.voice = voice;
       u.rate = Math.max(0.1, Math.min(2, baseRate * (seg.rateMultiplier ?? 1)));

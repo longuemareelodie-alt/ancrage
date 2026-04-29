@@ -109,7 +109,7 @@ const SpeakableText = ({
   // We only steal focus while actively speaking to avoid hijacking input.
   useEffect(() => {
     if (typeof window === "undefined") return;
-    if (!getFocusFollow()) return;
+    if (!getFocusFollow(lang)) return;
     if (state !== "speaking") return;
     if (activeIndex < 0) return;
     const el = sentenceRefs.current[activeIndex];
@@ -144,7 +144,7 @@ const SpeakableText = ({
   const restorePreviousFocus = () => {
     const prev = previousFocusRef.current;
     previousFocusRef.current = null;
-    if (!prev || !getFocusFollow()) return;
+    if (!prev || !getFocusFollow(lang)) return;
     const ae = document.activeElement as HTMLElement | null;
     if (ae && sentenceRefs.current.includes(ae as HTMLSpanElement)) {
       try {
@@ -159,7 +159,7 @@ const SpeakableText = ({
     if (!supported) return;
     cancelAll();
 
-    if (typeof document !== "undefined" && getFocusFollow()) {
+    if (typeof document !== "undefined" && getFocusFollow(lang)) {
       previousFocusRef.current = document.activeElement as HTMLElement | null;
     }
 
@@ -173,7 +173,7 @@ const SpeakableText = ({
     const baseRate = RATE_VALUES[getSpeechRate(effectiveLang)];
     const pitch = getSpeechPitch(effectiveLang);
 
-    const segments: UtteranceSegment[] = buildUtteranceSegments(fullText);
+    const segments: UtteranceSegment[] = buildUtteranceSegments(fullText, { lang: effectiveLang });
 
     // Build mapping: each segment -> its sentence index.
     const segMap: number[] = [];
@@ -218,7 +218,7 @@ const SpeakableText = ({
     cursorRef.current = startSegment;
     skipToSegmentRef.current = null;
 
-    const silentMode = getSilentMode();
+    const silentMode = getSilentMode(effectiveLang);
 
     const playNext = () => {
       if (playbackId !== playbackIdRef.current) return;
@@ -282,7 +282,7 @@ const SpeakableText = ({
         return;
       }
 
-      const u = new SpeechSynthesisUtterance(applyLexicon(seg.text ?? ""));
+      const u = new SpeechSynthesisUtterance(applyLexicon(seg.text ?? "", effectiveLang));
       u.lang = effectiveLang;
       if (voice) u.voice = voice;
       u.rate = Math.max(0.1, Math.min(2, baseRate * (seg.rateMultiplier ?? 1)));

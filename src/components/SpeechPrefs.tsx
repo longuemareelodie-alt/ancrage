@@ -98,9 +98,14 @@ const SpeechPrefs = ({ className = "" }: SpeechPrefsProps) => {
     setLang(l);
     setSpeechLang(l);
     setVoiceURI(null); // store cleared by setSpeechLang
-    // Load rate/pitch for the newly selected language.
+    // Load all per-language preferences for the newly selected language.
     setRate(getSpeechRate(l));
     setPitchState(getSpeechPitch(l));
+    setSentencePauseState(getSentencePauseMs(l));
+    setCommaPauseState(getCommaPauseMs(l));
+    setSlowKwState(getSlowKeywords(l));
+    setSilentModeState(getSilentMode(l));
+    setFocusFollowState(getFocusFollow(l));
   };
 
   const handleVoiceChange = (uri: string) => {
@@ -317,8 +322,11 @@ const SpeechPrefs = ({ className = "" }: SpeechPrefsProps) => {
             <PauseIcon className="h-3.5 w-3.5" />
             Pause entre phrases
           </span>
-          <span className="font-mono normal-case tracking-normal text-foreground">
-            {(sentencePause / 1000).toFixed(2)} s
+          <span className="flex items-center gap-2 normal-case tracking-normal">
+            <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] text-muted-foreground">
+              {LANG_LABELS[lang]}
+            </span>
+            <span className="font-mono text-foreground">{(sentencePause / 1000).toFixed(2)} s</span>
           </span>
         </div>
         <Slider
@@ -329,7 +337,7 @@ const SpeechPrefs = ({ className = "" }: SpeechPrefsProps) => {
           onValueChange={(v) => {
             const next = v[0];
             setSentencePauseState(next);
-            setSentencePauseMs(next);
+            setSentencePauseMs(next, lang);
           }}
           aria-label="Pause entre phrases"
         />
@@ -342,8 +350,11 @@ const SpeechPrefs = ({ className = "" }: SpeechPrefsProps) => {
             <PauseIcon className="h-3.5 w-3.5" />
             Pause sur les virgules
           </span>
-          <span className="font-mono normal-case tracking-normal text-foreground">
-            {(commaPause / 1000).toFixed(2)} s
+          <span className="flex items-center gap-2 normal-case tracking-normal">
+            <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] text-muted-foreground">
+              {LANG_LABELS[lang]}
+            </span>
+            <span className="font-mono text-foreground">{(commaPause / 1000).toFixed(2)} s</span>
           </span>
         </div>
         <Slider
@@ -354,7 +365,7 @@ const SpeechPrefs = ({ className = "" }: SpeechPrefsProps) => {
           onValueChange={(v) => {
             const next = v[0];
             setCommaPauseState(next);
-            setCommaPauseMs(next);
+            setCommaPauseMs(next, lang);
           }}
           aria-label="Pause sur les virgules"
         />
@@ -375,7 +386,7 @@ const SpeechPrefs = ({ className = "" }: SpeechPrefsProps) => {
           checked={slowKw}
           onCheckedChange={(c) => {
             setSlowKwState(c);
-            setSlowKeywords(c);
+            setSlowKeywords(c, lang);
           }}
           aria-label="Ralentir les mots-clés de respiration"
         />
@@ -397,7 +408,7 @@ const SpeechPrefs = ({ className = "" }: SpeechPrefsProps) => {
           checked={silentMode}
           onCheckedChange={(c) => {
             setSilentModeState(c);
-            setSilentMode(c);
+            setSilentMode(c, lang);
           }}
           aria-label="Activer la surbrillance silencieuse"
         />
@@ -419,7 +430,7 @@ const SpeechPrefs = ({ className = "" }: SpeechPrefsProps) => {
           checked={focusFollow}
           onCheckedChange={(c) => {
             setFocusFollowState(c);
-            setFocusFollow(c);
+            setFocusFollow(c, lang);
           }}
           aria-label="Suivre la phrase active avec le focus clavier"
         />

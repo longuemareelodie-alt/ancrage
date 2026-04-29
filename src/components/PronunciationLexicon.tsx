@@ -17,18 +17,34 @@ import {
   getSpeechPitch,
   loadVoices,
   resolveVoice,
+  LANG_LABELS,
+  type SpeechLang,
 } from "@/lib/speechPrefs";
 
 const MAX_ENTRIES = 50;
 
 const PronunciationLexicon = ({ className = "" }: { className?: string }) => {
+  const [lang, setLang] = useState<SpeechLang>(() => getSpeechLang());
   const [entries, setEntries] = useState<PronunciationEntry[]>(() => getLexicon());
 
-  useEffect(() => onLexiconChange(() => setEntries(getLexicon())), []);
+  // Reload when the active language changes (SpeechPrefs dispatches this event).
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const onPrefs = () => {
+      const next = getSpeechLang();
+      setLang(next);
+      setEntries(getLexicon(next));
+    };
+    window.addEventListener("calm-speech-prefs-change", onPrefs);
+    return () => window.removeEventListener("calm-speech-prefs-change", onPrefs);
+  }, []);
+
+  // Reload when the lexicon itself changes (e.g. another tab).
+  useEffect(() => onLexiconChange(() => setEntries(getLexicon(lang))), [lang]);
 
   const persist = (next: PronunciationEntry[]) => {
     setEntries(next);
-    setLexicon(next);
+    setLexicon(next, lang);
   };
 
   const updateField = <K extends keyof PronunciationEntry>(
@@ -55,7 +71,6 @@ const PronunciationLexicon = ({ className = "" }: { className?: string }) => {
     const spoken = applyLexicon(sample, [entry]);
     const synth = window.speechSynthesis;
     synth.cancel();
-    const lang = getSpeechLang();
     const voices = await loadVoices();
     const voice = resolveVoice(voices, lang);
     const u = new SpeechSynthesisUtterance(spoken);
@@ -72,9 +87,14 @@ const PronunciationLexicon = ({ className = "" }: { className?: string }) => {
         <div className="flex items-center gap-2">
           <BookOpen className="h-4 w-4 text-primary" aria-hidden="true" />
           <div>
-            <h3 className="text-sm font-semibold">Lexique de prononciation</h3>
+            <h3 className="flex flex-wrap items-center gap-2 text-sm font-semibold">
+              Lexique de prononciation
+              <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-normal text-muted-foreground">
+                {LANG_LABELS[lang]}
+              </span>
+            </h3>
             <p className="text-xs text-muted-foreground">
-              Apprends à la voix comment lire certains mots (ou les épeler).
+              Apprends à la voix comment lire certains mots (ou les épeler) pour cette langue.
               Le texte affiché reste inchangé.
             </p>
           </div>
