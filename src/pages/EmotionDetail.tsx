@@ -10,6 +10,7 @@ import {
   ActionStyle,
   getActionStyle,
   setActionStyle,
+  recordLastUsedStyle,
 } from "@/lib/actionStyle";
 import {
   getStyleVariant,
@@ -102,6 +103,15 @@ const EmotionDetail = () => {
   const freeSteps = variant?.free ?? i18nFree;
   const lockedSteps = variant?.locked ?? i18nLocked;
   const supportsVariants = hasStyleVariants(key);
+
+  // Record the resolved style as the last one used (only when it's a real
+  // variant page so we know which side won).
+  useEffect(() => {
+    if (!supportsVariants) return;
+    if (effectiveStyle === "breathing" || effectiveStyle === "sensory") {
+      recordLastUsedStyle(effectiveStyle, key);
+    }
+  }, [effectiveStyle, supportsVariants, key]);
 
   const handleStyleChange = (value: ActionStyle) => {
     setStyle(value);

@@ -11,6 +11,7 @@ import { toast } from "@/hooks/use-toast";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
+import LastStyleCard from "@/components/LastStyleCard";
 import {
   AreaChart,
   Area,
@@ -266,6 +267,7 @@ const Historique = () => {
       </div>
 
       <div className="space-y-6 px-4">
+        <LastStyleCard />
         {totalCheckins === 0 ? (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
