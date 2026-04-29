@@ -39,6 +39,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isPaid, setIsPaid] = useState<boolean | null>(null);
   const [eligibilityPhase, setEligibilityPhase] = useState<EligibilityPhase>("idle");
   const checkSeqRef = useRef(0);
+  // Remember which user ids we've already warned about so we don't spam logs.
+  const loggedAnomaliesRef = useRef<Set<string>>(new Set());
 
   const checkEligibility = useCallback(async (userId: string | null) => {
     const seq = ++checkSeqRef.current;
