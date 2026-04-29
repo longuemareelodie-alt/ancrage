@@ -84,7 +84,14 @@ const PaidRoute = ({ children }: { children: React.ReactNode }) => {
     );
   }
 
-  if (!isPaid) return <Navigate to="/paywall" replace />;
+  if (!isPaid)
+    return (
+      <Navigate
+        to="/paywall"
+        replace
+        state={{ from: location.pathname + location.search }}
+      />
+    );
   return <>{children}</>;
 };
 
