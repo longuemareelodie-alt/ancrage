@@ -294,7 +294,7 @@ const Paywall = () => {
                         applyPromo();
                       }
                     }}
-                    placeholder={t("paywall.promo.placeholder", "Ex. ANCRAGE15")}
+                    placeholder={t("paywall.promo.placeholder", "Saisis ton code")}
                     className="flex-1 rounded-xl border border-input bg-background px-3 py-2 text-sm uppercase placeholder:normal-case placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                     autoComplete="off"
                     spellCheck={false}

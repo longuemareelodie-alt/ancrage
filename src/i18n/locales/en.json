@@ -516,7 +516,7 @@
     "cta_with_amount": "I want to feel better — {{amount}}",
     "promo": {
       "label": "Have a promo code?",
-      "placeholder": "e.g. ANCRAGE15",
+      "placeholder": "Enter your code",
       "apply": "Apply",
       "remove": "Remove promo code",
       "applied": "{{code}} applied — {{amount}} off",

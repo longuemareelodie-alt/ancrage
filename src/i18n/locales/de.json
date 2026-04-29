@@ -516,7 +516,7 @@
     "cta_with_amount": "Ich will mich besser fühlen — {{amount}}",
     "promo": {
       "label": "Hast du einen Gutscheincode?",
-      "placeholder": "z. B. ANCRAGE15",
+      "placeholder": "Code eingeben",
       "apply": "Anwenden",
       "remove": "Gutscheincode entfernen",
       "applied": "{{code}} angewendet — {{amount}} Rabatt",
