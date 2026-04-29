@@ -279,15 +279,61 @@ const PremiumActivationLog = () => {
               )}
               {error && (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-10 text-destructive">
-                    {error}
+                  <TableCell colSpan={6} className="py-10">
+                    <div className="mx-auto flex max-w-md flex-col items-center gap-3 text-center">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10">
+                        <AlertCircle className="h-6 w-6 text-destructive" aria-hidden="true" />
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-sm font-semibold text-foreground">
+                          {t("admin.premium_log.error_title", "Impossible de charger le journal")}
+                        </p>
+                        <p className="text-xs text-muted-foreground leading-relaxed">
+                          {t(
+                            "admin.premium_log.error_hint",
+                            "La récupération du journal a échoué. Vérifie ta connexion puis réessaie. Si le problème persiste, contacte le support.",
+                          )}
+                        </p>
+                        <p className="text-[11px] font-mono text-destructive break-all">
+                          {error}
+                        </p>
+                      </div>
+                      <div className="flex flex-col gap-2 sm:flex-row">
+                        <Button variant="outline" size="sm" onClick={() => fetchData()}>
+                          <RefreshCw className="mr-2 h-4 w-4" />
+                          {t("admin.premium_log.refresh")}
+                        </Button>
+                        <Button size="sm" onClick={() => setSupportOpen(true)}>
+                          <MessageCircle className="mr-2 h-4 w-4" />
+                          {t("admin.premium_log.contact_support", "Contacter le support")}
+                        </Button>
+                      </div>
+                    </div>
                   </TableCell>
                 </TableRow>
               )}
               {!loading && !error && rows.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-10 text-muted-foreground">
-                    {t("admin.premium_log.empty")}
+                  <TableCell colSpan={6} className="py-10">
+                    <div className="mx-auto flex max-w-md flex-col items-center gap-3 text-center">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
+                        <Inbox className="h-6 w-6 text-muted-foreground" aria-hidden="true" />
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-sm font-semibold text-foreground">
+                          {t("admin.premium_log.empty")}
+                        </p>
+                        <p className="text-xs text-muted-foreground leading-relaxed">
+                          {t(
+                            "admin.premium_log.empty_hint",
+                            "Aucune activation premium n'a encore été enregistrée pour ces filtres. Modifie les filtres ou réessaie plus tard.",
+                          )}
+                        </p>
+                      </div>
+                      <Button variant="ghost" size="sm" onClick={resetFilters}>
+                        {t("admin.premium_log.reset_filters")}
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               )}
