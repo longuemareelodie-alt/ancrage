@@ -8,19 +8,17 @@ import { Calendar, Pill, HeartPulse, Sparkles, ChevronRight, Lock } from "lucide
 const Sante = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [planType, setPlanType] = useState<string>("none");
+  const [hasAccess, setHasAccess] = useState(false);
 
   useEffect(() => {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("plan_type")
+      .select("is_premium")
       .eq("user_id", user.id)
       .single()
-      .then(({ data }) => setPlanType((data as any)?.plan_type ?? "none"));
+      .then(({ data }) => setHasAccess(!!data?.is_premium));
   }, [user]);
-
-  const hasAccess = planType !== "none";
 
   const items = [
     {

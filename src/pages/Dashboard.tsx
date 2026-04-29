@@ -22,7 +22,7 @@ const todayKey = () => new Date().toISOString().slice(0, 10);
 const Dashboard = () => {
   const { user } = useAuth();
   const [isPremium, setIsPremium] = useState<boolean | null>(null);
-  const [planType, setPlanType] = useState<string>("none");
+  // (planType state removed — is_premium is the single source of truth)
   const [streak, setStreak] = useState(0);
   const [firstName, setFirstName] = useState("");
   const [calmScore, setCalmScore] = useState<number>(50);
@@ -33,11 +33,10 @@ const Dashboard = () => {
       if (!user) return;
       const { data } = await supabase
         .from("profiles")
-        .select("is_premium, current_streak, first_name, plan_type")
+        .select("is_premium, current_streak, first_name")
         .eq("user_id", user.id)
         .single();
       setIsPremium(data?.is_premium ?? false);
-      setPlanType((data as any)?.plan_type ?? "none");
       const s = data?.current_streak ?? 0;
       setStreak(s);
       setFirstName(data?.first_name ?? "");
@@ -278,7 +277,7 @@ const Dashboard = () => {
           )}
 
           {/* History link for paying users */}
-          {planType !== "none" && (
+          {isPremium && (
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
