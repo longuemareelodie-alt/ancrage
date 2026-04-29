@@ -309,10 +309,10 @@ const Checkin = () => {
               animate={{ opacity: 1 }}
               transition={{ delay: 1.3 }}
               whileTap={{ scale: 0.96 }}
-              onClick={() => setStep("action")}
+              onClick={handleContinueAfterResponse}
               className="flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25"
             >
-              Aide-moi à redescendre
+              {isPaid ? "Aide-moi à redescendre" : "Continuer"}
               <ChevronRight className="h-4 w-4" />
             </motion.button>
           </motion.div>
