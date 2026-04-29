@@ -245,11 +245,11 @@ Deno.serve(async (req) => {
   });
 
   try {
-    // 1. Count recent failures
+    // 1. Count recent failures (incl. user_id and raw payload for context)
     const since = new Date(Date.now() - WINDOW_MINUTES * 60 * 1000).toISOString();
-    const { data: failures, error: fErr } = await supabase
+    const { data: failuresRaw, error: fErr } = await supabase
       .from("premium_activation_log")
-      .select("id, status, payment_id, message, created_at")
+      .select("id, status, payment_id, message, created_at, user_id, raw")
       .in("status", ["error", "failed"])
       .gte("created_at", since)
       .order("created_at", { ascending: false })
@@ -257,7 +257,7 @@ Deno.serve(async (req) => {
 
     if (fErr) throw new Error(`query failed: ${fErr.message}`);
 
-    const count = failures?.length ?? 0;
+    const count = failuresRaw?.length ?? 0;
     if (count < FAILURE_THRESHOLD) {
       return new Response(
         JSON.stringify({ ok: true, alerted: false, count, threshold: FAILURE_THRESHOLD }),
@@ -290,11 +290,38 @@ Deno.serve(async (req) => {
       }
     }
 
+    // 2b. Resolve user emails for the failures that have a user_id
+    const userIds = Array.from(
+      new Set((failuresRaw ?? []).map((f: any) => f.user_id).filter(Boolean)),
+    ) as string[];
+    const emailByUser = new Map<string, string>();
+    if (userIds.length > 0) {
+      const { data: profs } = await supabase
+        .from("profiles")
+        .select("user_id, email")
+        .in("user_id", userIds);
+      for (const p of profs ?? []) {
+        if (p?.user_id && p?.email) emailByUser.set(p.user_id as string, p.email as string);
+      }
+    }
+
+    const failures: FailureRow[] = (failuresRaw ?? []).map((f: any) => ({
+      id: f.id,
+      status: f.status,
+      payment_id: f.payment_id,
+      message: f.message,
+      created_at: f.created_at,
+      user_id: f.user_id,
+      user_email: f.user_id ? emailByUser.get(f.user_id) ?? null : null,
+      raw: f.raw,
+    }));
+    const ctx = buildContext(failures);
+
     // 3. Send alerts
     const text = `Le webhook Mollie a enregistré ${count} échec(s) (status error/failed) lors des ${WINDOW_MINUTES} dernières minutes.`;
     const [emailRes, slackRes] = await Promise.all([
-      sendEmailAlert(supabase, text, failures as FailureRow[]),
-      sendSlackAlert(text, failures as FailureRow[]),
+      sendEmailAlert(supabase, text, failures, ctx),
+      sendSlackAlert(text, failures, ctx),
     ]);
 
     // 4. Update cooldown state
