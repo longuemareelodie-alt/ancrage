@@ -344,11 +344,21 @@ const PaymentPending = () => {
                 <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10">
                   <AlertCircle className="h-8 w-8 text-destructive" />
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <h1 className="text-xl font-bold">{t("payment_pending.error.title")}</h1>
                   <p className="text-sm text-muted-foreground leading-relaxed">
                     {t("payment_pending.error.text")}
                   </p>
+                  <div className="rounded-xl border bg-muted/30 p-4 text-left">
+                    <p className="mb-2 text-xs font-semibold text-foreground">
+                      {t("payment_pending.error.steps_title", "Étapes rapides :")}
+                    </p>
+                    <ol className="list-decimal space-y-1.5 ps-5 text-xs text-muted-foreground leading-relaxed marker:text-primary marker:font-semibold">
+                      <li>{t("payment_pending.error.step_1")}</li>
+                      <li>{t("payment_pending.error.step_2")}</li>
+                      <li>{t("payment_pending.error.step_3")}</li>
+                    </ol>
+                  </div>
                   <p className="text-[11px] font-mono text-muted-foreground">
                     {t("payment_pending.support.ticket_label", "Ticket")} : {ticketId}
                   </p>
