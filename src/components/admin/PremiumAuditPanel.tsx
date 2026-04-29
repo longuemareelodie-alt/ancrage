@@ -281,10 +281,14 @@ const PremiumAuditPanel = () => {
                       <TableHead>{t("admin.audit.col_amount")}</TableHead>
                       <TableHead>{t("admin.audit.col_paid_at")}</TableHead>
                       <TableHead>{t("admin.audit.col_is_premium")}</TableHead>
+                      <TableHead className="text-right">Diagnostic</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {data.paid_without_premium.map((r) => (
+                    {data.paid_without_premium.map((r) => {
+                      const key = `pnp:${r.user_id}:${r.payment_id ?? "none"}`;
+                      const done = loggedKeys.has(key);
+                      return (
                       <TableRow key={r.user_id + r.paid_at}>
                         <TableCell className="text-sm">{r.email ?? "—"}</TableCell>
                         <TableCell className="font-mono text-xs">{shortId(r.user_id)}</TableCell>
@@ -298,8 +302,18 @@ const PremiumAuditPanel = () => {
                               ? t("admin.audit.yes")
                               : t("admin.audit.no")}
                         </TableCell>
+                        <TableCell className="text-right">
+                          <Button size="sm" variant={done ? "secondary" : "outline"} disabled={done || logging === key}
+                            onClick={() => logAnomaly("paid_no_premium", key, {
+                              user_id: r.user_id, payment_id: r.payment_id, amount: r.amount, email: r.email,
+                              is_premium: r.is_premium, log_status: "paid",
+                              timestamps: { paid_at: r.paid_at, audited_at: data.generated_at },
+                            })}>
+                            {logging === key ? <Loader2 className="h-3 w-3 animate-spin" /> : done ? <ClipboardCheck className="h-3 w-3" /> : "Enregistrer"}
+                          </Button>
+                        </TableCell>
                       </TableRow>
-                    ))}
+                    );})}
                   </TableBody>
                 </Table>
               </div>
