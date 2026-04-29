@@ -581,7 +581,10 @@
     "retrying": "Slow connection, retrying…",
     "error_title": "Temporary error",
     "error_text": "We couldn't check your access right now. Check your connection and try again.",
-    "retry": "Try again"
+    "retry": "Try again",
+    "contact_support": "Contact support",
+    "support_subject": "Issue accessing my account",
+    "support_body_intro": "Hi, I'm having trouble verifying access to my account."
   },
   "common": {
     "loading": "Loading…",
