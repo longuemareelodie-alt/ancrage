@@ -243,7 +243,18 @@ const EmotionDetail = () => {
               </span>
               <div className="min-w-0 flex-1">
                 <div className="flex items-start justify-between gap-2">
-                  <p className="pt-0.5">{step.text}</p>
+                  <div className="min-w-0 flex-1">
+                    <SpeakableText
+                      text={step.text}
+                      hint={step.hint}
+                      textClassName="pt-0.5"
+                    />
+                    {step.hint && (
+                      <p className="mt-1 text-xs italic text-muted-foreground">
+                        {step.hint}
+                      </p>
+                    )}
+                  </div>
                   {style === "any" && step.stepStyle && (
                     <span
                       className={`inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
@@ -261,46 +272,36 @@ const EmotionDetail = () => {
                     </span>
                   )}
                 </div>
-                {step.hint && (
-                  <p className="mt-1 text-xs italic text-muted-foreground">
-                    {step.hint}
-                  </p>
-                )}
               </div>
-              <div className="flex shrink-0 items-center gap-1">
-                <SpeakButton
-                  text={step.hint ? `${step.text}. ${step.hint}` : step.text}
-                />
-                {supportsVariants && (
-                  <div
-                    role="radiogroup"
-                    aria-label="Style d'exercice"
-                    className="flex shrink-0 gap-1"
-                  >
-                    {STYLE_OPTIONS.map(({ value, label, Icon }) => {
-                      const active = style === value;
-                      return (
-                        <button
-                          key={value}
-                          type="button"
-                          role="radio"
-                          aria-checked={active}
-                          aria-label={label}
-                          title={label}
-                          onClick={() => handleStyleChange(value)}
-                          className={`flex h-7 w-7 items-center justify-center rounded-full border transition-colors ${
-                            active
-                              ? "border-primary bg-primary text-primary-foreground"
-                              : "border-border bg-background text-muted-foreground hover:bg-muted"
-                          }`}
-                        >
-                          <Icon className="h-3.5 w-3.5" />
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
+              {supportsVariants && (
+                <div
+                  role="radiogroup"
+                  aria-label="Style d'exercice"
+                  className="flex shrink-0 gap-1"
+                >
+                  {STYLE_OPTIONS.map(({ value, label, Icon }) => {
+                    const active = style === value;
+                    return (
+                      <button
+                        key={value}
+                        type="button"
+                        role="radio"
+                        aria-checked={active}
+                        aria-label={label}
+                        title={label}
+                        onClick={() => handleStyleChange(value)}
+                        className={`flex h-7 w-7 items-center justify-center rounded-full border transition-colors ${
+                          active
+                            ? "border-primary bg-primary text-primary-foreground"
+                            : "border-border bg-background text-muted-foreground hover:bg-muted"
+                        }`}
+                      >
+                        <Icon className="h-3.5 w-3.5" />
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </motion.div>
           ))}
         </div>
