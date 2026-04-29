@@ -3,6 +3,7 @@ import { Volume2, Pause, Play, Square, RotateCcw } from "lucide-react";
 import {
   RATE_VALUES,
   getSpeechRate,
+  getSpeechLang,
   loadVoices,
   resolveVoice,
 } from "@/lib/speechPrefs";
