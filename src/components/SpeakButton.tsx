@@ -50,12 +50,13 @@ const SpeakButton = ({ text, lang, className = "" }: SpeakButtonProps) => {
     const synth = window.speechSynthesis;
     synth.cancel();
 
+    const effectiveLang = lang ?? getSpeechLang();
     const u = new SpeechSynthesisUtterance(text);
-    u.lang = lang;
+    u.lang = effectiveLang;
 
     // Apply user preferences (voice + rate).
     const voices = await loadVoices();
-    const voice = resolveVoice(voices, lang.split("-")[0] || "fr");
+    const voice = resolveVoice(voices, effectiveLang);
     if (voice) u.voice = voice;
     u.rate = RATE_VALUES[getSpeechRate()];
     u.pitch = 1;
