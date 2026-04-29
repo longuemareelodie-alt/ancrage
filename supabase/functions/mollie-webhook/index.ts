@@ -66,6 +66,58 @@ const logError = (label: string, error: unknown, context?: unknown) => {
   );
 };
 
+/**
+ * Audit-log a premium activation outcome to the `premium_activation_log` table.
+ * Best-effort: failures are logged but never break the webhook flow.
+ */
+const logActivation = async (
+  supabaseUrl: string | undefined,
+  serviceRoleKey: string | undefined,
+  entry: {
+    user_id?: string | null;
+    payment_id?: string | null;
+    status: string;
+    amount?: number | null;
+    message?: string | null;
+    raw?: Record<string, unknown> | null;
+  },
+) => {
+  if (!supabaseUrl || !serviceRoleKey) return;
+  try {
+    const res = await fetch(`${supabaseUrl}/rest/v1/premium_activation_log`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        apikey: serviceRoleKey,
+        Authorization: `Bearer ${serviceRoleKey}`,
+        Prefer: "return=minimal",
+      },
+      body: JSON.stringify({
+        user_id: entry.user_id ?? null,
+        payment_id: entry.payment_id ?? null,
+        status: entry.status,
+        amount: entry.amount ?? null,
+        source: "mollie-webhook",
+        message: entry.message ?? null,
+        raw: entry.raw ?? null,
+      }),
+    });
+    if (!res.ok) {
+      const body = await res.text().catch(() => "");
+      console.error(
+        "premium_activation_log insert failed",
+        safeStringify({ status: res.status, body: body.slice(0, 500), entry }),
+      );
+    }
+  } catch (err) {
+    console.error(
+      "premium_activation_log insert crashed",
+      safeStringify({ error: serializeError(err), entry }),
+    );
+  }
+};
+
+
 const firstString = (...values: unknown[]) => {
   for (const value of values) {
     if (typeof value === "string" && value.trim().length > 0) {
