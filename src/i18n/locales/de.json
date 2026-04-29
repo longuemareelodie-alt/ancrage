@@ -538,6 +538,11 @@
       "active_text": "Du hast bereits bezahlt. Ganz Ancrage ist in deinem Konto freigeschaltet, lebenslang.",
       "active_cta": "Zu meinem Bereich"
     },
+    "blocked": {
+      "title": "Dein voller Zugang ist noch nicht aktiv 💛",
+      "text": "Dein Konto wurde nach dem Start des kostenpflichtigen Zugangs zu Ancrage erstellt. Um alles freizuschalten (Ritual, Notfall, Gesundheitsbereich, Weg…), brauchst du die einmalige Zahlung von 39€.",
+      "cta": "Ancrage freischalten — 39€"
+    },
     "redirected": {
       "title": "Diese Seite erfordert deinen vollen Zugang 💛",
       "text": "Um diese Seite zu öffnen, brauchst du den vollen Zugang zu Ancrage. Du kannst deine Zahlung mit einem Klick fortsetzen.",
