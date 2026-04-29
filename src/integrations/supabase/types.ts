@@ -431,6 +431,42 @@ export type Database = {
         }
         Relationships: []
       }
+      speech_progress: {
+        Row: {
+          created_at: string
+          elapsed: number
+          id: string
+          lang: string | null
+          sentence: number
+          text_key: string
+          total: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          elapsed?: number
+          id?: string
+          lang?: string | null
+          sentence?: number
+          text_key: string
+          total?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          elapsed?: number
+          id?: string
+          lang?: string | null
+          sentence?: number
+          text_key?: string
+          total?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       subscriptions: {
         Row: {
           amount: number
