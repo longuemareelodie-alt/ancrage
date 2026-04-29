@@ -6,8 +6,12 @@
 //   - decimal / thousands numbers ("3.14", "1.000", "12,5")
 //   - acronyms made of single letters separated by dots ("S.O.S.", "U.S.A.")
 //   - initials in compound names ("J.-P. Sartre")
-//   - the French ellipsis (…), exclamation/question marks, and quote marks (» ")
-//   - successive punctuation ("?!", "!!!")
+//   - the French ellipsis (…) and ASCII triple-dot ("..."), exclamation /
+//     question marks, and quote marks (» " ' ’ ”)
+//   - successive punctuation ("?!", "!!!", "?…", "..!")
+//   - French opening/closing guillemets « … » (don't break inside an open
+//     quotation; include the closing » in the sentence)
+//   - parentheses (…) and brackets […] (don't break inside an open group)
 //   - skipping a split when the next char is lowercase / a digit (sentence
 //     continuation), unless punctuation is ! ? … which always end a sentence
 //
