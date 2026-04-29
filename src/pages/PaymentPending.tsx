@@ -61,24 +61,26 @@ const PaymentPending = () => {
             "Capture enregistrée dans tes téléchargements. Pense à la joindre au mail.",
           ),
         );
-      } else if (result.reason === "denied") {
-        toast.info(
-          t("payment_pending.support.screenshot_denied", "Capture annulée."),
-        );
-      } else if (result.reason === "unsupported") {
-        toast.error(
-          t(
-            "payment_pending.support.screenshot_unsupported",
-            "Ton navigateur ne permet pas la capture d'écran.",
-          ),
-        );
       } else {
-        toast.error(
-          t(
-            "payment_pending.support.screenshot_error",
-            "Impossible de réaliser la capture. Réessaie.",
-          ),
-        );
+        if (result.reason === "denied") {
+          toast.info(
+            t("payment_pending.support.screenshot_denied", "Capture annulée."),
+          );
+        } else if (result.reason === "unsupported") {
+          toast.error(
+            t(
+              "payment_pending.support.screenshot_unsupported",
+              "Ton navigateur ne permet pas la capture d'écran.",
+            ),
+          );
+        } else {
+          toast.error(
+            t(
+              "payment_pending.support.screenshot_error",
+              "Impossible de réaliser la capture. Réessaie.",
+            ),
+          );
+        }
       }
     } finally {
       setCapturing(false);
