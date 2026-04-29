@@ -27,15 +27,25 @@ vi.mock("react-i18next", () => ({
   }),
 }));
 
+// Keep this list in sync with src/App.tsx — every route wrapped in <PaidRoute>.
 const PROTECTED_PATHS = [
+  "/dashboard",
+  "/calme",
+  "/emotions",
+  "/emotion/joie",
+  "/checkin",
   "/historique",
   "/comprendre",
   "/avancer",
+  "/parcours",
+  "/profil",
+  "/profil/style",
   "/sante",
   "/sante/rendez-vous",
   "/sante/medicaments",
   "/sante/fiche-medicale",
   "/sante/ressources",
+  "/urgence",
 ];
 
 const renderRoute = (path: string) =>
