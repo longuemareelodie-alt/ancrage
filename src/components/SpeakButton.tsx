@@ -1,5 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { Volume2, Pause, Play, Square } from "lucide-react";
+import {
+  RATE_VALUES,
+  getSpeechRate,
+  loadVoices,
+  resolveVoice,
+} from "@/lib/speechPrefs";
 
 type SpeechState = "idle" | "speaking" | "paused";
 
