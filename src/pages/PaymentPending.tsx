@@ -8,9 +8,17 @@ import { supabase } from "@/integrations/supabase/client";
 import { withRetry } from "@/lib/supabaseRetry";
 
 type Status = "pending" | "confirmed" | "error" | "not_found";
+type LastState = "checking" | "retrying" | "error" | "not_found" | "confirmed";
 
 const MAX_ATTEMPTS = 30; // ~60s at 2s intervals
 const POLL_INTERVAL_MS = 2000;
+
+/** Generate a short, human-readable support ticket ID. */
+const generateTicketId = (): string => {
+  const ts = Date.now().toString(36).toUpperCase();
+  const rand = Math.random().toString(36).slice(2, 6).toUpperCase();
+  return `PP-${ts}-${rand}`;
+};
 
 const PaymentPending = () => {
   const { user, loading: authLoading } = useAuth();
