@@ -3,7 +3,7 @@ import { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { pullStyleFromRemote } from "@/lib/actionStyle";
 import { withRetry } from "@/lib/supabaseRetry";
-import { isGrandfatheredAccount } from "@/lib/paywallPolicy";
+import { classifyProfileCreatedAt, isGrandfatheredAccount } from "@/lib/paywallPolicy";
 
 type EligibilityPhase = "idle" | "checking" | "ready" | "error";
 
