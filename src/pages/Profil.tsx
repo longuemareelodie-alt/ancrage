@@ -461,6 +461,7 @@ const Profil = () => {
                   </div>
                   <ChevronRight className="h-5 w-5 text-muted-foreground" />
                 </Link>
+                <StyleSyncStatus className="mt-2" showAction />
               </div>
 
               {/* RGPD : export et suppression */}
