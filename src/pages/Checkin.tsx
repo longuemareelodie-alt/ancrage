@@ -14,6 +14,48 @@ import QuickBackLinks from "@/components/QuickBackLinks";
 
 type Step = "select" | "response" | "teaser" | "action" | "after" | "evolution" | "validation" | "summary";
 
+const PENDING_KEY = "ancrage:pendingCheckin";
+
+type PendingCheckin = { emotionId: string; savedAt: number };
+
+const readPendingCheckin = (): PendingCheckin | null => {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.localStorage.getItem(PENDING_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as PendingCheckin;
+    // Expire après 2h pour éviter les reprises fantômes
+    if (!parsed?.emotionId || Date.now() - parsed.savedAt > 2 * 60 * 60 * 1000) {
+      window.localStorage.removeItem(PENDING_KEY);
+      return null;
+    }
+    return parsed;
+  } catch {
+    return null;
+  }
+};
+
+const writePendingCheckin = (emotionId: string) => {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(
+      PENDING_KEY,
+      JSON.stringify({ emotionId, savedAt: Date.now() }),
+    );
+  } catch {
+    // ignore
+  }
+};
+
+const clearPendingCheckin = () => {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.removeItem(PENDING_KEY);
+  } catch {
+    // ignore
+  }
+};
+
 const progressLabels: Record<Step, string> = {
   select: "Écoute-toi",
   response: "On t'entend",
@@ -55,6 +97,43 @@ const Checkin = () => {
     fetchProfile();
   }, [user]);
 
+  // Reprise après paiement : si une émotion a été choisie en mode essai
+  // puis que la personne est revenue payante, on enregistre le check-in
+  // et on saute directement à l'étape exercice.
+  useEffect(() => {
+    if (!user || !isPaid) return;
+    const pending = readPendingCheckin();
+    if (!pending) return;
+    const emotion = emotions.find((e) => e.id === pending.emotionId);
+    if (!emotion) {
+      clearPendingCheckin();
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      await supabase.from("emotion_checkins").insert({
+        user_id: user.id,
+        emotion: emotion.id,
+        emotion_type: emotion.type,
+      });
+      await supabase
+        .from("profiles")
+        .update({ last_emotion: emotion.id })
+        .eq("user_id", user.id);
+      const result = await updateStreakAndBadges(user.id);
+      if (cancelled) return;
+      if (result?.newBadges?.length) setNewBadges(result.newBadges);
+      if (result?.streak) setStreakCount(result.streak);
+      setSelected(emotion);
+      setStep("action");
+      setShowReward(true);
+      clearPendingCheckin();
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [user, isPaid]);
+
   const negativeEmotions = emotions.filter((e) => e.type === "negative");
   const positiveEmotions = emotions.filter((e) => e.type === "positive");
 
@@ -95,6 +174,9 @@ const Checkin = () => {
   };
 
   const handleUnlock = () => {
+    if (selected) {
+      writePendingCheckin(selected.id);
+    }
     if (!user) {
       navigate("/auth?redirect=/checkin&action=pay");
       return;

@@ -10,9 +10,27 @@ import confetti from "canvas-confetti";
 const PaymentSuccess = () => {
   const { user } = useAuth();
   const [firstName, setFirstName] = useState("");
+  const [hasPendingCheckin, setHasPendingCheckin] = useState(false);
 
   useEffect(() => {
     confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+    if (typeof window !== "undefined") {
+      try {
+        const raw = window.localStorage.getItem("ancrage:pendingCheckin");
+        if (raw) {
+          const parsed = JSON.parse(raw) as { emotionId?: string; savedAt?: number };
+          if (
+            parsed?.emotionId &&
+            parsed.savedAt &&
+            Date.now() - parsed.savedAt < 2 * 60 * 60 * 1000
+          ) {
+            setHasPendingCheckin(true);
+          }
+        }
+      } catch {
+        // ignore
+      }
+    }
   }, []);
 
   useEffect(() => {
@@ -86,10 +104,10 @@ const PaymentSuccess = () => {
           transition={{ delay: 0.8, duration: 0.5 }}
         >
           <Link
-            to="/dashboard"
+            to={hasPendingCheckin ? "/checkin" : "/dashboard"}
             className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-8 py-4 text-base font-semibold text-primary-foreground shadow-lg shadow-primary/25 transition-transform hover:scale-[1.02] active:scale-[0.98]"
           >
-            Commencer maintenant
+            {hasPendingCheckin ? "Reprendre mon check-in" : "Commencer maintenant"}
             <ArrowRight className="h-4 w-4" />
           </Link>
         </motion.div>
