@@ -8,6 +8,7 @@ import { getDailyMessage } from "@/data/dailyMessages";
 import { getStreakLabel } from "@/data/streakLabels";
 import logo from "@/assets/logo-ancrage.png";
 import InstallPWAPrompt from "@/components/InstallPWAPrompt";
+import ResumeBanner from "@/components/ResumeBanner";
 
 type MoodKey = "calm" | "ok" | "tense" | "overflow";
 const MOOD_OPTIONS: { key: MoodKey; emoji: string; label: string; adjust: number }[] = [
@@ -142,6 +143,8 @@ const Dashboard = () => {
               {isMorning ? "Comment tu commences ta journée ?" : "Comment s'est passée ta journée ?"}
             </p>
           </div>
+
+          <ResumeBanner />
 
           {/* Mini check-in : Je suis plutôt… */}
           <motion.section
