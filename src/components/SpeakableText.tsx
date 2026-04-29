@@ -91,11 +91,12 @@ const SpeakableText = ({
     const synth = window.speechSynthesis;
     synth.cancel();
 
+    const effectiveLang = lang ?? getSpeechLang();
     const u = new SpeechSynthesisUtterance(fullText);
-    u.lang = lang;
+    u.lang = effectiveLang;
 
     const voices = await loadVoices();
-    const voice = resolveVoice(voices, lang.split("-")[0] || "fr");
+    const voice = resolveVoice(voices, effectiveLang);
     if (voice) u.voice = voice;
     u.rate = RATE_VALUES[getSpeechRate()];
     u.pitch = 1;
