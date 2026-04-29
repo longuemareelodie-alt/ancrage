@@ -513,6 +513,16 @@
     "amount": "39€",
     "amount_note": "Paiement unique · Accès à vie",
     "cta": "Je veux me sentir mieux — 39€",
+    "cta_with_amount": "Je veux me sentir mieux — {{amount}}",
+    "promo": {
+      "label": "Tu as un code promo ?",
+      "placeholder": "Ex. ANCRAGE15",
+      "apply": "Appliquer",
+      "remove": "Retirer le code promo",
+      "applied": "{{code}} appliqué — {{amount}} de réduction",
+      "invalid": "Code promo invalide.",
+      "empty": "Saisis un code promo."
+    },
     "loading": "Chargement…",
     "secure_short": "Paiement unique. Accès à vie. 100% sécurisé via Mollie.",
     "secure_long": "Paiement 100% sécurisé via Mollie",
