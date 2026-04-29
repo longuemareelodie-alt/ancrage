@@ -173,6 +173,17 @@ const SpeakableText = ({
     segmentSentenceMapRef.current = segMap;
     sentenceSegmentStartRef.current = sentStart;
 
+    // Estimate total duration: ~14 chars/second at rate 1, plus segment pauses.
+    let charCount = 0;
+    let pauseSeconds = 0;
+    for (const seg of segments) {
+      if (seg.pauseMs && seg.pauseMs > 0) pauseSeconds += seg.pauseMs / 1000;
+      else if (seg.text) charCount += seg.text.length;
+    }
+    const speechSeconds = charCount / (14 * Math.max(0.5, baseRate));
+    setEstimatedTotal(Math.max(1, speechSeconds + pauseSeconds));
+    setElapsed(0);
+
     setState("speaking");
     setActiveIndex(sentences.length > 0 ? 0 : -1);
     sentenceCursorRef.current = 0;
