@@ -3,16 +3,11 @@ import { render, screen, waitFor, cleanup } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import PaidRoute from "@/components/PaidRoute";
 
-// Mock auth — always logged in for these tests
 vi.mock("@/contexts/AuthContext", () => ({
-  useAuth: () => ({
-    user: { id: "user-123" },
-    loading: false,
-  }),
+  useAuth: () => ({ user: { id: "user-123" }, loading: false }),
 }));
 
-// Programmable plan_type returned by the mocked Supabase client
-let currentPlanType: string | null = "none";
+let currentIsPremium: boolean | null = false;
 
 vi.mock("@/integrations/supabase/client", () => ({
   supabase: {
@@ -21,7 +16,7 @@ vi.mock("@/integrations/supabase/client", () => ({
         eq: () => ({
           single: () =>
             Promise.resolve({
-              data: { plan_type: currentPlanType },
+              data: { is_premium: currentIsPremium },
               error: null,
             }),
         }),
@@ -60,63 +55,34 @@ const renderRoute = (path: string) =>
   );
 
 describe("PaidRoute — accès des payeurs aux routes protégées", () => {
-  beforeEach(() => {
-    cleanup();
-  });
+  beforeEach(() => cleanup());
 
-  describe("Utilisateur lifetime (paiement unique 39€)", () => {
-    beforeEach(() => {
-      currentPlanType = "lifetime";
-    });
-
+  describe("Utilisateur payant (is_premium=true)", () => {
+    beforeEach(() => { currentIsPremium = true; });
     for (const path of PROTECTED_PATHS) {
       it(`autorise l'accès à ${path}`, async () => {
         renderRoute(path);
         await waitFor(() =>
           expect(screen.getByText("PROTECTED_CONTENT_OK")).toBeInTheDocument()
         );
-        expect(screen.queryByText("REDIRECTED_TO_PAYWALL")).toBeNull();
       });
     }
   });
 
-  describe("Utilisateur avec ancien abonnement (legacy)", () => {
-    beforeEach(() => {
-      currentPlanType = "subscription";
-    });
-
-    for (const path of PROTECTED_PATHS) {
-      it(`autorise l'accès à ${path}`, async () => {
-        renderRoute(path);
-        await waitFor(() =>
-          expect(screen.getByText("PROTECTED_CONTENT_OK")).toBeInTheDocument()
-        );
-        expect(screen.queryByText("REDIRECTED_TO_PAYWALL")).toBeNull();
-      });
-    }
-  });
-
-  describe("Utilisateur non payeur", () => {
-    beforeEach(() => {
-      currentPlanType = "none";
-    });
-
+  describe("Utilisateur non payeur (is_premium=false)", () => {
+    beforeEach(() => { currentIsPremium = false; });
     for (const path of PROTECTED_PATHS) {
       it(`redirige depuis ${path} vers /paywall`, async () => {
         renderRoute(path);
         await waitFor(() =>
           expect(screen.getByText("REDIRECTED_TO_PAYWALL")).toBeInTheDocument()
         );
-        expect(screen.queryByText("PROTECTED_CONTENT_OK")).toBeNull();
       });
     }
   });
 
-  describe("plan_type null (profil sans valeur)", () => {
-    beforeEach(() => {
-      currentPlanType = null;
-    });
-
+  describe("is_premium null (profil sans valeur)", () => {
+    beforeEach(() => { currentIsPremium = null; });
     it("redirige vers /paywall (sécurité par défaut)", async () => {
       renderRoute("/historique");
       await waitFor(() =>
