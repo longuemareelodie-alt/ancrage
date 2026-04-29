@@ -34,11 +34,15 @@ const PaymentPending = () => {
       attempt += 1;
       setAttempts(attempt);
 
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("is_premium")
-        .eq("user_id", user.id)
-        .single();
+      const { data, error } = await withRetry(
+        () =>
+          supabase
+            .from("profiles")
+            .select("is_premium")
+            .eq("user_id", user.id)
+            .single(),
+        { maxAttempts: 2, baseDelayMs: 400, timeoutMs: 6000 },
+      );
 
       if (cancelled.current) return;
 
