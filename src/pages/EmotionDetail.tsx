@@ -238,7 +238,25 @@ const EmotionDetail = () => {
                 {i + 1}
               </span>
               <div className="min-w-0 flex-1">
-                <p className="pt-0.5">{step.text}</p>
+                <div className="flex items-start justify-between gap-2">
+                  <p className="pt-0.5">{step.text}</p>
+                  {style === "any" && step.stepStyle && (
+                    <span
+                      className={`inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
+                        step.stepStyle === "breathing"
+                          ? "bg-primary/10 text-primary"
+                          : "bg-accent text-accent-foreground"
+                      }`}
+                    >
+                      {step.stepStyle === "breathing" ? (
+                        <Wind className="h-3 w-3" />
+                      ) : (
+                        <Hand className="h-3 w-3" />
+                      )}
+                      {step.stepStyle === "breathing" ? "Souffle" : "Sens"}
+                    </span>
+                  )}
+                </div>
                 {step.hint && (
                   <p className="mt-1 text-xs italic text-muted-foreground">
                     {step.hint}
