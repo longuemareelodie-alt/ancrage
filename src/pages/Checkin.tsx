@@ -318,6 +318,64 @@ const Checkin = () => {
           </motion.div>
         )}
 
+        {/* STEP 2.5: TEASER (paywall après aperçu pour non payants) */}
+        {step === "teaser" && selected && (
+          <motion.div
+            key="teaser"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="mt-10 flex flex-1 flex-col items-center justify-center text-center space-y-6"
+          >
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", stiffness: 200, damping: 15 }}
+              className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10"
+            >
+              <Lock className="h-7 w-7 text-primary" />
+            </motion.div>
+
+            <div className="space-y-2 max-w-sm">
+              <h2 className="text-xl font-bold">Tu as commencé. Continue jusqu'au bout.</h2>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Tu viens d'identifier ce que tu ressens. La suite — l'exercice qui apaise ton corps, le suivi de ton évolution et ton résumé hebdo — t'attend.
+              </p>
+            </div>
+
+            <ul className="w-full max-w-sm space-y-2 rounded-2xl bg-card p-5 shadow-sm text-left">
+              {[
+                "L'exercice ciblé pour faire redescendre ton corps",
+                "Le bilan « avant / après » pour mesurer ce qui change",
+                "Ton résumé hebdo et tes badges de progression",
+                "Accès à toute l'app à vie, sans abonnement",
+              ].map((f) => (
+                <li key={f} className="flex items-start gap-2 text-sm">
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                  <span>{f}</span>
+                </li>
+              ))}
+            </ul>
+
+            <motion.button
+              whileTap={{ scale: 0.96 }}
+              onClick={handleUnlock}
+              disabled={paymentLoading}
+              className="flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 disabled:opacity-60"
+            >
+              <Sparkles className="h-4 w-4" />
+              {paymentLoading ? "Chargement…" : "Débloquer la suite"}
+            </motion.button>
+
+            <button
+              onClick={() => setStep("select")}
+              className="text-xs text-muted-foreground underline underline-offset-4"
+            >
+              Choisir une autre émotion
+            </button>
+          </motion.div>
+        )}
+
         {/* STEP 3: ACTION */}
         {step === "action" && selected && (
           <motion.div
