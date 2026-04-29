@@ -157,6 +157,7 @@ const PremiumAuditList = () => {
   const [page, setPage] = useState(0);
   const [logging, setLogging] = useState<string | null>(null);
   const [loggedKeys, setLoggedKeys] = useState<Set<string>>(new Set());
+  const [dedupWindowMin, setDedupWindowMin] = useState<number>(60);
 
   const runAudit = async () => {
     setLoading(true);
@@ -205,40 +206,36 @@ const PremiumAuditList = () => {
   const logOne = async (a: Anomaly) => {
     if (loggedKeys.has(a.key)) return;
     setLogging(a.key);
-    const { data: auth } = await supabase.auth.getUser();
-    const adminId = auth.user?.id ?? null;
-    const ticketId = `AUDIT-${a.kind.toUpperCase().slice(0, 3)}-${(a.user_id ?? "anon").slice(0, 6).toUpperCase()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
-    const { error } = await supabase.from("support_logs").insert([
-      {
-        user_id: adminId,
-        source: `admin_audit:${a.kind}`,
-        ticket_id: ticketId,
-        error_code: a.kind,
-        error_message: `Premium audit anomaly: ${a.kind}`,
-        last_state: JSON.stringify(a.raw).slice(0, 500),
-        url: typeof window !== "undefined" ? window.location.href : null,
-        user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
-        metadata: {
-          kind: a.kind,
-          ticket_id: ticketId,
-          target_user_id: a.user_id,
-          payment_id: a.payment_id,
-          is_premium: a.is_premium,
-          log_status: a.log_status,
-          timestamps: { event_at: a.timestamp, audited_at: data?.generated_at ?? null },
-          snapshot: a.raw,
-          logged_by_admin: adminId,
-          logged_at: new Date().toISOString(),
-        } as any,
-      },
-    ]);
+    const payload = {
+      ...a.raw,
+      kind: a.kind,
+      is_premium: a.is_premium,
+      log_status: a.log_status,
+      timestamps: { event_at: a.timestamp, audited_at: data?.generated_at ?? null },
+      url: typeof window !== "undefined" ? window.location.href : null,
+      user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
+    };
+    const { data: res, error } = await supabase.rpc("log_audit_anomaly", {
+      _kind: a.kind,
+      _target_user_id: a.user_id,
+      _payment_id: a.payment_id,
+      _payload: payload as any,
+      _window_minutes: dedupWindowMin,
+    });
     setLogging(null);
     if (error) {
       toast.error(`Diagnostic non enregistré: ${error.message}`);
       return;
     }
+    const r = res as any;
     setLoggedKeys((prev) => new Set(prev).add(a.key));
-    toast.success(`Diagnostic enregistré (${ticketId})`);
+    if (r?.inserted === false) {
+      toast.message(
+        `Alerte ignorée (anti-spam): ${r.existing_ticket} déjà émis il y a moins de ${r.window_minutes} min`
+      );
+    } else {
+      toast.success(`Diagnostic enregistré (${r?.ticket_id ?? "OK"})`);
+    }
   };
 
   return (
@@ -277,17 +274,34 @@ const PremiumAuditList = () => {
             </div>
           )}
         </div>
-        <Button onClick={runAudit} disabled={loading} variant="outline">
-          {loading ? (
-            <>
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" /> Analyse…
-            </>
-          ) : (
-            <>
-              <RefreshCw className="h-4 w-4 mr-2" /> Relancer l'audit
-            </>
-          )}
-        </Button>
+        <div className="flex flex-col items-end gap-2">
+          <Button onClick={runAudit} disabled={loading} variant="outline">
+            {loading ? (
+              <>
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" /> Analyse…
+              </>
+            ) : (
+              <>
+                <RefreshCw className="h-4 w-4 mr-2" /> Relancer l'audit
+              </>
+            )}
+          </Button>
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <label htmlFor="dedup-window">Anti-spam (min)</label>
+            <Select value={String(dedupWindowMin)} onValueChange={(v) => setDedupWindowMin(Number(v))}>
+              <SelectTrigger id="dedup-window" className="h-7 w-20 text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="5">5</SelectItem>
+                <SelectItem value="15">15</SelectItem>
+                <SelectItem value="60">60</SelectItem>
+                <SelectItem value="240">240</SelectItem>
+                <SelectItem value="1440">1440</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
       </header>
 
       {/* Compteurs par type */}

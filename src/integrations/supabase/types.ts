@@ -765,6 +765,16 @@ export type Database = {
         }
         Returns: boolean
       }
+      log_audit_anomaly: {
+        Args: {
+          _kind: string
+          _payload: Json
+          _payment_id: string
+          _target_user_id: string
+          _window_minutes?: number
+        }
+        Returns: Json
+      }
       move_to_dlq: {
         Args: {
           dlq_name: string
