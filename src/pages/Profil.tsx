@@ -1,11 +1,12 @@
 import { useEffect, useState, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import SectionBlock from "@/components/SectionBlock";
 import CTAButton from "@/components/CTAButton";
 import { motion, AnimatePresence } from "framer-motion";
-import { LogOut, Plus, Trash2, Save, User, BookOpen, StickyNote, Lock, Pencil, Check, Bell, BellOff, Flame, Trophy, Download, Share, XCircle, CreditCard } from "lucide-react";
+import { LogOut, Plus, Trash2, Save, User, BookOpen, StickyNote, Lock, Pencil, Check, Bell, BellOff, Flame, Trophy, Download, Share, XCircle, CreditCard, Wind, Hand, Sparkles, ChevronRight } from "lucide-react";
+import { ActionStyle, ACTION_STYLE_LABELS, getActionStyle } from "@/lib/actionStyle";
 import { Progress } from "@/components/ui/progress";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { Switch } from "@/components/ui/switch";
@@ -39,6 +40,16 @@ const Profil = () => {
   const [nameValue, setNameValue] = useState("");
   const [savingName, setSavingName] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [actionStyle, setActionStyleState] = useState<ActionStyle>(() => getActionStyle());
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent<ActionStyle>).detail;
+      if (detail) setActionStyleState(detail);
+    };
+    window.addEventListener("calm-action-style-change", handler as EventListener);
+    return () => window.removeEventListener("calm-action-style-change", handler as EventListener);
+  }, []);
 
   const isMobileDevice = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
   const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
@@ -424,6 +435,31 @@ const Profil = () => {
                     </div>
                   </div>
                 )}
+              </div>
+
+              {/* Style préféré */}
+              <div className="mt-4">
+                <Link
+                  to="/profil/style"
+                  className="flex items-center gap-3 rounded-2xl border border-border bg-card p-4 shadow-sm transition-colors hover:bg-muted/50"
+                >
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                    {actionStyle === "breathing" ? (
+                      <Wind className="h-5 w-5" />
+                    ) : actionStyle === "sensory" ? (
+                      <Hand className="h-5 w-5" />
+                    ) : (
+                      <Sparkles className="h-5 w-5" />
+                    )}
+                  </span>
+                  <div className="flex-1">
+                    <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                      Style préféré
+                    </p>
+                    <p className="font-semibold">{ACTION_STYLE_LABELS[actionStyle]}</p>
+                  </div>
+                  <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                </Link>
               </div>
 
               {/* RGPD : export et suppression */}
