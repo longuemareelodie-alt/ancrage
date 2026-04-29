@@ -52,6 +52,47 @@ const PaymentPending = () => {
   const [supportOpen, setSupportOpen] = useState(false);
   const screenshotsAvailable = isScreenshotSupported();
   const cancelled = useRef(false);
+  const loggedRef = useRef(false);
+
+  // Auto-log error / not_found states once to support_logs.
+  useEffect(() => {
+    if (loggedRef.current) return;
+    if (status !== "error" && status !== "not_found") return;
+    if (!user?.id) return;
+    loggedRef.current = true;
+
+    const errorCode =
+      status === "not_found"
+        ? "profile_not_found"
+        : lastError
+          ? "activation_error"
+          : "max_attempts_reached";
+
+    supabase
+      .from("support_logs")
+      .insert({
+        user_id: user.id,
+        ticket_id: ticketId,
+        source: "payment_pending",
+        error_code: errorCode,
+        error_message: lastError,
+        last_state: lastState,
+        attempts,
+        url: typeof window !== "undefined" ? window.location.href : null,
+        user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
+        metadata: {
+          status,
+          last_state_at: lastStateAt,
+          email: user.email ?? null,
+        },
+      })
+      .then(({ error }) => {
+        if (error) {
+          // Non-blocking: surface in console only.
+          console.warn("[support_logs] insert failed", error);
+        }
+      });
+  }, [status, user?.id, user?.email, ticketId, lastError, lastState, attempts, lastStateAt]);
 
   const handleCaptureScreenshot = async () => {
     setCapturing(true);
