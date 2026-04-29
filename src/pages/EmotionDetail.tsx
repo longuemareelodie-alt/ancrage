@@ -46,6 +46,8 @@ const EmotionDetail = () => {
 
   const [style, setStyle] = useState<ActionStyle>(() => getActionStyle());
   const [autoResolved, setAutoResolved] = useState<ResolvedStyle | null>(null);
+  const [activationBefore, setActivationBefore] = useState<number>(7);
+  const [activationAfter, setActivationAfter] = useState<number | null>(null);
 
   useEffect(() => {
     const handler = (e: Event) => {
