@@ -4,8 +4,10 @@ import {
   RATE_VALUES,
   getSpeechRate,
   getSpeechLang,
+  getSpeechPitch,
   loadVoices,
   resolveVoice,
+  buildUtteranceSegments,
 } from "@/lib/speechPrefs";
 
 type SpeechState = "idle" | "speaking" | "paused";
@@ -24,6 +26,8 @@ const SpeakButton = ({ text, lang, className = "" }: SpeakButtonProps) => {
   const [state, setState] = useState<SpeechState>("idle");
   const [supported, setSupported] = useState<boolean>(true);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const pauseTimerRef = useRef<number | null>(null);
+  const playbackIdRef = useRef(0);
 
   useEffect(() => {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) {
@@ -31,10 +35,13 @@ const SpeakButton = ({ text, lang, className = "" }: SpeakButtonProps) => {
     }
   }, []);
 
-  // Cleanup on unmount: stop any ongoing speech started by this button.
   useEffect(() => {
     return () => {
-      if (utteranceRef.current && typeof window !== "undefined" && "speechSynthesis" in window) {
+      if (pauseTimerRef.current !== null) {
+        window.clearTimeout(pauseTimerRef.current);
+        pauseTimerRef.current = null;
+      }
+      if (typeof window !== "undefined" && "speechSynthesis" in window) {
         try {
           window.speechSynthesis.cancel();
         } catch {
@@ -46,27 +53,65 @@ const SpeakButton = ({ text, lang, className = "" }: SpeakButtonProps) => {
 
   if (!supported) return null;
 
+  const cancelAll = () => {
+    if (pauseTimerRef.current !== null) {
+      window.clearTimeout(pauseTimerRef.current);
+      pauseTimerRef.current = null;
+    }
+    try {
+      window.speechSynthesis.cancel();
+    } catch {
+      /* noop */
+    }
+  };
+
   const handlePlay = async () => {
+    cancelAll();
+    const playbackId = ++playbackIdRef.current;
     const synth = window.speechSynthesis;
-    synth.cancel();
-
     const effectiveLang = lang ?? getSpeechLang();
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = effectiveLang;
 
-    // Apply user preferences (voice + rate).
     const voices = await loadVoices();
+    if (playbackId !== playbackIdRef.current) return;
     const voice = resolveVoice(voices, effectiveLang);
-    if (voice) u.voice = voice;
-    u.rate = RATE_VALUES[getSpeechRate()];
-    u.pitch = 1;
+    const baseRate = RATE_VALUES[getSpeechRate()];
+    const pitch = getSpeechPitch();
 
-    u.onend = () => setState("idle");
-    u.onerror = () => setState("idle");
-
-    utteranceRef.current = u;
-    synth.speak(u);
+    const segments = buildUtteranceSegments(text);
     setState("speaking");
+
+    let i = 0;
+    const playNext = () => {
+      if (playbackId !== playbackIdRef.current) return;
+      if (i >= segments.length) {
+        setState("idle");
+        return;
+      }
+      const seg = segments[i++];
+      if (seg.pauseMs && seg.pauseMs > 0) {
+        pauseTimerRef.current = window.setTimeout(() => {
+          if (playbackId !== playbackIdRef.current) return;
+          playNext();
+        }, seg.pauseMs);
+        return;
+      }
+      const u = new SpeechSynthesisUtterance(seg.text ?? "");
+      u.lang = effectiveLang;
+      if (voice) u.voice = voice;
+      u.rate = Math.max(0.1, Math.min(2, baseRate * (seg.rateMultiplier ?? 1)));
+      u.pitch = pitch;
+      u.onend = () => {
+        if (playbackId !== playbackIdRef.current) return;
+        playNext();
+      };
+      u.onerror = () => {
+        if (playbackId !== playbackIdRef.current) return;
+        setState("idle");
+      };
+      utteranceRef.current = u;
+      synth.speak(u);
+    };
+    playNext();
   };
 
   const handlePause = () => {
@@ -80,7 +125,8 @@ const SpeakButton = ({ text, lang, className = "" }: SpeakButtonProps) => {
   };
 
   const handleStop = () => {
-    window.speechSynthesis.cancel();
+    playbackIdRef.current++;
+    cancelAll();
     setState("idle");
   };
 

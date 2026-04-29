@@ -4,8 +4,11 @@ import {
   RATE_VALUES,
   getSpeechRate,
   getSpeechLang,
+  getSpeechPitch,
   loadVoices,
   resolveVoice,
+  buildUtteranceSegments,
+  type UtteranceSegment,
 } from "@/lib/speechPrefs";
 
 type SpeechState = "idle" | "speaking" | "paused";
@@ -64,6 +67,8 @@ const SpeakableText = ({
   const [supported, setSupported] = useState(true);
   const [activeIndex, setActiveIndex] = useState<number>(-1);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const pauseTimerRef = useRef<number | null>(null);
+  const playbackIdRef = useRef(0); // increments on each new playback to invalidate old chains
 
   const fullText = hint ? `${text}. ${hint}` : text;
   const sentences = splitSentences(fullText);
@@ -76,7 +81,11 @@ const SpeakableText = ({
 
   useEffect(() => {
     return () => {
-      if (utteranceRef.current && typeof window !== "undefined" && "speechSynthesis" in window) {
+      if (pauseTimerRef.current !== null) {
+        window.clearTimeout(pauseTimerRef.current);
+        pauseTimerRef.current = null;
+      }
+      if (typeof window !== "undefined" && "speechSynthesis" in window) {
         try {
           window.speechSynthesis.cancel();
         } catch {
@@ -86,41 +95,83 @@ const SpeakableText = ({
     };
   }, []);
 
+  const cancelAll = () => {
+    if (pauseTimerRef.current !== null) {
+      window.clearTimeout(pauseTimerRef.current);
+      pauseTimerRef.current = null;
+    }
+    try {
+      window.speechSynthesis.cancel();
+    } catch {
+      /* noop */
+    }
+  };
+
   const handlePlay = async () => {
     if (!supported) return;
-    const synth = window.speechSynthesis;
-    synth.cancel();
+    cancelAll();
 
+    const playbackId = ++playbackIdRef.current;
+    const synth = window.speechSynthesis;
     const effectiveLang = lang ?? getSpeechLang();
-    const u = new SpeechSynthesisUtterance(fullText);
-    u.lang = effectiveLang;
 
     const voices = await loadVoices();
+    if (playbackId !== playbackIdRef.current) return; // cancelled while loading
     const voice = resolveVoice(voices, effectiveLang);
-    if (voice) u.voice = voice;
-    u.rate = RATE_VALUES[getSpeechRate()];
-    u.pitch = 1;
+    const baseRate = RATE_VALUES[getSpeechRate()];
+    const pitch = getSpeechPitch();
 
-    u.onstart = () => setActiveIndex(sentences.length > 0 ? 0 : -1);
-    u.onboundary = (event) => {
-      // Use charIndex to find the sentence the cursor is currently in.
-      const idx = sentences.findIndex(
-        (s) => event.charIndex >= s.start && event.charIndex < s.end,
-      );
-      if (idx >= 0) setActiveIndex(idx);
-    };
-    u.onend = () => {
-      setState("idle");
-      setActiveIndex(-1);
-    };
-    u.onerror = () => {
-      setState("idle");
-      setActiveIndex(-1);
-    };
+    const segments: UtteranceSegment[] = buildUtteranceSegments(fullText);
 
-    utteranceRef.current = u;
-    synth.speak(u);
     setState("speaking");
+    setActiveIndex(sentences.length > 0 ? 0 : -1);
+
+    let sentenceCursor = 0;
+    let i = 0;
+
+    const playNext = () => {
+      if (playbackId !== playbackIdRef.current) return;
+      if (i >= segments.length) {
+        setState("idle");
+        setActiveIndex(-1);
+        return;
+      }
+      const seg = segments[i++];
+
+      if (seg.pauseMs && seg.pauseMs > 0) {
+        // Pure silence segment: advance sentence cursor if it represents a sentence break.
+        // We treat a pause >= 250ms as a sentence boundary (sentencePause defaults to 400).
+        const isSentenceBreak = seg.pauseMs >= 250;
+        pauseTimerRef.current = window.setTimeout(() => {
+          if (playbackId !== playbackIdRef.current) return;
+          if (isSentenceBreak) {
+            sentenceCursor = Math.min(sentences.length - 1, sentenceCursor + 1);
+            setActiveIndex(sentenceCursor);
+          }
+          playNext();
+        }, seg.pauseMs);
+        return;
+      }
+
+      const u = new SpeechSynthesisUtterance(seg.text ?? "");
+      u.lang = effectiveLang;
+      if (voice) u.voice = voice;
+      u.rate = Math.max(0.1, Math.min(2, baseRate * (seg.rateMultiplier ?? 1)));
+      u.pitch = pitch;
+      u.onend = () => {
+        if (playbackId !== playbackIdRef.current) return;
+        playNext();
+      };
+      u.onerror = () => {
+        if (playbackId !== playbackIdRef.current) return;
+        setState("idle");
+        setActiveIndex(-1);
+      };
+      utteranceRef.current = u;
+      synth.speak(u);
+    };
+
+    playNext();
   };
 
   const handlePause = () => {
@@ -134,7 +185,8 @@ const SpeakableText = ({
   };
 
   const handleStop = () => {
-    window.speechSynthesis.cancel();
+    playbackIdRef.current++; // invalidate any pending callbacks
+    cancelAll();
     setState("idle");
     setActiveIndex(-1);
   };
