@@ -69,6 +69,11 @@ const SpeakableText = ({
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const pauseTimerRef = useRef<number | null>(null);
   const playbackIdRef = useRef(0); // increments on each new playback to invalidate old chains
+  const skipToSegmentRef = useRef<number | null>(null);
+  const segmentSentenceMapRef = useRef<number[]>([]); // sentence index per segment
+  const sentenceSegmentStartRef = useRef<number[]>([]); // first segment index per sentence
+  const cursorRef = useRef(0); // current segment index
+  const sentenceCursorRef = useRef(0);
 
   const fullText = hint ? `${text}. ${hint}` : text;
   const sentences = splitSentences(fullText);
