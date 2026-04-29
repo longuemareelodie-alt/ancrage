@@ -1,3 +1,5 @@
+import { splitSentencesText } from "./sentenceSplit";
+
 export type SpeechRate = "slow" | "normal" | "fast";
 export type SpeechLang = "fr-FR" | "fr-CA" | "en-US";
 
