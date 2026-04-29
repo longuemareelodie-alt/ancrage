@@ -104,6 +104,29 @@ const SpeakableText = ({
     };
   }, []);
 
+  // Tick elapsed time only while actively speaking.
+  useEffect(() => {
+    if (state !== "speaking") {
+      if (tickerRef.current !== null) {
+        window.clearInterval(tickerRef.current);
+        tickerRef.current = null;
+      }
+      return;
+    }
+    const start = Date.now();
+    const startElapsed = elapsed;
+    tickerRef.current = window.setInterval(() => {
+      setElapsed(startElapsed + (Date.now() - start) / 1000);
+    }, 250);
+    return () => {
+      if (tickerRef.current !== null) {
+        window.clearInterval(tickerRef.current);
+        tickerRef.current = null;
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state]);
+
   const cancelAll = () => {
     if (pauseTimerRef.current !== null) {
       window.clearTimeout(pauseTimerRef.current);
