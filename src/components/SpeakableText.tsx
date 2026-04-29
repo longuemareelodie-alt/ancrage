@@ -225,6 +225,57 @@ const SpeakableText = ({
     setActiveIndex(-1);
   };
 
+  const handleSkipNext = () => {
+    if (state === "idle") return;
+    const sentStart = sentenceSegmentStartRef.current;
+    if (sentStart.length === 0) return;
+    const currentSentence = sentenceCursorRef.current;
+    const nextSentence = currentSentence + 1;
+    // If already at the last sentence, stop playback cleanly.
+    if (nextSentence >= sentences.length || nextSentence >= sentStart.length) {
+      handleStop();
+      return;
+    }
+    const targetSegment = sentStart[nextSentence];
+    skipToSegmentRef.current = targetSegment;
+
+    // If paused, resume so the chain continues.
+    if (state === "paused") {
+      try {
+        window.speechSynthesis.resume();
+      } catch {
+        /* noop */
+      }
+      setState("speaking");
+    }
+    // Cancel current utterance — onend won't fire after cancel, so kick the chain manually
+    // by clearing any pending pause timer and cancelling speech, then triggering playNext via
+    // a fresh microtask. Simpler: cancel speech; the next playNext is triggered by onend OR
+    // we call it ourselves through the pause timer route.
+    if (pauseTimerRef.current !== null) {
+      window.clearTimeout(pauseTimerRef.current);
+      pauseTimerRef.current = null;
+    }
+    try {
+      window.speechSynthesis.cancel();
+    } catch {
+      /* noop */
+    }
+    // After cancel, restart playback from the target segment within the same playback session.
+    // We do this by replaying: bump the cursor and call a fresh chain via a tiny timeout.
+    pauseTimerRef.current = window.setTimeout(() => {
+      // Trigger a re-entry into playNext by simulating end-of-segment:
+      // Re-run handlePlay would reset everything. Instead we mimic by relaunching from cursor.
+      relaunchFromCursor();
+    }, 30);
+  };
+
+  // Relaunch playback from skipToSegmentRef (or current cursor) within current playback session.
+  const relaunchRef = useRef<(() => void) | null>(null);
+  const relaunchFromCursor = () => {
+    if (relaunchRef.current) relaunchRef.current();
+  };
+
   const baseBtn =
     "flex h-8 w-8 items-center justify-center rounded-full border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
 
