@@ -284,7 +284,7 @@ export function buildUtteranceSegments(
   const kwMul = opts?.keywordRateMultiplier ?? 0.7;
 
   // 1. Sentence split — FR-aware (handles abbreviations, decimals, etc.).
-  const sentences = splitSentencesText(fullText);
+  const sentences = splitSentencesText(fullText, { lang: opts?.lang });
   if (sentences.length === 0 && fullText.trim()) sentences.push(fullText.trim());
 
   const out: UtteranceSegment[] = [];
