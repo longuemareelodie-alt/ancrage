@@ -73,10 +73,16 @@ const PremiumAuditPanel = () => {
     setLoading(false);
   };
 
+  // Vérification automatique au montage
+  useEffect(() => {
+    runAudit();
+  }, []);
+
+  const criticalCount = data
+    ? data.paid_without_premium.length + data.premium_without_paid_log.length
+    : 0;
   const totalAnomalies = data
-    ? data.paid_without_premium.length +
-      data.premium_without_paid_log.length +
-      data.already_active.length
+    ? criticalCount + data.already_active.length
     : 0;
 
   return (
