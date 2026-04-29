@@ -14,6 +14,48 @@ import QuickBackLinks from "@/components/QuickBackLinks";
 
 type Step = "select" | "response" | "teaser" | "action" | "after" | "evolution" | "validation" | "summary";
 
+const PENDING_KEY = "ancrage:pendingCheckin";
+
+type PendingCheckin = { emotionId: string; savedAt: number };
+
+const readPendingCheckin = (): PendingCheckin | null => {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.localStorage.getItem(PENDING_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as PendingCheckin;
+    // Expire après 2h pour éviter les reprises fantômes
+    if (!parsed?.emotionId || Date.now() - parsed.savedAt > 2 * 60 * 60 * 1000) {
+      window.localStorage.removeItem(PENDING_KEY);
+      return null;
+    }
+    return parsed;
+  } catch {
+    return null;
+  }
+};
+
+const writePendingCheckin = (emotionId: string) => {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(
+      PENDING_KEY,
+      JSON.stringify({ emotionId, savedAt: Date.now() }),
+    );
+  } catch {
+    // ignore
+  }
+};
+
+const clearPendingCheckin = () => {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.removeItem(PENDING_KEY);
+  } catch {
+    // ignore
+  }
+};
+
 const progressLabels: Record<Step, string> = {
   select: "Écoute-toi",
   response: "On t'entend",
