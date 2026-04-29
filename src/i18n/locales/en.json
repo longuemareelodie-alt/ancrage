@@ -558,6 +558,25 @@
     "done_back": "Back to my space",
     "done_upgrade": "Go further"
   },
+  "payment_pending": {
+    "pending": {
+      "title": "Activating your access…",
+      "text": "Your payment has been received. We're confirming your lifetime access in a few seconds.",
+      "hint": "Please don't close this page — we're handling everything."
+    },
+    "confirmed": {
+      "title": "Access confirmed 💛",
+      "text": "All of Ancrage is unlocked in your account, for life.",
+      "redirect": "Redirecting…"
+    },
+    "error": {
+      "title": "Activation is taking longer than expected",
+      "text": "Your payment may still be validating with your bank. This can take a few minutes. You can retry or go to your space — access will activate automatically.",
+      "retry": "Check again",
+      "dashboard": "Go to my space",
+      "support": "If nothing changes after 10 minutes, please contact us."
+    }
+  },
   "common": {
     "loading": "Loading…",
     "error": "Something went wrong",

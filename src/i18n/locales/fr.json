@@ -558,6 +558,25 @@
     "done_back": "Retour à mon espace",
     "done_upgrade": "Aller plus loin"
   },
+  "payment_pending": {
+    "pending": {
+      "title": "Activation de ton accès en cours…",
+      "text": "Ton paiement a bien été reçu. On confirme ton accès à vie dans quelques secondes.",
+      "hint": "Ne ferme pas cette page, on s'occupe de tout."
+    },
+    "confirmed": {
+      "title": "Accès confirmé 💛",
+      "text": "Tout Ancrage est débloqué dans ton compte, à vie.",
+      "redirect": "Redirection en cours…"
+    },
+    "error": {
+      "title": "L'activation prend plus de temps que prévu",
+      "text": "Ton paiement est peut-être en cours de validation par la banque. Cela peut prendre quelques minutes. Tu peux réessayer ou aller à ton espace — l'accès s'activera automatiquement.",
+      "retry": "Vérifier à nouveau",
+      "dashboard": "Aller à mon espace",
+      "support": "Si rien ne change après 10 minutes, contacte-nous."
+    }
+  },
   "common": {
     "loading": "Chargement…",
     "error": "Une erreur est survenue",
