@@ -33,7 +33,7 @@ const CGV = () => (
           Conditions Générales de Vente
         </h1>
         <p className="text-sm text-muted-foreground mb-6">
-          Dernière mise à jour : {new Date().toLocaleDateString("fr-FR")}
+          Dernière mise à jour&nbsp;: {new Date().toLocaleDateString("fr-FR")}
         </p>
 
         <nav
@@ -59,27 +59,33 @@ const CGV = () => (
           <section id="objet" className="scroll-mt-24">
             <h2 className="text-lg font-semibold text-foreground">1. Objet</h2>
             <p>
-              Les présentes Conditions Générales de Vente (« CGV ») régissent la
-              vente de l'accès à l'application <strong>Digital Maman Libre</strong>{" "}
-              (ci-après « le Service »), accessible depuis les domaines
-              digitalmamanlibre.com et ancrage.lovable.app. La validation de la
-              commande, matérialisée par la case à cocher d'acceptation lors du
-              paiement, vaut acceptation pleine et entière des présentes CGV.
+              Les présentes Conditions générales de vente (ci-après «&nbsp;CGV&nbsp;»)
+              régissent la vente de l'accès à l'application{" "}
+              <strong>Digital Maman Libre</strong> (ci-après «&nbsp;le
+              Service&nbsp;»), accessible depuis les domaines
+              digitalmamanlibre.com et ancrage.lovable.app. La validation de
+              la commande, matérialisée par le clic sur le bouton de paiement
+              et la mention d'acceptation associée, vaut acceptation pleine
+              et entière des présentes CGV par le client (ci-après «&nbsp;le
+              Client&nbsp;»).
             </p>
           </section>
 
           <section id="editeur-contact" className="scroll-mt-24">
-            <h2 className="text-lg font-semibold text-foreground">2. Éditeur et contact</h2>
+            <h2 className="text-lg font-semibold text-foreground">
+              2. Éditeur et contact
+            </h2>
             <p>
               Le Service est édité par <strong>Digital Maman Libre</strong>,
               micro-entreprise immatriculée sous le SIRET{" "}
-              <strong>829 977 958 00018</strong> (SIREN 829 977 958), dont le
-              siège social est situé au{" "}
+              <strong>829&nbsp;977&nbsp;958&nbsp;00018</strong> (SIREN
+              829&nbsp;977&nbsp;958), dont le siège social est situé au{" "}
               <strong>17 rue André Maurois, 76150 Maromme, France</strong>.
-              TVA non applicable, art. 293 B du CGI.
+              TVA non applicable, art. 293&nbsp;B du CGI. Directrice de la
+              publication&nbsp;: <strong>Élodie Mauger-Longuemare</strong>.
             </p>
             <p>
-              Service client :{" "}
+              Service client&nbsp;:{" "}
               <a
                 href="mailto:contact@digitalmamanlibre.com"
                 className="underline hover:text-primary"
@@ -87,7 +93,10 @@ const CGV = () => (
                 contact@digitalmamanlibre.com
               </a>
               . L'ensemble des informations légales figure également dans les{" "}
-              <Link to="/mentions-legales" className="underline hover:text-primary">
+              <Link
+                to="/mentions-legales"
+                className="underline hover:text-primary"
+              >
                 Mentions légales
               </Link>
               .
@@ -95,25 +104,32 @@ const CGV = () => (
           </section>
 
           <section id="description" className="scroll-mt-24">
-            <h2 className="text-lg font-semibold text-foreground">3. Description du Service</h2>
+            <h2 className="text-lg font-semibold text-foreground">
+              3. Description du Service
+            </h2>
             <p>
               Le Service propose des outils numériques d'accompagnement au
-              quotidien : suivi émotionnel, parcours guidés, fiches pratiques et
-              ressources de soutien. Il s'agit d'un outil de{" "}
-              <strong>bien-être</strong> qui <strong>ne constitue ni un
-              dispositif médical, ni un diagnostic, ni un substitut à un avis
-              professionnel de santé</strong>. En cas de doute ou de détresse,
-              l'utilisateur est invité à consulter un professionnel de santé ou
-              à contacter un service d'urgence.
+              quotidien&nbsp;: suivi émotionnel, parcours guidés, fiches
+              pratiques et ressources de soutien. Il s'agit d'un outil de{" "}
+              <strong>bien-être</strong> qui{" "}
+              <strong>
+                ne constitue ni un dispositif médical, ni un diagnostic, ni
+                un substitut à un avis professionnel de santé
+              </strong>
+              . En cas de doute ou de détresse, le Client est invité à
+              consulter un professionnel de santé ou à contacter un service
+              d'urgence.
             </p>
           </section>
 
           <section id="capacite-juridique" className="scroll-mt-24">
-            <h2 className="text-lg font-semibold text-foreground">4. Capacité juridique</h2>
+            <h2 className="text-lg font-semibold text-foreground">
+              4. Capacité juridique
+            </h2>
             <p>
-              Le client déclare être majeur (18 ans révolus) et disposer de la
-              pleine capacité juridique pour conclure un contrat à distance. Le
-              Service n'est pas destiné aux mineurs.
+              Le Client déclare être majeur (18&nbsp;ans révolus) et disposer
+              de la pleine capacité juridique pour conclure un contrat à
+              distance. Le Service n'est pas destiné aux mineurs.
             </p>
           </section>
 
@@ -121,29 +137,31 @@ const CGV = () => (
             <h2 className="text-lg font-semibold text-foreground">5. Prix</h2>
             <p>
               L'accès complet au Service est proposé sous forme d'un{" "}
-              <strong>paiement unique de 39 € TTC</strong> (toutes taxes
-              comprises, en euros), donnant un accès illimité dans le temps aux
-              fonctionnalités payantes existantes au moment de l'achat. Aucun
-              abonnement n'est souscrit : aucun prélèvement récurrent n'est
-              effectué.
+              <strong>paiement unique de 39&nbsp;€ TTC</strong> (toutes taxes
+              comprises, en euros), donnant un accès illimité dans le temps
+              aux fonctionnalités payantes existantes au moment de l'achat.
+              Aucun abonnement n'est souscrit&nbsp;: aucun prélèvement
+              récurrent n'est effectué.
             </p>
             <p>
-              Les prix sont indiqués TTC sur la page de paiement. La TVA
-              applicable est, le cas échéant, celle en vigueur au jour de la
-              commande. La mention « TVA non applicable, art. 293 B du CGI »
-              s'applique si l'éditeur relève du régime de la franchise en base.
+              Les prix sont indiqués TTC sur la page de paiement. L'éditeur
+              relève du régime de la franchise en base de TVA, ce qui
+              justifie la mention «&nbsp;TVA non applicable, art. 293&nbsp;B
+              du CGI&nbsp;». Aucune TVA n'est donc facturée au Client.
             </p>
           </section>
 
           <section id="modalites-paiement" className="scroll-mt-24">
-            <h2 className="text-lg font-semibold text-foreground">6. Modalités de paiement</h2>
+            <h2 className="text-lg font-semibold text-foreground">
+              6. Modalités de paiement
+            </h2>
             <p>
               Le paiement s'effectue en ligne, en une seule fois, par carte
-              bancaire ou par les moyens de paiement proposés par notre
-              prestataire <strong>Mollie</strong>. La transaction est sécurisée
-              et aucune coordonnée bancaire n'est stockée sur nos serveurs. La
-              commande est définitivement enregistrée après confirmation du
-              paiement par le prestataire.
+              bancaire ou par les moyens de paiement proposés par le
+              prestataire <strong>Mollie B.V.</strong> La transaction est
+              sécurisée et aucune coordonnée bancaire n'est stockée sur les
+              serveurs de l'éditeur. La commande est définitivement
+              enregistrée après confirmation du paiement par le prestataire.
             </p>
           </section>
 
