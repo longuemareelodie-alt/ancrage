@@ -340,18 +340,32 @@ const PremiumAuditPanel = () => {
                       <TableHead>{t("admin.audit.col_plan")}</TableHead>
                       <TableHead>{t("admin.audit.col_updated_at")}</TableHead>
                       <TableHead>{t("admin.audit.col_created_at")}</TableHead>
+                      <TableHead className="text-right">Diagnostic</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {data.premium_without_paid_log.map((r) => (
+                    {data.premium_without_paid_log.map((r) => {
+                      const key = `pnl:${r.user_id}`;
+                      const done = loggedKeys.has(key);
+                      return (
                       <TableRow key={r.user_id}>
                         <TableCell className="text-sm">{r.email ?? "—"}</TableCell>
                         <TableCell className="font-mono text-xs">{shortId(r.user_id)}</TableCell>
                         <TableCell>{r.plan_type ?? "—"}</TableCell>
                         <TableCell className="text-sm whitespace-nowrap">{fmtDate(r.profile_updated_at)}</TableCell>
                         <TableCell className="text-sm whitespace-nowrap">{fmtDate(r.profile_created_at)}</TableCell>
+                        <TableCell className="text-right">
+                          <Button size="sm" variant={done ? "secondary" : "outline"} disabled={done || logging === key}
+                            onClick={() => logAnomaly("premium_no_log", key, {
+                              user_id: r.user_id, payment_id: null, email: r.email, plan_type: r.plan_type,
+                              is_premium: true, log_status: "missing",
+                              timestamps: { profile_created_at: r.profile_created_at, profile_updated_at: r.profile_updated_at, audited_at: data.generated_at },
+                            })}>
+                            {logging === key ? <Loader2 className="h-3 w-3 animate-spin" /> : done ? <ClipboardCheck className="h-3 w-3" /> : "Enregistrer"}
+                          </Button>
+                        </TableCell>
                       </TableRow>
-                    ))}
+                    );})}
                   </TableBody>
                 </Table>
               </div>
