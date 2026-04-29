@@ -1,11 +1,26 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Loader2, CheckCircle2, AlertCircle, ArrowRight, RefreshCw, UserX } from "lucide-react";
+import {
+  Loader2,
+  CheckCircle2,
+  AlertCircle,
+  ArrowRight,
+  RefreshCw,
+  UserX,
+  Camera,
+  Check,
+} from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { withRetry } from "@/lib/supabaseRetry";
+import {
+  isScreenshotSupported,
+  captureAndDownloadScreenshot,
+  type CaptureResult,
+} from "@/lib/captureScreenshot";
+import { toast } from "sonner";
 
 type Status = "pending" | "confirmed" | "error" | "not_found";
 type LastState = "checking" | "retrying" | "error" | "not_found" | "confirmed";
@@ -30,7 +45,49 @@ const PaymentPending = () => {
   const [lastStateAt, setLastStateAt] = useState<string>(() => new Date().toISOString());
   const [lastError, setLastError] = useState<string | null>(null);
   const [ticketId] = useState<string>(() => generateTicketId());
+  const [screenshotFilename, setScreenshotFilename] = useState<string | null>(null);
+  const [capturing, setCapturing] = useState(false);
+  const screenshotsAvailable = isScreenshotSupported();
   const cancelled = useRef(false);
+
+  const handleCaptureScreenshot = async () => {
+    setCapturing(true);
+    try {
+      const result: CaptureResult = await captureAndDownloadScreenshot(`ancrage-support-${ticketId}`);
+      if (result.ok) {
+        setScreenshotFilename(result.filename);
+        toast.success(
+          t(
+            "payment_pending.support.screenshot_saved",
+            "Capture enregistrée dans tes téléchargements. Pense à la joindre au mail.",
+          ),
+        );
+      } else {
+        const failure = result as Extract<CaptureResult, { ok: false }>;
+        if (failure.reason === "denied") {
+          toast.info(
+            t("payment_pending.support.screenshot_denied", "Capture annulée."),
+          );
+        } else if (failure.reason === "unsupported") {
+          toast.error(
+            t(
+              "payment_pending.support.screenshot_unsupported",
+              "Ton navigateur ne permet pas la capture d'écran.",
+            ),
+          );
+        } else {
+          toast.error(
+            t(
+              "payment_pending.support.screenshot_error",
+              "Impossible de réaliser la capture. Réessaie.",
+            ),
+          );
+        }
+      }
+    } finally {
+      setCapturing(false);
+    }
+  };
 
   const updateLastState = (next: LastState, errorMsg?: string | null) => {
     setLastState(next);
@@ -192,9 +249,19 @@ const PaymentPending = () => {
             "— Informations diagnostic (ne pas modifier) —",
           );
 
+          const screenshotNote = screenshotFilename
+            ? t(
+                "payment_pending.support.screenshot_attached_note",
+                "📎 Capture d'écran à joindre : {{filename}} (téléchargée sur ton appareil)",
+                { filename: screenshotFilename },
+              )
+            : null;
+
           const body = [
             intro,
             "",
+            screenshotNote,
+            screenshotNote ? "" : null,
             summaryHeader,
             `Ticket ID : ${ticketId}`,
             `Dernier état : ${stateLabels[lastState]} (${lastState})`,
@@ -207,12 +274,41 @@ const PaymentPending = () => {
             `User-Agent : ${typeof navigator !== "undefined" ? navigator.userAgent : "—"}`,
             `Date : ${new Date().toISOString()}`,
           ]
-            .filter(Boolean)
+            .filter((l) => l !== null && l !== undefined)
             .join("\n");
 
           const mailto = `mailto:contact@digitalmamanlibre.com?subject=${encodeURIComponent(
             `[${ticketId}] ${subject}`,
           )}&body=${encodeURIComponent(body)}`;
+
+          const screenshotButton = screenshotsAvailable ? (
+            <button
+              type="button"
+              onClick={handleCaptureScreenshot}
+              disabled={capturing}
+              className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-dashed px-6 py-2.5 text-xs font-medium text-muted-foreground hover:bg-muted/50 disabled:opacity-60"
+            >
+              {capturing ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : screenshotFilename ? (
+                <Check className="h-3.5 w-3.5 text-primary" />
+              ) : (
+                <Camera className="h-3.5 w-3.5" />
+              )}
+              {capturing
+                ? t("payment_pending.support.screenshot_capturing", "Capture en cours…")
+                : screenshotFilename
+                  ? t(
+                      "payment_pending.support.screenshot_ready",
+                      "Capture prête : {{filename}}",
+                      { filename: screenshotFilename },
+                    )
+                  : t(
+                      "payment_pending.support.screenshot_cta",
+                      "Joindre une capture d'écran",
+                    )}
+            </button>
+          ) : null;
 
           if (!isNotFound) {
             return (
@@ -241,6 +337,7 @@ const PaymentPending = () => {
                     <RefreshCw className="h-4 w-4" />
                     {t("payment_pending.error.retry")}
                   </button>
+                  {screenshotButton}
                   <a
                     href={mailto}
                     className="inline-flex w-full items-center justify-center gap-2 rounded-xl border px-6 py-3 text-sm font-medium"
@@ -282,6 +379,7 @@ const PaymentPending = () => {
                 </p>
               </div>
               <div className="space-y-2">
+                {screenshotButton}
                 <a
                   href={mailto}
                   className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground"
