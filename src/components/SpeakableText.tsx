@@ -235,6 +235,7 @@ const SpeakableText = ({
         setState("idle");
         setActiveIndex(-1);
         setElapsed(estimatedTotal); // snap to 100% on natural completion
+        restorePreviousFocus();
         return;
       }
       const seg = segments[cursorRef.current++];
@@ -293,6 +294,7 @@ const SpeakableText = ({
         if (playbackId !== playbackIdRef.current) return;
         setState("idle");
         setActiveIndex(-1);
+        restorePreviousFocus();
       };
       utteranceRef.current = u;
       synth.speak(u);
