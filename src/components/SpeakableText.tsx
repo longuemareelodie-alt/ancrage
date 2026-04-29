@@ -78,6 +78,10 @@ const SpeakableText = ({
   const sentenceCursorRef = useRef(0);
   const playNextRef = useRef<(() => void) | null>(null);
   const tickerRef = useRef<number | null>(null);
+  // Frozen-pause support for silent pause segments (commas / sentence breaks).
+  const pauseDeadlineRef = useRef<number | null>(null); // when timer should fire
+  const pauseRemainingRef = useRef<number | null>(null); // remaining ms when paused
+  const pauseAfterRef = useRef<(() => void) | null>(null); // callback after the silent pause
 
   const fullText = hint ? `${text}. ${hint}` : text;
   const sentences = splitSentences(fullText);
