@@ -105,7 +105,7 @@ const PremiumAuditPanel = () => {
         logged_by_admin: adminId,
         logged_at: new Date().toISOString(),
       },
-    });
+    }]);
     setLogging(null);
     if (error) {
       if (!opts.silent) toast.error(`Diagnostic non enregistré: ${error.message}`);
