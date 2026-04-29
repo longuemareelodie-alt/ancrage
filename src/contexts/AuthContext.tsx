@@ -69,6 +69,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
     const profile = result.data as { is_premium?: boolean; created_at?: string } | null;
     const premium = !!profile?.is_premium;
+
+    // Diagnose anomalies on profile.created_at — they break the grandfather
+    // check silently otherwise. We log once per user id, per session.
+    const createdAtStatus = profile
+      ? classifyProfileCreatedAt(profile.created_at)
+      : "missing";
+    if (createdAtStatus !== "valid" && !loggedAnomaliesRef.current.has(userId)) {
+      loggedAnomaliesRef.current.add(userId);
+      const reason = profile
+        ? `profile.created_at is ${createdAtStatus} (value=${JSON.stringify(profile.created_at)})`
+        : "profile row missing for this user";
+      // eslint-disable-next-line no-console
+      console.warn(
+        `[eligibility] ${reason}; user_id=${userId}. Falling back to NOT grandfathered (paywall enforced).`,
+      );
+    }
+
     const grandfathered = isGrandfatheredAccount(profile?.created_at);
     setIsPaid(premium || grandfathered);
     setEligibilityPhase("ready");
