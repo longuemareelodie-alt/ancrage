@@ -8,6 +8,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { AnimatePresence } from "framer-motion";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import PaidRoute from "@/components/PaidRoute";
+import AdminRoute from "@/components/AdminRoute";
 import PageTransition from "@/components/PageTransition";
 import BottomNav from "@/components/BottomNav";
 import TopNav from "@/components/TopNav";
@@ -45,6 +46,7 @@ import SanteRessources from "./pages/SanteRessources";
 import FicheUrgencePublique from "./pages/FicheUrgencePublique";
 import CalmeEnClair from "./pages/CalmeEnClair";
 import Danger from "./pages/Danger";
+import PremiumActivationLogPage from "./pages/admin/PremiumActivationLog";
 
 const queryClient = new QueryClient();
 
@@ -107,6 +109,7 @@ const AnimatedRoutes = () => {
         <Route path="/sante/ressources" element={<PaidRoute><PageTransition><SanteRessources /></PageTransition></PaidRoute>} />
         <Route path="/fiche-urgence/:token" element={<PageTransition><FicheUrgencePublique /></PageTransition>} />
         <Route path="/unsubscribe" element={<PageTransition><Unsubscribe /></PageTransition>} />
+        <Route path="/admin/premium-log" element={<AdminRoute><PageTransition><PremiumActivationLogPage /></PageTransition></AdminRoute>} />
         <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
           </Routes>
         </RoutesWrapper>

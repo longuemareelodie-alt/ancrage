@@ -600,5 +600,28 @@
     "cancel": "إلغاء",
     "confirm": "تأكيد",
     "close": "إغلاق"
+  },
+  "admin": {
+    "premium_log": {
+      "title": "سجل تفعيلات بريميوم",
+      "subtitle": "سجل محاولات تفعيل بريميوم (للمشرف فقط).",
+      "filter_status": "الحالة",
+      "filter_payment_id": "معرّف الدفع",
+      "filter_from": "من",
+      "filter_to": "إلى",
+      "status_all": "الكل",
+      "reset_filters": "إعادة ضبط",
+      "refresh": "تحديث",
+      "col_date": "التاريخ",
+      "col_status": "الحالة",
+      "col_payment_id": "معرّف الدفع",
+      "col_user": "المستخدم",
+      "col_amount": "المبلغ",
+      "col_message": "الرسالة",
+      "empty": "لا توجد إدخالات",
+      "pagination": "{{from}}–{{to}} من {{total}}",
+      "prev": "السابق",
+      "next": "التالي"
+    }
   }
 }
