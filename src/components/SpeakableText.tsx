@@ -74,9 +74,14 @@ const SpeakableText = ({
   useEffect(() => { elapsedRef.current = elapsed; }, [elapsed]);
   useEffect(() => { estimatedTotalRef.current = estimatedTotal; }, [estimatedTotal]);
 
-  // Load any saved progress for this text on mount / when text changes.
+  // Load any saved progress for this text on mount / when text changes, and
+  // refresh whenever the cloud sync hydrates new entries.
   useEffect(() => {
     setSavedProgress(getProgress(fullText));
+    if (typeof window === "undefined") return;
+    const onHydrated = () => setSavedProgress(getProgress(fullText));
+    window.addEventListener("calm-speech-progress-hydrated", onHydrated);
+    return () => window.removeEventListener("calm-speech-progress-hydrated", onHydrated);
   }, [fullText]);
 
   useEffect(() => {
