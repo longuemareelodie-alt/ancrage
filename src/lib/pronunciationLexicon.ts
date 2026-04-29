@@ -26,10 +26,13 @@ export interface PronunciationEntry {
 const STORAGE_KEY = "calm_pronunciation_lexicon_v1";
 const CHANGE_EVENT = "calm-pronunciation-lexicon-change";
 
-export function getLexicon(): PronunciationEntry[] {
-  if (typeof window === "undefined") return [];
+import { getSpeechLang, normalizeSpeechLang, type SpeechLang } from "./speechPrefs";
+
+const lexiconKeyFor = (lang: SpeechLang) => `${STORAGE_KEY}__${lang}`;
+
+function readEntries(key: string): PronunciationEntry[] {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = localStorage.getItem(key);
     if (!raw) return [];
     const parsed = JSON.parse(raw);
     if (!Array.isArray(parsed)) return [];
@@ -39,22 +42,34 @@ export function getLexicon(): PronunciationEntry[] {
   }
 }
 
-export function setLexicon(entries: PronunciationEntry[]) {
+export function getLexicon(lang?: SpeechLang | string): PronunciationEntry[] {
+  if (typeof window === "undefined") return [];
+  const target = lang ? normalizeSpeechLang(lang) : getSpeechLang();
+  const perLang = readEntries(lexiconKeyFor(target));
+  if (perLang.length > 0) return perLang;
+  // Fallback: migrate legacy global lexicon (only used until first per-lang save).
+  const legacyRaw = localStorage.getItem(lexiconKeyFor(target));
+  if (legacyRaw !== null) return perLang; // explicit empty per-lang
+  return readEntries(STORAGE_KEY);
+}
+
+export function setLexicon(entries: PronunciationEntry[], lang?: SpeechLang | string) {
   if (typeof window === "undefined") return;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+  const target = lang ? normalizeSpeechLang(lang) : getSpeechLang();
+  localStorage.setItem(lexiconKeyFor(target), JSON.stringify(entries));
   window.dispatchEvent(new CustomEvent(CHANGE_EVENT));
 }
 
-export function upsertEntry(entry: PronunciationEntry) {
-  const all = getLexicon();
+export function upsertEntry(entry: PronunciationEntry, lang?: SpeechLang | string) {
+  const all = getLexicon(lang);
   const idx = all.findIndex((e) => e.id === entry.id);
   if (idx === -1) all.push(entry);
   else all[idx] = entry;
-  setLexicon(all);
+  setLexicon(all, lang);
 }
 
-export function removeEntry(id: string) {
-  setLexicon(getLexicon().filter((e) => e.id !== id));
+export function removeEntry(id: string, lang?: SpeechLang | string) {
+  setLexicon(getLexicon(lang).filter((e) => e.id !== id), lang);
 }
 
 export function newEntry(): PronunciationEntry {
