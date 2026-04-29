@@ -205,6 +205,7 @@ const SpeakableText = ({
       synth.speak(u);
     };
 
+    playNextRef.current = playNext;
     playNext();
   };
 
