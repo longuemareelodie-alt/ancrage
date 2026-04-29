@@ -622,6 +622,29 @@
       "pagination": "{{from}}–{{to}} von {{total}}",
       "prev": "Zurück",
       "next": "Weiter"
+    },
+    "audit": {
+      "title": "Aktivierungs-Audit",
+      "subtitle": "Vergleich zwischen Protokoll und aktuellem Premium-Status.",
+      "run": "Audit starten",
+      "running": "Läuft…",
+      "generated_at": "Erstellt am {{date}}",
+      "section_paid_no_premium": "Bezahlt, aber Profil nicht premium",
+      "section_premium_no_log": "Premium-Profile ohne Zahlungsprotokoll",
+      "section_already_active": "„Bereits aktiv“-Aktivierungen",
+      "empty": "Keine Anomalie",
+      "col_email": "E-Mail",
+      "col_user": "Nutzer",
+      "col_payment_id": "Zahlungs-ID",
+      "col_amount": "Betrag",
+      "col_paid_at": "Bezahlt am",
+      "col_is_premium": "Premium?",
+      "col_plan": "Plan",
+      "col_updated_at": "Aktualisiert",
+      "col_created_at": "Erstellt",
+      "col_message": "Nachricht",
+      "yes": "Ja",
+      "no": "Nein"
     }
   }
 }

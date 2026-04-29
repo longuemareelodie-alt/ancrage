@@ -622,6 +622,29 @@
       "pagination": "{{from}}–{{to}} من {{total}}",
       "prev": "السابق",
       "next": "التالي"
+    },
+    "audit": {
+      "title": "تدقيق التفعيلات",
+      "subtitle": "مقارنة بين السجل وحالة بريميوم الحالية.",
+      "run": "تشغيل التدقيق",
+      "running": "جارٍ التحليل…",
+      "generated_at": "أُنشئ في {{date}}",
+      "section_paid_no_premium": "دفع مستلم لكن الملف غير بريميوم",
+      "section_premium_no_log": "ملفات بريميوم بدون سجل دفع",
+      "section_already_active": "تفعيلات «نشطة سابقاً»",
+      "empty": "لا توجد مخالفة",
+      "col_email": "البريد",
+      "col_user": "المستخدم",
+      "col_payment_id": "معرّف الدفع",
+      "col_amount": "المبلغ",
+      "col_paid_at": "تاريخ الدفع",
+      "col_is_premium": "بريميوم؟",
+      "col_plan": "الخطة",
+      "col_updated_at": "آخر تحديث",
+      "col_created_at": "تاريخ الإنشاء",
+      "col_message": "الرسالة",
+      "yes": "نعم",
+      "no": "لا"
     }
   }
 }

@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import PremiumAuditPanel from "@/components/admin/PremiumAuditPanel";
 
 interface LogEntry {
   id: string;
@@ -138,6 +139,8 @@ const PremiumActivationLog = () => {
           {t("admin.premium_log.subtitle")}
         </p>
       </header>
+
+      <PremiumAuditPanel />
 
       <section className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 p-4 rounded-lg border bg-card">
         <div className="space-y-2">

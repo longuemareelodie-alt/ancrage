@@ -691,6 +691,7 @@ export type Database = {
           user_id: string
         }[]
       }
+      get_premium_audit: { Args: never; Returns: Json }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
