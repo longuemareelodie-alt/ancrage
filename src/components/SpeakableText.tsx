@@ -205,6 +205,7 @@ const SpeakableText = ({
       if (cursorRef.current >= segments.length) {
         setState("idle");
         setActiveIndex(-1);
+        setElapsed(estimatedTotal); // snap to 100% on natural completion
         return;
       }
       const seg = segments[cursorRef.current++];
