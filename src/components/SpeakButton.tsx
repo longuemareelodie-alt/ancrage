@@ -45,15 +45,20 @@ const SpeakButton = ({ text, lang = "fr-FR", className = "" }: SpeakButtonProps)
 
   if (!supported) return null;
 
-  const handlePlay = () => {
+  const handlePlay = async () => {
     const synth = window.speechSynthesis;
-    // Stop anything currently playing (including from another card).
     synth.cancel();
 
     const u = new SpeechSynthesisUtterance(text);
     u.lang = lang;
-    u.rate = 0.95;
+
+    // Apply user preferences (voice + rate).
+    const voices = await loadVoices();
+    const voice = resolveVoice(voices, lang.split("-")[0] || "fr");
+    if (voice) u.voice = voice;
+    u.rate = RATE_VALUES[getSpeechRate()];
     u.pitch = 1;
+
     u.onend = () => setState("idle");
     u.onerror = () => setState("idle");
 
