@@ -76,9 +76,9 @@ export const RATE_LABELS: Record<SpeechRate, string> = {
   fast: "Rapide",
 };
 
-export function getSpeechRate(lang?: SpeechLang): SpeechRate {
+export function getSpeechRate(lang?: SpeechLang | string): SpeechRate {
   if (typeof window === "undefined") return "normal";
-  const target = lang ?? getSpeechLang();
+  const target = lang ? normalizeSpeechLang(lang) : getSpeechLang();
   const perLang = localStorage.getItem(rateKeyFor(target));
   if (perLang === "slow" || perLang === "normal" || perLang === "fast") return perLang;
   // Fallback to legacy global value (migrated lazily on next set).
@@ -87,9 +87,9 @@ export function getSpeechRate(lang?: SpeechLang): SpeechRate {
   return "normal";
 }
 
-export function setSpeechRate(rate: SpeechRate, lang?: SpeechLang) {
+export function setSpeechRate(rate: SpeechRate, lang?: SpeechLang | string) {
   if (typeof window === "undefined") return;
-  const target = lang ?? getSpeechLang();
+  const target = lang ? normalizeSpeechLang(lang) : getSpeechLang();
   localStorage.setItem(rateKeyFor(target), rate);
   window.dispatchEvent(new CustomEvent("calm-speech-prefs-change"));
 }
