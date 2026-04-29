@@ -18,7 +18,7 @@ interface PaidNoPremium {
   user_id: string;
   payment_id: string | null;
   amount: number | null;
-  paid_at: string;
+  paid_at: string | null;
   is_premium: boolean | null;
   email: string | null;
 }
@@ -26,8 +26,8 @@ interface PremiumNoLog {
   user_id: string;
   email: string | null;
   plan_type: string | null;
-  profile_created_at: string;
-  profile_updated_at: string;
+  profile_created_at: string | null;
+  profile_updated_at: string | null;
 }
 interface AlreadyActive {
   id: string;
@@ -35,7 +35,7 @@ interface AlreadyActive {
   payment_id: string | null;
   amount: number | null;
   message: string | null;
-  created_at: string;
+  created_at: string | null;
   email: string | null;
 }
 interface AuditResult {
@@ -46,7 +46,12 @@ interface AuditResult {
 }
 
 const fmtAmount = (a: number | null) => (a != null ? `${(a / 100).toFixed(2)} €` : "—");
-const fmtDate = (d: string) => format(new Date(d), "yyyy-MM-dd HH:mm");
+const fmtDate = (d: string | null | undefined) => {
+  if (!d) return "—";
+  const dt = new Date(d);
+  if (Number.isNaN(dt.getTime())) return "—";
+  return format(dt, "yyyy-MM-dd HH:mm");
+};
 const shortId = (id: string | null) => (id ? id.slice(0, 8) + "…" : "—");
 
 const PremiumAuditPanel = () => {
