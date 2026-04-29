@@ -363,21 +363,35 @@ const SpeakableText = ({
           ? fullText
           : sentences.map((s, i) => {
               const isActive = i === activeIndex;
+              const activeClass =
+                state === "paused"
+                  ? "rounded-md bg-primary/10 px-1 text-foreground ring-1 ring-dashed ring-primary/60 transition-colors"
+                  : "rounded-md bg-primary/15 px-1 text-foreground transition-colors";
               return (
                 <span
                   key={`${s.start}-${i}`}
-                  className={
-                    isActive
-                      ? "rounded-md bg-primary/15 px-1 text-foreground transition-colors"
-                      : "transition-colors"
-                  }
+                  className={isActive ? activeClass : "transition-colors"}
+                  aria-current={isActive ? (state === "paused" ? "false" : "true") : undefined}
                 >
+                  {isActive && state === "paused" && (
+                    <Pause
+                      className="mr-1 inline h-3 w-3 align-[-1px] text-primary"
+                      aria-hidden="true"
+                    />
+                  )}
                   {s.text}
                   {i < sentences.length - 1 ? " " : ""}
                 </span>
               );
             })}
       </p>
+
+      {state === "paused" && (
+        <div className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-primary/40 bg-primary/10 px-2.5 py-0.5 text-[11px] font-medium text-primary">
+          <Pause className="h-3 w-3" aria-hidden="true" />
+          <span>En pause</span>
+        </div>
+      )}
 
       {/* Live region for screen readers, announces playback state changes */}
       <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
@@ -404,7 +418,9 @@ const SpeakableText = ({
               aria-valuetext={`${pct} pour cent lu, ${fmt(remaining)} restant`}
             >
               <div
-                className="h-full rounded-full bg-primary transition-[width] duration-200 ease-linear"
+                className={`h-full rounded-full transition-[width] duration-200 ease-linear ${
+                  state === "paused" ? "bg-primary/40" : "bg-primary"
+                }`}
                 style={{ width: `${pct}%` }}
               />
             </div>
@@ -452,8 +468,8 @@ const SpeakableText = ({
                   onClick={handleResume}
                   aria-label="Reprendre la lecture"
                   aria-pressed={true}
-                  title="Reprendre"
-                  className={`${baseBtn} border-primary bg-primary text-primary-foreground`}
+                  title="Reprendre la lecture"
+                  className={`${baseBtn} border-primary bg-primary text-primary-foreground animate-pulse`}
                 >
                   <Play className="h-3.5 w-3.5" aria-hidden="true" />
                 </button>
