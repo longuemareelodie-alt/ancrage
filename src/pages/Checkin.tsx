@@ -61,15 +61,18 @@ const Checkin = () => {
   const handleSelect = async (emotion: EmotionData) => {
     setSelected(emotion);
     setStep("response");
-    setShowReward(true); // Show micro reward
 
-    if (!user) return;
+    // Aperçu non payant : pas de sauvegarde, pas de streak/badges.
+    if (!user || !isPaid) {
+      return;
+    }
+
+    setShowReward(true);
     await supabase.from("emotion_checkins").insert({
       user_id: user.id,
       emotion: emotion.id,
       emotion_type: emotion.type,
     });
-    // Update last_emotion only — last_checkin_date is handled by updateStreakAndBadges
     await supabase
       .from("profiles")
       .update({ last_emotion: emotion.id })
@@ -81,6 +84,22 @@ const Checkin = () => {
     if (result?.streak) {
       setStreakCount(result.streak);
     }
+  };
+
+  const handleContinueAfterResponse = () => {
+    if (!isPaid) {
+      setStep("teaser");
+    } else {
+      setStep("action");
+    }
+  };
+
+  const handleUnlock = () => {
+    if (!user) {
+      navigate("/auth?redirect=/checkin&action=pay");
+      return;
+    }
+    startPayment();
   };
 
   const handleActionComplete = () => {
