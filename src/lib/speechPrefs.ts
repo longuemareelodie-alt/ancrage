@@ -1,7 +1,32 @@
 export type SpeechRate = "slow" | "normal" | "fast";
+export type SpeechLang = "fr-FR" | "fr-CA" | "en-US";
 
 const VOICE_KEY = "calm_speech_voice";
 const RATE_KEY = "calm_speech_rate";
+const LANG_KEY = "calm_speech_lang";
+
+export const LANG_LABELS: Record<SpeechLang, string> = {
+  "fr-FR": "Français (France)",
+  "fr-CA": "Français (Canada)",
+  "en-US": "English (US)",
+};
+
+export const LANG_OPTIONS: SpeechLang[] = ["fr-FR", "fr-CA", "en-US"];
+
+export function getSpeechLang(): SpeechLang {
+  if (typeof window === "undefined") return "fr-FR";
+  const v = localStorage.getItem(LANG_KEY);
+  if (v === "fr-FR" || v === "fr-CA" || v === "en-US") return v;
+  return "fr-FR";
+}
+
+export function setSpeechLang(lang: SpeechLang) {
+  if (typeof window === "undefined") return;
+  localStorage.setItem(LANG_KEY, lang);
+  // Reset voice — saved voice may not match the new language.
+  localStorage.removeItem(VOICE_KEY);
+  window.dispatchEvent(new CustomEvent("calm-speech-prefs-change"));
+}
 
 export const RATE_VALUES: Record<SpeechRate, number> = {
   slow: 0.75,
