@@ -555,16 +555,32 @@ const SpeakableText = ({
           aria-label="Contrôles du guidage audio"
         >
           {state === "idle" ? (
-            <button
-              type="button"
-              onClick={() => handlePlay(0)}
-              aria-label="Lire à voix haute"
-              aria-pressed={false}
-              title="Guidage audio"
-              className={`${baseBtn} border-border bg-background text-muted-foreground hover:bg-muted`}
-            >
-              <Volume2 className="h-3.5 w-3.5" aria-hidden="true" />
-            </button>
+            <>
+              <button
+                type="button"
+                onClick={() => handlePlay(0, 0)}
+                aria-label="Lire à voix haute"
+                aria-pressed={false}
+                title="Guidage audio"
+                className={`${baseBtn} border-border bg-background text-muted-foreground hover:bg-muted`}
+              >
+                <Volume2 className="h-3.5 w-3.5" aria-hidden="true" />
+              </button>
+              {savedProgress && savedProgress.sentence > 0 && (
+                <button
+                  type="button"
+                  onClick={() =>
+                    handlePlay(savedProgress.sentence, savedProgress.elapsed)
+                  }
+                  title="Reprendre où vous vous êtes arrêté"
+                  aria-label={`Reprendre la lecture à la phrase ${savedProgress.sentence + 1}`}
+                  className="inline-flex h-8 items-center gap-1.5 rounded-full border border-primary/40 bg-primary/10 px-3 text-xs font-medium text-primary transition-colors hover:bg-primary/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                >
+                  <Play className="h-3.5 w-3.5" aria-hidden="true" />
+                  <span>Reprendre</span>
+                </button>
+              )}
+            </>
           ) : (
             <>
               {state === "speaking" ? (
