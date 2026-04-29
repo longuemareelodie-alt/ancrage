@@ -366,11 +366,12 @@ const PaymentPending = () => {
                     {t("payment_pending.error.retry")}
                   </button>
                   {screenshotButton}
+                  {formButton}
                   <a
                     href={mailto}
                     className="inline-flex w-full items-center justify-center gap-2 rounded-xl border px-6 py-3 text-sm font-medium"
                   >
-                    {t("payment_pending.error.contact_support", "Contacter le support")}
+                    {t("payment_pending.error.contact_support_email", "Ou contacter par email")}
                   </a>
                   <Link
                     to="/dashboard"
@@ -383,6 +384,13 @@ const PaymentPending = () => {
                     {t("payment_pending.error.support")}
                   </p>
                 </div>
+                <SupportContactDialog
+                  open={supportOpen}
+                  onOpenChange={setSupportOpen}
+                  context={subject}
+                  diagnostics={diagnosticsForDialog}
+                  ticketId={ticketId}
+                />
               </>
             );
           }
