@@ -113,6 +113,7 @@ const AnimatedRoutes = () => {
         <Route path="/unsubscribe" element={<PageTransition><Unsubscribe /></PageTransition>} />
         <Route path="/admin/premium-log" element={<AdminRoute><PageTransition><PremiumActivationLogPage /></PageTransition></AdminRoute>} />
         <Route path="/admin/premium-audit" element={<AdminRoute><PageTransition><PremiumAuditListPage /></PageTransition></AdminRoute>} />
+        <Route path="/admin/webhook-anomalies" element={<AdminRoute><PageTransition><WebhookAnomaliesPage /></PageTransition></AdminRoute>} />
         <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
           </Routes>
         </RoutesWrapper>
