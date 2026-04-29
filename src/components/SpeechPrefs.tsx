@@ -49,6 +49,7 @@ const SpeechPrefs = ({ className = "" }: SpeechPrefsProps) => {
   const [commaPause, setCommaPauseState] = useState<number>(() => getCommaPauseMs());
   const [pitch, setPitchState] = useState<number>(() => getSpeechPitch());
   const [slowKw, setSlowKwState] = useState<boolean>(() => getSlowKeywords());
+  const [silentMode, setSilentModeState] = useState<boolean>(() => getSilentMode());
 
   useEffect(() => {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) {
