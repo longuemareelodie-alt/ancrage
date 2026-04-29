@@ -96,7 +96,11 @@ function lastWordBeforeDot(input: string, dotIndex: number): string {
  * Decide whether the terminator at `i` (one of . ! ? …) is a real sentence
  * boundary in the given context.
  */
-function isSentenceBoundary(input: string, i: number): boolean {
+function isSentenceBoundary(
+  input: string,
+  i: number,
+  abbrevs: ReadonlySet<string>,
+): boolean {
   const ch = input[i];
 
   // ! ? … always end a sentence (even in numbers / abbreviations).
@@ -112,7 +116,7 @@ function isSentenceBoundary(input: string, i: number): boolean {
   // Known abbreviation (checked BEFORE the initials heuristic so that "M.",
   // "Mme.", "Dr." don't get split even when followed by an uppercase name).
   const word = lastWordBeforeDot(input, i).toLowerCase();
-  if (word && FR_ABBREVIATIONS.has(word)) return false;
+  if (word && abbrevs.has(word)) return false;
 
   // Single-letter acronym pattern: "S.O.S.", "U.S.A.", "J.-P.".
   // Trigger: previous char is a single uppercase letter AND the char before
