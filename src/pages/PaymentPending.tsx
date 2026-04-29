@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Loader2, CheckCircle2, AlertCircle, ArrowRight, RefreshCw } from "lucide-react";
+import { Loader2, CheckCircle2, AlertCircle, ArrowRight, RefreshCw, UserX } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { withRetry } from "@/lib/supabaseRetry";
 
-type Status = "pending" | "confirmed" | "error";
+type Status = "pending" | "confirmed" | "error" | "not_found";
 
 const MAX_ATTEMPTS = 30; // ~60s at 2s intervals
 const POLL_INTERVAL_MS = 2000;
