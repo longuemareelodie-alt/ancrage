@@ -260,12 +260,43 @@ const SpeakableText = ({
   };
 
   const handlePause = () => {
-    window.speechSynthesis.pause();
+    // Pause the speech itself.
+    try {
+      window.speechSynthesis.pause();
+    } catch {
+      /* noop */
+    }
+    // Freeze any in-flight silent pause timer so activeIndex doesn't advance
+    // while the user is paused.
+    if (pauseTimerRef.current !== null && pauseDeadlineRef.current !== null) {
+      window.clearTimeout(pauseTimerRef.current);
+      pauseTimerRef.current = null;
+      pauseRemainingRef.current = Math.max(
+        0,
+        pauseDeadlineRef.current - Date.now(),
+      );
+    }
     setState("paused");
   };
 
   const handleResume = () => {
-    window.speechSynthesis.resume();
+    try {
+      window.speechSynthesis.resume();
+    } catch {
+      /* noop */
+    }
+    // Resume a frozen silent pause with its remaining time.
+    if (
+      pauseRemainingRef.current !== null &&
+      pauseAfterRef.current !== null &&
+      pauseTimerRef.current === null
+    ) {
+      const remaining = pauseRemainingRef.current;
+      const after = pauseAfterRef.current;
+      pauseDeadlineRef.current = Date.now() + remaining;
+      pauseRemainingRef.current = null;
+      pauseTimerRef.current = window.setTimeout(after, remaining);
+    }
     setState("speaking");
   };
 
