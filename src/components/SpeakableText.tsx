@@ -65,6 +65,19 @@ const SpeakableText = ({
 
   const fullText = hint ? `${text}. ${hint}` : text;
   const sentences = splitSentences(fullText);
+  const [savedProgress, setSavedProgress] = useState<SpeechProgress | null>(null);
+  const stateRef = useRef<SpeechState>("idle");
+  const elapsedRef = useRef(0);
+  const estimatedTotalRef = useRef(0);
+
+  useEffect(() => { stateRef.current = state; }, [state]);
+  useEffect(() => { elapsedRef.current = elapsed; }, [elapsed]);
+  useEffect(() => { estimatedTotalRef.current = estimatedTotal; }, [estimatedTotal]);
+
+  // Load any saved progress for this text on mount / when text changes.
+  useEffect(() => {
+    setSavedProgress(getProgress(fullText));
+  }, [fullText]);
 
   useEffect(() => {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) {
