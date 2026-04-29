@@ -74,6 +74,7 @@ const SpeakableText = ({
   const sentenceSegmentStartRef = useRef<number[]>([]); // first segment index per sentence
   const cursorRef = useRef(0); // current segment index
   const sentenceCursorRef = useRef(0);
+  const playNextRef = useRef<(() => void) | null>(null);
 
   const fullText = hint ? `${text}. ${hint}` : text;
   const sentences = splitSentences(fullText);
