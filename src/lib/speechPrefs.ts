@@ -37,6 +37,18 @@ export const LANG_LABELS: Record<SpeechLang, string> = {
 
 export const LANG_OPTIONS: SpeechLang[] = ["fr-FR", "fr-CA", "en-US"];
 
+/** Normalize an arbitrary BCP-47 tag onto a supported SpeechLang. */
+export function normalizeSpeechLang(lang: string | undefined | null): SpeechLang {
+  if (!lang) return getSpeechLang();
+  const lower = lang.toLowerCase();
+  if (lower === "fr-fr") return "fr-FR";
+  if (lower === "fr-ca") return "fr-CA";
+  if (lower === "en-us") return "en-US";
+  if (lower.startsWith("fr")) return "fr-FR";
+  if (lower.startsWith("en")) return "en-US";
+  return getSpeechLang();
+}
+
 export function getSpeechLang(): SpeechLang {
   if (typeof window === "undefined") return "fr-FR";
   const v = localStorage.getItem(LANG_KEY);
