@@ -104,10 +104,10 @@ const PaymentSuccess = () => {
           transition={{ delay: 0.8, duration: 0.5 }}
         >
           <Link
-            to="/dashboard"
+            to={hasPendingCheckin ? "/checkin" : "/dashboard"}
             className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-8 py-4 text-base font-semibold text-primary-foreground shadow-lg shadow-primary/25 transition-transform hover:scale-[1.02] active:scale-[0.98]"
           >
-            Commencer maintenant
+            {hasPendingCheckin ? "Reprendre mon check-in" : "Commencer maintenant"}
             <ArrowRight className="h-4 w-4" />
           </Link>
         </motion.div>
