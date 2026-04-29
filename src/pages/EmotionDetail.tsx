@@ -15,6 +15,10 @@ import {
   getStyleVariant,
   hasStyleVariants,
 } from "@/data/emotionStyleVariants";
+import {
+  resolveAutoStyleFromToday,
+  type ResolvedStyle,
+} from "@/lib/autoStyle";
 
 const STYLE_OPTIONS: {
   value: ActionStyle;
@@ -23,8 +27,13 @@ const STYLE_OPTIONS: {
 }[] = [
   { value: "breathing", label: "Respiration", Icon: Wind },
   { value: "sensory", label: "Sensoriel", Icon: Hand },
-  { value: "any", label: "Au choix", Icon: Sparkles },
+  { value: "any", label: "Au choix (auto)", Icon: Sparkles },
 ];
+
+const RESOLVED_LABEL: Record<ResolvedStyle, string> = {
+  breathing: "Respiration",
+  sensory: "Sensoriel",
+};
 
 const EmotionDetail = () => {
   const { emotion } = useParams<{ emotion: string }>();
