@@ -97,15 +97,52 @@ const EmotionDetail = () => {
 
   const toSteps = (arr: string[]): Step[] => arr.map((text) => ({ text }));
 
-  // Effective style: if user picked "any", use the auto-resolved one (or
-  // fall back to i18n until it loads).
+  // Tag steps with the style they belong to (breathing or sensory) so each
+  // card knows what it represents — needed for "any" alternation.
+  type TaggedStep = Step & { stepStyle?: "breathing" | "sensory" };
+  const tag = (steps: Step[], stepStyle: "breathing" | "sensory"): TaggedStep[] =>
+    steps.map((s) => ({ ...s, stepStyle }));
+
+  /**
+   * Build the alternating list when style === "any":
+   * starts with the dominant style (auto-resolved from today's mood) then
+   * zips the other one — so each card flips between breathing and sensory.
+   */
+  const buildAlternating = (
+    breathing: Step[],
+    sensory: Step[],
+    dominant: "breathing" | "sensory",
+  ): TaggedStep[] => {
+    const first = dominant === "breathing" ? tag(breathing, "breathing") : tag(sensory, "sensory");
+    const second = dominant === "breathing" ? tag(sensory, "sensory") : tag(breathing, "breathing");
+    const max = Math.max(first.length, second.length);
+    const out: TaggedStep[] = [];
+    for (let i = 0; i < max; i++) {
+      if (first[i]) out.push(first[i]);
+      if (second[i]) out.push(second[i]);
+    }
+    return out;
+  };
+
+  const supportsVariants = hasStyleVariants(key);
+  const variants = supportsVariants ? EMOTION_STYLE_VARIANTS[key] : null;
+
+  // Effective style for header/recording: when "any", we pick the dominant
+  // (auto-resolved) one but actual cards may alternate.
   const effectiveStyle: ActionStyle =
     style === "any" ? (autoResolved ?? "any") : style;
 
-  const variant = getStyleVariant(key, effectiveStyle);
-  const freeSteps: Step[] = variant?.free ?? toSteps(i18nFreeRaw);
-  const lockedSteps: Step[] = variant?.locked ?? toSteps(i18nLockedRaw);
-  const supportsVariants = hasStyleVariants(key);
+  let freeSteps: TaggedStep[];
+  let lockedSteps: TaggedStep[];
+
+  if (variants && style === "any" && autoResolved) {
+    freeSteps = buildAlternating(variants.breathing.free, variants.sensory.free, autoResolved);
+    lockedSteps = buildAlternating(variants.breathing.locked, variants.sensory.locked, autoResolved);
+  } else {
+    const variant = getStyleVariant(key, effectiveStyle);
+    freeSteps = variant ? tag(variant.free, effectiveStyle as "breathing" | "sensory") : toSteps(i18nFreeRaw);
+    lockedSteps = variant ? tag(variant.locked, effectiveStyle as "breathing" | "sensory") : toSteps(i18nLockedRaw);
+  }
 
   // Record the resolved style as the last one used (only when it's a real
   // variant page so we know which side won).
