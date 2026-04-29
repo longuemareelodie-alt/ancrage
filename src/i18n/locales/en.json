@@ -119,15 +119,42 @@
     "section_negative": "What's coming up",
     "section_positive": "What feels better",
     "list": {
-      "panique": { "label": "I'm panicking", "hook": "Your body is trying to protect you" },
-      "hypervigilance": { "label": "Hypervigilance", "hook": "Your system stayed on alert" },
-      "rumination": { "label": "Rumination", "hook": "Your mind is looking for a way out" },
-      "explosion": { "label": "Explosion", "hook": "The pressure is too much" },
-      "vide": { "label": "Empty", "hook": "Your system shut down to hold on" },
-      "epuisee": { "label": "Exhausted", "hook": "You've given too much" },
-      "calme": { "label": "Calmer", "hook": "You can enjoy this moment" },
-      "apaisee": { "label": "Soothed", "hook": "Keep it inside you" },
-      "fiere": { "label": "Proud of myself", "hook": "You deserve to feel it" }
+      "panique": {
+        "label": "I'm panicking",
+        "hook": "Your body is trying to protect you"
+      },
+      "hypervigilance": {
+        "label": "Hypervigilance",
+        "hook": "Your system stayed on alert"
+      },
+      "rumination": {
+        "label": "Rumination",
+        "hook": "Your mind is looking for a way out"
+      },
+      "explosion": {
+        "label": "Explosion",
+        "hook": "The pressure is too much"
+      },
+      "vide": {
+        "label": "Empty",
+        "hook": "Your system shut down to hold on"
+      },
+      "epuisee": {
+        "label": "Exhausted",
+        "hook": "You've given too much"
+      },
+      "calme": {
+        "label": "Calmer",
+        "hook": "You can enjoy this moment"
+      },
+      "apaisee": {
+        "label": "Soothed",
+        "hook": "Keep it inside you"
+      },
+      "fiere": {
+        "label": "Proud of myself",
+        "hook": "You deserve to feel it"
+      }
     }
   },
   "emotion_detail": {
@@ -144,30 +171,297 @@
     "after_p2": "👉 and that already changes everything",
     "next": "What now?",
     "data": {
-      "panique": { "title": "You're panicking", "validation": "Your body is trying to protect you.", "free": ["Look around you", "Name 5 objects"], "locked": ["Place a hand on your heart", "Breathe in slowly", "Breathe out longer"] },
-      "hypervigilance": { "title": "Your body is hypervigilant", "validation": "Your system stayed on alert.", "free": ["Look at 3 things", "Listen for 2 sounds"], "locked": ["Touch an object", "Drop your shoulders", "Breathe slowly"] },
-      "rumination": { "title": "Your mind is in a loop", "validation": "Your brain is looking for a way out.", "free": ["Look at a fixed point", "Breathe slowly"], "locked": ["Say \"stop\" inside"] },
-      "explosion": { "title": "The pressure is too much", "validation": "The pressure is too much.", "free": ["Clench your fists", "Release"], "locked": ["Press your feet down", "Breathe deeply"] },
-      "vide": { "title": "You feel empty", "validation": "Your system shut down to cope.", "free": ["Move your hands", "Touch a surface"], "locked": ["Drink water", "Breathe"] },
-      "epuisee": { "title": "You're exhausted", "validation": "Your nervous system has given too much.", "free": ["Place your hand on your heart", "Feel your breathing"], "locked": ["Close your eyes", "Release every muscle", "Stay 1 minute"] },
-      "calme": { "title": "You feel calmer", "validation": "Your nervous system is settling.", "free": ["Close your eyes", "Breathe slowly 3 times"], "locked": ["Smile gently", "Savour this moment"] },
-      "apaisee": { "title": "You feel soothed", "validation": "Your body has found a safe space.", "free": ["Breathe in deeply", "Think of one positive thing"], "locked": ["Breathe out with gratitude", "Stay in this moment"] },
-      "fiere": { "title": "You're proud of yourself", "validation": "Your system recognises you did something hard.", "free": ["Smile", "Place your hand on your heart"], "locked": ["Say \"well done\"", "Celebrate silently"] },
-      "anxieuse": { "title": "You're anxious", "validation": "Your nervous system is on alert.", "free": ["Breathe in 4 seconds", "Breathe out 6 seconds"], "locked": ["Repeat 5 times", "Plant your feet on the ground", "Feel the contact"] },
-      "oppressee": { "title": "You feel pressed down", "validation": "Your body carries a load it can no longer hold.", "free": ["Open your arms wide", "Stretch"], "locked": ["Breathe deeply 5 times", "Drop your shoulders"] },
-      "submergee": { "title": "You feel overwhelmed", "validation": "Too much information, too much load.", "free": ["Plant both feet on the ground", "Name 3 things you see"], "locked": ["Breathe slowly", "Close your eyes for 30 seconds"] },
-      "triste": { "title": "You're sad", "validation": "Sadness is a healthy emotion.", "free": ["Cross your arms over your chest", "Squeeze gently"], "locked": ["Breathe", "Let the emotion pass"] },
-      "colere": { "title": "You feel angry", "validation": "Anger protects a wound.", "free": ["Clench your fists hard for 5 seconds", "Release"], "locked": ["Repeat 5 times", "Breathe out long"] },
-      "perdue": { "title": "You feel lost", "validation": "Your brain is searching for direction but there's too much noise.", "free": ["Look at a fixed point", "Breathe slowly"], "locked": ["Write one thought", "Put down the phone"] },
-      "surmenage": { "title": "You're mentally overworked", "validation": "Your brain is in a loop.", "free": ["Note 3 thoughts spinning", "Put down the phone"], "locked": ["Breathe 5 times", "Close your eyes"] },
-      "survie": { "title": "You're in survival mode", "validation": "Your nervous system is stuck in permanent alert.", "free": ["Breathe in 3 seconds", "Breathe out 8 seconds"], "locked": ["Repeat 4 times", "Release your whole body"] },
-      "stable": { "title": "You feel stable", "validation": "Your nervous system is centred.", "free": ["Plant your feet", "Feel your body"], "locked": ["Say \"I am here\"", "Stay a moment"] },
-      "mieux": { "title": "You feel slightly better", "validation": "Even a little better is a huge signal.", "free": ["Tell yourself \"I'm getting better\"", "Breathe"], "locked": ["Note this progress", "Smile"] },
-      "soulagee": { "title": "You feel relieved", "validation": "Relief comes when the pressure eases.", "free": ["A big sigh", "Let it all out"], "locked": ["Do it again", "Breathe deeply"] },
-      "claire": { "title": "You feel clearer", "validation": "Mental clarity is returning.", "free": ["Note one thing to do today", "Just one"], "locked": ["Breathe", "Anchor this clarity"] },
-      "securite": { "title": "You feel safe", "validation": "Feeling safe is the deepest signal of regulation.", "free": ["Do nothing", "Just breathe"], "locked": ["Enjoy", "Stay here a moment"] },
-      "connectee": { "title": "You feel connected to yourself", "validation": "You hear your needs without judging them.", "free": ["Scan your body head to toe", "Where do you feel good?"], "locked": ["Stay with this sensation", "Breathe"] },
-      "presente": { "title": "You're present", "validation": "Being present is the opposite of dissociation.", "free": ["Name 3 beautiful things around you", "Smile"], "locked": ["Breathe", "Savour the moment"] }
+      "panique": {
+        "title": "You're panicking",
+        "validation": "Your body is trying to protect you.",
+        "free": [
+          "Look around you",
+          "Name 5 objects"
+        ],
+        "locked": [
+          "Place a hand on your heart",
+          "Breathe in slowly",
+          "Breathe out longer"
+        ]
+      },
+      "hypervigilance": {
+        "title": "Your body is hypervigilant",
+        "validation": "Your system stayed on alert.",
+        "free": [
+          "Look at 3 things",
+          "Listen for 2 sounds"
+        ],
+        "locked": [
+          "Touch an object",
+          "Drop your shoulders",
+          "Breathe slowly"
+        ]
+      },
+      "rumination": {
+        "title": "Your mind is in a loop",
+        "validation": "Your brain is looking for a way out.",
+        "free": [
+          "Look at a fixed point",
+          "Breathe slowly"
+        ],
+        "locked": [
+          "Say \"stop\" inside"
+        ]
+      },
+      "explosion": {
+        "title": "The pressure is too much",
+        "validation": "The pressure is too much.",
+        "free": [
+          "Clench your fists",
+          "Release"
+        ],
+        "locked": [
+          "Press your feet down",
+          "Breathe deeply"
+        ]
+      },
+      "vide": {
+        "title": "You feel empty",
+        "validation": "Your system shut down to cope.",
+        "free": [
+          "Move your hands",
+          "Touch a surface"
+        ],
+        "locked": [
+          "Drink water",
+          "Breathe"
+        ]
+      },
+      "epuisee": {
+        "title": "You're exhausted",
+        "validation": "Your nervous system has given too much.",
+        "free": [
+          "Place your hand on your heart",
+          "Feel your breathing"
+        ],
+        "locked": [
+          "Close your eyes",
+          "Release every muscle",
+          "Stay 1 minute"
+        ]
+      },
+      "calme": {
+        "title": "You feel calmer",
+        "validation": "Your nervous system is settling.",
+        "free": [
+          "Close your eyes",
+          "Breathe slowly 3 times"
+        ],
+        "locked": [
+          "Smile gently",
+          "Savour this moment"
+        ]
+      },
+      "apaisee": {
+        "title": "You feel soothed",
+        "validation": "Your body has found a safe space.",
+        "free": [
+          "Breathe in deeply",
+          "Think of one positive thing"
+        ],
+        "locked": [
+          "Breathe out with gratitude",
+          "Stay in this moment"
+        ]
+      },
+      "fiere": {
+        "title": "You're proud of yourself",
+        "validation": "Your system recognises you did something hard.",
+        "free": [
+          "Smile",
+          "Place your hand on your heart"
+        ],
+        "locked": [
+          "Say \"well done\"",
+          "Celebrate silently"
+        ]
+      },
+      "anxieuse": {
+        "title": "You're anxious",
+        "validation": "Your nervous system is on alert.",
+        "free": [
+          "Breathe in 4 seconds",
+          "Breathe out 6 seconds"
+        ],
+        "locked": [
+          "Repeat 5 times",
+          "Plant your feet on the ground",
+          "Feel the contact"
+        ]
+      },
+      "oppressee": {
+        "title": "You feel pressed down",
+        "validation": "Your body carries a load it can no longer hold.",
+        "free": [
+          "Open your arms wide",
+          "Stretch"
+        ],
+        "locked": [
+          "Breathe deeply 5 times",
+          "Drop your shoulders"
+        ]
+      },
+      "submergee": {
+        "title": "You feel overwhelmed",
+        "validation": "Too much information, too much load.",
+        "free": [
+          "Plant both feet on the ground",
+          "Name 3 things you see"
+        ],
+        "locked": [
+          "Breathe slowly",
+          "Close your eyes for 30 seconds"
+        ]
+      },
+      "triste": {
+        "title": "You're sad",
+        "validation": "Sadness is a healthy emotion.",
+        "free": [
+          "Cross your arms over your chest",
+          "Squeeze gently"
+        ],
+        "locked": [
+          "Breathe",
+          "Let the emotion pass"
+        ]
+      },
+      "colere": {
+        "title": "You feel angry",
+        "validation": "Anger protects a wound.",
+        "free": [
+          "Clench your fists hard for 5 seconds",
+          "Release"
+        ],
+        "locked": [
+          "Repeat 5 times",
+          "Breathe out long"
+        ]
+      },
+      "perdue": {
+        "title": "You feel lost",
+        "validation": "Your brain is searching for direction but there's too much noise.",
+        "free": [
+          "Look at a fixed point",
+          "Breathe slowly"
+        ],
+        "locked": [
+          "Write one thought",
+          "Put down the phone"
+        ]
+      },
+      "surmenage": {
+        "title": "You're mentally overworked",
+        "validation": "Your brain is in a loop.",
+        "free": [
+          "Note 3 thoughts spinning",
+          "Put down the phone"
+        ],
+        "locked": [
+          "Breathe 5 times",
+          "Close your eyes"
+        ]
+      },
+      "survie": {
+        "title": "You're in survival mode",
+        "validation": "Your nervous system is stuck in permanent alert.",
+        "free": [
+          "Breathe in 3 seconds",
+          "Breathe out 8 seconds"
+        ],
+        "locked": [
+          "Repeat 4 times",
+          "Release your whole body"
+        ]
+      },
+      "stable": {
+        "title": "You feel stable",
+        "validation": "Your nervous system is centred.",
+        "free": [
+          "Plant your feet",
+          "Feel your body"
+        ],
+        "locked": [
+          "Say \"I am here\"",
+          "Stay a moment"
+        ]
+      },
+      "mieux": {
+        "title": "You feel slightly better",
+        "validation": "Even a little better is a huge signal.",
+        "free": [
+          "Tell yourself \"I'm getting better\"",
+          "Breathe"
+        ],
+        "locked": [
+          "Note this progress",
+          "Smile"
+        ]
+      },
+      "soulagee": {
+        "title": "You feel relieved",
+        "validation": "Relief comes when the pressure eases.",
+        "free": [
+          "A big sigh",
+          "Let it all out"
+        ],
+        "locked": [
+          "Do it again",
+          "Breathe deeply"
+        ]
+      },
+      "claire": {
+        "title": "You feel clearer",
+        "validation": "Mental clarity is returning.",
+        "free": [
+          "Note one thing to do today",
+          "Just one"
+        ],
+        "locked": [
+          "Breathe",
+          "Anchor this clarity"
+        ]
+      },
+      "securite": {
+        "title": "You feel safe",
+        "validation": "Feeling safe is the deepest signal of regulation.",
+        "free": [
+          "Do nothing",
+          "Just breathe"
+        ],
+        "locked": [
+          "Enjoy",
+          "Stay here a moment"
+        ]
+      },
+      "connectee": {
+        "title": "You feel connected to yourself",
+        "validation": "You hear your needs without judging them.",
+        "free": [
+          "Scan your body head to toe",
+          "Where do you feel good?"
+        ],
+        "locked": [
+          "Stay with this sensation",
+          "Breathe"
+        ]
+      },
+      "presente": {
+        "title": "You're present",
+        "validation": "Being present is the opposite of dissociation.",
+        "free": [
+          "Name 3 beautiful things around you",
+          "Smile"
+        ],
+        "locked": [
+          "Breathe",
+          "Savour the moment"
+        ]
+      }
     }
   },
   "contextual_faq": {
@@ -233,6 +527,16 @@
       "badges": "Badges and progress",
       "journey": "4-phase journey",
       "lifetime": "Lifetime access — no subscription"
+    },
+    "lifetime_box": {
+      "title": "Lifetime access after your one-time payment",
+      "text": "You pay €39 once. As soon as the payment is confirmed, all of Ancrage is unlocked in your account — forever.",
+      "bullet_one_payment": "One single €39 payment",
+      "bullet_no_renewal": "No subscription, nothing to renew",
+      "bullet_all_devices": "On all your devices, for life",
+      "active_title": "Your lifetime access is active 💛",
+      "active_text": "You've already paid. All of Ancrage is unlocked in your account, for life.",
+      "active_cta": "Go to my space"
     }
   },
   "emergency": {
