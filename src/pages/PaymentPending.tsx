@@ -337,6 +337,7 @@ const PaymentPending = () => {
                     <RefreshCw className="h-4 w-4" />
                     {t("payment_pending.error.retry")}
                   </button>
+                  {screenshotButton}
                   <a
                     href={mailto}
                     className="inline-flex w-full items-center justify-center gap-2 rounded-xl border px-6 py-3 text-sm font-medium"
