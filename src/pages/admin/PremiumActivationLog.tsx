@@ -136,13 +136,21 @@ const PremiumActivationLog = () => {
 
   return (
     <main className="container mx-auto max-w-6xl px-4 py-8 pb-32">
-      <header className="mb-6">
-        <h1 className="text-3xl font-bold tracking-tight">
-          {t("admin.premium_log.title")}
-        </h1>
-        <p className="text-muted-foreground mt-1">
-          {t("admin.premium_log.subtitle")}
-        </p>
+      <header className="mb-6 flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">
+            {t("admin.premium_log.title")}
+          </h1>
+          <p className="text-muted-foreground mt-1">
+            {t("admin.premium_log.subtitle")}
+          </p>
+        </div>
+        <Button variant="outline" asChild>
+          <a href="/admin/premium-audit">
+            <AlertCircle className="h-4 w-4 mr-2" />
+            Vue des incohérences
+          </a>
+        </Button>
       </header>
 
       <PremiumAuditPanel />
