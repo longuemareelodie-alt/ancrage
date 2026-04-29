@@ -29,12 +29,64 @@ interface FailureRow {
   payment_id: string | null;
   message: string | null;
   created_at: string;
+  user_id: string | null;
+  user_email?: string | null;
+  raw?: unknown;
 }
 
-async function sendSlackAlert(text: string, failures: FailureRow[]) {
+interface AlertContext {
+  firstErrorAt: string | null;
+  lastErrorAt: string | null;
+  lastPayload: unknown;
+  lastPayloadAt: string | null;
+  lastPaymentId: string | null;
+  lastUserId: string | null;
+  lastUserEmail: string | null;
+}
+
+function buildContext(failures: FailureRow[]): AlertContext {
+  if (failures.length === 0) {
+    return {
+      firstErrorAt: null, lastErrorAt: null, lastPayload: null, lastPayloadAt: null,
+      lastPaymentId: null, lastUserId: null, lastUserEmail: null,
+    };
+  }
+  // failures arrive ordered desc by created_at
+  const last = failures[0];
+  const first = failures[failures.length - 1];
+  const withPayload = failures.find((f) => f.raw != null);
+  return {
+    firstErrorAt: first.created_at,
+    lastErrorAt: last.created_at,
+    lastPayload: withPayload?.raw ?? null,
+    lastPayloadAt: withPayload?.created_at ?? null,
+    lastPaymentId: last.payment_id,
+    lastUserId: last.user_id,
+    lastUserEmail: last.user_email ?? null,
+  };
+}
+
+function truncate(s: string, n: number) {
+  return s.length > n ? s.slice(0, n) + "…(truncated)" : s;
+}
+
+async function sendSlackAlert(text: string, failures: FailureRow[], ctx: AlertContext) {
   if (!SLACK_WEBHOOK_URL) return { skipped: true };
-  const blocks = [
+
+  const fields = [
+    `*Last payment_id:* \`${ctx.lastPaymentId ?? "—"}\``,
+    `*Last user:* ${ctx.lastUserEmail ? `\`${ctx.lastUserEmail}\`` : "—"}${ctx.lastUserId ? ` (\`${ctx.lastUserId}\`)` : ""}`,
+    `*First error:* ${ctx.firstErrorAt ?? "—"}`,
+    `*Last error:* ${ctx.lastErrorAt ?? "—"}`,
+  ].join("\n");
+
+  const payloadText = ctx.lastPayload
+    ? truncate(JSON.stringify(ctx.lastPayload, null, 2), 2500)
+    : "— aucun payload Mollie capturé —";
+
+  const blocks: Array<Record<string, unknown>> = [
     { type: "section", text: { type: "mrkdwn", text } },
+    { type: "section", text: { type: "mrkdwn", text: fields } },
     {
       type: "section",
       text: {
@@ -47,9 +99,16 @@ async function sendSlackAlert(text: string, failures: FailureRow[]) {
               (f) =>
                 `• \`${f.status}\` · ${new Date(f.created_at).toISOString()} · ${
                   f.payment_id ?? "no payment_id"
-                } · ${f.message ?? ""}`,
+                } · ${f.user_email ?? f.user_id ?? "no user"} · ${f.message ?? ""}`,
             )
             .join("\n"),
+      },
+    },
+    {
+      type: "section",
+      text: {
+        type: "mrkdwn",
+        text: `*Dernier payload Mollie reçu* (${ctx.lastPayloadAt ?? "n/a"}):\n\`\`\`${payloadText}\`\`\``,
       },
     },
   ];
