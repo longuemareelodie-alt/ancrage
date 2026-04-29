@@ -134,6 +134,33 @@ const Checkin = () => {
     };
   }, [user, isPaid]);
 
+  // Polling discret sur l'écran teaser : tant que la personne attend la
+  // confirmation du paiement Mollie, on re-vérifie son éligibilité toutes
+  // les 4 secondes. Dès que isPaid bascule à true, l'effet de reprise
+  // ci-dessus enregistre le check-in et passe à l'exercice automatiquement.
+  useEffect(() => {
+    if (step !== "teaser") return;
+    if (!user) return;
+    if (isPaid) return;
+    if (typeof document !== "undefined" && document.visibilityState === "hidden") return;
+
+    const interval = window.setInterval(() => {
+      void refreshEligibility();
+    }, 4000);
+
+    const onVisibility = () => {
+      if (document.visibilityState === "visible") {
+        void refreshEligibility();
+      }
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+
+    return () => {
+      window.clearInterval(interval);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
+  }, [step, user, isPaid, refreshEligibility]);
+
   const negativeEmotions = emotions.filter((e) => e.type === "negative");
   const positiveEmotions = emotions.filter((e) => e.type === "positive");
 
