@@ -111,6 +111,7 @@ const AnimatedRoutes = () => {
         <Route path="/fiche-urgence/:token" element={<PageTransition><FicheUrgencePublique /></PageTransition>} />
         <Route path="/unsubscribe" element={<PageTransition><Unsubscribe /></PageTransition>} />
         <Route path="/admin/premium-log" element={<AdminRoute><PageTransition><PremiumActivationLogPage /></PageTransition></AdminRoute>} />
+        <Route path="/admin/premium-audit" element={<AdminRoute><PageTransition><PremiumAuditListPage /></PageTransition></AdminRoute>} />
         <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
           </Routes>
         </RoutesWrapper>
