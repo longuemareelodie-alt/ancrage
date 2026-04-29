@@ -214,6 +214,18 @@ export function setSilentMode(enabled: boolean) {
   window.dispatchEvent(new CustomEvent("calm-speech-prefs-change"));
 }
 
+export function getFocusFollow(): boolean {
+  if (typeof window === "undefined") return FOCUS_FOLLOW_DEFAULT;
+  const v = localStorage.getItem(FOCUS_FOLLOW_KEY);
+  if (v === null) return FOCUS_FOLLOW_DEFAULT;
+  return v === "1";
+}
+export function setFocusFollow(enabled: boolean) {
+  if (typeof window === "undefined") return;
+  localStorage.setItem(FOCUS_FOLLOW_KEY, enabled ? "1" : "0");
+  window.dispatchEvent(new CustomEvent("calm-speech-prefs-change"));
+}
+
 /**
  * Découpe un texte en segments destinés à être prononcés séquentiellement,
  * en insérant des pauses (silences) et en ralentissant les mots-clés respiration.
