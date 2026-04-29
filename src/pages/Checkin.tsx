@@ -137,6 +137,9 @@ const Checkin = () => {
   };
 
   const handleUnlock = () => {
+    if (selected) {
+      writePendingCheckin(selected.id);
+    }
     if (!user) {
       navigate("/auth?redirect=/checkin&action=pay");
       return;
