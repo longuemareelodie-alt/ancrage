@@ -250,6 +250,11 @@ const EmotionDetail = () => {
                       hint={step.hint}
                       textClassName="pt-0.5"
                     />
+                    {step.hint && (
+                      <p className="mt-1 text-xs italic text-muted-foreground">
+                        {step.hint}
+                      </p>
+                    )}
                   </div>
                   {style === "any" && step.stepStyle && (
                     <span
