@@ -70,8 +70,8 @@ export function getSpeechLang(): SpeechLang {
 export function setSpeechLang(lang: SpeechLang) {
   if (typeof window === "undefined") return;
   localStorage.setItem(LANG_KEY, lang);
-  // Reset voice — saved voice may not match the new language.
-  localStorage.removeItem(VOICE_KEY);
+  // Voice is now stored per-language, so switching language no longer wipes
+  // the saved voice — each language remembers its own (or its fallback).
   window.dispatchEvent(new CustomEvent("calm-speech-prefs-change"));
 }
 
