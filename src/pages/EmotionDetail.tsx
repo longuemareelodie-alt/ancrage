@@ -15,6 +15,7 @@ import {
 import {
   getStyleVariant,
   hasStyleVariants,
+  EMOTION_STYLE_VARIANTS,
   type Step,
 } from "@/data/emotionStyleVariants";
 import {
