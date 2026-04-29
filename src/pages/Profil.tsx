@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import SectionBlock from "@/components/SectionBlock";
 import CTAButton from "@/components/CTAButton";
 import { motion, AnimatePresence } from "framer-motion";
-import { LogOut, Plus, Trash2, Save, User, BookOpen, StickyNote, Lock, Pencil, Check, Bell, BellOff, Flame, Trophy, Download, Share, CreditCard, Wind, Hand, Sparkles, ChevronRight } from "lucide-react";
+import { LogOut, Plus, Trash2, Save, User, BookOpen, StickyNote, Lock, Pencil, Check, Bell, BellOff, Flame, Trophy, Download, Share, CreditCard, Wind, Hand, Sparkles, ChevronRight, AlertCircle, MessageCircle, Crown } from "lucide-react";
 import { ActionStyle, ACTION_STYLE_LABELS, getActionStyle } from "@/lib/actionStyle";
 import { Progress } from "@/components/ui/progress";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
@@ -18,6 +18,7 @@ import DataActions from "@/components/DataActions";
 import StyleSyncStatus from "@/components/StyleSyncStatus";
 import SpeechPrefs from "@/components/SpeechPrefs";
 import PronunciationLexicon from "@/components/PronunciationLexicon";
+import SupportContactDialog from "@/components/SupportContactDialog";
 interface Note {
   id: string;
   title: string;
@@ -30,6 +31,12 @@ const Profil = () => {
   const navigate = useNavigate();
   const { isSupported, isSubscribed, subscribe, unsubscribe, loading: pushLoading } = usePushNotifications();
   const [profile, setProfile] = useState<{ first_name: string; email: string | null; is_premium: boolean; current_streak: number; longest_streak: number } | null>(null);
+  const [profileLoadError, setProfileLoadError] = useState<string | null>(null);
+  const [profileLoaded, setProfileLoaded] = useState(false);
+  const [supportOpen, setSupportOpen] = useState(false);
+  const [profileTicketId] = useState<string>(
+    () => `PROF-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`,
+  );
   const [completedPhases, setCompletedPhases] = useState<number[]>([]);
   const [earnedBadges, setEarnedBadges] = useState<string[]>([]);
   const [checkinDates, setCheckinDates] = useState<Set<string>>(new Set());
