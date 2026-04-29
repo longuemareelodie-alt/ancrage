@@ -2,7 +2,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { AlertTriangle, RefreshCw, Loader2 } from "lucide-react";
+import { AlertTriangle, RefreshCw, Loader2, Mail } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { withRetry } from "@/lib/supabaseRetry";
 import { isGrandfatheredAccount } from "@/lib/paywallPolicy";
@@ -112,6 +112,35 @@ const PaidRoute = ({ children }: { children: React.ReactNode }) => {
             <RefreshCw className="h-4 w-4" />
             {t("paid_route.retry", "Réessayer")}
           </button>
+          {(() => {
+            const subject = t(
+              "paid_route.support_subject",
+              "Problème d'accès à mon compte",
+            );
+            const bodyLines = [
+              t(
+                "paid_route.support_body_intro",
+                "Bonjour, je rencontre un problème pour vérifier l'accès à mon compte.",
+              ),
+              "",
+              `User ID : ${user?.id ?? "—"}`,
+              `Email : ${user?.email ?? "—"}`,
+              `URL : ${typeof window !== "undefined" ? window.location.href : "—"}`,
+              `Date : ${new Date().toISOString()}`,
+            ];
+            const href = `mailto:contact@digitalmamanlibre.com?subject=${encodeURIComponent(
+              subject,
+            )}&body=${encodeURIComponent(bodyLines.join("\n"))}`;
+            return (
+              <a
+                href={href}
+                className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-border bg-background px-5 py-2.5 text-sm font-semibold text-foreground hover:bg-muted"
+              >
+                <Mail className="h-4 w-4" />
+                {t("paid_route.contact_support", "Contacter le support")}
+              </a>
+            );
+          })()}
         </div>
       </div>
     );
