@@ -181,12 +181,41 @@ const EmotionDetail = () => {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: i * 0.1 }}
-              className="flex items-center gap-4 rounded-xl bg-card p-4 shadow-sm"
+              className="flex items-start gap-4 rounded-xl bg-card p-4 shadow-sm"
             >
               <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
                 {i + 1}
               </span>
-              <span>{step}</span>
+              <span className="flex-1 pt-0.5">{step}</span>
+              {supportsVariants && (
+                <div
+                  role="radiogroup"
+                  aria-label="Style d'exercice"
+                  className="flex shrink-0 gap-1"
+                >
+                  {STYLE_OPTIONS.map(({ value, label, Icon }) => {
+                    const active = style === value;
+                    return (
+                      <button
+                        key={value}
+                        type="button"
+                        role="radio"
+                        aria-checked={active}
+                        aria-label={label}
+                        title={label}
+                        onClick={() => handleStyleChange(value)}
+                        className={`flex h-7 w-7 items-center justify-center rounded-full border transition-colors ${
+                          active
+                            ? "border-primary bg-primary text-primary-foreground"
+                            : "border-border bg-background text-muted-foreground hover:bg-muted"
+                        }`}
+                      >
+                        <Icon className="h-3.5 w-3.5" />
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </motion.div>
           ))}
         </div>
