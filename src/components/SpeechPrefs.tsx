@@ -39,8 +39,12 @@ interface SpeechPrefsProps {
   className?: string;
 }
 
+type VoiceMatch = "exact" | "fallback" | "none";
+
 const SpeechPrefs = ({ className = "" }: SpeechPrefsProps) => {
-  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const [exactVoices, setExactVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const [fallbackVoices, setFallbackVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const [match, setMatch] = useState<VoiceMatch>("exact");
   const [voiceURI, setVoiceURI] = useState<string | null>(() => getSpeechVoiceURI());
   const [rate, setRate] = useState<SpeechRate>(() => getSpeechRate());
   const [lang, setLang] = useState<SpeechLang>(() => getSpeechLang());
@@ -51,6 +55,9 @@ const SpeechPrefs = ({ className = "" }: SpeechPrefsProps) => {
   const [slowKw, setSlowKwState] = useState<boolean>(() => getSlowKeywords());
   const [silentMode, setSilentModeState] = useState<boolean>(() => getSilentMode());
 
+  // Combined list (used by handleVoiceChange to find an actual voice).
+  const voices = [...exactVoices, ...fallbackVoices];
+
   useEffect(() => {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) {
       setSupported(false);
@@ -60,15 +67,16 @@ const SpeechPrefs = ({ className = "" }: SpeechPrefsProps) => {
     loadVoices().then((all) => {
       if (cancelled) return;
       const lower = lang.toLowerCase();
-      // Match exact locale first; fall back to primary language.
-      const exact = all.filter((v) => v.lang.toLowerCase() === lower);
-      if (exact.length > 0) {
-        setVoices(exact);
-        return;
-      }
       const primary = lower.split("-")[0];
-      const sameLang = all.filter((v) => v.lang.toLowerCase().startsWith(primary));
-      setVoices(sameLang.length > 0 ? sameLang : all);
+      const exact = all.filter((v) => v.lang.toLowerCase() === lower);
+      const sameLang = all.filter(
+        (v) => v.lang.toLowerCase() !== lower && v.lang.toLowerCase().startsWith(primary),
+      );
+      setExactVoices(exact);
+      setFallbackVoices(sameLang);
+      if (exact.length > 0) setMatch("exact");
+      else if (sameLang.length > 0) setMatch("fallback");
+      else setMatch("none");
     });
     return () => {
       cancelled = true;
