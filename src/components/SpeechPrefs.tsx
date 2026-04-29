@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Volume2, Gauge, Languages, Music2, Pause as PauseIcon, Wind, Eye } from "lucide-react";
+import { Volume2, Gauge, Languages, Music2, Pause as PauseIcon, Wind, Eye, AlertTriangle } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -39,8 +39,12 @@ interface SpeechPrefsProps {
   className?: string;
 }
 
+type VoiceMatch = "exact" | "fallback" | "none";
+
 const SpeechPrefs = ({ className = "" }: SpeechPrefsProps) => {
-  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const [exactVoices, setExactVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const [fallbackVoices, setFallbackVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const [match, setMatch] = useState<VoiceMatch>("exact");
   const [voiceURI, setVoiceURI] = useState<string | null>(() => getSpeechVoiceURI());
   const [rate, setRate] = useState<SpeechRate>(() => getSpeechRate());
   const [lang, setLang] = useState<SpeechLang>(() => getSpeechLang());
@@ -51,6 +55,9 @@ const SpeechPrefs = ({ className = "" }: SpeechPrefsProps) => {
   const [slowKw, setSlowKwState] = useState<boolean>(() => getSlowKeywords());
   const [silentMode, setSilentModeState] = useState<boolean>(() => getSilentMode());
 
+  // Combined list (used by handleVoiceChange to find an actual voice).
+  const voices = [...exactVoices, ...fallbackVoices];
+
   useEffect(() => {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) {
       setSupported(false);
@@ -60,15 +67,16 @@ const SpeechPrefs = ({ className = "" }: SpeechPrefsProps) => {
     loadVoices().then((all) => {
       if (cancelled) return;
       const lower = lang.toLowerCase();
-      // Match exact locale first; fall back to primary language.
-      const exact = all.filter((v) => v.lang.toLowerCase() === lower);
-      if (exact.length > 0) {
-        setVoices(exact);
-        return;
-      }
       const primary = lower.split("-")[0];
-      const sameLang = all.filter((v) => v.lang.toLowerCase().startsWith(primary));
-      setVoices(sameLang.length > 0 ? sameLang : all);
+      const exact = all.filter((v) => v.lang.toLowerCase() === lower);
+      const sameLang = all.filter(
+        (v) => v.lang.toLowerCase() !== lower && v.lang.toLowerCase().startsWith(primary),
+      );
+      setExactVoices(exact);
+      setFallbackVoices(sameLang);
+      if (exact.length > 0) setMatch("exact");
+      else if (sameLang.length > 0) setMatch("fallback");
+      else setMatch("none");
     });
     return () => {
       cancelled = true;
@@ -179,23 +187,59 @@ const SpeechPrefs = ({ className = "" }: SpeechPrefsProps) => {
           <Volume2 className="h-3.5 w-3.5" />
           Voix
         </div>
+
+        {match === "fallback" && (
+          <div className="mb-2 flex items-start gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 p-2 text-xs text-amber-900 dark:text-amber-200">
+            <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+            <p>
+              Aucune voix exacte pour <strong>{LANG_LABELS[lang]}</strong> sur cet appareil.
+              Choisis une voix de secours dans la même langue ci-dessous.
+            </p>
+          </div>
+        )}
+        {match === "none" && (
+          <div className="mb-2 flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/10 p-2 text-xs text-destructive">
+            <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+            <p>
+              Aucune voix disponible pour <strong>{LANG_LABELS[lang]}</strong> sur cet appareil.
+              La synthèse utilisera la voix système par défaut.
+            </p>
+          </div>
+        )}
+
         <select
           value={voiceURI ?? "__default__"}
           onChange={(e) => handleVoiceChange(e.target.value)}
           className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary/30"
         >
-          <option value="__default__">Voix par défaut ({lang})</option>
-          {voices.map((v) => (
-            <option key={v.voiceURI} value={v.voiceURI}>
-              {v.name} ({v.lang})
-            </option>
-          ))}
+          <option value="__default__">
+            {match === "exact"
+              ? `Voix par défaut (${lang})`
+              : match === "fallback"
+                ? `Voix par défaut du système (${lang} indisponible)`
+                : `Voix par défaut du système`}
+          </option>
+
+          {exactVoices.length > 0 && (
+            <optgroup label={`Voix exactes — ${LANG_LABELS[lang]}`}>
+              {exactVoices.map((v) => (
+                <option key={v.voiceURI} value={v.voiceURI}>
+                  {v.name} ({v.lang})
+                </option>
+              ))}
+            </optgroup>
+          )}
+
+          {fallbackVoices.length > 0 && (
+            <optgroup label={`Voix de secours — même langue (${lang.split("-")[0]}-*)`}>
+              {fallbackVoices.map((v) => (
+                <option key={v.voiceURI} value={v.voiceURI}>
+                  {v.name} ({v.lang})
+                </option>
+              ))}
+            </optgroup>
+          )}
         </select>
-        {voices.length === 0 && (
-          <p className="mt-1 text-xs text-muted-foreground">
-            Aucune voix détectée pour cette langue.
-          </p>
-        )}
       </div>
 
       <div>
