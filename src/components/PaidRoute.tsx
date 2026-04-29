@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { AlertTriangle, RefreshCw, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { withRetry } from "@/lib/supabaseRetry";
+import { isGrandfatheredAccount } from "@/lib/paywallPolicy";
 
 type Phase = "checking" | "retrying" | "ready" | "error";
 
@@ -37,7 +38,7 @@ const PaidRoute = ({ children }: { children: React.ReactNode }) => {
         () =>
           supabase
             .from("profiles")
-            .select("is_premium")
+            .select("is_premium, created_at")
             .eq("user_id", user.id)
             .single(),
         {
@@ -55,10 +56,10 @@ const PaidRoute = ({ children }: { children: React.ReactNode }) => {
         return;
       }
 
-      // Permanent "no row" error: treat as not premium (don't block forever).
-      // Any other permanent error: also treat as not premium so the user can
-      // still reach /paywall, but that case is rare.
-      setIsPaid(!!(result.data as any)?.is_premium);
+      const profile = result.data as any;
+      const premium = !!profile?.is_premium;
+      const grandfathered = isGrandfatheredAccount(profile?.created_at);
+      setIsPaid(premium || grandfathered);
       setPhase("ready");
     })();
 

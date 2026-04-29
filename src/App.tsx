@@ -76,10 +76,10 @@ const AnimatedRoutes = () => {
         <RoutesWrapper key={location.pathname}>
           <Routes location={location}>
         <Route path="/" element={<PageTransition><Index /></PageTransition>} />
-        <Route path="/dashboard" element={<ProtectedRoute><PageTransition><Dashboard /></PageTransition></ProtectedRoute>} />
-        <Route path="/calme" element={<ProtectedRoute><PageTransition><CalmeEnClair /></PageTransition></ProtectedRoute>} />
-        <Route path="/emotions" element={<ProtectedRoute><PageTransition><Emotions /></PageTransition></ProtectedRoute>} />
-        <Route path="/emotion/:emotion" element={<ProtectedRoute><PageTransition><EmotionDetail /></PageTransition></ProtectedRoute>} />
+        <Route path="/dashboard" element={<PaidRoute><PageTransition><Dashboard /></PageTransition></PaidRoute>} />
+        <Route path="/calme" element={<PaidRoute><PageTransition><CalmeEnClair /></PageTransition></PaidRoute>} />
+        <Route path="/emotions" element={<PaidRoute><PageTransition><Emotions /></PageTransition></PaidRoute>} />
+        <Route path="/emotion/:emotion" element={<PaidRoute><PageTransition><EmotionDetail /></PageTransition></PaidRoute>} />
         <Route path="/checkin" element={<PaidRoute><PageTransition><Checkin /></PageTransition></PaidRoute>} />
         <Route path="/historique" element={<PaidRoute><PageTransition><Historique /></PageTransition></PaidRoute>} />
         <Route path="/comprendre" element={<PaidRoute><PageTransition><Comprendre /></PageTransition></PaidRoute>} />
