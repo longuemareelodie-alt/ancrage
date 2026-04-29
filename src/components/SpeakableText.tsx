@@ -5,6 +5,7 @@ import {
   getSpeechRate,
   getSpeechLang,
   getSpeechPitch,
+  getSilentMode,
   loadVoices,
   resolveVoice,
   buildUtteranceSegments,
