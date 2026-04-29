@@ -72,7 +72,7 @@ const Emergency = () => {
                 <p className="text-sm text-muted-foreground leading-relaxed">{t("emergency.blocked_text")}</p>
               </div>
               <div className="space-y-3 w-full">
-                <Link to="/paywall?upgrade=subscription"
+                <Link to="/paywall"
                   className="block w-full rounded-full bg-primary px-6 py-3 text-center text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25">
                   {t("emergency.blocked_cta")}
                 </Link>
@@ -140,8 +140,8 @@ const Emergency = () => {
                   className="block w-full rounded-full bg-primary px-6 py-3 text-center text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25">
                   {t("emergency.done_back")}
                 </Link>
-                {usage?.plan_type !== "subscription" && (
-                  <Link to="/paywall?upgrade=subscription"
+                {(usage?.plan_type ?? "none") === "none" && (
+                  <Link to="/paywall"
                     className="block w-full rounded-full border border-border px-6 py-3 text-center text-sm font-medium">
                     {t("emergency.done_upgrade")}
                   </Link>

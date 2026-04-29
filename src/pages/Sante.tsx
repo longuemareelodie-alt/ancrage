@@ -20,7 +20,7 @@ const Sante = () => {
       .then(({ data }) => setPlanType((data as any)?.plan_type ?? "none"));
   }, [user]);
 
-  const isSubscription = planType === "subscription";
+  const hasAccess = planType !== "none";
 
   const items = [
     {
@@ -30,7 +30,7 @@ const Sante = () => {
       emoji: "📅",
       title: "Mes Rendez-vous",
       desc: "Agenda médical avec rappels automatiques",
-      locked: !isSubscription,
+      locked: !hasAccess,
     },
     {
       key: "med",
@@ -39,7 +39,7 @@ const Sante = () => {
       emoji: "💊",
       title: "Mes Médicaments",
       desc: "Suivi et rappels quotidiens",
-      locked: !isSubscription,
+      locked: !hasAccess,
     },
     {
       key: "fiche",
@@ -48,7 +48,7 @@ const Sante = () => {
       emoji: "🆘",
       title: "Fiche Médicale d'Urgence",
       desc: "Tes infos vitales accessibles via QR code",
-      locked: !isSubscription,
+      locked: !hasAccess,
     },
     {
       key: "ressources",
@@ -76,7 +76,7 @@ const Sante = () => {
             <button
               key={item.key}
               onClick={() => {
-                if (item.locked) navigate("/paywall?upgrade=subscription");
+                if (item.locked) navigate("/paywall");
                 else navigate(item.to);
               }}
               className="flex w-full items-center gap-4 rounded-2xl bg-card p-4 text-left shadow-sm transition-all hover:shadow-md active:scale-[0.98]"
@@ -95,17 +95,17 @@ const Sante = () => {
           ))}
         </div>
 
-        {!isSubscription && (
+        {!hasAccess && (
           <div className="mt-6 rounded-2xl border border-primary/20 bg-primary/5 p-4">
             <p className="text-xs font-semibold text-primary">💡 Débloque tout ton suivi santé</p>
             <p className="mt-1 text-xs text-muted-foreground">
-              L'abonnement te donne accès à l'agenda médical, au suivi des traitements et à ta fiche d'urgence.
+              L'accès à vie te donne tout : agenda médical, suivi des traitements, fiche d'urgence et tout le contenu d'Ancrage.
             </p>
             <button
-              onClick={() => navigate("/paywall?upgrade=subscription")}
+              onClick={() => navigate("/paywall")}
               className="mt-3 rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground"
             >
-              Découvrir l'abonnement
+              Débloquer l'accès complet
             </button>
           </div>
         )}
