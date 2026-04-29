@@ -63,11 +63,12 @@ const PaymentPending = () => {
           ),
         );
       } else {
-        if (result.reason === "denied") {
+        const failure = result as Extract<CaptureResult, { ok: false }>;
+        if (failure.reason === "denied") {
           toast.info(
             t("payment_pending.support.screenshot_denied", "Capture annulée."),
           );
-        } else if (result.reason === "unsupported") {
+        } else if (failure.reason === "unsupported") {
           toast.error(
             t(
               "payment_pending.support.screenshot_unsupported",
