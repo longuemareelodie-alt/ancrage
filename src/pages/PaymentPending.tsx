@@ -379,6 +379,7 @@ const PaymentPending = () => {
                 </p>
               </div>
               <div className="space-y-2">
+                {screenshotButton}
                 <a
                   href={mailto}
                   className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground"
