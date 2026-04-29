@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
-import { Volume2, Gauge, Languages } from "lucide-react";
+import { Volume2, Gauge, Languages, Music2, Pause as PauseIcon, Wind } from "lucide-react";
+import { Slider } from "@/components/ui/slider";
+import { Switch } from "@/components/ui/switch";
 import {
   RATE_LABELS,
   type SpeechRate,
@@ -13,14 +15,22 @@ import {
   getSpeechVoiceURI,
   setSpeechVoiceURI,
   loadVoices,
+  getSentencePauseMs,
+  setSentencePauseMs,
+  getCommaPauseMs,
+  setCommaPauseMs,
+  getSpeechPitch,
+  setSpeechPitch,
+  getSlowKeywords,
+  setSlowKeywords,
 } from "@/lib/speechPrefs";
 
 const RATE_OPTIONS: SpeechRate[] = ["slow", "normal", "fast"];
 
 const PREVIEW_TEXT: Record<SpeechLang, string> = {
-  "fr-FR": "Bonjour, voici un aperçu de ma voix.",
-  "fr-CA": "Bonjour, voici un aperçu de ma voix.",
-  "en-US": "Hello, this is a preview of my voice.",
+  "fr-FR": "Inspire profondément, retiens, puis expire lentement. Tu es ici, en sécurité.",
+  "fr-CA": "Inspire profondément, retiens, puis expire lentement. Tu es ici, en sécurité.",
+  "en-US": "Inhale slowly, hold, then exhale. You are here, safe.",
 };
 
 interface SpeechPrefsProps {
@@ -33,6 +43,10 @@ const SpeechPrefs = ({ className = "" }: SpeechPrefsProps) => {
   const [rate, setRate] = useState<SpeechRate>(() => getSpeechRate());
   const [lang, setLang] = useState<SpeechLang>(() => getSpeechLang());
   const [supported, setSupported] = useState(true);
+  const [sentencePause, setSentencePauseState] = useState<number>(() => getSentencePauseMs());
+  const [commaPause, setCommaPauseState] = useState<number>(() => getCommaPauseMs());
+  const [pitch, setPitchState] = useState<number>(() => getSpeechPitch());
+  const [slowKw, setSlowKwState] = useState<boolean>(() => getSlowKeywords());
 
   useEffect(() => {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) {
