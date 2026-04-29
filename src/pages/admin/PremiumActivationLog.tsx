@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import PremiumAuditPanel from "@/components/admin/PremiumAuditPanel";
 
 interface LogEntry {
   id: string;
