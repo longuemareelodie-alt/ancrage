@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+import { pullStyleFromRemote } from "@/lib/actionStyle";
 
 interface AuthContextType {
   session: Session | null;
@@ -27,12 +28,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       (_event, session) => {
         setSession(session);
         setLoading(false);
+        if (session?.user) {
+          setTimeout(() => { void pullStyleFromRemote(); }, 0);
+        }
       }
     );
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setLoading(false);
+      if (session?.user) {
+        setTimeout(() => { void pullStyleFromRemote(); }, 0);
+      }
     });
 
     return () => subscription.unsubscribe();

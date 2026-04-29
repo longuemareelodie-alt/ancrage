@@ -10,6 +10,7 @@ import {
 } from "@/lib/actionStyle";
 import { resolveAutoStyleFromToday, type ResolvedStyle } from "@/lib/autoStyle";
 import { toast } from "@/hooks/use-toast";
+import StyleSyncStatus from "@/components/StyleSyncStatus";
 
 const OPTIONS: {
   value: ActionStyle;
@@ -87,6 +88,7 @@ const ProfilStyle = () => {
           Choisis le type d'exercice qui te correspond. Il s'appliquera
           automatiquement à toutes tes pages émotion et tes actions rapides.
         </p>
+        <StyleSyncStatus className="mt-4" showAction />
       </SectionBlock>
 
       <SectionBlock>

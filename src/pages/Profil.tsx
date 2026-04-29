@@ -15,6 +15,7 @@ import StreakCalendar from "@/components/StreakCalendar";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
 import PaymentHistory from "@/components/PaymentHistory";
 import DataActions from "@/components/DataActions";
+import StyleSyncStatus from "@/components/StyleSyncStatus";
 interface Note {
   id: string;
   title: string;
@@ -460,6 +461,7 @@ const Profil = () => {
                   </div>
                   <ChevronRight className="h-5 w-5 text-muted-foreground" />
                 </Link>
+                <StyleSyncStatus className="mt-2" showAction />
               </div>
 
               {/* RGPD : export et suppression */}
