@@ -90,9 +90,14 @@ function isSentenceBoundary(input: string, i: number): boolean {
   // Decimal / thousands separator: digit . digit  (e.g. 3.14, 1.000).
   if (isDigit(prev) && isDigit(next)) return false;
 
-  // Single-letter acronym pattern: "S.O.S.", "U.S.A.".
+  // Known abbreviation (checked BEFORE the initials heuristic so that "M.",
+  // "Mme.", "Dr." don't get split even when followed by an uppercase name).
+  const word = lastWordBeforeDot(input, i).toLowerCase();
+  if (word && FR_ABBREVIATIONS.has(word)) return false;
+
+  // Single-letter acronym pattern: "S.O.S.", "U.S.A.", "J.-P.".
   // Trigger: previous char is a single uppercase letter AND the char before
-  // it is either start-of-string, whitespace, "." or "-".
+  // it is start-of-string, whitespace, "." or "-".
   if (isUpperLetter(prev)) {
     const before = input[i - 2] ?? "";
     if (
@@ -101,28 +106,25 @@ function isSentenceBoundary(input: string, i: number): boolean {
       before === "-" ||
       /\s/.test(before)
     ) {
-      // Looks like an initial — only a real boundary if followed by EOS or
-      // a clear new-sentence start (whitespace + uppercase letter that is
-      // NOT itself an initial pattern like " J.").
-      if (next === "") return true;
+      // Looks like an initial. Continuation cases (NOT a boundary):
+      //   "J.-P." → next is "-"
+      //   "U.S.A" → next is uppercase letter directly (no space)
+      //   "J. P." → next is whitespace then uppercase + "."
+      if (next === "-") return false;
+      if (isUpperLetter(next)) return false;
+      if (next === "" ) return true;
       if (/\s/.test(next)) {
         // Peek the next non-whitespace char.
         let k = i + 1;
         while (k < input.length && /\s/.test(input[k])) k++;
         const nextChar = input[k] ?? "";
         const nextNext = input[k + 1] ?? "";
-        // "J. P. Sartre" — second initial: not a boundary.
         if (isUpperLetter(nextChar) && nextNext === ".") return false;
-        // Otherwise treat as boundary (end of acronym).
         return true;
       }
       return false;
     }
   }
-
-  // Known abbreviation list.
-  const word = lastWordBeforeDot(input, i).toLowerCase();
-  if (word && FR_ABBREVIATIONS.has(word)) return false;
 
   // Otherwise, only a boundary if followed by EOS or whitespace + uppercase
   // letter / digit / opening quote.
