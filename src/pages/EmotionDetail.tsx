@@ -5,7 +5,8 @@ import SectionBlock from "@/components/SectionBlock";
 import CTAButton from "@/components/CTAButton";
 import QuickBackLinks from "@/components/QuickBackLinks";
 import { motion } from "framer-motion";
-import { Lock, Wind, Hand, Sparkles } from "lucide-react";
+import { Lock, Wind, Hand, Sparkles, Activity, ArrowRight, Check } from "lucide-react";
+import { Slider } from "@/components/ui/slider";
 import {
   ActionStyle,
   getActionStyle,
@@ -45,6 +46,8 @@ const EmotionDetail = () => {
 
   const [style, setStyle] = useState<ActionStyle>(() => getActionStyle());
   const [autoResolved, setAutoResolved] = useState<ResolvedStyle | null>(null);
+  const [activationBefore, setActivationBefore] = useState<number>(7);
+  const [activationAfter, setActivationAfter] = useState<number | null>(null);
 
   useEffect(() => {
     const handler = (e: Event) => {
@@ -316,6 +319,124 @@ const EmotionDetail = () => {
               </div>
             </div>
           ))}
+        </div>
+      </SectionBlock>
+
+      {/* Check de sortie 30 sec : mesurer la baisse d'activation */}
+      <SectionBlock>
+        <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+          <div className="flex items-center gap-2">
+            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
+              <Activity className="h-4 w-4" />
+            </span>
+            <div>
+              <h3 className="text-base font-bold">Check de sortie · 30 sec</h3>
+              <p className="text-xs text-muted-foreground">
+                Mesure si ton activation a baissé après l'exercice.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-5 space-y-5">
+            {/* AVANT */}
+            <div>
+              <div className="mb-2 flex items-center justify-between text-xs">
+                <span className="font-medium text-muted-foreground">
+                  Avant l'exercice
+                </span>
+                <span className="font-bold text-foreground">{activationBefore}/10</span>
+              </div>
+              <Slider
+                value={[activationBefore]}
+                min={0}
+                max={10}
+                step={1}
+                onValueChange={(v) => setActivationBefore(v[0])}
+                disabled={activationAfter !== null}
+                aria-label="Niveau d'activation avant"
+              />
+              <div className="mt-1 flex justify-between text-[10px] text-muted-foreground">
+                <span>Calme</span>
+                <span>En alerte</span>
+              </div>
+            </div>
+
+            {/* APRÈS */}
+            <div>
+              <div className="mb-2 flex items-center justify-between text-xs">
+                <span className="font-medium text-muted-foreground">
+                  Maintenant
+                </span>
+                <span className="font-bold text-foreground">
+                  {activationAfter ?? "—"}/10
+                </span>
+              </div>
+              <Slider
+                value={[activationAfter ?? activationBefore]}
+                min={0}
+                max={10}
+                step={1}
+                onValueChange={(v) => setActivationAfter(v[0])}
+                aria-label="Niveau d'activation maintenant"
+              />
+              <div className="mt-1 flex justify-between text-[10px] text-muted-foreground">
+                <span>Calme</span>
+                <span>En alerte</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Résultat + suggestion */}
+          {activationAfter !== null && (() => {
+            const delta = activationBefore - activationAfter;
+            let icon = <Check className="h-4 w-4" />;
+            let title = "";
+            let suggestion = "";
+            let nextLabel = "";
+            let nextTo = "/post-flow";
+            let tone = "bg-primary/10 text-primary";
+
+            if (delta >= 2) {
+              title = `Activation -${delta} points`;
+              suggestion = "Belle baisse. Tu peux clore en douceur ou ancrer ce calme.";
+              nextLabel = "Ancrer le calme";
+              nextTo = "/post-flow";
+            } else if (delta >= 0) {
+              title = delta === 0 ? "Stable" : `Activation -${delta} point`;
+              suggestion = "Refais une étape sensorielle ou respiration courte.";
+              nextLabel = "Refaire une étape";
+              nextTo = `/emotion/${key}`;
+              tone = "bg-accent text-accent-foreground";
+            } else {
+              title = `Activation +${Math.abs(delta)} points`;
+              suggestion =
+                "Ton corps est encore en alerte. Va vers une action plus contenante.";
+              nextLabel = "Voir Calme en clair";
+              nextTo = "/calme";
+              tone = "bg-destructive/10 text-destructive";
+              icon = <Activity className="h-4 w-4" />;
+            }
+
+            return (
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-5 space-y-3"
+              >
+                <div className={`flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold ${tone}`}>
+                  {icon}
+                  {title}
+                </div>
+                <p className="text-sm text-muted-foreground">{suggestion}</p>
+                <CTAButton to={nextTo}>
+                  <span className="inline-flex items-center gap-1.5">
+                    {nextLabel}
+                    <ArrowRight className="h-4 w-4" />
+                  </span>
+                </CTAButton>
+              </motion.div>
+            );
+          })()}
         </div>
       </SectionBlock>
 
