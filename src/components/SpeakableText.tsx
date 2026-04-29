@@ -146,7 +146,7 @@ const SpeakableText = ({
     }
   };
 
-  const handlePlay = async () => {
+  const handlePlay = async (fromSentence = 0) => {
     if (!supported) return;
     cancelAll();
 
@@ -163,7 +163,6 @@ const SpeakableText = ({
     const segments: UtteranceSegment[] = buildUtteranceSegments(fullText);
 
     // Build mapping: each segment -> its sentence index.
-    // Sentence breaks are pause segments >= 250ms; everything before is sentence N.
     const segMap: number[] = [];
     const sentStart: number[] = [0];
     {
@@ -180,10 +179,19 @@ const SpeakableText = ({
     segmentSentenceMapRef.current = segMap;
     sentenceSegmentStartRef.current = sentStart;
 
-    // Estimate total duration: ~14 chars/second at rate 1, plus segment pauses.
+    // Clamp the starting sentence and resolve its first segment.
+    const startSentence = Math.max(
+      0,
+      Math.min(sentences.length - 1, fromSentence | 0),
+    );
+    const startSegment =
+      sentStart[startSentence] !== undefined ? sentStart[startSentence] : 0;
+
+    // Estimate total duration of the *played* portion (from startSegment onward).
     let charCount = 0;
     let pauseSeconds = 0;
-    for (const seg of segments) {
+    for (let k = startSegment; k < segments.length; k++) {
+      const seg = segments[k];
       if (seg.pauseMs && seg.pauseMs > 0) pauseSeconds += seg.pauseMs / 1000;
       else if (seg.text) charCount += seg.text.length;
     }
@@ -192,9 +200,9 @@ const SpeakableText = ({
     setElapsed(0);
 
     setState("speaking");
-    setActiveIndex(sentences.length > 0 ? 0 : -1);
-    sentenceCursorRef.current = 0;
-    cursorRef.current = 0;
+    setActiveIndex(sentences.length > 0 ? startSentence : -1);
+    sentenceCursorRef.current = startSentence;
+    cursorRef.current = startSegment;
     skipToSegmentRef.current = null;
 
     const playNext = () => {
@@ -427,7 +435,7 @@ const SpeakableText = ({
           {state === "idle" ? (
             <button
               type="button"
-              onClick={handlePlay}
+              onClick={() => handlePlay(0)}
               aria-label="Lire à voix haute"
               aria-pressed={false}
               title="Guidage audio"
@@ -462,9 +470,9 @@ const SpeakableText = ({
               )}
               <button
                 type="button"
-                onClick={handlePlay}
-                aria-label="Répéter la lecture depuis le début"
-                title="Répéter"
+                onClick={() => handlePlay(Math.max(0, sentenceCursorRef.current))}
+                aria-label="Répéter la phrase en cours"
+                title="Répéter la phrase en cours"
                 className="inline-flex h-8 items-center gap-1.5 rounded-full border border-border bg-background px-3 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               >
                 <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
