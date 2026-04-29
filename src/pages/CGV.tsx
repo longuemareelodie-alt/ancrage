@@ -334,49 +334,67 @@ const CGV = () => (
           </section>
 
           <section id="compte-utilisateur" className="scroll-mt-24">
-            <h2 className="text-lg font-semibold text-foreground">10. Compte utilisateur</h2>
+            <h2 className="text-lg font-semibold text-foreground">
+              10. Compte utilisateur
+            </h2>
             <p>
-              Le client est responsable de la confidentialité de ses
-              identifiants et de toute activité réalisée depuis son compte. Tout
-              usage frauduleux doit être signalé sans délai au service client.
+              Le Client est responsable de la confidentialité de ses
+              identifiants et de toute activité réalisée depuis son compte.
+              Tout usage frauduleux doit être signalé sans délai au service
+              client.
             </p>
           </section>
 
           <section id="propriete-intellectuelle" className="scroll-mt-24">
-            <h2 className="text-lg font-semibold text-foreground">11. Propriété intellectuelle</h2>
+            <h2 className="text-lg font-semibold text-foreground">
+              11. Propriété intellectuelle
+            </h2>
             <p>
               L'ensemble des contenus du Service (textes, visuels, parcours,
-              code, marques) est protégé par le droit de la propriété
-              intellectuelle. L'achat confère un droit d'usage personnel, non
-              exclusif et non transférable. Toute reproduction, diffusion,
-              revente ou exploitation non autorisée est strictement interdite.
+              code, marques, logos) est protégé par le droit de la propriété
+              intellectuelle, conformément aux articles L.&nbsp;111-1 et
+              suivants du Code de la propriété intellectuelle. L'achat
+              confère au Client un droit d'usage personnel, non exclusif et
+              non transférable, limité à un usage strictement privé. Toute
+              reproduction, représentation, diffusion, revente ou
+              exploitation non autorisée est strictement interdite et
+              constitue une contrefaçon sanctionnée par les articles
+              L.&nbsp;335-2 et suivants du même Code.
             </p>
           </section>
 
           <section id="responsabilite" className="scroll-mt-24">
-            <h2 className="text-lg font-semibold text-foreground">12. Responsabilité</h2>
+            <h2 className="text-lg font-semibold text-foreground">
+              12. Responsabilité
+            </h2>
             <p>
               Le Service est fourni dans la limite des moyens techniques
               raisonnables. L'éditeur ne saurait être tenu responsable des
-              décisions prises par l'utilisateur sur la base des contenus
+              décisions prises par le Client sur la base des contenus
               proposés, ni des indisponibilités ponctuelles liées à des
               opérations de maintenance ou à des causes extérieures (force
               majeure, défaillance d'un tiers, du réseau Internet, etc.). La
-              responsabilité de l'éditeur ne pourra en tout état de cause
-              excéder le montant payé par le client au titre du Service.
+              responsabilité de l'éditeur ne pourra, en tout état de cause,
+              excéder le montant payé par le Client au titre du Service.
             </p>
           </section>
 
           <section id="donnees-personnelles" className="scroll-mt-24">
-            <h2 className="text-lg font-semibold text-foreground">13. Données personnelles</h2>
+            <h2 className="text-lg font-semibold text-foreground">
+              13. Données personnelles
+            </h2>
             <p>
               Les traitements de données personnelles mis en œuvre dans le
-              cadre du Service sont conformes au Règlement (UE) 2016/679 (RGPD)
-              et à la loi Informatique et Libertés. Le client dispose des
-              droits d'accès, de rectification, d'effacement, de limitation,
-              d'opposition et de portabilité, qu'il peut exercer dans les
-              conditions précisées dans la{" "}
-              <Link to="/confidentialite" className="underline hover:text-primary">
+              cadre du Service sont conformes au Règlement (UE) 2016/679
+              (RGPD) et à la loi n°&nbsp;78-17 du 6 janvier 1978 modifiée
+              dite «&nbsp;Informatique et Libertés&nbsp;». Le Client dispose
+              des droits d'accès, de rectification, d'effacement, de
+              limitation, d'opposition et de portabilité, qu'il peut exercer
+              dans les conditions précisées dans la{" "}
+              <Link
+                to="/confidentialite"
+                className="underline hover:text-primary"
+              >
                 Politique de confidentialité
               </Link>
               .
@@ -384,11 +402,13 @@ const CGV = () => (
           </section>
 
           <section id="modification-cgv" className="scroll-mt-24">
-            <h2 className="text-lg font-semibold text-foreground">14. Modification des CGV</h2>
+            <h2 className="text-lg font-semibold text-foreground">
+              14. Modification des CGV
+            </h2>
             <p>
               L'éditeur se réserve le droit de modifier les présentes CGV à
-              tout moment. Les CGV applicables sont celles en vigueur à la date
-              de la commande, archivées par l'éditeur.
+              tout moment. Les CGV applicables à une commande sont celles en
+              vigueur à la date de sa validation, archivées par l'éditeur.
             </p>
           </section>
 
@@ -426,52 +446,54 @@ const CGV = () => (
 
           <section id="contact-support" className="scroll-mt-24">
             <h2 className="text-lg font-semibold text-foreground">
-              16. Contact & support
+              16. Contact &amp; support
             </h2>
             <p>
-              Pour toute question relative à ta commande, à un{" "}
+              Pour toute question relative à une commande, à un{" "}
               <strong>problème de paiement</strong> (échec de transaction,
               double débit, accès non activé après paiement) ou à une{" "}
-              <strong>demande au titre des garanties légales</strong> (article
-              9), tu peux contacter le service client :
+              <strong>demande au titre des garanties légales</strong>{" "}
+              (article&nbsp;9), le Client peut contacter le service client&nbsp;:
             </p>
             <ul className="list-disc pl-5 space-y-1">
               <li>
-                par e-mail :{" "}
+                par e-mail&nbsp;:{" "}
                 <a
                   href="mailto:contact@digitalmamanlibre.com"
                   className="underline hover:text-primary"
                 >
                   contact@digitalmamanlibre.com
                 </a>
+                &nbsp;;
               </li>
               <li>
-                délai de réponse indicatif : sous{" "}
-                <strong>5 jours ouvrés</strong>.
+                délai de réponse indicatif&nbsp;: sous{" "}
+                <strong>5&nbsp;jours ouvrés</strong>.
               </li>
             </ul>
             <p>
-              Pour un traitement rapide, merci d'indiquer dans ton message :
+              Pour un traitement rapide, il est recommandé d'indiquer dans
+              le message&nbsp;:
             </p>
             <ul className="list-disc pl-5 space-y-1">
-              <li>l'adresse e-mail utilisée lors de la commande ;</li>
-              <li>la date et le montant du paiement ;</li>
+              <li>l'adresse e-mail utilisée lors de la commande&nbsp;;</li>
+              <li>la date et le montant du paiement&nbsp;;</li>
               <li>
                 la référence de transaction Mollie (visible sur l'e-mail de
-                confirmation ou sur le relevé bancaire) ;
+                confirmation ou sur le relevé bancaire)&nbsp;;
               </li>
               <li>une description précise du problème rencontré.</li>
             </ul>
             <p>
               <strong>Demande de remboursement.</strong> Conformément à
-              l'article 9, aucun remboursement à titre commercial n'est accordé
-              après activation de l'accès au Service. Toute demande fondée sur
-              les garanties légales (défaut de conformité, vice caché) ou sur
-              un dysfonctionnement technique avéré sera néanmoins examinée. En
-              cas d'éligibilité, le remboursement est effectué sur le moyen de
-              paiement utilisé lors de la commande, sous un délai maximum de{" "}
-              <strong>14 jours</strong> à compter de l'accord du service
-              client.
+              l'article&nbsp;9, aucun remboursement à titre commercial n'est
+              accordé après activation de l'accès au Service. Toute demande
+              fondée sur les garanties légales (défaut de conformité, vice
+              caché) ou sur un dysfonctionnement technique avéré sera
+              néanmoins examinée. En cas d'éligibilité, le remboursement est
+              effectué sur le moyen de paiement utilisé lors de la commande,
+              sous un délai maximum de <strong>14&nbsp;jours</strong> à
+              compter de l'accord du service client.
             </p>
           </section>
 
