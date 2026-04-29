@@ -47,6 +47,7 @@ import FicheUrgencePublique from "./pages/FicheUrgencePublique";
 import CalmeEnClair from "./pages/CalmeEnClair";
 import Danger from "./pages/Danger";
 import PremiumActivationLogPage from "./pages/admin/PremiumActivationLog";
+import PremiumAuditListPage from "./pages/admin/PremiumAuditList";
 
 const queryClient = new QueryClient();
 
