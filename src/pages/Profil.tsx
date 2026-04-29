@@ -16,6 +16,7 @@ import { useMolliePayment } from "@/hooks/useMolliePayment";
 import PaymentHistory from "@/components/PaymentHistory";
 import DataActions from "@/components/DataActions";
 import StyleSyncStatus from "@/components/StyleSyncStatus";
+import SpeechPrefs from "@/components/SpeechPrefs";
 interface Note {
   id: string;
   title: string;
@@ -462,6 +463,14 @@ const Profil = () => {
                   <ChevronRight className="h-5 w-5 text-muted-foreground" />
                 </Link>
                 <StyleSyncStatus className="mt-2" showAction />
+              </div>
+
+              {/* Préférences audio (guidage vocal) */}
+              <div className="mt-4">
+                <p className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                  Guidage audio
+                </p>
+                <SpeechPrefs />
               </div>
 
               {/* RGPD : export et suppression */}
