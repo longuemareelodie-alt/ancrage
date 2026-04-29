@@ -71,14 +71,26 @@ const CGV = () => (
           <section id="editeur-contact" className="scroll-mt-24">
             <h2 className="text-lg font-semibold text-foreground">2. Éditeur et contact</h2>
             <p>
-              Le Service est édité par Digital Maman Libre. Les informations
-              légales complètes (raison sociale, SIREN, hébergeur, contact)
-              figurent dans les{" "}
+              Le Service est édité par <strong>Digital Maman Libre</strong>,
+              micro-entreprise immatriculée sous le SIRET{" "}
+              <strong>829 977 958 00018</strong> (SIREN 829 977 958), dont le
+              siège social est situé au{" "}
+              <strong>17 rue André Maurois, 76150 Maromme, France</strong>.
+              TVA non applicable, art. 293 B du CGI.
+            </p>
+            <p>
+              Service client :{" "}
+              <a
+                href="mailto:contact@digitalmamanlibre.com"
+                className="underline hover:text-primary"
+              >
+                contact@digitalmamanlibre.com
+              </a>
+              . L'ensemble des informations légales figure également dans les{" "}
               <Link to="/mentions-legales" className="underline hover:text-primary">
                 Mentions légales
               </Link>
-              . Toute demande relative à une commande peut être adressée au
-              service client via l'adresse e-mail indiquée dans ces mentions.
+              .
             </p>
           </section>
 

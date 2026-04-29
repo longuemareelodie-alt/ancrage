@@ -25,9 +25,11 @@ const MentionsLegales = () => (
             </p>
             <ul className="list-disc pl-5 space-y-1">
               <li>Raison sociale : Digital Maman Libre</li>
-              <li>Forme juridique : [à compléter — ex. micro-entreprise]</li>
-              <li>SIREN / SIRET : [à compléter]</li>
-              <li>Adresse du siège : [à compléter]</li>
+              <li>Forme juridique : Micro-entreprise</li>
+              <li>SIREN : 829 977 958</li>
+              <li>SIRET : 829 977 958 00018</li>
+              <li>Adresse du siège : 17 rue André Maurois, 76150 Maromme, France</li>
+              <li>TVA non applicable, art. 293 B du CGI</li>
               <li>
                 E-mail :{" "}
                 <a
