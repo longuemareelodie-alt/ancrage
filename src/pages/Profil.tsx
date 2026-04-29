@@ -86,7 +86,14 @@ const Profil = () => {
       .select("first_name, email, is_premium, current_streak, longest_streak")
       .eq("user_id", user.id)
       .single()
-      .then(({ data }) => {
+      .then(({ data, error }) => {
+        setProfileLoaded(true);
+        if (error) {
+          setProfileLoadError(error.message);
+          setProfile(null);
+          return;
+        }
+        setProfileLoadError(null);
         if (data) setProfile(data as any);
       });
 
