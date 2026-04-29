@@ -1,12 +1,23 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState, ReactNode } from "react";
 import { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { pullStyleFromRemote } from "@/lib/actionStyle";
+import { withRetry } from "@/lib/supabaseRetry";
+import { isGrandfatheredAccount } from "@/lib/paywallPolicy";
+
+type EligibilityPhase = "idle" | "checking" | "ready" | "error";
 
 interface AuthContextType {
   session: Session | null;
   user: User | null;
+  /** True until BOTH the auth session AND (when logged in) premium eligibility have been resolved. */
   loading: boolean;
+  /** True if the user is allowed into paid pages (premium or grandfathered). null while unknown. */
+  isPaid: boolean | null;
+  /** Status of the eligibility check itself. */
+  eligibilityPhase: EligibilityPhase;
+  /** Force a re-check (e.g. after returning from payment). */
+  refreshEligibility: () => Promise<void>;
   signOut: () => Promise<void>;
 }
 
@@ -14,6 +25,9 @@ const AuthContext = createContext<AuthContextType>({
   session: null,
   user: null,
   loading: true,
+  isPaid: null,
+  eligibilityPhase: "idle",
+  refreshEligibility: async () => {},
   signOut: async () => {},
 });
 
@@ -21,36 +35,98 @@ export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [authLoading, setAuthLoading] = useState(true);
+  const [isPaid, setIsPaid] = useState<boolean | null>(null);
+  const [eligibilityPhase, setEligibilityPhase] = useState<EligibilityPhase>("idle");
+  const checkSeqRef = useRef(0);
+
+  const checkEligibility = useCallback(async (userId: string | null) => {
+    const seq = ++checkSeqRef.current;
+    if (!userId) {
+      setIsPaid(null);
+      setEligibilityPhase("idle");
+      return;
+    }
+    setEligibilityPhase("checking");
+    const result = await withRetry(
+      () =>
+        supabase
+          .from("profiles")
+          .select("is_premium, created_at")
+          .eq("user_id", userId)
+          .maybeSingle(),
+      { maxAttempts: 4, baseDelayMs: 500 },
+    );
+    // Ignore stale responses (user changed in the meantime)
+    if (seq !== checkSeqRef.current) return;
+
+    if (result.transientFailure) {
+      setIsPaid(null);
+      setEligibilityPhase("error");
+      return;
+    }
+    const profile = result.data as { is_premium?: boolean; created_at?: string } | null;
+    const premium = !!profile?.is_premium;
+    const grandfathered = isGrandfatheredAccount(profile?.created_at);
+    setIsPaid(premium || grandfathered);
+    setEligibilityPhase("ready");
+  }, []);
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setSession(session);
-        setLoading(false);
-        if (session?.user) {
+      (_event, nextSession) => {
+        setSession(nextSession);
+        setAuthLoading(false);
+        const uid = nextSession?.user?.id ?? null;
+        // Reset paid state immediately on auth change so old value never leaks across users.
+        setIsPaid(null);
+        setEligibilityPhase(uid ? "checking" : "idle");
+        void checkEligibility(uid);
+        if (nextSession?.user) {
           setTimeout(() => { void pullStyleFromRemote(); }, 0);
         }
-      }
+      },
     );
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setLoading(false);
-      if (session?.user) {
+    supabase.auth.getSession().then(({ data: { session: initial } }) => {
+      setSession(initial);
+      setAuthLoading(false);
+      const uid = initial?.user?.id ?? null;
+      setEligibilityPhase(uid ? "checking" : "idle");
+      void checkEligibility(uid);
+      if (initial?.user) {
         setTimeout(() => { void pullStyleFromRemote(); }, 0);
       }
     });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [checkEligibility]);
+
+  const refreshEligibility = useCallback(async () => {
+    await checkEligibility(session?.user?.id ?? null);
+  }, [checkEligibility, session?.user?.id]);
 
   const signOut = async () => {
     await supabase.auth.signOut();
   };
 
+  // Combined loading: auth not resolved yet, OR (logged in AND eligibility still pending).
+  const loading =
+    authLoading ||
+    (!!session?.user && (eligibilityPhase === "idle" || eligibilityPhase === "checking"));
+
   return (
-    <AuthContext.Provider value={{ session, user: session?.user ?? null, loading, signOut }}>
+    <AuthContext.Provider
+      value={{
+        session,
+        user: session?.user ?? null,
+        loading,
+        isPaid,
+        eligibilityPhase,
+        refreshEligibility,
+        signOut,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

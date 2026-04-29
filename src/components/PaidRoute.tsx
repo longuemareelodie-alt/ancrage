@@ -1,74 +1,22 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { Navigate } from "react-router-dom";
-import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { AlertTriangle, RefreshCw, Loader2, Mail } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { withRetry } from "@/lib/supabaseRetry";
-import { isGrandfatheredAccount } from "@/lib/paywallPolicy";
-
-type Phase = "checking" | "retrying" | "ready" | "error";
 
 /**
- * Allows access to any paying user (lifetime access after one-time payment).
- * Redirects free users to /paywall.
+ * Gate for paid pages. Eligibility is resolved upstream in AuthContext, so this
+ * component only renders the appropriate UI based on the centralized state.
  *
- * Resilient to transient network/Supabase errors: retries with exponential
- * backoff and shows a clear "temporary error" state instead of mistakenly
- * sending paying users back to /paywall on a network blip.
+ * - While eligibility is unknown → loader (no protected content rendered).
+ * - On transient failure → error UI with retry + support contact.
+ * - Otherwise → redirect (no user → /auth, not paid → /paywall) or render children.
  */
 const PaidRoute = ({ children }: { children: React.ReactNode }) => {
-  const { user, loading } = useAuth();
+  const { user, loading, isPaid, eligibilityPhase, refreshEligibility } = useAuth();
   const { t } = useTranslation();
-  const [isPaid, setIsPaid] = useState<boolean | null>(null);
-  const [phase, setPhase] = useState<Phase>("checking");
-  const [retryToken, setRetryToken] = useState(0);
 
-  useEffect(() => {
-    if (!user) {
-      setPhase("ready");
-      return;
-    }
-
-    let cancelled = false;
-    setPhase("checking");
-
-    (async () => {
-      const result = await withRetry(
-        () =>
-          supabase
-            .from("profiles")
-            .select("is_premium, created_at")
-            .eq("user_id", user.id)
-            .single(),
-        {
-          maxAttempts: 4,
-          baseDelayMs: 500,
-          onRetry: () => {
-            if (!cancelled) setPhase("retrying");
-          },
-        },
-      );
-      if (cancelled) return;
-
-      if (result.transientFailure) {
-        setPhase("error");
-        return;
-      }
-
-      const profile = result.data as any;
-      const premium = !!profile?.is_premium;
-      const grandfathered = isGrandfatheredAccount(profile?.created_at);
-      setIsPaid(premium || grandfathered);
-      setPhase("ready");
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [user?.id, retryToken]);
-
-  if (loading || phase === "checking") {
+  // Block ANY rendering until everything is resolved → no flash possible.
+  if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
@@ -76,18 +24,25 @@ const PaidRoute = ({ children }: { children: React.ReactNode }) => {
     );
   }
 
-  if (phase === "retrying") {
-    return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-3 bg-background px-6 text-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="text-sm text-muted-foreground">
-          {t("paid_route.retrying", "Connexion lente, on réessaie…")}
-        </p>
-      </div>
-    );
-  }
+  if (!user) return <Navigate to="/auth" replace />;
 
-  if (phase === "error") {
+  if (eligibilityPhase === "error") {
+    const subject = t("paid_route.support_subject", "Problème d'accès à mon compte");
+    const bodyLines = [
+      t(
+        "paid_route.support_body_intro",
+        "Bonjour, je rencontre un problème pour vérifier l'accès à mon compte.",
+      ),
+      "",
+      `User ID : ${user?.id ?? "—"}`,
+      `Email : ${user?.email ?? "—"}`,
+      `URL : ${typeof window !== "undefined" ? window.location.href : "—"}`,
+      `Date : ${new Date().toISOString()}`,
+    ];
+    const href = `mailto:contact@digitalmamanlibre.com?subject=${encodeURIComponent(
+      subject,
+    )}&body=${encodeURIComponent(bodyLines.join("\n"))}`;
+
     return (
       <div className="flex min-h-screen items-center justify-center bg-background px-6">
         <div className="w-full max-w-sm space-y-4 rounded-2xl border bg-card p-6 text-center shadow-sm">
@@ -106,47 +61,28 @@ const PaidRoute = ({ children }: { children: React.ReactNode }) => {
             </p>
           </div>
           <button
-            onClick={() => setRetryToken((n) => n + 1)}
+            onClick={() => void refreshEligibility()}
             className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground"
           >
-            <RefreshCw className="h-4 w-4" />
+            {eligibilityPhase === "error" ? (
+              <RefreshCw className="h-4 w-4" />
+            ) : (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            )}
             {t("paid_route.retry", "Réessayer")}
           </button>
-          {(() => {
-            const subject = t(
-              "paid_route.support_subject",
-              "Problème d'accès à mon compte",
-            );
-            const bodyLines = [
-              t(
-                "paid_route.support_body_intro",
-                "Bonjour, je rencontre un problème pour vérifier l'accès à mon compte.",
-              ),
-              "",
-              `User ID : ${user?.id ?? "—"}`,
-              `Email : ${user?.email ?? "—"}`,
-              `URL : ${typeof window !== "undefined" ? window.location.href : "—"}`,
-              `Date : ${new Date().toISOString()}`,
-            ];
-            const href = `mailto:contact@digitalmamanlibre.com?subject=${encodeURIComponent(
-              subject,
-            )}&body=${encodeURIComponent(bodyLines.join("\n"))}`;
-            return (
-              <a
-                href={href}
-                className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-border bg-background px-5 py-2.5 text-sm font-semibold text-foreground hover:bg-muted"
-              >
-                <Mail className="h-4 w-4" />
-                {t("paid_route.contact_support", "Contacter le support")}
-              </a>
-            );
-          })()}
+          <a
+            href={href}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-border bg-background px-5 py-2.5 text-sm font-semibold text-foreground hover:bg-muted"
+          >
+            <Mail className="h-4 w-4" />
+            {t("paid_route.contact_support", "Contacter le support")}
+          </a>
         </div>
       </div>
     );
   }
 
-  if (!user) return <Navigate to="/auth" replace />;
   if (!isPaid) return <Navigate to="/paywall" replace />;
   return <>{children}</>;
 };

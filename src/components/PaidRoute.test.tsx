@@ -4,32 +4,27 @@ import { MemoryRouter, Route, Routes } from "react-router-dom";
 import PaidRoute from "@/components/PaidRoute";
 
 const STABLE_USER = { id: "user-123" };
+
+// Eligibility now lives in AuthContext. Tests drive PaidRoute by setting the
+// mocked context values.
+let mockIsPaid: boolean | null = false;
+let mockEligibilityPhase: "idle" | "checking" | "ready" | "error" = "ready";
+let mockLoading = false;
+
 vi.mock("@/contexts/AuthContext", () => ({
-  useAuth: () => ({ user: STABLE_USER, loading: false }),
+  useAuth: () => ({
+    user: STABLE_USER,
+    loading: mockLoading,
+    isPaid: mockIsPaid,
+    eligibilityPhase: mockEligibilityPhase,
+    refreshEligibility: vi.fn(),
+  }),
 }));
 
 vi.mock("react-i18next", () => ({
   useTranslation: () => ({
     t: (_key: string, fallback?: string) => fallback ?? _key,
   }),
-}));
-
-let currentIsPremium: boolean | null = false;
-
-vi.mock("@/integrations/supabase/client", () => ({
-  supabase: {
-    from: () => ({
-      select: () => ({
-        eq: () => ({
-          single: () =>
-            Promise.resolve({
-              data: { is_premium: currentIsPremium },
-              error: null,
-            }),
-        }),
-      }),
-    }),
-  },
 }));
 
 const PROTECTED_PATHS = [
@@ -58,14 +53,20 @@ const renderRoute = (path: string) =>
         <Route path="/paywall" element={<div>REDIRECTED_TO_PAYWALL</div>} />
         <Route path="/auth" element={<div>REDIRECTED_TO_AUTH</div>} />
       </Routes>
-    </MemoryRouter>
+    </MemoryRouter>,
   );
 
 describe("PaidRoute — accès des payeurs aux routes protégées", () => {
-  beforeEach(() => cleanup());
+  beforeEach(() => {
+    cleanup();
+    mockLoading = false;
+    mockEligibilityPhase = "ready";
+  });
 
-  describe("Utilisateur payant (is_premium=true)", () => {
-    beforeEach(() => { currentIsPremium = true; });
+  describe("Utilisateur payant (isPaid=true)", () => {
+    beforeEach(() => {
+      mockIsPaid = true;
+    });
     for (const path of PROTECTED_PATHS) {
       it(`autorise l'accès à ${path}`, async () => {
         renderRoute(path);
@@ -77,8 +78,10 @@ describe("PaidRoute — accès des payeurs aux routes protégées", () => {
     }
   });
 
-  describe("Utilisateur non payeur (is_premium=false)", () => {
-    beforeEach(() => { currentIsPremium = false; });
+  describe("Utilisateur non payeur (isPaid=false)", () => {
+    beforeEach(() => {
+      mockIsPaid = false;
+    });
     for (const path of PROTECTED_PATHS) {
       it(`redirige depuis ${path} vers /paywall`, async () => {
         renderRoute(path);
@@ -90,13 +93,28 @@ describe("PaidRoute — accès des payeurs aux routes protégées", () => {
     }
   });
 
-  describe("is_premium null (profil sans valeur)", () => {
-    beforeEach(() => { currentIsPremium = null; });
+  describe("isPaid null (statut inconnu après vérif)", () => {
+    beforeEach(() => {
+      mockIsPaid = null;
+    });
     it("redirige vers /paywall (sécurité par défaut)", async () => {
       renderRoute("/historique");
       await waitFor(() =>
-        expect(screen.getByText("REDIRECTED_TO_PAYWALL")).toBeInTheDocument()
+        expect(screen.getByText("REDIRECTED_TO_PAYWALL")).toBeInTheDocument(),
       );
+    });
+  });
+
+  describe("Chargement en cours (loading=true)", () => {
+    beforeEach(() => {
+      mockLoading = true;
+      mockIsPaid = null;
+      mockEligibilityPhase = "checking";
+    });
+    it("ne rend PAS le contenu protégé tant que le statut n'est pas connu", () => {
+      renderRoute("/historique");
+      expect(screen.queryByText("PROTECTED_CONTENT_OK")).not.toBeInTheDocument();
+      expect(screen.queryByText("REDIRECTED_TO_PAYWALL")).not.toBeInTheDocument();
     });
   });
 });
