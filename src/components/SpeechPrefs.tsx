@@ -106,6 +106,38 @@ const SpeechPrefs = ({ className = "" }: SpeechPrefsProps) => {
     setSpeechRate(r);
   };
 
+  const playPreview = async () => {
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+    const { buildUtteranceSegments, RATE_VALUES } = await import("@/lib/speechPrefs");
+    const synth = window.speechSynthesis;
+    synth.cancel();
+    const baseRate = RATE_VALUES[rate];
+    const voice = voices.find((v) => v.voiceURI === voiceURI);
+    const segs = buildUtteranceSegments(PREVIEW_TEXT[lang], {
+      sentencePauseMs: sentencePause,
+      commaPauseMs: commaPause,
+      slowKeywords: slowKw,
+    });
+    let i = 0;
+    const playNext = () => {
+      if (i >= segs.length) return;
+      const seg = segs[i++];
+      if (seg.pauseMs && seg.pauseMs > 0) {
+        window.setTimeout(playNext, seg.pauseMs);
+        return;
+      }
+      const u = new SpeechSynthesisUtterance(seg.text ?? "");
+      u.lang = lang;
+      if (voice) u.voice = voice;
+      u.rate = Math.max(0.1, Math.min(2, baseRate * (seg.rateMultiplier ?? 1)));
+      u.pitch = pitch;
+      u.onend = playNext;
+      u.onerror = () => undefined;
+      synth.speak(u);
+    };
+    playNext();
+  };
+
   return (
     <div className={`space-y-3 rounded-2xl border border-border bg-card p-4 shadow-sm ${className}`}>
       <div>
