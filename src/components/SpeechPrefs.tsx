@@ -219,6 +219,115 @@ const SpeechPrefs = ({ className = "" }: SpeechPrefsProps) => {
           })}
         </div>
       </div>
+
+      {/* Hauteur de la voix (pitch) */}
+      <div>
+        <div className="mb-2 flex items-center justify-between gap-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          <span className="flex items-center gap-2">
+            <Music2 className="h-3.5 w-3.5" />
+            Hauteur de la voix
+          </span>
+          <span className="font-mono normal-case tracking-normal text-foreground">
+            {pitch.toFixed(2)}
+          </span>
+        </div>
+        <Slider
+          value={[pitch]}
+          min={0.5}
+          max={1.5}
+          step={0.05}
+          onValueChange={(v) => {
+            const next = v[0];
+            setPitchState(next);
+            setSpeechPitch(next);
+          }}
+          aria-label="Hauteur de la voix"
+        />
+        <div className="mt-1 flex justify-between text-[10px] text-muted-foreground">
+          <span>Grave</span>
+          <span>Aigu</span>
+        </div>
+      </div>
+
+      {/* Pause entre phrases */}
+      <div>
+        <div className="mb-2 flex items-center justify-between gap-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          <span className="flex items-center gap-2">
+            <PauseIcon className="h-3.5 w-3.5" />
+            Pause entre phrases
+          </span>
+          <span className="font-mono normal-case tracking-normal text-foreground">
+            {(sentencePause / 1000).toFixed(2)} s
+          </span>
+        </div>
+        <Slider
+          value={[sentencePause]}
+          min={0}
+          max={1500}
+          step={50}
+          onValueChange={(v) => {
+            const next = v[0];
+            setSentencePauseState(next);
+            setSentencePauseMs(next);
+          }}
+          aria-label="Pause entre phrases"
+        />
+      </div>
+
+      {/* Pause sur les virgules */}
+      <div>
+        <div className="mb-2 flex items-center justify-between gap-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          <span className="flex items-center gap-2">
+            <PauseIcon className="h-3.5 w-3.5" />
+            Pause sur les virgules
+          </span>
+          <span className="font-mono normal-case tracking-normal text-foreground">
+            {(commaPause / 1000).toFixed(2)} s
+          </span>
+        </div>
+        <Slider
+          value={[commaPause]}
+          min={0}
+          max={800}
+          step={25}
+          onValueChange={(v) => {
+            const next = v[0];
+            setCommaPauseState(next);
+            setCommaPauseMs(next);
+          }}
+          aria-label="Pause sur les virgules"
+        />
+      </div>
+
+      {/* Ralentir mots-clés respiration */}
+      <div className="flex items-start justify-between gap-3 rounded-xl bg-muted/40 p-3">
+        <div className="flex items-start gap-2">
+          <Wind className="mt-0.5 h-4 w-4 text-primary" />
+          <div>
+            <p className="text-sm font-semibold">Ralentir les mots de respiration</p>
+            <p className="text-xs text-muted-foreground">
+              « inspire », « expire », « retiens »… seront prononcés plus lentement.
+            </p>
+          </div>
+        </div>
+        <Switch
+          checked={slowKw}
+          onCheckedChange={(c) => {
+            setSlowKwState(c);
+            setSlowKeywords(c);
+          }}
+          aria-label="Ralentir les mots-clés de respiration"
+        />
+      </div>
+
+      {/* Tester */}
+      <button
+        type="button"
+        onClick={playPreview}
+        className="w-full rounded-full border border-primary bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+      >
+        Tester ces réglages
+      </button>
     </div>
   );
 };
