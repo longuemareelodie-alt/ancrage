@@ -222,7 +222,7 @@ const Checkin = () => {
   };
 
   const handleEvolutionContinue = () => {
-    if (isPremium) {
+    if (isPremium || isPaid) {
       loadWeeklySummary();
       setStep("summary");
     } else {
