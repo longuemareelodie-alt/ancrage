@@ -5,6 +5,7 @@ import { Loader2, CheckCircle2, AlertCircle, ArrowRight, RefreshCw } from "lucid
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { withRetry } from "@/lib/supabaseRetry";
 
 type Status = "pending" | "confirmed" | "error";
 
