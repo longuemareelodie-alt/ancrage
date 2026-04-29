@@ -18,7 +18,7 @@ interface PaidNoPremium {
   user_id: string;
   payment_id: string | null;
   amount: number | null;
-  paid_at: string;
+  paid_at: string | null;
   is_premium: boolean | null;
   email: string | null;
 }
@@ -26,8 +26,8 @@ interface PremiumNoLog {
   user_id: string;
   email: string | null;
   plan_type: string | null;
-  profile_created_at: string;
-  profile_updated_at: string;
+  profile_created_at: string | null;
+  profile_updated_at: string | null;
 }
 interface AlreadyActive {
   id: string;
@@ -35,7 +35,7 @@ interface AlreadyActive {
   payment_id: string | null;
   amount: number | null;
   message: string | null;
-  created_at: string;
+  created_at: string | null;
   email: string | null;
 }
 interface AuditResult {
