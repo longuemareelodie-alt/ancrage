@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { useParams, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import SectionBlock from "@/components/SectionBlock";
 import CTAButton from "@/components/CTAButton";
