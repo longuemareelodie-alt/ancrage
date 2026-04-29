@@ -719,6 +719,66 @@ export type Database = {
         }
         Relationships: []
       }
+      webhook_anomalies: {
+        Row: {
+          created_at: string
+          first_seen_at: string
+          id: string
+          kind: string
+          last_seen_at: string
+          message: string | null
+          occurrences: number
+          payment_id: string | null
+          resolution_note: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          severity: string
+          snapshot: Json | null
+          status: string
+          target_user_id: string | null
+          ticket_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          first_seen_at?: string
+          id?: string
+          kind: string
+          last_seen_at?: string
+          message?: string | null
+          occurrences?: number
+          payment_id?: string | null
+          resolution_note?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: string
+          snapshot?: Json | null
+          status?: string
+          target_user_id?: string | null
+          ticket_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          first_seen_at?: string
+          id?: string
+          kind?: string
+          last_seen_at?: string
+          message?: string | null
+          occurrences?: number
+          payment_id?: string | null
+          resolution_note?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: string
+          snapshot?: Json | null
+          status?: string
+          target_user_id?: string | null
+          ticket_id?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -793,6 +853,10 @@ export type Database = {
         }[]
       }
       regenerate_medical_token: { Args: never; Returns: Json }
+      resolve_webhook_anomaly: {
+        Args: { _anomaly_id: string; _new_status: string; _note?: string }
+        Returns: Json
+      }
       upsert_user_progress: {
         Args: { _completed_phases: number[] }
         Returns: undefined

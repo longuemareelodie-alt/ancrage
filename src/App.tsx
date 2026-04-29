@@ -48,6 +48,7 @@ import CalmeEnClair from "./pages/CalmeEnClair";
 import Danger from "./pages/Danger";
 import PremiumActivationLogPage from "./pages/admin/PremiumActivationLog";
 import PremiumAuditListPage from "./pages/admin/PremiumAuditList";
+import WebhookAnomaliesPage from "./pages/admin/WebhookAnomalies";
 
 const queryClient = new QueryClient();
 
@@ -112,6 +113,7 @@ const AnimatedRoutes = () => {
         <Route path="/unsubscribe" element={<PageTransition><Unsubscribe /></PageTransition>} />
         <Route path="/admin/premium-log" element={<AdminRoute><PageTransition><PremiumActivationLogPage /></PageTransition></AdminRoute>} />
         <Route path="/admin/premium-audit" element={<AdminRoute><PageTransition><PremiumAuditListPage /></PageTransition></AdminRoute>} />
+        <Route path="/admin/webhook-anomalies" element={<AdminRoute><PageTransition><WebhookAnomaliesPage /></PageTransition></AdminRoute>} />
         <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
           </Routes>
         </RoutesWrapper>
