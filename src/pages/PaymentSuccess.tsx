@@ -10,9 +10,27 @@ import confetti from "canvas-confetti";
 const PaymentSuccess = () => {
   const { user } = useAuth();
   const [firstName, setFirstName] = useState("");
+  const [hasPendingCheckin, setHasPendingCheckin] = useState(false);
 
   useEffect(() => {
     confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+    if (typeof window !== "undefined") {
+      try {
+        const raw = window.localStorage.getItem("ancrage:pendingCheckin");
+        if (raw) {
+          const parsed = JSON.parse(raw) as { emotionId?: string; savedAt?: number };
+          if (
+            parsed?.emotionId &&
+            parsed.savedAt &&
+            Date.now() - parsed.savedAt < 2 * 60 * 60 * 1000
+          ) {
+            setHasPendingCheckin(true);
+          }
+        }
+      } catch {
+        // ignore
+      }
+    }
   }, []);
 
   useEffect(() => {
