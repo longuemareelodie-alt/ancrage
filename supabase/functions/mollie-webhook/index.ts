@@ -729,19 +729,9 @@ Deno.serve(async (req) => {
     }
 
     // --- Determine plan_type from payment metadata ---
-    const paymentTypeMeta = firstString(paymentMetadata?.type);
-    // "lifetime" = 29€ one-time, "subscription_first" or absent w/ recurring = subscription
-    let newPlanType: "lifetime" | "subscription";
-    if (paymentTypeMeta === "lifetime") {
-      newPlanType = "lifetime";
-    } else {
-      // subscription_first OR recurring subscription payments
-      newPlanType = "subscription";
-    }
-
-    // Don't downgrade: if user already has subscription, keep it even if a lifetime payment comes in
-    const finalPlanType =
-      profile.plan_type === "subscription" ? "subscription" : newPlanType;
+    // Ancrage no longer offers subscriptions: any successful payment grants
+    // lifetime "paid" access. Subscription-related metadata is ignored.
+    const finalPlanType = "paid";
 
     if (profile.is_premium && profile.plan_type === finalPlanType) {
       logDebug("Profile already at this plan", { profile, paymentId, finalPlanType });
