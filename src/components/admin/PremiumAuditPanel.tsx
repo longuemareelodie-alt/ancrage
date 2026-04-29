@@ -56,21 +56,76 @@ const fmtDate = (d: string | null | undefined) => {
 };
 const shortId = (id: string | null) => (id ? id.slice(0, 8) + "…" : "—");
 
+type AnomalyKind = "paid_no_premium" | "premium_no_log" | "already_active";
+
+const buildTicketId = (kind: AnomalyKind, ref: string) => {
+  const k = kind === "paid_no_premium" ? "PNP" : kind === "premium_no_log" ? "PNL" : "AAC";
+  const rand = Math.random().toString(36).slice(2, 6).toUpperCase();
+  return `AUDIT-${k}-${ref.slice(0, 6).toUpperCase()}-${rand}`;
+};
+
 const PremiumAuditPanel = () => {
   const { t } = useTranslation();
   const [data, setData] = useState<AuditResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [autoLog, setAutoLog] = useState(true);
+  const [loggedKeys, setLoggedKeys] = useState<Set<string>>(new Set());
+  const [logging, setLogging] = useState<string | null>(null);
+
+  const logAnomaly = async (
+    kind: AnomalyKind,
+    key: string,
+    payload: Record<string, unknown>,
+    opts: { silent?: boolean } = {}
+  ) => {
+    if (loggedKeys.has(key)) return { skipped: true };
+    setLogging(key);
+    const { data: auth } = await supabase.auth.getUser();
+    const adminId = auth.user?.id ?? null;
+    const ticketId = buildTicketId(kind, key);
+    const { error } = await supabase.from("support_logs").insert({
+      user_id: adminId,
+      source: `admin_audit:${kind}`,
+      ticket_id: ticketId,
+      error_code: kind,
+      error_message: `Premium audit anomaly: ${kind}`,
+      last_state: JSON.stringify(payload).slice(0, 500),
+      url: typeof window !== "undefined" ? window.location.href : null,
+      user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
+      metadata: {
+        kind,
+        ticket_id: ticketId,
+        target_user_id: payload.user_id ?? null,
+        payment_id: payload.payment_id ?? null,
+        is_premium: payload.is_premium ?? null,
+        log_status: payload.log_status ?? null,
+        timestamps: payload.timestamps ?? null,
+        snapshot: payload,
+        logged_by_admin: adminId,
+        logged_at: new Date().toISOString(),
+      },
+    });
+    setLogging(null);
+    if (error) {
+      if (!opts.silent) toast.error(`Diagnostic non enregistré: ${error.message}`);
+      return { error };
+    }
+    setLoggedKeys((prev) => new Set(prev).add(key));
+    if (!opts.silent) toast.success(`Diagnostic enregistré (${ticketId})`);
+    return { ticketId };
+  };
 
   const runAudit = async () => {
     setLoading(true);
     setError(null);
-    const { data, error } = await supabase.rpc("get_premium_audit");
+    setLoggedKeys(new Set());
+    const { data: result, error } = await supabase.rpc("get_premium_audit");
     if (error) {
       setError(error.message);
       setData(null);
     } else {
-      setData(data as unknown as AuditResult);
+      setData(result as unknown as AuditResult);
     }
     setLoading(false);
   };
@@ -79,6 +134,59 @@ const PremiumAuditPanel = () => {
   useEffect(() => {
     runAudit();
   }, []);
+
+  // Enregistrement automatique des diagnostics
+  useEffect(() => {
+    if (!data || !autoLog) return;
+    (async () => {
+      let count = 0;
+      for (const r of data.paid_without_premium) {
+        const key = `pnp:${r.user_id}:${r.payment_id ?? "none"}`;
+        const res = await logAnomaly("paid_no_premium", key, {
+          user_id: r.user_id,
+          payment_id: r.payment_id,
+          amount: r.amount,
+          email: r.email,
+          is_premium: r.is_premium,
+          log_status: "paid",
+          timestamps: { paid_at: r.paid_at, audited_at: data.generated_at },
+        }, { silent: true });
+        if ((res as any)?.ticketId) count++;
+      }
+      for (const r of data.premium_without_paid_log) {
+        const key = `pnl:${r.user_id}`;
+        const res = await logAnomaly("premium_no_log", key, {
+          user_id: r.user_id,
+          payment_id: null,
+          email: r.email,
+          plan_type: r.plan_type,
+          is_premium: true,
+          log_status: "missing",
+          timestamps: {
+            profile_created_at: r.profile_created_at,
+            profile_updated_at: r.profile_updated_at,
+            audited_at: data.generated_at,
+          },
+        }, { silent: true });
+        if ((res as any)?.ticketId) count++;
+      }
+      for (const r of data.already_active) {
+        const key = `aac:${r.id}`;
+        const res = await logAnomaly("already_active", key, {
+          user_id: r.user_id,
+          payment_id: r.payment_id,
+          amount: r.amount,
+          email: r.email,
+          message: r.message,
+          log_status: "already_active",
+          timestamps: { event_at: r.created_at, audited_at: data.generated_at },
+        }, { silent: true });
+        if ((res as any)?.ticketId) count++;
+      }
+      if (count > 0) toast.success(`${count} diagnostic(s) enregistré(s) automatiquement`);
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, autoLog]);
 
   const criticalCount = data
     ? data.paid_without_premium.length + data.premium_without_paid_log.length
