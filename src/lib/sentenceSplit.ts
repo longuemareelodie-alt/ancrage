@@ -158,12 +158,27 @@ export function splitSentences(input: string): Sentence[] {
   const out: Sentence[] = [];
   if (!input) return out;
 
+  // Track nesting so we don't break a sentence in the middle of a quotation
+  // or a parenthetical aside.
+  let openGuillemet = 0; // « ... »
+  let openParen = 0; // ( ... )
+  let openBracket = 0; // [ ... ]
+
   let sentenceStart = 0;
   let i = 0;
   while (i < input.length) {
     const ch = input[i];
+
+    // Update nesting counters as we scan.
+    if (ch === "«") openGuillemet++;
+    else if (ch === "»") openGuillemet = Math.max(0, openGuillemet - 1);
+    else if (ch === "(") openParen++;
+    else if (ch === ")") openParen = Math.max(0, openParen - 1);
+    else if (ch === "[") openBracket++;
+    else if (ch === "]") openBracket = Math.max(0, openBracket - 1);
+
     if (ch === "." || ch === "!" || ch === "?" || ch === "…") {
-      // Consume runs of mixed terminators (e.g. "?!", "...", "!!!").
+      // Consume runs of mixed terminators (e.g. "?!", "...", "!!!", "?…").
       let end = i;
       while (
         end + 1 < input.length &&
@@ -174,11 +189,25 @@ export function splitSentences(input: string): Sentence[] {
       ) {
         end++;
       }
-      // Decision uses the LAST char of the run.
-      if (isSentenceBoundary(input, end)) {
-        // Include trailing closing chars (», "”", ')') as part of the sentence.
+
+      const insideGroup =
+        openGuillemet > 0 || openParen > 0 || openBracket > 0;
+
+      // Decision uses the LAST char of the run. Inside an open group, never
+      // treat a terminator as a sentence boundary — keep scanning so the
+      // sentence remains coherent on screen and in audio.
+      if (!insideGroup && isSentenceBoundary(input, end)) {
+        // Include trailing closing chars (», ”, ’, ', ", ), ]) as part of
+        // the sentence. Update nesting counters for any closing group chars
+        // we absorb, otherwise the next iteration would underflow them.
         let stop = end + 1;
-        while (stop < input.length && CLOSING_CHARS.has(input[stop])) stop++;
+        while (stop < input.length && CLOSING_CHARS.has(input[stop])) {
+          const c = input[stop];
+          if (c === "»") openGuillemet = Math.max(0, openGuillemet - 1);
+          else if (c === ")") openParen = Math.max(0, openParen - 1);
+          else if (c === "]") openBracket = Math.max(0, openBracket - 1);
+          stop++;
+        }
         const rawStart = sentenceStart;
         const rawEnd = stop;
         const slice = input.slice(rawStart, rawEnd);
