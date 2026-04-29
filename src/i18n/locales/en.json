@@ -600,5 +600,28 @@
     "cancel": "Cancel",
     "confirm": "Confirm",
     "close": "Close"
+  },
+  "admin": {
+    "premium_log": {
+      "title": "Premium activations log",
+      "subtitle": "History of premium activation attempts (admin only).",
+      "filter_status": "Status",
+      "filter_payment_id": "Payment ID",
+      "filter_from": "From",
+      "filter_to": "To",
+      "status_all": "All",
+      "reset_filters": "Reset",
+      "refresh": "Refresh",
+      "col_date": "Date",
+      "col_status": "Status",
+      "col_payment_id": "Payment ID",
+      "col_user": "User",
+      "col_amount": "Amount",
+      "col_message": "Message",
+      "empty": "No entries",
+      "pagination": "{{from}}–{{to}} of {{total}}",
+      "prev": "Previous",
+      "next": "Next"
+    }
   }
 }

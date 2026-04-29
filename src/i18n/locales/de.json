@@ -600,5 +600,28 @@
     "cancel": "Abbrechen",
     "confirm": "Bestätigen",
     "close": "Schließen"
+  },
+  "admin": {
+    "premium_log": {
+      "title": "Premium-Aktivierungsprotokoll",
+      "subtitle": "Verlauf der Premium-Aktivierungsversuche (nur Admin).",
+      "filter_status": "Status",
+      "filter_payment_id": "Zahlungs-ID",
+      "filter_from": "Von",
+      "filter_to": "Bis",
+      "status_all": "Alle",
+      "reset_filters": "Zurücksetzen",
+      "refresh": "Aktualisieren",
+      "col_date": "Datum",
+      "col_status": "Status",
+      "col_payment_id": "Zahlungs-ID",
+      "col_user": "Nutzer",
+      "col_amount": "Betrag",
+      "col_message": "Nachricht",
+      "empty": "Keine Einträge",
+      "pagination": "{{from}}–{{to}} von {{total}}",
+      "prev": "Zurück",
+      "next": "Weiter"
+    }
   }
 }

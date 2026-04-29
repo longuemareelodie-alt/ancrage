@@ -600,5 +600,28 @@
     "cancel": "Annuler",
     "confirm": "Confirmer",
     "close": "Fermer"
+  },
+  "admin": {
+    "premium_log": {
+      "title": "Journal d'activations premium",
+      "subtitle": "Historique des tentatives d'activation premium (admin uniquement).",
+      "filter_status": "Statut",
+      "filter_payment_id": "Payment ID",
+      "filter_from": "Du",
+      "filter_to": "Au",
+      "status_all": "Tous",
+      "reset_filters": "Réinitialiser",
+      "refresh": "Actualiser",
+      "col_date": "Date",
+      "col_status": "Statut",
+      "col_payment_id": "Payment ID",
+      "col_user": "Utilisateur",
+      "col_amount": "Montant",
+      "col_message": "Message",
+      "empty": "Aucune entrée",
+      "pagination": "{{from}}–{{to}} sur {{total}}",
+      "prev": "Précédent",
+      "next": "Suivant"
+    }
   }
 }
