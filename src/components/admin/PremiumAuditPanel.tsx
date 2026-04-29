@@ -46,7 +46,12 @@ interface AuditResult {
 }
 
 const fmtAmount = (a: number | null) => (a != null ? `${(a / 100).toFixed(2)} €` : "—");
-const fmtDate = (d: string) => format(new Date(d), "yyyy-MM-dd HH:mm");
+const fmtDate = (d: string | null | undefined) => {
+  if (!d) return "—";
+  const dt = new Date(d);
+  if (Number.isNaN(dt.getTime())) return "—";
+  return format(dt, "yyyy-MM-dd HH:mm");
+};
 const shortId = (id: string | null) => (id ? id.slice(0, 8) + "…" : "—");
 
 const PremiumAuditPanel = () => {
