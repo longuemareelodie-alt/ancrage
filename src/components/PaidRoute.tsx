@@ -65,7 +65,7 @@ const PaidRoute = ({ children }: { children: React.ReactNode }) => {
     return () => {
       cancelled = true;
     };
-  }, [user, retryToken]);
+  }, [user?.id, retryToken]);
 
   if (loading || phase === "checking") {
     return (
