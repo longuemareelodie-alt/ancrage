@@ -282,7 +282,7 @@ const SpeakableText = ({
         return;
       }
 
-      const u = new SpeechSynthesisUtterance(applyLexicon(seg.text ?? ""));
+      const u = new SpeechSynthesisUtterance(applyLexicon(seg.text ?? "", effectiveLang));
       u.lang = effectiveLang;
       if (voice) u.voice = voice;
       u.rate = Math.max(0.1, Math.min(2, baseRate * (seg.rateMultiplier ?? 1)));
