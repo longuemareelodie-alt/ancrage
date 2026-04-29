@@ -227,19 +227,31 @@ const PremiumAuditPanel = () => {
             </div>
           )}
         </div>
-        <Button onClick={runAudit} disabled={loading} variant="outline">
-          {loading ? (
-            <>
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              {t("admin.audit.running")}
-            </>
-          ) : (
-            <>
-              <RefreshCw className="h-4 w-4 mr-2" />
-              {t("admin.audit.run")}
-            </>
+        <div className="flex flex-col items-end gap-2">
+          <Button onClick={runAudit} disabled={loading} variant="outline">
+            {loading ? (
+              <>
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                {t("admin.audit.running")}
+              </>
+            ) : (
+              <>
+                <RefreshCw className="h-4 w-4 mr-2" />
+                {t("admin.audit.run")}
+              </>
+            )}
+          </Button>
+          <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer">
+            <Switch checked={autoLog} onCheckedChange={setAutoLog} />
+            <span>Journaliser automatiquement chaque alerte</span>
+          </label>
+          {loggedKeys.size > 0 && (
+            <span className="text-xs text-muted-foreground flex items-center gap-1">
+              <ClipboardCheck className="h-3 w-3" />
+              {loggedKeys.size} diagnostic(s) enregistré(s)
+            </span>
           )}
-        </Button>
+        </div>
       </div>
 
       {error && (
