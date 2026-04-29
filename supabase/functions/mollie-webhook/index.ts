@@ -66,6 +66,58 @@ const logError = (label: string, error: unknown, context?: unknown) => {
   );
 };
 
+/**
+ * Audit-log a premium activation outcome to the `premium_activation_log` table.
+ * Best-effort: failures are logged but never break the webhook flow.
+ */
+const logActivation = async (
+  supabaseUrl: string | undefined,
+  serviceRoleKey: string | undefined,
+  entry: {
+    user_id?: string | null;
+    payment_id?: string | null;
+    status: string;
+    amount?: number | null;
+    message?: string | null;
+    raw?: Record<string, unknown> | null;
+  },
+) => {
+  if (!supabaseUrl || !serviceRoleKey) return;
+  try {
+    const res = await fetch(`${supabaseUrl}/rest/v1/premium_activation_log`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        apikey: serviceRoleKey,
+        Authorization: `Bearer ${serviceRoleKey}`,
+        Prefer: "return=minimal",
+      },
+      body: JSON.stringify({
+        user_id: entry.user_id ?? null,
+        payment_id: entry.payment_id ?? null,
+        status: entry.status,
+        amount: entry.amount ?? null,
+        source: "mollie-webhook",
+        message: entry.message ?? null,
+        raw: entry.raw ?? null,
+      }),
+    });
+    if (!res.ok) {
+      const body = await res.text().catch(() => "");
+      console.error(
+        "premium_activation_log insert failed",
+        safeStringify({ status: res.status, body: body.slice(0, 500), entry }),
+      );
+    }
+  } catch (err) {
+    console.error(
+      "premium_activation_log insert crashed",
+      safeStringify({ error: serializeError(err), entry }),
+    );
+  }
+};
+
+
 const firstString = (...values: unknown[]) => {
   for (const value of values) {
     if (typeof value === "string" && value.trim().length > 0) {
@@ -610,8 +662,20 @@ Deno.serve(async (req) => {
       });
     }
 
+    const amountCents =
+      payment?.amount?.value && !Number.isNaN(parseFloat(payment.amount.value))
+        ? Math.round(parseFloat(payment.amount.value) * 100)
+        : null;
+
     if (payment.status !== "paid") {
       logDebug("Payment not paid", { paymentId, status: payment?.status ?? null });
+      await logActivation(supabaseUrl, serviceRoleKey, {
+        payment_id: paymentId,
+        status: payment?.status === "failed" ? "failed" : "pending",
+        amount: amountCents,
+        message: `Mollie payment status: ${payment?.status ?? "unknown"}`,
+        raw: { mollie_status: payment?.status, event_type: eventType },
+      });
       return webhookAck({ status: payment.status, action: "none" });
     }
 
@@ -632,6 +696,13 @@ Deno.serve(async (req) => {
         paymentRecordId: payment?.id ?? null,
         metadata: payment?.metadata ?? null,
         payment,
+      });
+      await logActivation(supabaseUrl, serviceRoleKey, {
+        payment_id: paymentId,
+        status: "error",
+        amount: amountCents,
+        message: "user_identifier_missing",
+        raw: { metadata: paymentMetadata ?? null },
       });
       return webhookAck({
         status: "ignored",
@@ -704,6 +775,13 @@ Deno.serve(async (req) => {
         email,
         metadata: paymentMetadata,
       });
+      await logActivation(supabaseUrl, serviceRoleKey, {
+        user_id: userId,
+        payment_id: paymentId,
+        status: "error",
+        amount: amountCents,
+        message: "user_lookup_crashed",
+      });
       return webhookAck({
         status: "error",
         error: "user_lookup_crashed",
@@ -720,6 +798,13 @@ Deno.serve(async (req) => {
         paymentMetadata,
         payment,
       });
+      await logActivation(supabaseUrl, serviceRoleKey, {
+        user_id: userId,
+        payment_id: paymentId,
+        status: "user_not_found",
+        amount: amountCents,
+        message: `Lookup failed (user_id=${userId ?? "n/a"}, email=${email ?? "n/a"})`,
+      });
       return webhookAck({
         status: "ignored",
         action: "none",
@@ -735,6 +820,13 @@ Deno.serve(async (req) => {
 
     if (profile.is_premium && profile.plan_type === finalPlanType) {
       logDebug("Profile already at this plan", { profile, paymentId, finalPlanType });
+      await logActivation(supabaseUrl, serviceRoleKey, {
+        user_id: profile.user_id,
+        payment_id: paymentId,
+        status: "already_active",
+        amount: amountCents,
+        message: "Profile already premium=true / plan=paid",
+      });
       return webhookAck({
         status: "premium_already_active",
         user_id: profile.user_id,
@@ -764,6 +856,14 @@ Deno.serve(async (req) => {
         hint: updateError.hint,
         code: updateError.code,
       });
+      await logActivation(supabaseUrl, serviceRoleKey, {
+        user_id: profile.user_id,
+        payment_id: paymentId,
+        status: "error",
+        amount: amountCents,
+        message: `profile_update_failed: ${updateError.message}`,
+        raw: { code: updateError.code, details: updateError.details, hint: updateError.hint },
+      });
       return webhookAck({
         status: "error",
         error: "profile_update_failed",
@@ -777,12 +877,34 @@ Deno.serve(async (req) => {
     });
 
     if (!updatedProfile?.user_id) {
+      await logActivation(supabaseUrl, serviceRoleKey, {
+        user_id: profile.user_id,
+        payment_id: paymentId,
+        status: "error",
+        amount: amountCents,
+        message: "profile_update_empty_result",
+      });
       return webhookAck({
         status: "error",
         error: "profile_update_empty_result",
         user_id: profile.user_id,
       });
     }
+
+    // --- Successful activation: write the audit-log entry ---
+    await logActivation(supabaseUrl, serviceRoleKey, {
+      user_id: updatedProfile.user_id,
+      payment_id: paymentId,
+      status: "paid",
+      amount: amountCents,
+      message: "is_premium activated",
+      raw: {
+        previous_is_premium: profile.is_premium,
+        previous_plan_type: profile.plan_type,
+        currency: payment?.amount?.currency ?? null,
+        method: payment?.method ?? null,
+      },
+    });
 
     // --- Send welcome premium email ---
     try {

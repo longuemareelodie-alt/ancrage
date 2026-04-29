@@ -353,6 +353,42 @@ export type Database = {
         }
         Relationships: []
       }
+      premium_activation_log: {
+        Row: {
+          amount: number | null
+          created_at: string
+          id: string
+          message: string | null
+          payment_id: string | null
+          raw: Json | null
+          source: string
+          status: string
+          user_id: string | null
+        }
+        Insert: {
+          amount?: number | null
+          created_at?: string
+          id?: string
+          message?: string | null
+          payment_id?: string | null
+          raw?: Json | null
+          source?: string
+          status: string
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number | null
+          created_at?: string
+          id?: string
+          message?: string | null
+          payment_id?: string | null
+          raw?: Json | null
+          source?: string
+          status?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
