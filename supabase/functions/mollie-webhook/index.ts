@@ -697,6 +697,13 @@ Deno.serve(async (req) => {
         metadata: payment?.metadata ?? null,
         payment,
       });
+      await logActivation(supabaseUrl, serviceRoleKey, {
+        payment_id: paymentId,
+        status: "error",
+        amount: amountCents,
+        message: "user_identifier_missing",
+        raw: { metadata: paymentMetadata ?? null },
+      });
       return webhookAck({
         status: "ignored",
         action: "none",
@@ -768,6 +775,13 @@ Deno.serve(async (req) => {
         email,
         metadata: paymentMetadata,
       });
+      await logActivation(supabaseUrl, serviceRoleKey, {
+        user_id: userId,
+        payment_id: paymentId,
+        status: "error",
+        amount: amountCents,
+        message: "user_lookup_crashed",
+      });
       return webhookAck({
         status: "error",
         error: "user_lookup_crashed",
@@ -784,6 +798,13 @@ Deno.serve(async (req) => {
         paymentMetadata,
         payment,
       });
+      await logActivation(supabaseUrl, serviceRoleKey, {
+        user_id: userId,
+        payment_id: paymentId,
+        status: "user_not_found",
+        amount: amountCents,
+        message: `Lookup failed (user_id=${userId ?? "n/a"}, email=${email ?? "n/a"})`,
+      });
       return webhookAck({
         status: "ignored",
         action: "none",
@@ -799,6 +820,13 @@ Deno.serve(async (req) => {
 
     if (profile.is_premium && profile.plan_type === finalPlanType) {
       logDebug("Profile already at this plan", { profile, paymentId, finalPlanType });
+      await logActivation(supabaseUrl, serviceRoleKey, {
+        user_id: profile.user_id,
+        payment_id: paymentId,
+        status: "already_active",
+        amount: amountCents,
+        message: "Profile already premium=true / plan=paid",
+      });
       return webhookAck({
         status: "premium_already_active",
         user_id: profile.user_id,
@@ -828,6 +856,14 @@ Deno.serve(async (req) => {
         hint: updateError.hint,
         code: updateError.code,
       });
+      await logActivation(supabaseUrl, serviceRoleKey, {
+        user_id: profile.user_id,
+        payment_id: paymentId,
+        status: "error",
+        amount: amountCents,
+        message: `profile_update_failed: ${updateError.message}`,
+        raw: { code: updateError.code, details: updateError.details, hint: updateError.hint },
+      });
       return webhookAck({
         status: "error",
         error: "profile_update_failed",
@@ -841,12 +877,34 @@ Deno.serve(async (req) => {
     });
 
     if (!updatedProfile?.user_id) {
+      await logActivation(supabaseUrl, serviceRoleKey, {
+        user_id: profile.user_id,
+        payment_id: paymentId,
+        status: "error",
+        amount: amountCents,
+        message: "profile_update_empty_result",
+      });
       return webhookAck({
         status: "error",
         error: "profile_update_empty_result",
         user_id: profile.user_id,
       });
     }
+
+    // --- Successful activation: write the audit-log entry ---
+    await logActivation(supabaseUrl, serviceRoleKey, {
+      user_id: updatedProfile.user_id,
+      payment_id: paymentId,
+      status: "paid",
+      amount: amountCents,
+      message: "is_premium activated",
+      raw: {
+        previous_is_premium: profile.is_premium,
+        previous_plan_type: profile.plan_type,
+        currency: payment?.amount?.currency ?? null,
+        method: payment?.method ?? null,
+      },
+    });
 
     // --- Send welcome premium email ---
     try {
