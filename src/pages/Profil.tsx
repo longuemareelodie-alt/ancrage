@@ -636,6 +636,20 @@ const Profil = () => {
           )}
         </AnimatePresence>
       </SectionBlock>
+
+      <SupportContactDialog
+        open={supportOpen}
+        onOpenChange={setSupportOpen}
+        context="Vérification accès premium impossible"
+        ticketId={profileTicketId}
+        diagnostics={[
+          `Source : Profil.tsx`,
+          `Ticket : ${profileTicketId}`,
+          `User ID : ${user?.id ?? "—"}`,
+          `Erreur : ${profileLoadError ?? "—"}`,
+          `URL : ${typeof window !== "undefined" ? window.location.href : "—"}`,
+        ].join("\n")}
+      />
     </div>
   );
 };
