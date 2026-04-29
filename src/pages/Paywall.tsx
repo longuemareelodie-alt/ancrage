@@ -7,6 +7,10 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
 import { supabase } from "@/integrations/supabase/client";
 import { withRetry } from "@/lib/supabaseRetry";
+import {
+  PAYWALL_ENFORCEMENT_CUTOFF_ISO,
+  classifyProfileCreatedAt,
+} from "@/lib/paywallPolicy";
 import Breadcrumb from "@/components/Breadcrumb";
 
 const Paywall = () => {
