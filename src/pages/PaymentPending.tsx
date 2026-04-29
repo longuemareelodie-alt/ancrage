@@ -5,6 +5,7 @@ import { Loader2, CheckCircle2, AlertCircle, ArrowRight, RefreshCw } from "lucid
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { withRetry } from "@/lib/supabaseRetry";
 
 type Status = "pending" | "confirmed" | "error";
 
@@ -34,11 +35,15 @@ const PaymentPending = () => {
       attempt += 1;
       setAttempts(attempt);
 
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("is_premium")
-        .eq("user_id", user.id)
-        .single();
+      const { data, error } = await withRetry(
+        () =>
+          supabase
+            .from("profiles")
+            .select("is_premium")
+            .eq("user_id", user.id)
+            .single(),
+        { maxAttempts: 2, baseDelayMs: 400, timeoutMs: 6000 },
+      );
 
       if (cancelled.current) return;
 
@@ -63,7 +68,7 @@ const PaymentPending = () => {
     return () => {
       cancelled.current = true;
     };
-  }, [user, authLoading, navigate]);
+  }, [user?.id, authLoading, navigate]);
 
   const progressPct = Math.min(100, Math.round((attempts / MAX_ATTEMPTS) * 100));
 

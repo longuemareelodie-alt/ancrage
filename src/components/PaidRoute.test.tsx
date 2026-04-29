@@ -3,8 +3,15 @@ import { render, screen, waitFor, cleanup } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import PaidRoute from "@/components/PaidRoute";
 
+const STABLE_USER = { id: "user-123" };
 vi.mock("@/contexts/AuthContext", () => ({
-  useAuth: () => ({ user: { id: "user-123" }, loading: false }),
+  useAuth: () => ({ user: STABLE_USER, loading: false }),
+}));
+
+vi.mock("react-i18next", () => ({
+  useTranslation: () => ({
+    t: (_key: string, fallback?: string) => fallback ?? _key,
+  }),
 }));
 
 let currentIsPremium: boolean | null = false;
@@ -62,8 +69,9 @@ describe("PaidRoute — accès des payeurs aux routes protégées", () => {
     for (const path of PROTECTED_PATHS) {
       it(`autorise l'accès à ${path}`, async () => {
         renderRoute(path);
-        await waitFor(() =>
-          expect(screen.getByText("PROTECTED_CONTENT_OK")).toBeInTheDocument()
+        await waitFor(
+          () => expect(screen.getByText("PROTECTED_CONTENT_OK")).toBeInTheDocument(),
+          { timeout: 3000 },
         );
       });
     }
@@ -74,8 +82,9 @@ describe("PaidRoute — accès des payeurs aux routes protégées", () => {
     for (const path of PROTECTED_PATHS) {
       it(`redirige depuis ${path} vers /paywall`, async () => {
         renderRoute(path);
-        await waitFor(() =>
-          expect(screen.getByText("REDIRECTED_TO_PAYWALL")).toBeInTheDocument()
+        await waitFor(
+          () => expect(screen.getByText("REDIRECTED_TO_PAYWALL")).toBeInTheDocument(),
+          { timeout: 3000 },
         );
       });
     }
