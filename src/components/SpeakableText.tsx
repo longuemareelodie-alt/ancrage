@@ -418,7 +418,9 @@ const SpeakableText = ({
               aria-valuetext={`${pct} pour cent lu, ${fmt(remaining)} restant`}
             >
               <div
-                className="h-full rounded-full bg-primary transition-[width] duration-200 ease-linear"
+                className={`h-full rounded-full transition-[width] duration-200 ease-linear ${
+                  state === "paused" ? "bg-primary/40" : "bg-primary"
+                }`}
                 style={{ width: `${pct}%` }}
               />
             </div>
