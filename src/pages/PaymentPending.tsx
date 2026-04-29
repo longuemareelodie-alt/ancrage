@@ -52,6 +52,7 @@ const PaymentPending = () => {
       if (cancelled.current) return;
       attempt += 1;
       setAttempts(attempt);
+      updateLastState("checking");
 
       const { data, error } = await withRetry(
         () =>
@@ -68,6 +69,7 @@ const PaymentPending = () => {
       // Confirm ONLY when the profile row exists AND is_premium is strictly true.
       if (!error && data && data.is_premium === true) {
         setStatus("confirmed");
+        updateLastState("confirmed");
         setTimeout(() => {
           if (!cancelled.current) navigate("/payment-success", { replace: true });
         }, 1200);
@@ -78,14 +80,18 @@ const PaymentPending = () => {
       // Don't keep polling — the webhook can't activate a profile that doesn't exist.
       if (!error && data === null) {
         setStatus("not_found");
+        updateLastState("not_found");
         return;
       }
 
       if (attempt >= MAX_ATTEMPTS) {
         setStatus("error");
+        updateLastState("error", error?.message ?? "max_attempts_reached");
         return;
       }
 
+      // Still pending (or transient error) → will retry.
+      updateLastState("retrying", error?.message ?? null);
       setTimeout(poll, POLL_INTERVAL_MS);
     };
 
