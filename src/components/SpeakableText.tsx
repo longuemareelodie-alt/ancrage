@@ -414,6 +414,8 @@ const SpeakableText = ({
     setState("idle");
     setActiveIndex(-1);
     setElapsed(0);
+    clearProgress(fullText);
+    setSavedProgress(null);
     restorePreviousFocus();
   };
 
