@@ -14,6 +14,12 @@ import {
 } from "@/lib/speechPrefs";
 import { splitSentences } from "@/lib/sentenceSplit";
 import { applyLexicon } from "@/lib/pronunciationLexicon";
+import {
+  getProgress,
+  saveProgress,
+  clearProgress,
+  type SpeechProgress,
+} from "@/lib/speechProgress";
 
 type SpeechState = "idle" | "speaking" | "paused";
 
@@ -59,6 +65,19 @@ const SpeakableText = ({
 
   const fullText = hint ? `${text}. ${hint}` : text;
   const sentences = splitSentences(fullText);
+  const [savedProgress, setSavedProgress] = useState<SpeechProgress | null>(null);
+  const stateRef = useRef<SpeechState>("idle");
+  const elapsedRef = useRef(0);
+  const estimatedTotalRef = useRef(0);
+
+  useEffect(() => { stateRef.current = state; }, [state]);
+  useEffect(() => { elapsedRef.current = elapsed; }, [elapsed]);
+  useEffect(() => { estimatedTotalRef.current = estimatedTotal; }, [estimatedTotal]);
+
+  // Load any saved progress for this text on mount / when text changes.
+  useEffect(() => {
+    setSavedProgress(getProgress(fullText));
+  }, [fullText]);
 
   useEffect(() => {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) {
@@ -66,8 +85,22 @@ const SpeakableText = ({
     }
   }, []);
 
+  // Helper that captures the current playback position.
+  const persistCurrentProgress = () => {
+    if (stateRef.current === "idle") return;
+    const sentence = Math.max(0, sentenceCursorRef.current);
+    saveProgress(fullText, {
+      sentence,
+      elapsed: elapsedRef.current,
+      total: estimatedTotalRef.current,
+      lang: lang,
+    });
+  };
+
   useEffect(() => {
     return () => {
+      // Persist on unmount if still playing/paused.
+      persistCurrentProgress();
       if (pauseTimerRef.current !== null) {
         window.clearTimeout(pauseTimerRef.current);
         pauseTimerRef.current = null;
@@ -80,7 +113,31 @@ const SpeakableText = ({
         }
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Persist progress on tab hide / page unload so we don't lose position.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const onHide = () => persistCurrentProgress();
+    document.addEventListener("visibilitychange", onHide);
+    window.addEventListener("pagehide", onHide);
+    window.addEventListener("beforeunload", onHide);
+    return () => {
+      document.removeEventListener("visibilitychange", onHide);
+      window.removeEventListener("pagehide", onHide);
+      window.removeEventListener("beforeunload", onHide);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fullText, lang]);
+
+  // Throttled save while speaking (every ~3s) to keep storage fresh.
+  useEffect(() => {
+    if (state !== "speaking") return;
+    const id = window.setInterval(() => persistCurrentProgress(), 3000);
+    return () => window.clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state, fullText, lang]);
 
   // Tick elapsed time only while actively speaking.
   useEffect(() => {
@@ -155,7 +212,7 @@ const SpeakableText = ({
     }
   };
 
-  const handlePlay = async (fromSentence = 0) => {
+  const handlePlay = async (fromSentence = 0, fromElapsed = 0) => {
     if (!supported) return;
     cancelAll();
 
@@ -210,7 +267,7 @@ const SpeakableText = ({
     }
     const speechSeconds = charCount / (14 * Math.max(0.5, baseRate));
     setEstimatedTotal(Math.max(1, speechSeconds + pauseSeconds));
-    setElapsed(0);
+    setElapsed(Math.max(0, fromElapsed));
 
     setState("speaking");
     setActiveIndex(sentences.length > 0 ? startSentence : -1);
@@ -236,6 +293,8 @@ const SpeakableText = ({
         setState("idle");
         setActiveIndex(-1);
         setElapsed(estimatedTotal); // snap to 100% on natural completion
+        clearProgress(fullText);
+        setSavedProgress(null);
         restorePreviousFocus();
         return;
       }
@@ -323,6 +382,9 @@ const SpeakableText = ({
       );
     }
     setState("paused");
+    // Persist immediately so a reload right after pause still resumes here.
+    persistCurrentProgress();
+    setSavedProgress(getProgress(fullText));
   };
 
   const handleResume = () => {
@@ -352,6 +414,8 @@ const SpeakableText = ({
     setState("idle");
     setActiveIndex(-1);
     setElapsed(0);
+    clearProgress(fullText);
+    setSavedProgress(null);
     restorePreviousFocus();
   };
 
@@ -491,16 +555,32 @@ const SpeakableText = ({
           aria-label="Contrôles du guidage audio"
         >
           {state === "idle" ? (
-            <button
-              type="button"
-              onClick={() => handlePlay(0)}
-              aria-label="Lire à voix haute"
-              aria-pressed={false}
-              title="Guidage audio"
-              className={`${baseBtn} border-border bg-background text-muted-foreground hover:bg-muted`}
-            >
-              <Volume2 className="h-3.5 w-3.5" aria-hidden="true" />
-            </button>
+            <>
+              <button
+                type="button"
+                onClick={() => handlePlay(0, 0)}
+                aria-label="Lire à voix haute"
+                aria-pressed={false}
+                title="Guidage audio"
+                className={`${baseBtn} border-border bg-background text-muted-foreground hover:bg-muted`}
+              >
+                <Volume2 className="h-3.5 w-3.5" aria-hidden="true" />
+              </button>
+              {savedProgress && savedProgress.sentence > 0 && (
+                <button
+                  type="button"
+                  onClick={() =>
+                    handlePlay(savedProgress.sentence, savedProgress.elapsed)
+                  }
+                  title="Reprendre où vous vous êtes arrêté"
+                  aria-label={`Reprendre la lecture à la phrase ${savedProgress.sentence + 1}`}
+                  className="inline-flex h-8 items-center gap-1.5 rounded-full border border-primary/40 bg-primary/10 px-3 text-xs font-medium text-primary transition-colors hover:bg-primary/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                >
+                  <Play className="h-3.5 w-3.5" aria-hidden="true" />
+                  <span>Reprendre</span>
+                </button>
+              )}
+            </>
           ) : (
             <>
               {state === "speaking" ? (
