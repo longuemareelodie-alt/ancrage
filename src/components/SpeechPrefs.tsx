@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Volume2, Gauge, Languages, Music2, Pause as PauseIcon, Wind, Eye, AlertTriangle } from "lucide-react";
+import { Volume2, Gauge, Languages, Music2, Pause as PauseIcon, Wind, Eye, AlertTriangle, Crosshair } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -25,6 +25,8 @@ import {
   setSlowKeywords,
   getSilentMode,
   setSilentMode,
+  getFocusFollow,
+  setFocusFollow,
 } from "@/lib/speechPrefs";
 
 const RATE_OPTIONS: SpeechRate[] = ["slow", "normal", "fast"];
@@ -54,6 +56,7 @@ const SpeechPrefs = ({ className = "" }: SpeechPrefsProps) => {
   const [pitch, setPitchState] = useState<number>(() => getSpeechPitch());
   const [slowKw, setSlowKwState] = useState<boolean>(() => getSlowKeywords());
   const [silentMode, setSilentModeState] = useState<boolean>(() => getSilentMode());
+  const [focusFollow, setFocusFollowState] = useState<boolean>(() => getFocusFollow());
 
   // Combined list (used by handleVoiceChange to find an actual voice).
   const voices = [...exactVoices, ...fallbackVoices];
@@ -397,6 +400,28 @@ const SpeechPrefs = ({ className = "" }: SpeechPrefsProps) => {
             setSilentMode(c);
           }}
           aria-label="Activer la surbrillance silencieuse"
+        />
+      </div>
+
+      {/* Suivi du focus clavier */}
+      <div className="flex items-start justify-between gap-3 rounded-xl bg-muted/40 p-3">
+        <div className="flex items-start gap-2">
+          <Crosshair className="mt-0.5 h-4 w-4 text-primary" />
+          <div>
+            <p className="text-sm font-semibold">Suivre la phrase au clavier</p>
+            <p className="text-xs text-muted-foreground">
+              Le focus clavier se déplace sur la phrase en cours pendant la lecture
+              (utile pour suivre le texte avec un lecteur d'écran ou une loupe).
+            </p>
+          </div>
+        </div>
+        <Switch
+          checked={focusFollow}
+          onCheckedChange={(c) => {
+            setFocusFollowState(c);
+            setFocusFollow(c);
+          }}
+          aria-label="Suivre la phrase active avec le focus clavier"
         />
       </div>
 
