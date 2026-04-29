@@ -47,9 +47,10 @@ const SpeechPrefs = ({ className = "" }: SpeechPrefsProps) => {
   const [exactVoices, setExactVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [fallbackVoices, setFallbackVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [match, setMatch] = useState<VoiceMatch>("exact");
-  const [voiceURI, setVoiceURI] = useState<string | null>(() => getSpeechVoiceURI());
+  const initialLang = getSpeechLang();
+  const [voiceURI, setVoiceURI] = useState<string | null>(() => getSpeechVoiceURI(initialLang));
   const [rate, setRate] = useState<SpeechRate>(() => getSpeechRate());
-  const [lang, setLang] = useState<SpeechLang>(() => getSpeechLang());
+  const [lang, setLang] = useState<SpeechLang>(() => initialLang);
   const [supported, setSupported] = useState(true);
   const [sentencePause, setSentencePauseState] = useState<number>(() => getSentencePauseMs());
   const [commaPause, setCommaPauseState] = useState<number>(() => getCommaPauseMs());
@@ -97,7 +98,9 @@ const SpeechPrefs = ({ className = "" }: SpeechPrefsProps) => {
   const handleLangChange = (l: SpeechLang) => {
     setLang(l);
     setSpeechLang(l);
-    setVoiceURI(null); // store cleared by setSpeechLang
+    // Voice is now per-language → load whatever this language remembered
+    // (could be its own fallback choice, e.g. fr-FR voice picked for fr-CA).
+    setVoiceURI(getSpeechVoiceURI(l));
     // Load all per-language preferences for the newly selected language.
     setRate(getSpeechRate(l));
     setPitchState(getSpeechPitch(l));
@@ -111,7 +114,7 @@ const SpeechPrefs = ({ className = "" }: SpeechPrefsProps) => {
   const handleVoiceChange = (uri: string) => {
     const next = uri === "__default__" ? null : uri;
     setVoiceURI(next);
-    setSpeechVoiceURI(next);
+    setSpeechVoiceURI(next, lang);
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
       window.speechSynthesis.cancel();
       const u = new SpeechSynthesisUtterance(PREVIEW_TEXT[lang]);

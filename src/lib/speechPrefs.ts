@@ -3,7 +3,7 @@ import { splitSentencesText } from "./sentenceSplit";
 export type SpeechRate = "slow" | "normal" | "fast";
 export type SpeechLang = "fr-FR" | "fr-CA" | "en-US";
 
-const VOICE_KEY = "calm_speech_voice";
+const VOICE_KEY = "calm_speech_voice"; // legacy global voice (migrated per-lang)
 const RATE_KEY = "calm_speech_rate"; // legacy global rate (migrated per-lang)
 const LANG_KEY = "calm_speech_lang";
 // Legacy global keys (kept as fallback during migration to per-lang values).
@@ -22,6 +22,7 @@ const commaPauseKeyFor = (lang: SpeechLang) => `calm_speech_comma_pause__${lang}
 const slowKeywordsKeyFor = (lang: SpeechLang) => `calm_speech_slow_keywords__${lang}`;
 const silentModeKeyFor = (lang: SpeechLang) => `calm_speech_silent_mode__${lang}`;
 const focusFollowKeyFor = (lang: SpeechLang) => `calm_speech_focus_follow__${lang}`;
+const voiceKeyFor = (lang: SpeechLang) => `calm_speech_voice__${lang}`;
 
 export const SENTENCE_PAUSE_DEFAULT = 400; // ms
 export const COMMA_PAUSE_DEFAULT = 150; // ms
@@ -69,8 +70,8 @@ export function getSpeechLang(): SpeechLang {
 export function setSpeechLang(lang: SpeechLang) {
   if (typeof window === "undefined") return;
   localStorage.setItem(LANG_KEY, lang);
-  // Reset voice — saved voice may not match the new language.
-  localStorage.removeItem(VOICE_KEY);
+  // Voice is now stored per-language, so switching language no longer wipes
+  // the saved voice — each language remembers its own (or its fallback).
   window.dispatchEvent(new CustomEvent("calm-speech-prefs-change"));
 }
 
@@ -104,15 +105,28 @@ export function setSpeechRate(rate: SpeechRate, lang?: SpeechLang | string) {
   window.dispatchEvent(new CustomEvent("calm-speech-prefs-change"));
 }
 
-export function getSpeechVoiceURI(): string | null {
+export function getSpeechVoiceURI(lang?: SpeechLang | string): string | null {
   if (typeof window === "undefined") return null;
-  return localStorage.getItem(VOICE_KEY);
+  const target = lang ? normalizeSpeechLang(lang) : getSpeechLang();
+  const perLang = localStorage.getItem(voiceKeyFor(target));
+  if (perLang) return perLang;
+  // Legacy global voice — only honour it for the currently-active language
+  // to avoid leaking an FR voice into EN (or vice-versa).
+  if (target === getSpeechLang()) {
+    const legacy = localStorage.getItem(VOICE_KEY);
+    if (legacy) return legacy;
+  }
+  return null;
 }
 
-export function setSpeechVoiceURI(uri: string | null) {
+export function setSpeechVoiceURI(uri: string | null, lang?: SpeechLang | string) {
   if (typeof window === "undefined") return;
-  if (uri) localStorage.setItem(VOICE_KEY, uri);
-  else localStorage.removeItem(VOICE_KEY);
+  const target = lang ? normalizeSpeechLang(lang) : getSpeechLang();
+  if (uri) localStorage.setItem(voiceKeyFor(target), uri);
+  else localStorage.removeItem(voiceKeyFor(target));
+  // Drop the legacy global key once the user has actively picked something
+  // — per-lang storage is now the source of truth.
+  localStorage.removeItem(VOICE_KEY);
   window.dispatchEvent(new CustomEvent("calm-speech-prefs-change"));
 }
 
@@ -140,7 +154,10 @@ export function loadVoices(): Promise<SpeechSynthesisVoice[]> {
 }
 
 export function resolveVoice(voices: SpeechSynthesisVoice[], lang = "fr-FR"): SpeechSynthesisVoice | null {
-  const stored = getSpeechVoiceURI();
+  // Honour the per-language stored voice first. This is what makes the
+  // fallback "stick": e.g. for fr-CA without an exact voice, the user can
+  // pick a fr-FR voice and it will be remembered for fr-CA only.
+  const stored = getSpeechVoiceURI(lang);
   if (stored) {
     const found = voices.find((v) => v.voiceURI === stored);
     if (found) return found;
