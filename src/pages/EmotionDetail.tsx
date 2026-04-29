@@ -44,8 +44,10 @@ const RESOLVED_LABEL: Record<ResolvedStyle, string> = {
 
 const EmotionDetail = () => {
   const { emotion } = useParams<{ emotion: string }>();
+  const location = useLocation();
   const { t, i18n } = useTranslation();
   const key = emotion || "";
+  const titleRef = useRef<string>("");
 
   const [style, setStyle] = useState<ActionStyle>(() => getActionStyle());
   const [autoResolved, setAutoResolved] = useState<ResolvedStyle | null>(null);
