@@ -64,7 +64,7 @@ const SpeakableText = ({
   const previousFocusRef = useRef<HTMLElement | null>(null);
 
   const fullText = hint ? `${text}. ${hint}` : text;
-  const sentences = splitSentences(fullText);
+  const sentences = splitSentences(fullText, { lang });
   const [savedProgress, setSavedProgress] = useState<SpeechProgress | null>(null);
   const stateRef = useRef<SpeechState>("idle");
   const elapsedRef = useRef(0);
