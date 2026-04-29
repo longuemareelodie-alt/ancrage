@@ -84,7 +84,7 @@ const PremiumAuditPanel = () => {
     const { data: auth } = await supabase.auth.getUser();
     const adminId = auth.user?.id ?? null;
     const ticketId = buildTicketId(kind, key);
-    const { error } = await supabase.from("support_logs").insert({
+    const { error } = await supabase.from("support_logs").insert([{
       user_id: adminId,
       source: `admin_audit:${kind}`,
       ticket_id: ticketId,
