@@ -165,6 +165,11 @@ const EmotionDetail = () => {
                 );
               })}
             </div>
+            {style === "any" && autoResolved && (
+              <p className="mt-2 text-xs text-muted-foreground">
+                Adapté à ton humeur du jour : <span className="font-semibold text-foreground">{RESOLVED_LABEL[autoResolved]}</span>
+              </p>
+            )}
           </div>
         )}
 
