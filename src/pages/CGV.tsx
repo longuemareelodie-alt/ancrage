@@ -33,7 +33,7 @@ const CGV = () => (
           Conditions Générales de Vente
         </h1>
         <p className="text-sm text-muted-foreground mb-6">
-          Dernière mise à jour : {new Date().toLocaleDateString("fr-FR")}
+          Dernière mise à jour&nbsp;: {new Date().toLocaleDateString("fr-FR")}
         </p>
 
         <nav
@@ -59,27 +59,33 @@ const CGV = () => (
           <section id="objet" className="scroll-mt-24">
             <h2 className="text-lg font-semibold text-foreground">1. Objet</h2>
             <p>
-              Les présentes Conditions Générales de Vente (« CGV ») régissent la
-              vente de l'accès à l'application <strong>Digital Maman Libre</strong>{" "}
-              (ci-après « le Service »), accessible depuis les domaines
-              digitalmamanlibre.com et ancrage.lovable.app. La validation de la
-              commande, matérialisée par la case à cocher d'acceptation lors du
-              paiement, vaut acceptation pleine et entière des présentes CGV.
+              Les présentes Conditions générales de vente (ci-après «&nbsp;CGV&nbsp;»)
+              régissent la vente de l'accès à l'application{" "}
+              <strong>Digital Maman Libre</strong> (ci-après «&nbsp;le
+              Service&nbsp;»), accessible depuis les domaines
+              digitalmamanlibre.com et ancrage.lovable.app. La validation de
+              la commande, matérialisée par le clic sur le bouton de paiement
+              et la mention d'acceptation associée, vaut acceptation pleine
+              et entière des présentes CGV par le client (ci-après «&nbsp;le
+              Client&nbsp;»).
             </p>
           </section>
 
           <section id="editeur-contact" className="scroll-mt-24">
-            <h2 className="text-lg font-semibold text-foreground">2. Éditeur et contact</h2>
+            <h2 className="text-lg font-semibold text-foreground">
+              2. Éditeur et contact
+            </h2>
             <p>
               Le Service est édité par <strong>Digital Maman Libre</strong>,
               micro-entreprise immatriculée sous le SIRET{" "}
-              <strong>829 977 958 00018</strong> (SIREN 829 977 958), dont le
-              siège social est situé au{" "}
+              <strong>829&nbsp;977&nbsp;958&nbsp;00018</strong> (SIREN
+              829&nbsp;977&nbsp;958), dont le siège social est situé au{" "}
               <strong>17 rue André Maurois, 76150 Maromme, France</strong>.
-              TVA non applicable, art. 293 B du CGI.
+              TVA non applicable, art. 293&nbsp;B du CGI. Directrice de la
+              publication&nbsp;: <strong>Élodie Mauger-Longuemare</strong>.
             </p>
             <p>
-              Service client :{" "}
+              Service client&nbsp;:{" "}
               <a
                 href="mailto:contact@digitalmamanlibre.com"
                 className="underline hover:text-primary"
@@ -87,7 +93,10 @@ const CGV = () => (
                 contact@digitalmamanlibre.com
               </a>
               . L'ensemble des informations légales figure également dans les{" "}
-              <Link to="/mentions-legales" className="underline hover:text-primary">
+              <Link
+                to="/mentions-legales"
+                className="underline hover:text-primary"
+              >
                 Mentions légales
               </Link>
               .
@@ -95,25 +104,32 @@ const CGV = () => (
           </section>
 
           <section id="description" className="scroll-mt-24">
-            <h2 className="text-lg font-semibold text-foreground">3. Description du Service</h2>
+            <h2 className="text-lg font-semibold text-foreground">
+              3. Description du Service
+            </h2>
             <p>
               Le Service propose des outils numériques d'accompagnement au
-              quotidien : suivi émotionnel, parcours guidés, fiches pratiques et
-              ressources de soutien. Il s'agit d'un outil de{" "}
-              <strong>bien-être</strong> qui <strong>ne constitue ni un
-              dispositif médical, ni un diagnostic, ni un substitut à un avis
-              professionnel de santé</strong>. En cas de doute ou de détresse,
-              l'utilisateur est invité à consulter un professionnel de santé ou
-              à contacter un service d'urgence.
+              quotidien&nbsp;: suivi émotionnel, parcours guidés, fiches
+              pratiques et ressources de soutien. Il s'agit d'un outil de{" "}
+              <strong>bien-être</strong> qui{" "}
+              <strong>
+                ne constitue ni un dispositif médical, ni un diagnostic, ni
+                un substitut à un avis professionnel de santé
+              </strong>
+              . En cas de doute ou de détresse, le Client est invité à
+              consulter un professionnel de santé ou à contacter un service
+              d'urgence.
             </p>
           </section>
 
           <section id="capacite-juridique" className="scroll-mt-24">
-            <h2 className="text-lg font-semibold text-foreground">4. Capacité juridique</h2>
+            <h2 className="text-lg font-semibold text-foreground">
+              4. Capacité juridique
+            </h2>
             <p>
-              Le client déclare être majeur (18 ans révolus) et disposer de la
-              pleine capacité juridique pour conclure un contrat à distance. Le
-              Service n'est pas destiné aux mineurs.
+              Le Client déclare être majeur (18&nbsp;ans révolus) et disposer
+              de la pleine capacité juridique pour conclure un contrat à
+              distance. Le Service n'est pas destiné aux mineurs.
             </p>
           </section>
 
@@ -121,29 +137,31 @@ const CGV = () => (
             <h2 className="text-lg font-semibold text-foreground">5. Prix</h2>
             <p>
               L'accès complet au Service est proposé sous forme d'un{" "}
-              <strong>paiement unique de 39 € TTC</strong> (toutes taxes
-              comprises, en euros), donnant un accès illimité dans le temps aux
-              fonctionnalités payantes existantes au moment de l'achat. Aucun
-              abonnement n'est souscrit : aucun prélèvement récurrent n'est
-              effectué.
+              <strong>paiement unique de 39&nbsp;€ TTC</strong> (toutes taxes
+              comprises, en euros), donnant un accès illimité dans le temps
+              aux fonctionnalités payantes existantes au moment de l'achat.
+              Aucun abonnement n'est souscrit&nbsp;: aucun prélèvement
+              récurrent n'est effectué.
             </p>
             <p>
-              Les prix sont indiqués TTC sur la page de paiement. La TVA
-              applicable est, le cas échéant, celle en vigueur au jour de la
-              commande. La mention « TVA non applicable, art. 293 B du CGI »
-              s'applique si l'éditeur relève du régime de la franchise en base.
+              Les prix sont indiqués TTC sur la page de paiement. L'éditeur
+              relève du régime de la franchise en base de TVA, ce qui
+              justifie la mention «&nbsp;TVA non applicable, art. 293&nbsp;B
+              du CGI&nbsp;». Aucune TVA n'est donc facturée au Client.
             </p>
           </section>
 
           <section id="modalites-paiement" className="scroll-mt-24">
-            <h2 className="text-lg font-semibold text-foreground">6. Modalités de paiement</h2>
+            <h2 className="text-lg font-semibold text-foreground">
+              6. Modalités de paiement
+            </h2>
             <p>
               Le paiement s'effectue en ligne, en une seule fois, par carte
-              bancaire ou par les moyens de paiement proposés par notre
-              prestataire <strong>Mollie</strong>. La transaction est sécurisée
-              et aucune coordonnée bancaire n'est stockée sur nos serveurs. La
-              commande est définitivement enregistrée après confirmation du
-              paiement par le prestataire.
+              bancaire ou par les moyens de paiement proposés par le
+              prestataire <strong>Mollie B.V.</strong> La transaction est
+              sécurisée et aucune coordonnée bancaire n'est stockée sur les
+              serveurs de l'éditeur. La commande est définitivement
+              enregistrée après confirmation du paiement par le prestataire.
             </p>
           </section>
 
@@ -316,49 +334,67 @@ const CGV = () => (
           </section>
 
           <section id="compte-utilisateur" className="scroll-mt-24">
-            <h2 className="text-lg font-semibold text-foreground">10. Compte utilisateur</h2>
+            <h2 className="text-lg font-semibold text-foreground">
+              10. Compte utilisateur
+            </h2>
             <p>
-              Le client est responsable de la confidentialité de ses
-              identifiants et de toute activité réalisée depuis son compte. Tout
-              usage frauduleux doit être signalé sans délai au service client.
+              Le Client est responsable de la confidentialité de ses
+              identifiants et de toute activité réalisée depuis son compte.
+              Tout usage frauduleux doit être signalé sans délai au service
+              client.
             </p>
           </section>
 
           <section id="propriete-intellectuelle" className="scroll-mt-24">
-            <h2 className="text-lg font-semibold text-foreground">11. Propriété intellectuelle</h2>
+            <h2 className="text-lg font-semibold text-foreground">
+              11. Propriété intellectuelle
+            </h2>
             <p>
               L'ensemble des contenus du Service (textes, visuels, parcours,
-              code, marques) est protégé par le droit de la propriété
-              intellectuelle. L'achat confère un droit d'usage personnel, non
-              exclusif et non transférable. Toute reproduction, diffusion,
-              revente ou exploitation non autorisée est strictement interdite.
+              code, marques, logos) est protégé par le droit de la propriété
+              intellectuelle, conformément aux articles L.&nbsp;111-1 et
+              suivants du Code de la propriété intellectuelle. L'achat
+              confère au Client un droit d'usage personnel, non exclusif et
+              non transférable, limité à un usage strictement privé. Toute
+              reproduction, représentation, diffusion, revente ou
+              exploitation non autorisée est strictement interdite et
+              constitue une contrefaçon sanctionnée par les articles
+              L.&nbsp;335-2 et suivants du même Code.
             </p>
           </section>
 
           <section id="responsabilite" className="scroll-mt-24">
-            <h2 className="text-lg font-semibold text-foreground">12. Responsabilité</h2>
+            <h2 className="text-lg font-semibold text-foreground">
+              12. Responsabilité
+            </h2>
             <p>
               Le Service est fourni dans la limite des moyens techniques
               raisonnables. L'éditeur ne saurait être tenu responsable des
-              décisions prises par l'utilisateur sur la base des contenus
+              décisions prises par le Client sur la base des contenus
               proposés, ni des indisponibilités ponctuelles liées à des
               opérations de maintenance ou à des causes extérieures (force
               majeure, défaillance d'un tiers, du réseau Internet, etc.). La
-              responsabilité de l'éditeur ne pourra en tout état de cause
-              excéder le montant payé par le client au titre du Service.
+              responsabilité de l'éditeur ne pourra, en tout état de cause,
+              excéder le montant payé par le Client au titre du Service.
             </p>
           </section>
 
           <section id="donnees-personnelles" className="scroll-mt-24">
-            <h2 className="text-lg font-semibold text-foreground">13. Données personnelles</h2>
+            <h2 className="text-lg font-semibold text-foreground">
+              13. Données personnelles
+            </h2>
             <p>
               Les traitements de données personnelles mis en œuvre dans le
-              cadre du Service sont conformes au Règlement (UE) 2016/679 (RGPD)
-              et à la loi Informatique et Libertés. Le client dispose des
-              droits d'accès, de rectification, d'effacement, de limitation,
-              d'opposition et de portabilité, qu'il peut exercer dans les
-              conditions précisées dans la{" "}
-              <Link to="/confidentialite" className="underline hover:text-primary">
+              cadre du Service sont conformes au Règlement (UE) 2016/679
+              (RGPD) et à la loi n°&nbsp;78-17 du 6 janvier 1978 modifiée
+              dite «&nbsp;Informatique et Libertés&nbsp;». Le Client dispose
+              des droits d'accès, de rectification, d'effacement, de
+              limitation, d'opposition et de portabilité, qu'il peut exercer
+              dans les conditions précisées dans la{" "}
+              <Link
+                to="/confidentialite"
+                className="underline hover:text-primary"
+              >
                 Politique de confidentialité
               </Link>
               .
@@ -366,11 +402,13 @@ const CGV = () => (
           </section>
 
           <section id="modification-cgv" className="scroll-mt-24">
-            <h2 className="text-lg font-semibold text-foreground">14. Modification des CGV</h2>
+            <h2 className="text-lg font-semibold text-foreground">
+              14. Modification des CGV
+            </h2>
             <p>
               L'éditeur se réserve le droit de modifier les présentes CGV à
-              tout moment. Les CGV applicables sont celles en vigueur à la date
-              de la commande, archivées par l'éditeur.
+              tout moment. Les CGV applicables à une commande sont celles en
+              vigueur à la date de sa validation, archivées par l'éditeur.
             </p>
           </section>
 
@@ -408,52 +446,54 @@ const CGV = () => (
 
           <section id="contact-support" className="scroll-mt-24">
             <h2 className="text-lg font-semibold text-foreground">
-              16. Contact & support
+              16. Contact &amp; support
             </h2>
             <p>
-              Pour toute question relative à ta commande, à un{" "}
+              Pour toute question relative à une commande, à un{" "}
               <strong>problème de paiement</strong> (échec de transaction,
               double débit, accès non activé après paiement) ou à une{" "}
-              <strong>demande au titre des garanties légales</strong> (article
-              9), tu peux contacter le service client :
+              <strong>demande au titre des garanties légales</strong>{" "}
+              (article&nbsp;9), le Client peut contacter le service client&nbsp;:
             </p>
             <ul className="list-disc pl-5 space-y-1">
               <li>
-                par e-mail :{" "}
+                par e-mail&nbsp;:{" "}
                 <a
                   href="mailto:contact@digitalmamanlibre.com"
                   className="underline hover:text-primary"
                 >
                   contact@digitalmamanlibre.com
                 </a>
+                &nbsp;;
               </li>
               <li>
-                délai de réponse indicatif : sous{" "}
-                <strong>5 jours ouvrés</strong>.
+                délai de réponse indicatif&nbsp;: sous{" "}
+                <strong>5&nbsp;jours ouvrés</strong>.
               </li>
             </ul>
             <p>
-              Pour un traitement rapide, merci d'indiquer dans ton message :
+              Pour un traitement rapide, il est recommandé d'indiquer dans
+              le message&nbsp;:
             </p>
             <ul className="list-disc pl-5 space-y-1">
-              <li>l'adresse e-mail utilisée lors de la commande ;</li>
-              <li>la date et le montant du paiement ;</li>
+              <li>l'adresse e-mail utilisée lors de la commande&nbsp;;</li>
+              <li>la date et le montant du paiement&nbsp;;</li>
               <li>
                 la référence de transaction Mollie (visible sur l'e-mail de
-                confirmation ou sur le relevé bancaire) ;
+                confirmation ou sur le relevé bancaire)&nbsp;;
               </li>
               <li>une description précise du problème rencontré.</li>
             </ul>
             <p>
               <strong>Demande de remboursement.</strong> Conformément à
-              l'article 9, aucun remboursement à titre commercial n'est accordé
-              après activation de l'accès au Service. Toute demande fondée sur
-              les garanties légales (défaut de conformité, vice caché) ou sur
-              un dysfonctionnement technique avéré sera néanmoins examinée. En
-              cas d'éligibilité, le remboursement est effectué sur le moyen de
-              paiement utilisé lors de la commande, sous un délai maximum de{" "}
-              <strong>14 jours</strong> à compter de l'accord du service
-              client.
+              l'article&nbsp;9, aucun remboursement à titre commercial n'est
+              accordé après activation de l'accès au Service. Toute demande
+              fondée sur les garanties légales (défaut de conformité, vice
+              caché) ou sur un dysfonctionnement technique avéré sera
+              néanmoins examinée. En cas d'éligibilité, le remboursement est
+              effectué sur le moyen de paiement utilisé lors de la commande,
+              sous un délai maximum de <strong>14&nbsp;jours</strong> à
+              compter de l'accord du service client.
             </p>
           </section>
 
