@@ -37,10 +37,25 @@ const FR_ABBREVIATIONS: ReadonlySet<string> = new Set([
   "art", "ch", "fig", "ill", "n", "no", "p", "pp", "vol",
   "tél", "tel", "fax", "ref", "réf", "éd", "ed",
   "sec", "min", "hab",
-  // Anglo
-  "mr", "mrs", "ms", "jr", "sr", "vs", "inc", "co", "ltd",
   // Heures / unités courantes
   "h", "kg", "km", "cm", "mm", "ml", "cl",
+]);
+
+// English abbreviations — used when the detected/specified language is EN,
+// or as a fallback when language detection is uncertain.
+const EN_ABBREVIATIONS: ReadonlySet<string> = new Set([
+  // Titles
+  "mr", "mrs", "ms", "mx", "dr", "prof", "sr", "jr", "st",
+  "rev", "hon", "gen", "col", "capt", "lt", "sgt", "pvt",
+  // Locutions
+  "etc", "vs", "ie", "eg", "cf", "approx", "est", "no", "nos",
+  "vol", "ch", "p", "pp", "fig", "ed", "eds", "ref", "min", "max",
+  // Companies / org
+  "inc", "co", "ltd", "llc", "corp", "plc",
+  // Times / units
+  "am", "pm", "a", "p", "kg", "lb", "oz", "ft", "in", "mi", "km",
+  // Geo
+  "us", "usa", "uk", "eu",
 ]);
 
 // Closing punctuation that may follow a terminator (".", "!", "?", "…")
