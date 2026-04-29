@@ -4,11 +4,13 @@ export type SpeechRate = "slow" | "normal" | "fast";
 export type SpeechLang = "fr-FR" | "fr-CA" | "en-US";
 
 const VOICE_KEY = "calm_speech_voice";
-const RATE_KEY = "calm_speech_rate";
+const RATE_KEY = "calm_speech_rate"; // legacy global rate (migrated per-lang)
 const LANG_KEY = "calm_speech_lang";
 const SENTENCE_PAUSE_KEY = "calm_speech_sentence_pause"; // ms, 0-1500
 const COMMA_PAUSE_KEY = "calm_speech_comma_pause"; // ms, 0-800
-const PITCH_KEY = "calm_speech_pitch"; // 0.5-1.5
+const PITCH_KEY = "calm_speech_pitch"; // legacy global pitch (migrated per-lang)
+const rateKeyFor = (lang: SpeechLang) => `calm_speech_rate__${lang}`;
+const pitchKeyFor = (lang: SpeechLang) => `calm_speech_pitch__${lang}`;
 const SLOW_KEYWORDS_KEY = "calm_speech_slow_keywords"; // "1" | "0"
 const SILENT_MODE_KEY = "calm_speech_silent_mode"; // "1" | "0" — surbrillance sans audio
 
@@ -34,6 +36,18 @@ export const LANG_LABELS: Record<SpeechLang, string> = {
 };
 
 export const LANG_OPTIONS: SpeechLang[] = ["fr-FR", "fr-CA", "en-US"];
+
+/** Normalize an arbitrary BCP-47 tag onto a supported SpeechLang. */
+export function normalizeSpeechLang(lang: string | undefined | null): SpeechLang {
+  if (!lang) return getSpeechLang();
+  const lower = lang.toLowerCase();
+  if (lower === "fr-fr") return "fr-FR";
+  if (lower === "fr-ca") return "fr-CA";
+  if (lower === "en-us") return "en-US";
+  if (lower.startsWith("fr")) return "fr-FR";
+  if (lower.startsWith("en")) return "en-US";
+  return getSpeechLang();
+}
 
 export function getSpeechLang(): SpeechLang {
   if (typeof window === "undefined") return "fr-FR";
@@ -62,16 +76,21 @@ export const RATE_LABELS: Record<SpeechRate, string> = {
   fast: "Rapide",
 };
 
-export function getSpeechRate(): SpeechRate {
+export function getSpeechRate(lang?: SpeechLang | string): SpeechRate {
   if (typeof window === "undefined") return "normal";
-  const v = localStorage.getItem(RATE_KEY);
-  if (v === "slow" || v === "normal" || v === "fast") return v;
+  const target = lang ? normalizeSpeechLang(lang) : getSpeechLang();
+  const perLang = localStorage.getItem(rateKeyFor(target));
+  if (perLang === "slow" || perLang === "normal" || perLang === "fast") return perLang;
+  // Fallback to legacy global value (migrated lazily on next set).
+  const legacy = localStorage.getItem(RATE_KEY);
+  if (legacy === "slow" || legacy === "normal" || legacy === "fast") return legacy;
   return "normal";
 }
 
-export function setSpeechRate(rate: SpeechRate) {
+export function setSpeechRate(rate: SpeechRate, lang?: SpeechLang | string) {
   if (typeof window === "undefined") return;
-  localStorage.setItem(RATE_KEY, rate);
+  const target = lang ? normalizeSpeechLang(lang) : getSpeechLang();
+  localStorage.setItem(rateKeyFor(target), rate);
   window.dispatchEvent(new CustomEvent("calm-speech-prefs-change"));
 }
 
@@ -154,12 +173,18 @@ export function setCommaPauseMs(ms: number) {
   window.dispatchEvent(new CustomEvent("calm-speech-prefs-change"));
 }
 
-export function getSpeechPitch(): number {
+export function getSpeechPitch(lang?: SpeechLang | string): number {
+  if (typeof window === "undefined") return PITCH_DEFAULT;
+  const target = lang ? normalizeSpeechLang(lang) : getSpeechLang();
+  const perLang = readNumber(pitchKeyFor(target), Number.NaN, 0.5, 1.5);
+  if (Number.isFinite(perLang)) return perLang;
+  // Fallback to legacy global pitch.
   return readNumber(PITCH_KEY, PITCH_DEFAULT, 0.5, 1.5);
 }
-export function setSpeechPitch(pitch: number) {
+export function setSpeechPitch(pitch: number, lang?: SpeechLang | string) {
   if (typeof window === "undefined") return;
-  localStorage.setItem(PITCH_KEY, pitch.toFixed(2));
+  const target = lang ? normalizeSpeechLang(lang) : getSpeechLang();
+  localStorage.setItem(pitchKeyFor(target), pitch.toFixed(2));
   window.dispatchEvent(new CustomEvent("calm-speech-prefs-change"));
 }
 

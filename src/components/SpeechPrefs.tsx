@@ -87,6 +87,9 @@ const SpeechPrefs = ({ className = "" }: SpeechPrefsProps) => {
     setLang(l);
     setSpeechLang(l);
     setVoiceURI(null); // store cleared by setSpeechLang
+    // Load rate/pitch for the newly selected language.
+    setRate(getSpeechRate(l));
+    setPitchState(getSpeechPitch(l));
   };
 
   const handleVoiceChange = (uri: string) => {
@@ -106,7 +109,7 @@ const SpeechPrefs = ({ className = "" }: SpeechPrefsProps) => {
 
   const handleRateChange = (r: SpeechRate) => {
     setRate(r);
-    setSpeechRate(r);
+    setSpeechRate(r, lang);
   };
 
   const playPreview = async () => {
@@ -196,9 +199,14 @@ const SpeechPrefs = ({ className = "" }: SpeechPrefsProps) => {
       </div>
 
       <div>
-        <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-          <Gauge className="h-3.5 w-3.5" />
-          Vitesse de lecture
+        <div className="mb-2 flex items-center justify-between gap-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          <span className="flex items-center gap-2">
+            <Gauge className="h-3.5 w-3.5" />
+            Vitesse de lecture
+          </span>
+          <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] normal-case tracking-normal text-muted-foreground">
+            {LANG_LABELS[lang]}
+          </span>
         </div>
         <div role="radiogroup" aria-label="Vitesse de lecture" className="flex gap-2">
           {RATE_OPTIONS.map((r) => {
@@ -230,8 +238,11 @@ const SpeechPrefs = ({ className = "" }: SpeechPrefsProps) => {
             <Music2 className="h-3.5 w-3.5" />
             Hauteur de la voix
           </span>
-          <span className="font-mono normal-case tracking-normal text-foreground">
-            {pitch.toFixed(2)}
+          <span className="flex items-center gap-2 normal-case tracking-normal">
+            <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] text-muted-foreground">
+              {LANG_LABELS[lang]}
+            </span>
+            <span className="font-mono text-foreground">{pitch.toFixed(2)}</span>
           </span>
         </div>
         <Slider
@@ -242,7 +253,7 @@ const SpeechPrefs = ({ className = "" }: SpeechPrefsProps) => {
           onValueChange={(v) => {
             const next = v[0];
             setPitchState(next);
-            setSpeechPitch(next);
+            setSpeechPitch(next, lang);
           }}
           aria-label="Hauteur de la voix"
         />

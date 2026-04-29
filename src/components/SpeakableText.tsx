@@ -127,8 +127,8 @@ const SpeakableText = ({
     const voices = await loadVoices();
     if (playbackId !== playbackIdRef.current) return; // cancelled while loading
     const voice = resolveVoice(voices, effectiveLang);
-    const baseRate = RATE_VALUES[getSpeechRate()];
-    const pitch = getSpeechPitch();
+    const baseRate = RATE_VALUES[getSpeechRate(effectiveLang)];
+    const pitch = getSpeechPitch(effectiveLang);
 
     const segments: UtteranceSegment[] = buildUtteranceSegments(fullText);
 
