@@ -30,7 +30,7 @@ const STYLE_OPTIONS: {
 }[] = [
   { value: "breathing", label: "Respiration", Icon: Wind },
   { value: "sensory", label: "Sensoriel", Icon: Hand },
-  { value: "any", label: "Au choix (auto)", Icon: Sparkles },
+  { value: "any", label: "Au choix (alterné)", Icon: Sparkles },
 ];
 
 const RESOLVED_LABEL: Record<ResolvedStyle, string> = {
