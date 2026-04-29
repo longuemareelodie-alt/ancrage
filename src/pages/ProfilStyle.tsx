@@ -10,6 +10,7 @@ import {
 } from "@/lib/actionStyle";
 import { resolveAutoStyleFromToday, type ResolvedStyle } from "@/lib/autoStyle";
 import { toast } from "@/hooks/use-toast";
+import StyleSyncStatus from "@/components/StyleSyncStatus";
 
 const OPTIONS: {
   value: ActionStyle;
