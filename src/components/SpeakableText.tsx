@@ -206,6 +206,8 @@ const SpeakableText = ({
     cursorRef.current = startSegment;
     skipToSegmentRef.current = null;
 
+    const silentMode = getSilentMode();
+
     const playNext = () => {
       if (playbackId !== playbackIdRef.current) return;
 
@@ -226,8 +228,26 @@ const SpeakableText = ({
       }
       const seg = segments[cursorRef.current++];
 
-      if (seg.pauseMs && seg.pauseMs > 0) {
-        const isSentenceBreak = seg.pauseMs >= 250;
+      // In silent mode, replace text segments with a timed pause matching the
+      // estimated speech duration, so highlight progresses without audio.
+      const isSilentTextSeg = silentMode && !!seg.text && (!seg.pauseMs || seg.pauseMs === 0);
+      const effectiveSeg: UtteranceSegment = isSilentTextSeg
+        ? {
+            pauseMs: Math.max(
+              120,
+              Math.round(
+                ((seg.text?.length ?? 0) /
+                  (14 * Math.max(0.5, baseRate * (seg.rateMultiplier ?? 1)))) *
+                  1000,
+              ),
+            ),
+          }
+        : seg;
+
+      if (effectiveSeg.pauseMs && effectiveSeg.pauseMs > 0) {
+        // Sentence-break detection only applies to *real* pause segments,
+        // not to silent-mode text-as-pause stubs.
+        const isSentenceBreak = !isSilentTextSeg && effectiveSeg.pauseMs >= 250;
         const after = () => {
           if (playbackId !== playbackIdRef.current) return;
           pauseDeadlineRef.current = null;
@@ -243,9 +263,9 @@ const SpeakableText = ({
           playNext();
         };
         pauseAfterRef.current = after;
-        pauseDeadlineRef.current = Date.now() + seg.pauseMs;
+        pauseDeadlineRef.current = Date.now() + effectiveSeg.pauseMs;
         pauseRemainingRef.current = null;
-        pauseTimerRef.current = window.setTimeout(after, seg.pauseMs);
+        pauseTimerRef.current = window.setTimeout(after, effectiveSeg.pauseMs);
         return;
       }
 
