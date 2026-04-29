@@ -140,7 +140,14 @@ const SpeakableText = ({
   };
 
   const baseBtn =
-    "flex h-7 w-7 items-center justify-center rounded-full border transition-colors";
+    "flex h-8 w-8 items-center justify-center rounded-full border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+
+  const stateAnnouncement =
+    state === "speaking"
+      ? "Lecture audio en cours."
+      : state === "paused"
+        ? "Lecture audio en pause."
+        : "";
 
   return (
     <div className={className}>
@@ -165,17 +172,27 @@ const SpeakableText = ({
             })}
       </p>
 
+      {/* Live region for screen readers, announces playback state changes */}
+      <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
+        {stateAnnouncement}
+      </div>
+
       {supported && (
-        <div className="mt-2 flex items-center gap-1">
+        <div
+          className="mt-2 flex items-center gap-1"
+          role="group"
+          aria-label="Contrôles du guidage audio"
+        >
           {state === "idle" ? (
             <button
               type="button"
               onClick={handlePlay}
               aria-label="Lire à voix haute"
+              aria-pressed={false}
               title="Guidage audio"
               className={`${baseBtn} border-border bg-background text-muted-foreground hover:bg-muted`}
             >
-              <Volume2 className="h-3.5 w-3.5" />
+              <Volume2 className="h-3.5 w-3.5" aria-hidden="true" />
             </button>
           ) : (
             <>
@@ -183,40 +200,42 @@ const SpeakableText = ({
                 <button
                   type="button"
                   onClick={handlePause}
-                  aria-label="Mettre en pause"
+                  aria-label="Mettre la lecture en pause"
+                  aria-pressed={true}
                   title="Pause"
                   className={`${baseBtn} border-primary bg-primary text-primary-foreground`}
                 >
-                  <Pause className="h-3.5 w-3.5" />
+                  <Pause className="h-3.5 w-3.5" aria-hidden="true" />
                 </button>
               ) : (
                 <button
                   type="button"
                   onClick={handleResume}
                   aria-label="Reprendre la lecture"
+                  aria-pressed={true}
                   title="Reprendre"
                   className={`${baseBtn} border-primary bg-primary text-primary-foreground`}
                 >
-                  <Play className="h-3.5 w-3.5" />
+                  <Play className="h-3.5 w-3.5" aria-hidden="true" />
                 </button>
               )}
               <button
                 type="button"
                 onClick={handlePlay}
-                aria-label="Répéter depuis le début"
+                aria-label="Répéter la lecture depuis le début"
                 title="Répéter"
                 className={`${baseBtn} border-border bg-background text-muted-foreground hover:bg-muted`}
               >
-                <RotateCcw className="h-3.5 w-3.5" />
+                <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
               </button>
               <button
                 type="button"
                 onClick={handleStop}
-                aria-label="Arrêter la lecture"
+                aria-label="Arrêter la lecture audio"
                 title="Arrêter"
                 className={`${baseBtn} border-border bg-background text-muted-foreground hover:bg-muted`}
               >
-                <Square className="h-3.5 w-3.5" />
+                <Square className="h-3.5 w-3.5" aria-hidden="true" />
               </button>
             </>
           )}
