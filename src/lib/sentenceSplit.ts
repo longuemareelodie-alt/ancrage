@@ -182,11 +182,21 @@ export function splitSentences(input: string): Sentence[] {
         const trailing = slice.length - slice.trimEnd().length;
         const trimmed = slice.trim();
         if (trimmed) {
-          out.push({
-            text: trimmed,
-            start: rawStart + leading,
-            end: rawEnd - trailing,
-          });
+          // If the new "sentence" is only made of terminators / closing chars
+          // (e.g. " !" right after "S.O.S."), attach it to the previous one
+          // instead of emitting a punctuation-only sentence.
+          const isPunctOnly = /^[.!?…\s"'”’»\)\]]+$/.test(trimmed);
+          if (isPunctOnly && out.length > 0) {
+            const prev = out[out.length - 1];
+            prev.text = (prev.text + trimmed).replace(/\s+/g, " ").trim();
+            prev.end = rawEnd - trailing;
+          } else {
+            out.push({
+              text: trimmed,
+              start: rawStart + leading,
+              end: rawEnd - trailing,
+            });
+          }
         }
         sentenceStart = stop;
         i = stop;
