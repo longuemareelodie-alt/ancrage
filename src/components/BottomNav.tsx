@@ -1,40 +1,15 @@
-import { useEffect, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { Home, Heart, HeartPulse, User } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/integrations/supabase/client";
 
 /**
  * Persistent bottom navigation bar for paying users.
  * - Hidden for free users and on auth/landing/legal pages.
+ * - Eligibility resolved upstream in AuthContext (no flash, no duplicate query).
  */
 const BottomNav = () => {
-  const { user, loading } = useAuth();
+  const { user, loading, isPaid } = useAuth();
   const location = useLocation();
-  const [isPaid, setIsPaid] = useState(false);
-  const [ready, setReady] = useState(false);
-
-  useEffect(() => {
-    if (loading) return;
-    if (!user) {
-      setReady(true);
-      return;
-    }
-    let cancelled = false;
-    supabase
-      .from("profiles")
-      .select("is_premium")
-      .eq("user_id", user.id)
-      .single()
-      .then(({ data }) => {
-        if (cancelled) return;
-        setIsPaid(!!data?.is_premium);
-        setReady(true);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [user, loading]);
 
   // Routes where the bottom nav should NOT appear
   const hiddenRoutes = [
