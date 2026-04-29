@@ -56,7 +56,7 @@ function splitSentences(input: string): Sentence[] {
 const SpeakableText = ({
   text,
   hint,
-  lang = "fr-FR",
+  lang,
   className = "",
   textClassName = "",
 }: SpeakableTextProps) => {
