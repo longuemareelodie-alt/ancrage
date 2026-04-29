@@ -4,6 +4,24 @@ export type SpeechLang = "fr-FR" | "fr-CA" | "en-US";
 const VOICE_KEY = "calm_speech_voice";
 const RATE_KEY = "calm_speech_rate";
 const LANG_KEY = "calm_speech_lang";
+const SENTENCE_PAUSE_KEY = "calm_speech_sentence_pause"; // ms, 0-1500
+const COMMA_PAUSE_KEY = "calm_speech_comma_pause"; // ms, 0-800
+const PITCH_KEY = "calm_speech_pitch"; // 0.5-1.5
+const SLOW_KEYWORDS_KEY = "calm_speech_slow_keywords"; // "1" | "0"
+
+export const SENTENCE_PAUSE_DEFAULT = 400; // ms
+export const COMMA_PAUSE_DEFAULT = 150; // ms
+export const PITCH_DEFAULT = 1; // 0.5..1.5
+export const SLOW_KEYWORDS_DEFAULT = true;
+
+/** Mots-clés de respiration ralentis automatiquement (rate * 0.7). */
+export const BREATH_KEYWORDS = [
+  "inspire", "inspires", "inspirer", "inspiration",
+  "expire", "expires", "expirer", "expiration",
+  "retiens", "retenir", "souffle", "respire", "respires",
+  "ancre", "ancrer", "détends", "détendre",
+  "breathe", "inhale", "exhale", "hold",
+];
 
 export const LANG_LABELS: Record<SpeechLang, string> = {
   "fr-FR": "Français (France)",
