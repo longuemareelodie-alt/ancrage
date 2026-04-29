@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Volume2, Pause, Play, Square, RotateCcw } from "lucide-react";
+import { Volume2, Pause, Play, Square, RotateCcw, SkipForward } from "lucide-react";
 import {
   RATE_VALUES,
   getSpeechRate,
@@ -69,6 +69,12 @@ const SpeakableText = ({
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const pauseTimerRef = useRef<number | null>(null);
   const playbackIdRef = useRef(0); // increments on each new playback to invalidate old chains
+  const skipToSegmentRef = useRef<number | null>(null);
+  const segmentSentenceMapRef = useRef<number[]>([]); // sentence index per segment
+  const sentenceSegmentStartRef = useRef<number[]>([]); // first segment index per sentence
+  const cursorRef = useRef(0); // current segment index
+  const sentenceCursorRef = useRef(0);
+  const playNextRef = useRef<(() => void) | null>(null);
 
   const fullText = hint ? `${text}. ${hint}` : text;
   const sentences = splitSentences(fullText);
@@ -123,30 +129,59 @@ const SpeakableText = ({
 
     const segments: UtteranceSegment[] = buildUtteranceSegments(fullText);
 
+    // Build mapping: each segment -> its sentence index.
+    // Sentence breaks are pause segments >= 250ms; everything before is sentence N.
+    const segMap: number[] = [];
+    const sentStart: number[] = [0];
+    {
+      let s = 0;
+      for (let k = 0; k < segments.length; k++) {
+        segMap.push(s);
+        const seg = segments[k];
+        if (seg.pauseMs && seg.pauseMs >= 250) {
+          s = Math.min(sentences.length - 1, s + 1);
+          if (sentStart.length <= s) sentStart.push(k + 1);
+        }
+      }
+    }
+    segmentSentenceMapRef.current = segMap;
+    sentenceSegmentStartRef.current = sentStart;
+
     setState("speaking");
     setActiveIndex(sentences.length > 0 ? 0 : -1);
-
-    let sentenceCursor = 0;
-    let i = 0;
+    sentenceCursorRef.current = 0;
+    cursorRef.current = 0;
+    skipToSegmentRef.current = null;
 
     const playNext = () => {
       if (playbackId !== playbackIdRef.current) return;
-      if (i >= segments.length) {
+
+      // Honour pending skip request.
+      if (skipToSegmentRef.current !== null) {
+        cursorRef.current = skipToSegmentRef.current;
+        skipToSegmentRef.current = null;
+        const newSentence = segMap[cursorRef.current] ?? sentences.length - 1;
+        sentenceCursorRef.current = newSentence;
+        setActiveIndex(newSentence);
+      }
+
+      if (cursorRef.current >= segments.length) {
         setState("idle");
         setActiveIndex(-1);
         return;
       }
-      const seg = segments[i++];
+      const seg = segments[cursorRef.current++];
 
       if (seg.pauseMs && seg.pauseMs > 0) {
-        // Pure silence segment: advance sentence cursor if it represents a sentence break.
-        // We treat a pause >= 250ms as a sentence boundary (sentencePause defaults to 400).
         const isSentenceBreak = seg.pauseMs >= 250;
         pauseTimerRef.current = window.setTimeout(() => {
           if (playbackId !== playbackIdRef.current) return;
           if (isSentenceBreak) {
-            sentenceCursor = Math.min(sentences.length - 1, sentenceCursor + 1);
-            setActiveIndex(sentenceCursor);
+            sentenceCursorRef.current = Math.min(
+              sentences.length - 1,
+              sentenceCursorRef.current + 1,
+            );
+            setActiveIndex(sentenceCursorRef.current);
           }
           playNext();
         }, seg.pauseMs);
@@ -171,6 +206,7 @@ const SpeakableText = ({
       synth.speak(u);
     };
 
+    playNextRef.current = playNext;
     playNext();
   };
 
@@ -189,6 +225,43 @@ const SpeakableText = ({
     cancelAll();
     setState("idle");
     setActiveIndex(-1);
+  };
+
+  const handleSkipNext = () => {
+    if (state === "idle") return;
+    const sentStart = sentenceSegmentStartRef.current;
+    if (sentStart.length === 0 || !playNextRef.current) return;
+    const nextSentence = sentenceCursorRef.current + 1;
+    // If already at the last sentence, stop playback cleanly.
+    if (nextSentence >= sentences.length || nextSentence >= sentStart.length) {
+      handleStop();
+      return;
+    }
+    skipToSegmentRef.current = sentStart[nextSentence];
+
+    // Cancel pending pause timer and any current utterance.
+    if (pauseTimerRef.current !== null) {
+      window.clearTimeout(pauseTimerRef.current);
+      pauseTimerRef.current = null;
+    }
+    // Detach onend so cancel() doesn't terminate the chain prematurely.
+    if (utteranceRef.current) {
+      utteranceRef.current.onend = null;
+    }
+    try {
+      window.speechSynthesis.cancel();
+    } catch {
+      /* noop */
+    }
+
+    // If paused, the synth was paused; cancel resets state. Resume not needed.
+    if (state === "paused") {
+      setState("speaking");
+    }
+
+    // Restart the chain — playNext will consume skipToSegmentRef and jump.
+    const fn = playNextRef.current;
+    window.setTimeout(() => fn(), 30);
   };
 
   const baseBtn =
@@ -279,6 +352,15 @@ const SpeakableText = ({
                 className={`${baseBtn} border-border bg-background text-muted-foreground hover:bg-muted`}
               >
                 <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
+              </button>
+              <button
+                type="button"
+                onClick={handleSkipNext}
+                aria-label="Aller à l'étape suivante"
+                title="Aller à l'étape suivante"
+                className={`${baseBtn} border-border bg-background text-muted-foreground hover:bg-muted`}
+              >
+                <SkipForward className="h-3.5 w-3.5" aria-hidden="true" />
               </button>
               <button
                 type="button"
