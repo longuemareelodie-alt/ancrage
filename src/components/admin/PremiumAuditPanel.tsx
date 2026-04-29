@@ -96,15 +96,15 @@ const PremiumAuditPanel = () => {
       metadata: {
         kind,
         ticket_id: ticketId,
-        target_user_id: payload.user_id ?? null,
-        payment_id: payload.payment_id ?? null,
-        is_premium: payload.is_premium ?? null,
-        log_status: payload.log_status ?? null,
-        timestamps: payload.timestamps ?? null,
-        snapshot: payload,
+        target_user_id: (payload.user_id as string | null) ?? null,
+        payment_id: (payload.payment_id as string | null) ?? null,
+        is_premium: (payload.is_premium as boolean | null) ?? null,
+        log_status: (payload.log_status as string | null) ?? null,
+        timestamps: (payload.timestamps as Record<string, string | null> | null) ?? null,
+        snapshot: payload as Record<string, unknown>,
         logged_by_admin: adminId,
         logged_at: new Date().toISOString(),
-      },
+      } as any,
     }]);
     setLogging(null);
     if (error) {
