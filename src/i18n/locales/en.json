@@ -513,6 +513,16 @@
     "amount": "€39",
     "amount_note": "One-time payment · Lifetime access",
     "cta": "I want to feel better — €39",
+    "cta_with_amount": "I want to feel better — {{amount}}",
+    "promo": {
+      "label": "Have a promo code?",
+      "placeholder": "e.g. ANCRAGE15",
+      "apply": "Apply",
+      "remove": "Remove promo code",
+      "applied": "{{code}} applied — {{amount}} off",
+      "invalid": "Invalid promo code.",
+      "empty": "Enter a promo code."
+    },
     "loading": "Loading…",
     "secure_short": "One-time payment. Lifetime access. 100% secure via Mollie.",
     "secure_long": "Payment 100% secure via Mollie",
