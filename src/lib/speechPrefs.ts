@@ -275,11 +275,12 @@ export function buildUtteranceSegments(
     commaPauseMs?: number;
     slowKeywords?: boolean;
     keywordRateMultiplier?: number;
+    lang?: SpeechLang | string;
   },
 ): UtteranceSegment[] {
-  const sentencePause = opts?.sentencePauseMs ?? getSentencePauseMs();
-  const commaPause = opts?.commaPauseMs ?? getCommaPauseMs();
-  const slowKeywords = opts?.slowKeywords ?? getSlowKeywords();
+  const sentencePause = opts?.sentencePauseMs ?? getSentencePauseMs(opts?.lang);
+  const commaPause = opts?.commaPauseMs ?? getCommaPauseMs(opts?.lang);
+  const slowKeywords = opts?.slowKeywords ?? getSlowKeywords(opts?.lang);
   const kwMul = opts?.keywordRateMultiplier ?? 0.7;
 
   // 1. Sentence split — FR-aware (handles abbreviations, decimals, etc.).
