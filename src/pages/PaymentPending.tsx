@@ -41,17 +41,25 @@ const PaymentPending = () => {
             .from("profiles")
             .select("is_premium")
             .eq("user_id", user.id)
-            .single(),
+            .maybeSingle(),
         { maxAttempts: 2, baseDelayMs: 400, timeoutMs: 6000 },
       );
 
       if (cancelled.current) return;
 
-      if (!error && data?.is_premium) {
+      // Confirm ONLY when the profile row exists AND is_premium is strictly true.
+      if (!error && data && data.is_premium === true) {
         setStatus("confirmed");
         setTimeout(() => {
           if (!cancelled.current) navigate("/payment-success", { replace: true });
         }, 1200);
+        return;
+      }
+
+      // Profile row genuinely missing (no error, no data): show a distinct state.
+      // Don't keep polling — the webhook can't activate a profile that doesn't exist.
+      if (!error && data === null) {
+        setStatus("not_found");
         return;
       }
 
