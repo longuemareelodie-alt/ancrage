@@ -98,7 +98,9 @@ const SpeechPrefs = ({ className = "" }: SpeechPrefsProps) => {
   const handleLangChange = (l: SpeechLang) => {
     setLang(l);
     setSpeechLang(l);
-    setVoiceURI(null); // store cleared by setSpeechLang
+    // Voice is now per-language → load whatever this language remembered
+    // (could be its own fallback choice, e.g. fr-FR voice picked for fr-CA).
+    setVoiceURI(getSpeechVoiceURI(l));
     // Load all per-language preferences for the newly selected language.
     setRate(getSpeechRate(l));
     setPitchState(getSpeechPitch(l));
