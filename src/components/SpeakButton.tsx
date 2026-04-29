@@ -78,7 +78,7 @@ const SpeakButton = ({ text, lang, className = "" }: SpeakButtonProps) => {
     const baseRate = RATE_VALUES[getSpeechRate(effectiveLang)];
     const pitch = getSpeechPitch(effectiveLang);
 
-    const segments = buildUtteranceSegments(text);
+    const segments = buildUtteranceSegments(text, { lang: effectiveLang });
     setState("speaking");
 
     let i = 0;
