@@ -136,6 +136,9 @@ const SpeakableText = ({
       window.clearTimeout(pauseTimerRef.current);
       pauseTimerRef.current = null;
     }
+    pauseDeadlineRef.current = null;
+    pauseRemainingRef.current = null;
+    pauseAfterRef.current = null;
     try {
       window.speechSynthesis.cancel();
     } catch {
