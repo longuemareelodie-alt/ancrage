@@ -140,9 +140,27 @@ const SpeakableText = ({
     }
   };
 
+  const restorePreviousFocus = () => {
+    const prev = previousFocusRef.current;
+    previousFocusRef.current = null;
+    if (!prev || !getFocusFollow()) return;
+    const ae = document.activeElement as HTMLElement | null;
+    if (ae && sentenceRefs.current.includes(ae as HTMLSpanElement)) {
+      try {
+        prev.focus({ preventScroll: true });
+      } catch {
+        /* noop */
+      }
+    }
+  };
+
   const handlePlay = async (fromSentence = 0) => {
     if (!supported) return;
     cancelAll();
+
+    if (typeof document !== "undefined" && getFocusFollow()) {
+      previousFocusRef.current = document.activeElement as HTMLElement | null;
+    }
 
     const playbackId = ++playbackIdRef.current;
     const synth = window.speechSynthesis;
