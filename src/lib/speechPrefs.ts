@@ -105,15 +105,28 @@ export function setSpeechRate(rate: SpeechRate, lang?: SpeechLang | string) {
   window.dispatchEvent(new CustomEvent("calm-speech-prefs-change"));
 }
 
-export function getSpeechVoiceURI(): string | null {
+export function getSpeechVoiceURI(lang?: SpeechLang | string): string | null {
   if (typeof window === "undefined") return null;
-  return localStorage.getItem(VOICE_KEY);
+  const target = lang ? normalizeSpeechLang(lang) : getSpeechLang();
+  const perLang = localStorage.getItem(voiceKeyFor(target));
+  if (perLang) return perLang;
+  // Legacy global voice — only honour it for the currently-active language
+  // to avoid leaking an FR voice into EN (or vice-versa).
+  if (target === getSpeechLang()) {
+    const legacy = localStorage.getItem(VOICE_KEY);
+    if (legacy) return legacy;
+  }
+  return null;
 }
 
-export function setSpeechVoiceURI(uri: string | null) {
+export function setSpeechVoiceURI(uri: string | null, lang?: SpeechLang | string) {
   if (typeof window === "undefined") return;
-  if (uri) localStorage.setItem(VOICE_KEY, uri);
-  else localStorage.removeItem(VOICE_KEY);
+  const target = lang ? normalizeSpeechLang(lang) : getSpeechLang();
+  if (uri) localStorage.setItem(voiceKeyFor(target), uri);
+  else localStorage.removeItem(voiceKeyFor(target));
+  // Drop the legacy global key once the user has actively picked something
+  // — per-lang storage is now the source of truth.
+  localStorage.removeItem(VOICE_KEY);
   window.dispatchEvent(new CustomEvent("calm-speech-prefs-change"));
 }
 
