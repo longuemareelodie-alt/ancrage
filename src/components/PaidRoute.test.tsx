@@ -7,6 +7,12 @@ vi.mock("@/contexts/AuthContext", () => ({
   useAuth: () => ({ user: { id: "user-123" }, loading: false }),
 }));
 
+vi.mock("react-i18next", () => ({
+  useTranslation: () => ({
+    t: (_key: string, fallback?: string) => fallback ?? _key,
+  }),
+}));
+
 let currentIsPremium: boolean | null = false;
 
 vi.mock("@/integrations/supabase/client", () => ({
