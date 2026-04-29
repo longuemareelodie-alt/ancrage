@@ -85,6 +85,54 @@ const EmotionDetail = () => {
   // Validate the emotion key against known translations.
   const titleKey = `emotion_detail.data.${key}.title`;
   const exists = i18n.exists(titleKey);
+  if (exists) titleRef.current = t(titleKey) as string;
+
+  // Restore scroll position when arriving via "Reprendre ici" (#resume=NNN).
+  useEffect(() => {
+    if (!exists) return;
+    const m = location.hash.match(/resume=(\d+)/);
+    if (!m) return;
+    const target = parseInt(m[1], 10);
+    if (Number.isFinite(target) && target > 0) {
+      const id = window.setTimeout(() => {
+        window.scrollTo({ top: target, behavior: "smooth" });
+      }, 60);
+      return () => window.clearTimeout(id);
+    }
+  }, [exists, location.hash]);
+
+  // Persist last visited card + scroll position.
+  useEffect(() => {
+    if (!exists || !key) return;
+    const save = () => {
+      writeLastVisited({
+        emotion: key,
+        title: titleRef.current || key,
+        scrollY: Math.round(window.scrollY || 0),
+      });
+    };
+    save();
+    let raf = 0;
+    const onScroll = () => {
+      if (raf) return;
+      raf = window.requestAnimationFrame(() => {
+        raf = 0;
+        save();
+      });
+    };
+    const onHide = () => save();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("pagehide", onHide);
+    document.addEventListener("visibilitychange", onHide);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("pagehide", onHide);
+      document.removeEventListener("visibilitychange", onHide);
+      if (raf) cancelAnimationFrame(raf);
+      save();
+    };
+  }, [exists, key]);
+
 
   if (!exists) {
     return (
