@@ -537,6 +537,25 @@
       "active_title": "Dein lebenslanger Zugang ist aktiv 💛",
       "active_text": "Du hast bereits bezahlt. Ganz Ancrage ist in deinem Konto freigeschaltet, lebenslang.",
       "active_cta": "Zu meinem Bereich"
+    },
+    "redirected": {
+      "title": "Diese Seite erfordert deinen vollen Zugang 💛",
+      "text": "Um diese Seite zu öffnen, brauchst du den vollen Zugang zu Ancrage. Du kannst deine Zahlung mit einem Klick fortsetzen.",
+      "text_with_page": "Um « {{page}} » zu öffnen, brauchst du den vollen Zugang zu Ancrage. Du kannst deine Zahlung mit einem Klick fortsetzen.",
+      "resume_cta": "Zahlung fortsetzen",
+      "page": {
+        "dashboard": "Mein Bereich",
+        "calme": "Ruhe im Klaren",
+        "emotions": "Emotionen",
+        "checkin": "Check-in",
+        "historique": "Verlauf",
+        "comprendre": "Verstehen",
+        "avancer": "Vorangehen",
+        "parcours": "Weg",
+        "profil": "Profil",
+        "sante": "Gesundheitsbereich",
+        "generic": "diese Seite"
+      }
     }
   },
   "emergency": {

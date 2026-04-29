@@ -1,5 +1,5 @@
 import { useAuth } from "@/contexts/AuthContext";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { AlertTriangle, RefreshCw, Loader2, Mail } from "lucide-react";
 
@@ -14,6 +14,7 @@ import { AlertTriangle, RefreshCw, Loader2, Mail } from "lucide-react";
 const PaidRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, loading, isPaid, eligibilityPhase, refreshEligibility } = useAuth();
   const { t } = useTranslation();
+  const location = useLocation();
 
   // Block ANY rendering until everything is resolved → no flash possible.
   if (loading) {
@@ -83,7 +84,14 @@ const PaidRoute = ({ children }: { children: React.ReactNode }) => {
     );
   }
 
-  if (!isPaid) return <Navigate to="/paywall" replace />;
+  if (!isPaid)
+    return (
+      <Navigate
+        to="/paywall"
+        replace
+        state={{ from: location.pathname + location.search }}
+      />
+    );
   return <>{children}</>;
 };
 

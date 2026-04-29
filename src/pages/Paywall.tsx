@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
-import { Lock, Check, Infinity as InfinityIcon, ArrowRight } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
+import { Lock, Check, Infinity as InfinityIcon, ArrowRight, AlertCircle } from "lucide-react";
 import { useTranslation, Trans } from "react-i18next";
 import { useAuth } from "@/contexts/AuthContext";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
@@ -15,6 +15,9 @@ const Paywall = () => {
   const { startPayment, loading: paymentLoading } = useMolliePayment();
   const [isPaid, setIsPaid] = useState(false);
   const [statusLoading, setStatusLoading] = useState<boolean>(!!user);
+  const location = useLocation();
+  const fromPath = (location.state as { from?: string } | null)?.from ?? null;
+  const resumeBtnRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
     if (!user) {
@@ -62,6 +65,25 @@ const Paywall = () => {
     t("paywall.features.lifetime"),
   ];
 
+  // Friendly label for the page the user tried to reach (used in the banner).
+  const fromLabelKey = (() => {
+    if (!fromPath) return null;
+    const p = fromPath.split("?")[0];
+    if (p.startsWith("/dashboard")) return "paywall.redirected.page.dashboard";
+    if (p.startsWith("/calme")) return "paywall.redirected.page.calme";
+    if (p.startsWith("/emotion")) return "paywall.redirected.page.emotions";
+    if (p.startsWith("/checkin")) return "paywall.redirected.page.checkin";
+    if (p.startsWith("/historique")) return "paywall.redirected.page.historique";
+    if (p.startsWith("/comprendre")) return "paywall.redirected.page.comprendre";
+    if (p.startsWith("/avancer")) return "paywall.redirected.page.avancer";
+    if (p.startsWith("/parcours")) return "paywall.redirected.page.parcours";
+    if (p.startsWith("/profil")) return "paywall.redirected.page.profil";
+    if (p.startsWith("/sante")) return "paywall.redirected.page.sante";
+    return "paywall.redirected.page.generic";
+  })();
+
+  const showRedirectBanner = !!fromPath && !isPaid && !statusLoading;
+
   return (
     <div className="min-h-screen bg-background">
       <Breadcrumb items={[{ label: t("paywall.breadcrumb") }]} />
@@ -72,6 +94,44 @@ const Paywall = () => {
           transition={{ duration: 0.6 }}
           className="mx-auto w-full max-w-md space-y-8"
         >
+          {showRedirectBanner && (
+            <motion.div
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              role="alert"
+              className="rounded-2xl border border-primary/30 bg-primary/10 p-4 shadow-sm"
+            >
+              <div className="flex items-start gap-3">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/20 text-primary">
+                  <AlertCircle className="h-[18px] w-[18px]" />
+                </span>
+                <div className="flex-1 space-y-2">
+                  <p className="text-sm font-bold text-foreground">
+                    {t("paywall.redirected.title")}
+                  </p>
+                  <p className="text-xs leading-relaxed text-muted-foreground">
+                    {fromLabelKey
+                      ? t("paywall.redirected.text_with_page", {
+                          page: t(fromLabelKey),
+                        })
+                      : t("paywall.redirected.text")}
+                  </p>
+                  <button
+                    ref={resumeBtnRef}
+                    onClick={handlePurchase}
+                    disabled={paymentLoading}
+                    className="mt-1 inline-flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-xs font-bold text-primary-foreground shadow shadow-primary/25 transition-transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60"
+                  >
+                    {paymentLoading
+                      ? t("paywall.loading")
+                      : t("paywall.redirected.resume_cta")}
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
           <div className="text-center space-y-3">
             <motion.div
               initial={{ scale: 0 }}

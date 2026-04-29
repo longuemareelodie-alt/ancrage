@@ -537,6 +537,25 @@
       "active_title": "Your lifetime access is active 💛",
       "active_text": "You've already paid. All of Ancrage is unlocked in your account, for life.",
       "active_cta": "Go to my space"
+    },
+    "redirected": {
+      "title": "This page requires your full access 💛",
+      "text": "To open this page, you need full access to Ancrage. You can resume your payment in one click.",
+      "text_with_page": "To open « {{page}} », you need full access to Ancrage. You can resume your payment in one click.",
+      "resume_cta": "Resume payment",
+      "page": {
+        "dashboard": "My space",
+        "calme": "Calm at a glance",
+        "emotions": "Emotions",
+        "checkin": "Check-in",
+        "historique": "History",
+        "comprendre": "Understand",
+        "avancer": "Move forward",
+        "parcours": "Journey",
+        "profil": "Profile",
+        "sante": "Health space",
+        "generic": "this page"
+      }
     }
   },
   "emergency": {
