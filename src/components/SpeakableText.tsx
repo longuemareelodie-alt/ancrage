@@ -13,6 +13,7 @@ import {
   type UtteranceSegment,
 } from "@/lib/speechPrefs";
 import { splitSentences } from "@/lib/sentenceSplit";
+import { applyLexicon } from "@/lib/pronunciationLexicon";
 
 type SpeechState = "idle" | "speaking" | "paused";
 
@@ -281,7 +282,7 @@ const SpeakableText = ({
         return;
       }
 
-      const u = new SpeechSynthesisUtterance(seg.text ?? "");
+      const u = new SpeechSynthesisUtterance(applyLexicon(seg.text ?? ""));
       u.lang = effectiveLang;
       if (voice) u.voice = voice;
       u.rate = Math.max(0.1, Math.min(2, baseRate * (seg.rateMultiplier ?? 1)));
