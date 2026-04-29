@@ -278,7 +278,7 @@ const Dashboard = () => {
           )}
 
           {/* History link for paying users */}
-          {(planType === "subscription" || planType === "lifetime") && (
+          {planType !== "none" && (
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
