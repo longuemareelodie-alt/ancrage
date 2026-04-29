@@ -15,6 +15,7 @@ import StreakCalendar from "@/components/StreakCalendar";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
 import PaymentHistory from "@/components/PaymentHistory";
 import DataActions from "@/components/DataActions";
+import StyleSyncStatus from "@/components/StyleSyncStatus";
 interface Note {
   id: string;
   title: string;
