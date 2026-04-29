@@ -47,9 +47,10 @@ const SpeechPrefs = ({ className = "" }: SpeechPrefsProps) => {
   const [exactVoices, setExactVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [fallbackVoices, setFallbackVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [match, setMatch] = useState<VoiceMatch>("exact");
-  const [voiceURI, setVoiceURI] = useState<string | null>(() => getSpeechVoiceURI());
+  const initialLang = getSpeechLang();
+  const [voiceURI, setVoiceURI] = useState<string | null>(() => getSpeechVoiceURI(initialLang));
   const [rate, setRate] = useState<SpeechRate>(() => getSpeechRate());
-  const [lang, setLang] = useState<SpeechLang>(() => getSpeechLang());
+  const [lang, setLang] = useState<SpeechLang>(() => initialLang);
   const [supported, setSupported] = useState(true);
   const [sentencePause, setSentencePauseState] = useState<number>(() => getSentencePauseMs());
   const [commaPause, setCommaPauseState] = useState<number>(() => getCommaPauseMs());
