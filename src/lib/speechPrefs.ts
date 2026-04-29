@@ -221,39 +221,36 @@ export function setSpeechPitch(pitch: number, lang?: SpeechLang | string) {
   window.dispatchEvent(new CustomEvent("calm-speech-prefs-change"));
 }
 
-export function getSlowKeywords(): boolean {
-  if (typeof window === "undefined") return SLOW_KEYWORDS_DEFAULT;
-  const v = localStorage.getItem(SLOW_KEYWORDS_KEY);
-  if (v === null) return SLOW_KEYWORDS_DEFAULT;
-  return v === "1";
+export function getSlowKeywords(lang?: SpeechLang | string): boolean {
+  const target = lang ? normalizeSpeechLang(lang) : getSpeechLang();
+  return readBoolPerLang(slowKeywordsKeyFor(target), SLOW_KEYWORDS_KEY, SLOW_KEYWORDS_DEFAULT);
 }
-export function setSlowKeywords(enabled: boolean) {
+export function setSlowKeywords(enabled: boolean, lang?: SpeechLang | string) {
   if (typeof window === "undefined") return;
-  localStorage.setItem(SLOW_KEYWORDS_KEY, enabled ? "1" : "0");
+  const target = lang ? normalizeSpeechLang(lang) : getSpeechLang();
+  localStorage.setItem(slowKeywordsKeyFor(target), enabled ? "1" : "0");
   window.dispatchEvent(new CustomEvent("calm-speech-prefs-change"));
 }
 
-export function getSilentMode(): boolean {
-  if (typeof window === "undefined") return SILENT_MODE_DEFAULT;
-  const v = localStorage.getItem(SILENT_MODE_KEY);
-  if (v === null) return SILENT_MODE_DEFAULT;
-  return v === "1";
+export function getSilentMode(lang?: SpeechLang | string): boolean {
+  const target = lang ? normalizeSpeechLang(lang) : getSpeechLang();
+  return readBoolPerLang(silentModeKeyFor(target), SILENT_MODE_KEY, SILENT_MODE_DEFAULT);
 }
-export function setSilentMode(enabled: boolean) {
+export function setSilentMode(enabled: boolean, lang?: SpeechLang | string) {
   if (typeof window === "undefined") return;
-  localStorage.setItem(SILENT_MODE_KEY, enabled ? "1" : "0");
+  const target = lang ? normalizeSpeechLang(lang) : getSpeechLang();
+  localStorage.setItem(silentModeKeyFor(target), enabled ? "1" : "0");
   window.dispatchEvent(new CustomEvent("calm-speech-prefs-change"));
 }
 
-export function getFocusFollow(): boolean {
-  if (typeof window === "undefined") return FOCUS_FOLLOW_DEFAULT;
-  const v = localStorage.getItem(FOCUS_FOLLOW_KEY);
-  if (v === null) return FOCUS_FOLLOW_DEFAULT;
-  return v === "1";
+export function getFocusFollow(lang?: SpeechLang | string): boolean {
+  const target = lang ? normalizeSpeechLang(lang) : getSpeechLang();
+  return readBoolPerLang(focusFollowKeyFor(target), FOCUS_FOLLOW_KEY, FOCUS_FOLLOW_DEFAULT);
 }
-export function setFocusFollow(enabled: boolean) {
+export function setFocusFollow(enabled: boolean, lang?: SpeechLang | string) {
   if (typeof window === "undefined") return;
-  localStorage.setItem(FOCUS_FOLLOW_KEY, enabled ? "1" : "0");
+  const target = lang ? normalizeSpeechLang(lang) : getSpeechLang();
+  localStorage.setItem(focusFollowKeyFor(target), enabled ? "1" : "0");
   window.dispatchEvent(new CustomEvent("calm-speech-prefs-change"));
 }
 
