@@ -149,7 +149,7 @@ function isSentenceBoundary(input: string, i: number): boolean {
   // quote/dash, or « (French opening guillemet).
   if (isUpperLetter(peek)) return true;
   if (isDigit(peek)) return true;
-  if (peek === "«" || peek === "—" || peek === "–" || peek === "-") return true;
+  if (peek === "«" || peek === "(" || peek === "[" || peek === "—" || peek === "–" || peek === "-" || peek === "\"" || peek === "“" || peek === "‘") return true;
   // Lowercase follow-up → sentence continues.
   return false;
 }
