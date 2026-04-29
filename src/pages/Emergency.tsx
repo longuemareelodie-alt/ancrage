@@ -13,7 +13,7 @@ const Emergency = () => {
   const [step, setStep] = useState<EmergencyStep>("loading");
   const [breathCount, setBreathCount] = useState(0);
   const [usage, setUsage] = useState<{
-    plan_type: string; used_today: number; daily_limit: number; unlimited: boolean; remaining: number;
+    used_today: number; daily_limit: number; unlimited: boolean; remaining: number;
   } | null>(null);
 
   useEffect(() => {
@@ -22,7 +22,6 @@ const Emergency = () => {
       if (error) { console.error(error); setStep("breathe"); return; }
       const result = data as any;
       setUsage({
-        plan_type: result?.plan_type ?? "none",
         used_today: result?.used_today ?? 0,
         daily_limit: result?.daily_limit ?? 0,
         unlimited: !!result?.unlimited,
@@ -140,7 +139,7 @@ const Emergency = () => {
                   className="block w-full rounded-full bg-primary px-6 py-3 text-center text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25">
                   {t("emergency.done_back")}
                 </Link>
-                {(usage?.plan_type ?? "none") === "none" && (
+                {!usage?.unlimited && (
                   <Link to="/paywall"
                     className="block w-full rounded-full border border-border px-6 py-3 text-center text-sm font-medium">
                     {t("emergency.done_upgrade")}

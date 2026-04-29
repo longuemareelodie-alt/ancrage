@@ -4,19 +4,23 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 /**
- * Allows access to any paying user (lifetime OR subscription).
+ * Allows access to any paying user (lifetime access after one-time payment).
  * Redirects free users to /paywall.
  */
 const PaidRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, loading } = useAuth();
-  const [planType, setPlanType] = useState<string | null>(null);
+  const [isPaid, setIsPaid] = useState<boolean | null>(null);
   const [checking, setChecking] = useState(true);
 
   useEffect(() => {
     if (!user) { setChecking(false); return; }
-    supabase.from("profiles").select("plan_type").eq("user_id", user.id).single()
+    supabase
+      .from("profiles")
+      .select("is_premium")
+      .eq("user_id", user.id)
+      .single()
       .then(({ data }) => {
-        setPlanType((data as any)?.plan_type ?? "none");
+        setIsPaid(!!data?.is_premium);
         setChecking(false);
       });
   }, [user]);
@@ -30,7 +34,7 @@ const PaidRoute = ({ children }: { children: React.ReactNode }) => {
   }
 
   if (!user) return <Navigate to="/auth" replace />;
-  if (planType === "none" || !planType) return <Navigate to="/paywall" replace />;
+  if (!isPaid) return <Navigate to="/paywall" replace />;
   return <>{children}</>;
 };
 

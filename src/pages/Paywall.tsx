@@ -24,12 +24,11 @@ const Paywall = () => {
     setStatusLoading(true);
     supabase
       .from("profiles")
-      .select("is_premium, plan_type")
+      .select("is_premium")
       .eq("user_id", user.id)
       .single()
       .then(({ data }) => {
-        const paid = !!(data as any)?.is_premium || ((data as any)?.plan_type ?? "none") !== "none";
-        setIsPaid(paid);
+        setIsPaid(!!data?.is_premium);
         setStatusLoading(false);
       });
   }, [user]);
