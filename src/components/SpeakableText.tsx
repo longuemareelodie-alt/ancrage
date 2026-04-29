@@ -11,6 +11,7 @@ import {
   buildUtteranceSegments,
   type UtteranceSegment,
 } from "@/lib/speechPrefs";
+import { splitSentences } from "@/lib/sentenceSplit";
 
 type SpeechState = "idle" | "speaking" | "paused";
 
@@ -23,39 +24,7 @@ interface SpeakableTextProps {
   textClassName?: string;
 }
 
-/**
- * Splits a string into sentences while keeping their trailing punctuation,
- * and tracks the start offset of each sentence in the original string.
- */
-interface Sentence {
-  text: string;
-  start: number;
-  end: number;
-}
-
-function splitSentences(input: string): Sentence[] {
-  const result: Sentence[] = [];
-  // Match a run of non-terminator chars + the terminator (or end of string).
-  const regex = /[^.!?…]+[.!?…]+|\S[^.!?…]*$/g;
-  let match: RegExpExecArray | null;
-  while ((match = regex.exec(input)) !== null) {
-    const raw = match[0];
-    const trimmedStart = match.index + (raw.length - raw.trimStart().length);
-    const text = raw.trim();
-    if (!text) continue;
-    result.push({
-      text,
-      start: trimmedStart,
-      end: trimmedStart + text.length,
-    });
-  }
-  if (result.length === 0 && input.trim()) {
-    const t = input.trim();
-    const start = input.indexOf(t);
-    result.push({ text: t, start, end: start + t.length });
-  }
-  return result;
-}
+// Sentence splitting is provided by `@/lib/sentenceSplit` (FR-aware).
 
 const SpeakableText = ({
   text,
