@@ -622,6 +622,29 @@
       "pagination": "{{from}}–{{to}} sur {{total}}",
       "prev": "Précédent",
       "next": "Suivant"
+    },
+    "audit": {
+      "title": "Audit des activations",
+      "subtitle": "Comparaison entre le journal et le statut premium actuel.",
+      "run": "Lancer l'audit",
+      "running": "Analyse en cours…",
+      "generated_at": "Généré le {{date}}",
+      "section_paid_no_premium": "Paiements reçus mais profil non premium",
+      "section_premium_no_log": "Profils premium sans paiement enregistré",
+      "section_already_active": "Activations « déjà actives »",
+      "empty": "Aucune anomalie",
+      "col_email": "Email",
+      "col_user": "Utilisateur",
+      "col_payment_id": "Payment ID",
+      "col_amount": "Montant",
+      "col_paid_at": "Payé le",
+      "col_is_premium": "Premium ?",
+      "col_plan": "Plan",
+      "col_updated_at": "Mis à jour",
+      "col_created_at": "Créé le",
+      "col_message": "Message",
+      "yes": "Oui",
+      "no": "Non"
     }
   }
 }

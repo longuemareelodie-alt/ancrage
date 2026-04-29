@@ -622,6 +622,29 @@
       "pagination": "{{from}}–{{to}} of {{total}}",
       "prev": "Previous",
       "next": "Next"
+    },
+    "audit": {
+      "title": "Activations audit",
+      "subtitle": "Comparison between log and current premium status.",
+      "run": "Run audit",
+      "running": "Running…",
+      "generated_at": "Generated at {{date}}",
+      "section_paid_no_premium": "Paid but profile not premium",
+      "section_premium_no_log": "Premium profiles without paid log",
+      "section_already_active": "“Already active” activations",
+      "empty": "No anomaly",
+      "col_email": "Email",
+      "col_user": "User",
+      "col_payment_id": "Payment ID",
+      "col_amount": "Amount",
+      "col_paid_at": "Paid at",
+      "col_is_premium": "Premium?",
+      "col_plan": "Plan",
+      "col_updated_at": "Updated",
+      "col_created_at": "Created",
+      "col_message": "Message",
+      "yes": "Yes",
+      "no": "No"
     }
   }
 }
