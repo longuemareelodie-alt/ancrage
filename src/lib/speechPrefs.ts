@@ -6,14 +6,22 @@ export type SpeechLang = "fr-FR" | "fr-CA" | "en-US";
 const VOICE_KEY = "calm_speech_voice";
 const RATE_KEY = "calm_speech_rate"; // legacy global rate (migrated per-lang)
 const LANG_KEY = "calm_speech_lang";
-const SENTENCE_PAUSE_KEY = "calm_speech_sentence_pause"; // ms, 0-1500
-const COMMA_PAUSE_KEY = "calm_speech_comma_pause"; // ms, 0-800
-const PITCH_KEY = "calm_speech_pitch"; // legacy global pitch (migrated per-lang)
+// Legacy global keys (kept as fallback during migration to per-lang values).
+const SENTENCE_PAUSE_KEY = "calm_speech_sentence_pause";
+const COMMA_PAUSE_KEY = "calm_speech_comma_pause";
+const PITCH_KEY = "calm_speech_pitch";
+const SLOW_KEYWORDS_KEY = "calm_speech_slow_keywords";
+const SILENT_MODE_KEY = "calm_speech_silent_mode";
+const FOCUS_FOLLOW_KEY = "calm_speech_focus_follow";
+
+// Per-language storage keys.
 const rateKeyFor = (lang: SpeechLang) => `calm_speech_rate__${lang}`;
 const pitchKeyFor = (lang: SpeechLang) => `calm_speech_pitch__${lang}`;
-const SLOW_KEYWORDS_KEY = "calm_speech_slow_keywords"; // "1" | "0"
-const SILENT_MODE_KEY = "calm_speech_silent_mode"; // "1" | "0" — surbrillance sans audio
-const FOCUS_FOLLOW_KEY = "calm_speech_focus_follow"; // "1" | "0" — déplacer le focus clavier sur la phrase active
+const sentencePauseKeyFor = (lang: SpeechLang) => `calm_speech_sentence_pause__${lang}`;
+const commaPauseKeyFor = (lang: SpeechLang) => `calm_speech_comma_pause__${lang}`;
+const slowKeywordsKeyFor = (lang: SpeechLang) => `calm_speech_slow_keywords__${lang}`;
+const silentModeKeyFor = (lang: SpeechLang) => `calm_speech_silent_mode__${lang}`;
+const focusFollowKeyFor = (lang: SpeechLang) => `calm_speech_focus_follow__${lang}`;
 
 export const SENTENCE_PAUSE_DEFAULT = 400; // ms
 export const COMMA_PAUSE_DEFAULT = 150; // ms
@@ -157,21 +165,44 @@ function readNumber(key: string, fallback: number, min: number, max: number): nu
   return Math.min(max, Math.max(min, n));
 }
 
-export function getSentencePauseMs(): number {
+function readBoolPerLang(
+  perLangKey: string,
+  legacyKey: string,
+  fallback: boolean,
+): boolean {
+  if (typeof window === "undefined") return fallback;
+  const v = localStorage.getItem(perLangKey);
+  if (v === "1") return true;
+  if (v === "0") return false;
+  const legacy = localStorage.getItem(legacyKey);
+  if (legacy === "1") return true;
+  if (legacy === "0") return false;
+  return fallback;
+}
+
+export function getSentencePauseMs(lang?: SpeechLang | string): number {
+  const target = lang ? normalizeSpeechLang(lang) : getSpeechLang();
+  const perLang = readNumber(sentencePauseKeyFor(target), Number.NaN, 0, 1500);
+  if (Number.isFinite(perLang)) return perLang;
   return readNumber(SENTENCE_PAUSE_KEY, SENTENCE_PAUSE_DEFAULT, 0, 1500);
 }
-export function setSentencePauseMs(ms: number) {
+export function setSentencePauseMs(ms: number, lang?: SpeechLang | string) {
   if (typeof window === "undefined") return;
-  localStorage.setItem(SENTENCE_PAUSE_KEY, String(Math.round(ms)));
+  const target = lang ? normalizeSpeechLang(lang) : getSpeechLang();
+  localStorage.setItem(sentencePauseKeyFor(target), String(Math.round(ms)));
   window.dispatchEvent(new CustomEvent("calm-speech-prefs-change"));
 }
 
-export function getCommaPauseMs(): number {
+export function getCommaPauseMs(lang?: SpeechLang | string): number {
+  const target = lang ? normalizeSpeechLang(lang) : getSpeechLang();
+  const perLang = readNumber(commaPauseKeyFor(target), Number.NaN, 0, 800);
+  if (Number.isFinite(perLang)) return perLang;
   return readNumber(COMMA_PAUSE_KEY, COMMA_PAUSE_DEFAULT, 0, 800);
 }
-export function setCommaPauseMs(ms: number) {
+export function setCommaPauseMs(ms: number, lang?: SpeechLang | string) {
   if (typeof window === "undefined") return;
-  localStorage.setItem(COMMA_PAUSE_KEY, String(Math.round(ms)));
+  const target = lang ? normalizeSpeechLang(lang) : getSpeechLang();
+  localStorage.setItem(commaPauseKeyFor(target), String(Math.round(ms)));
   window.dispatchEvent(new CustomEvent("calm-speech-prefs-change"));
 }
 
