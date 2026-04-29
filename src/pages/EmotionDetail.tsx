@@ -21,6 +21,7 @@ import {
   EMOTION_STYLE_VARIANTS,
   type Step,
 } from "@/data/emotionStyleVariants";
+import { writeLastVisited } from "@/lib/lastVisited";
 import {
   resolveAutoStyleFromToday,
   type ResolvedStyle,
