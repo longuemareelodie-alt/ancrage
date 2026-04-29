@@ -24,6 +24,42 @@ const Paywall = () => {
   const fromPath = (location.state as { from?: string } | null)?.from ?? null;
   const resumeBtnRef = useRef<HTMLButtonElement | null>(null);
 
+  // ---- Promo code (client-side preview only; server is authoritative) ----
+  // Catalog must mirror server PROMO_CATALOG in create-mollie-payment.
+  const PROMO_CATALOG: Record<string, { discountCents: number; label: string }> = {
+    ANCRAGE15: { discountCents: 1500, label: "Ancrage15" },
+  };
+  const BASE_PRICE_CENTS = 3900;
+  const [promoInput, setPromoInput] = useState("");
+  const [appliedPromo, setAppliedPromo] = useState<string | null>(null);
+  const [promoError, setPromoError] = useState<string | null>(null);
+
+  const applyPromo = () => {
+    const code = promoInput.trim().toUpperCase();
+    if (!code) {
+      setPromoError(t("paywall.promo.empty", "Saisis un code promo."));
+      return;
+    }
+    if (!PROMO_CATALOG[code]) {
+      setAppliedPromo(null);
+      setPromoError(t("paywall.promo.invalid", "Code promo invalide."));
+      return;
+    }
+    setAppliedPromo(code);
+    setPromoError(null);
+  };
+
+  const removePromo = () => {
+    setAppliedPromo(null);
+    setPromoInput("");
+    setPromoError(null);
+  };
+
+  const discountCents = appliedPromo ? PROMO_CATALOG[appliedPromo].discountCents : 0;
+  const finalCents = Math.max(0, BASE_PRICE_CENTS - discountCents);
+  const formatEur = (cents: number) =>
+    `${(cents / 100).toFixed(cents % 100 === 0 ? 0 : 2).replace(".", ",")}€`;
+
   useEffect(() => {
     if (!user) {
       setIsPaid(false);
