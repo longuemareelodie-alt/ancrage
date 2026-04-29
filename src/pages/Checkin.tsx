@@ -97,6 +97,43 @@ const Checkin = () => {
     fetchProfile();
   }, [user]);
 
+  // Reprise après paiement : si une émotion a été choisie en mode essai
+  // puis que la personne est revenue payante, on enregistre le check-in
+  // et on saute directement à l'étape exercice.
+  useEffect(() => {
+    if (!user || !isPaid) return;
+    const pending = readPendingCheckin();
+    if (!pending) return;
+    const emotion = emotions.find((e) => e.id === pending.emotionId);
+    if (!emotion) {
+      clearPendingCheckin();
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      await supabase.from("emotion_checkins").insert({
+        user_id: user.id,
+        emotion: emotion.id,
+        emotion_type: emotion.type,
+      });
+      await supabase
+        .from("profiles")
+        .update({ last_emotion: emotion.id })
+        .eq("user_id", user.id);
+      const result = await updateStreakAndBadges(user.id);
+      if (cancelled) return;
+      if (result?.newBadges?.length) setNewBadges(result.newBadges);
+      if (result?.streak) setStreakCount(result.streak);
+      setSelected(emotion);
+      setStep("action");
+      setShowReward(true);
+      clearPendingCheckin();
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [user, isPaid]);
+
   const negativeEmotions = emotions.filter((e) => e.type === "negative");
   const positiveEmotions = emotions.filter((e) => e.type === "positive");
 
