@@ -104,6 +104,27 @@ const SpeakableText = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state]);
 
+  // Move keyboard focus onto the active sentence span when the user opted-in.
+  // We only steal focus while actively speaking to avoid hijacking input.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!getFocusFollow()) return;
+    if (state !== "speaking") return;
+    if (activeIndex < 0) return;
+    const el = sentenceRefs.current[activeIndex];
+    if (!el) return;
+    // Don't steal focus if the user is currently interacting with a control
+    // (typing in a field, etc.).
+    const ae = document.activeElement as HTMLElement | null;
+    const tag = ae?.tagName;
+    if (tag === "INPUT" || tag === "TEXTAREA" || ae?.isContentEditable) return;
+    try {
+      el.focus({ preventScroll: false });
+    } catch {
+      /* noop */
+    }
+  }, [activeIndex, state]);
+
   const cancelAll = () => {
     if (pauseTimerRef.current !== null) {
       window.clearTimeout(pauseTimerRef.current);
