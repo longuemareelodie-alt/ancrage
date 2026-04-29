@@ -239,9 +239,83 @@ const Paywall = () => {
 
             <div className="text-center pt-2">
               <p className="text-sm font-medium text-muted-foreground">{t("paywall.brand")}</p>
-              <p className="mt-2 text-4xl font-bold">{t("paywall.amount")}</p>
+              {appliedPromo ? (
+                <div className="mt-2 flex items-baseline justify-center gap-2">
+                  <p className="text-xl font-medium text-muted-foreground line-through">
+                    {formatEur(BASE_PRICE_CENTS)}
+                  </p>
+                  <p className="text-4xl font-bold text-primary">{formatEur(finalCents)}</p>
+                </div>
+              ) : (
+                <p className="mt-2 text-4xl font-bold">{t("paywall.amount")}</p>
+              )}
               <p className="text-xs text-muted-foreground mt-1">{t("paywall.amount_note")}</p>
+              {appliedPromo && (
+                <p className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-primary/15 px-3 py-1 text-xs font-semibold text-primary">
+                  <Tag className="h-3.5 w-3.5" />
+                  {t("paywall.promo.applied", {
+                    code: appliedPromo,
+                    amount: formatEur(discountCents),
+                    defaultValue: "{{code}} appliqué — {{amount}} de réduction",
+                  })}
+                  <button
+                    type="button"
+                    onClick={removePromo}
+                    aria-label={t("paywall.promo.remove", "Retirer le code promo")}
+                    className="ml-1 rounded-full p-0.5 hover:bg-primary/20"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </p>
+              )}
             </div>
+
+            {/* Promo code input */}
+            {!appliedPromo && (
+              <div className="space-y-1.5">
+                <label
+                  htmlFor="promo-code"
+                  className="text-xs font-medium text-muted-foreground"
+                >
+                  {t("paywall.promo.label", "Tu as un code promo ?")}
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    id="promo-code"
+                    type="text"
+                    value={promoInput}
+                    onChange={(e) => {
+                      setPromoInput(e.target.value);
+                      if (promoError) setPromoError(null);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        applyPromo();
+                      }
+                    }}
+                    placeholder={t("paywall.promo.placeholder", "Ex. ANCRAGE15")}
+                    className="flex-1 rounded-xl border border-input bg-background px-3 py-2 text-sm uppercase placeholder:normal-case placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                    autoComplete="off"
+                    spellCheck={false}
+                    aria-invalid={!!promoError}
+                    aria-describedby={promoError ? "promo-code-error" : undefined}
+                  />
+                  <button
+                    type="button"
+                    onClick={applyPromo}
+                    className="rounded-xl border border-primary/40 px-4 py-2 text-xs font-semibold text-primary hover:bg-primary/10"
+                  >
+                    {t("paywall.promo.apply", "Appliquer")}
+                  </button>
+                </div>
+                {promoError && (
+                  <p id="promo-code-error" className="text-xs text-destructive">
+                    {promoError}
+                  </p>
+                )}
+              </div>
+            )}
 
             <ul className="space-y-2">
               {features.map((item) => (
@@ -257,7 +331,14 @@ const Paywall = () => {
               disabled={paymentLoading}
               className="w-full rounded-xl bg-primary py-3.5 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 transition-transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60"
             >
-              {paymentLoading ? t("paywall.loading") : t("paywall.cta")}
+              {paymentLoading
+                ? t("paywall.loading")
+                : appliedPromo
+                  ? t("paywall.cta_with_amount", {
+                      amount: formatEur(finalCents),
+                      defaultValue: "Je veux me sentir mieux — {{amount}}",
+                    })
+                  : t("paywall.cta")}
             </button>
             <p className="text-center text-xs text-muted-foreground">{t("paywall.secure_short")}</p>
             <p className="text-center text-[11px] leading-relaxed text-muted-foreground">
