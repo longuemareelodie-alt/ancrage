@@ -68,7 +68,7 @@ const progressLabels: Record<Step, string> = {
 };
 
 const Checkin = () => {
-  const { user, isPaid } = useAuth();
+  const { user, isPaid, refreshEligibility } = useAuth();
   const { startPayment, loading: paymentLoading } = useMolliePayment();
   const navigate = useNavigate();
   const [step, setStep] = useState<Step>("select");
@@ -134,6 +134,33 @@ const Checkin = () => {
     };
   }, [user, isPaid]);
 
+  // Polling discret sur l'écran teaser : tant que la personne attend la
+  // confirmation du paiement Mollie, on re-vérifie son éligibilité toutes
+  // les 4 secondes. Dès que isPaid bascule à true, l'effet de reprise
+  // ci-dessus enregistre le check-in et passe à l'exercice automatiquement.
+  useEffect(() => {
+    if (step !== "teaser") return;
+    if (!user) return;
+    if (isPaid) return;
+    if (typeof document !== "undefined" && document.visibilityState === "hidden") return;
+
+    const interval = window.setInterval(() => {
+      void refreshEligibility();
+    }, 4000);
+
+    const onVisibility = () => {
+      if (document.visibilityState === "visible") {
+        void refreshEligibility();
+      }
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+
+    return () => {
+      window.clearInterval(interval);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
+  }, [step, user, isPaid, refreshEligibility]);
+
   const negativeEmotions = emotions.filter((e) => e.type === "negative");
   const positiveEmotions = emotions.filter((e) => e.type === "positive");
 
@@ -195,7 +222,7 @@ const Checkin = () => {
   };
 
   const handleEvolutionContinue = () => {
-    if (isPremium) {
+    if (isPremium || isPaid) {
       loadWeeklySummary();
       setStep("summary");
     } else {
@@ -448,6 +475,12 @@ const Checkin = () => {
               <Sparkles className="h-4 w-4" />
               {paymentLoading ? "Chargement…" : "Débloquer la suite"}
             </motion.button>
+
+            {user && !isPaid && (
+              <p className="text-[11px] text-muted-foreground max-w-xs">
+                Dès que ton paiement est confirmé, la suite se débloque ici automatiquement.
+              </p>
+            )}
 
             <button
               onClick={() => setStep("select")}
