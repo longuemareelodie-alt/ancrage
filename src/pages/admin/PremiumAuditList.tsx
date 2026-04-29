@@ -157,6 +157,7 @@ const PremiumAuditList = () => {
   const [page, setPage] = useState(0);
   const [logging, setLogging] = useState<string | null>(null);
   const [loggedKeys, setLoggedKeys] = useState<Set<string>>(new Set());
+  const [dedupWindowMin, setDedupWindowMin] = useState<number>(60);
 
   const runAudit = async () => {
     setLoading(true);
