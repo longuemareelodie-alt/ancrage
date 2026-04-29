@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { format } from "date-fns";
-import { AlertTriangle, Loader2, ShieldCheck } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Loader2, RefreshCw, ShieldCheck } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -73,10 +73,16 @@ const PremiumAuditPanel = () => {
     setLoading(false);
   };
 
+  // Vérification automatique au montage
+  useEffect(() => {
+    runAudit();
+  }, []);
+
+  const criticalCount = data
+    ? data.paid_without_premium.length + data.premium_without_paid_log.length
+    : 0;
   const totalAnomalies = data
-    ? data.paid_without_premium.length +
-      data.premium_without_paid_log.length +
-      data.already_active.length
+    ? criticalCount + data.already_active.length
     : 0;
 
   return (
@@ -91,16 +97,27 @@ const PremiumAuditPanel = () => {
             {t("admin.audit.subtitle")}
           </p>
           {data && (
-            <p className="text-xs text-muted-foreground mt-2">
-              {t("admin.audit.generated_at", { date: fmtDate(data.generated_at) })}
-              {" · "}
-              <Badge variant={totalAnomalies > 0 ? "destructive" : "default"}>
-                {totalAnomalies}
-              </Badge>
-            </p>
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              {criticalCount === 0 ? (
+                <Badge variant="default" className="gap-1">
+                  <CheckCircle2 className="h-3 w-3" />
+                  {t("admin.audit.status_healthy", "Tout est cohérent")}
+                </Badge>
+              ) : (
+                <Badge variant="destructive" className="gap-1">
+                  <AlertTriangle className="h-3 w-3" />
+                  {t("admin.audit.status_anomalies", { count: criticalCount, defaultValue: "{{count}} incohérence(s) critique(s)" })}
+                </Badge>
+              )}
+              <span className="text-xs text-muted-foreground">
+                {t("admin.audit.generated_at", { date: fmtDate(data.generated_at) })}
+                {" · "}
+                {t("admin.audit.total", { count: totalAnomalies, defaultValue: "{{count}} entrée(s) au total" })}
+              </span>
+            </div>
           )}
         </div>
-        <Button onClick={runAudit} disabled={loading}>
+        <Button onClick={runAudit} disabled={loading} variant="outline">
           {loading ? (
             <>
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -108,7 +125,7 @@ const PremiumAuditPanel = () => {
             </>
           ) : (
             <>
-              <AlertTriangle className="h-4 w-4 mr-2" />
+              <RefreshCw className="h-4 w-4 mr-2" />
               {t("admin.audit.run")}
             </>
           )}
