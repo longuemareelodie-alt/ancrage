@@ -558,6 +558,25 @@
     "done_back": "Zurück zu meinem Bereich",
     "done_upgrade": "Weitergehen"
   },
+  "payment_pending": {
+    "pending": {
+      "title": "Dein Zugang wird aktiviert…",
+      "text": "Deine Zahlung ist eingegangen. Wir bestätigen deinen lebenslangen Zugang in wenigen Sekunden.",
+      "hint": "Bitte schließe diese Seite nicht — wir kümmern uns um alles."
+    },
+    "confirmed": {
+      "title": "Zugang bestätigt 💛",
+      "text": "Ganz Ancrage ist in deinem Konto freigeschaltet — für immer.",
+      "redirect": "Weiterleitung läuft…"
+    },
+    "error": {
+      "title": "Die Aktivierung dauert länger als erwartet",
+      "text": "Deine Zahlung wird möglicherweise noch von deiner Bank bestätigt. Das kann ein paar Minuten dauern. Du kannst es erneut versuchen oder zu deinem Bereich gehen — der Zugang wird automatisch aktiviert.",
+      "retry": "Erneut prüfen",
+      "dashboard": "Zu meinem Bereich",
+      "support": "Falls sich nach 10 Minuten nichts ändert, kontaktiere uns."
+    }
+  },
   "common": {
     "loading": "Lädt…",
     "error": "Ein Fehler ist aufgetreten",
