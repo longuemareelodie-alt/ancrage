@@ -48,6 +48,7 @@ import CalmeEnClair from "./pages/CalmeEnClair";
 import Danger from "./pages/Danger";
 import PremiumActivationLogPage from "./pages/admin/PremiumActivationLog";
 import PremiumAuditListPage from "./pages/admin/PremiumAuditList";
+import WebhookAnomaliesPage from "./pages/admin/WebhookAnomalies";
 
 const queryClient = new QueryClient();
 
