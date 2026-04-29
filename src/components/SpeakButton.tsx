@@ -20,7 +20,7 @@ interface SpeakButtonProps {
  * Bouton de guidage audio utilisant la synthèse vocale native du navigateur.
  * Permet de lire un texte, mettre en pause / reprendre, et arrêter.
  */
-const SpeakButton = ({ text, lang = "fr-FR", className = "" }: SpeakButtonProps) => {
+const SpeakButton = ({ text, lang, className = "" }: SpeakButtonProps) => {
   const [state, setState] = useState<SpeechState>("idle");
   const [supported, setSupported] = useState<boolean>(true);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
