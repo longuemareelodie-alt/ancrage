@@ -3,6 +3,7 @@ import { Volume2, Pause, Play, Square, RotateCcw } from "lucide-react";
 import {
   RATE_VALUES,
   getSpeechRate,
+  getSpeechLang,
   loadVoices,
   resolveVoice,
 } from "@/lib/speechPrefs";
@@ -55,7 +56,7 @@ function splitSentences(input: string): Sentence[] {
 const SpeakableText = ({
   text,
   hint,
-  lang = "fr-FR",
+  lang,
   className = "",
   textClassName = "",
 }: SpeakableTextProps) => {
@@ -90,11 +91,12 @@ const SpeakableText = ({
     const synth = window.speechSynthesis;
     synth.cancel();
 
+    const effectiveLang = lang ?? getSpeechLang();
     const u = new SpeechSynthesisUtterance(fullText);
-    u.lang = lang;
+    u.lang = effectiveLang;
 
     const voices = await loadVoices();
-    const voice = resolveVoice(voices, lang.split("-")[0] || "fr");
+    const voice = resolveVoice(voices, effectiveLang);
     if (voice) u.voice = voice;
     u.rate = RATE_VALUES[getSpeechRate()];
     u.pitch = 1;

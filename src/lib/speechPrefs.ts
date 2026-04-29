@@ -1,7 +1,32 @@
 export type SpeechRate = "slow" | "normal" | "fast";
+export type SpeechLang = "fr-FR" | "fr-CA" | "en-US";
 
 const VOICE_KEY = "calm_speech_voice";
 const RATE_KEY = "calm_speech_rate";
+const LANG_KEY = "calm_speech_lang";
+
+export const LANG_LABELS: Record<SpeechLang, string> = {
+  "fr-FR": "Français (France)",
+  "fr-CA": "Français (Canada)",
+  "en-US": "English (US)",
+};
+
+export const LANG_OPTIONS: SpeechLang[] = ["fr-FR", "fr-CA", "en-US"];
+
+export function getSpeechLang(): SpeechLang {
+  if (typeof window === "undefined") return "fr-FR";
+  const v = localStorage.getItem(LANG_KEY);
+  if (v === "fr-FR" || v === "fr-CA" || v === "en-US") return v;
+  return "fr-FR";
+}
+
+export function setSpeechLang(lang: SpeechLang) {
+  if (typeof window === "undefined") return;
+  localStorage.setItem(LANG_KEY, lang);
+  // Reset voice — saved voice may not match the new language.
+  localStorage.removeItem(VOICE_KEY);
+  window.dispatchEvent(new CustomEvent("calm-speech-prefs-change"));
+}
 
 export const RATE_VALUES: Record<SpeechRate, number> = {
   slow: 0.75,
@@ -63,12 +88,17 @@ export function loadVoices(): Promise<SpeechSynthesisVoice[]> {
   });
 }
 
-export function resolveVoice(voices: SpeechSynthesisVoice[], lang = "fr"): SpeechSynthesisVoice | null {
+export function resolveVoice(voices: SpeechSynthesisVoice[], lang = "fr-FR"): SpeechSynthesisVoice | null {
   const stored = getSpeechVoiceURI();
   if (stored) {
     const found = voices.find((v) => v.voiceURI === stored);
     if (found) return found;
   }
-  // Default: first voice matching the requested language.
-  return voices.find((v) => v.lang.toLowerCase().startsWith(lang.toLowerCase())) ?? null;
+  const lower = lang.toLowerCase();
+  // 1. Exact locale match (e.g. fr-CA).
+  const exact = voices.find((v) => v.lang.toLowerCase() === lower);
+  if (exact) return exact;
+  // 2. Same primary language (e.g. fr-* when fr-CA not available).
+  const primary = lower.split("-")[0];
+  return voices.find((v) => v.lang.toLowerCase().startsWith(primary)) ?? null;
 }
