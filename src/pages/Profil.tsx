@@ -40,6 +40,16 @@ const Profil = () => {
   const [nameValue, setNameValue] = useState("");
   const [savingName, setSavingName] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [actionStyle, setActionStyleState] = useState<ActionStyle>(() => getActionStyle());
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent<ActionStyle>).detail;
+      if (detail) setActionStyleState(detail);
+    };
+    window.addEventListener("calm-action-style-change", handler as EventListener);
+    return () => window.removeEventListener("calm-action-style-change", handler as EventListener);
+  }, []);
 
   const isMobileDevice = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
   const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
