@@ -124,6 +124,15 @@ const SpeakButton = ({ text, lang = "fr-FR", className = "" }: SpeakButtonProps)
       )}
       <button
         type="button"
+        onClick={handlePlay}
+        aria-label="Répéter depuis le début"
+        title="Répéter"
+        className={`${baseBtn} border-border bg-background text-muted-foreground hover:bg-muted`}
+      >
+        <RotateCcw className="h-3.5 w-3.5" />
+      </button>
+      <button
+        type="button"
         onClick={handleStop}
         aria-label="Arrêter la lecture"
         title="Arrêter"
