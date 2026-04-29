@@ -15,6 +15,7 @@ import {
 import {
   getStyleVariant,
   hasStyleVariants,
+  EMOTION_STYLE_VARIANTS,
   type Step,
 } from "@/data/emotionStyleVariants";
 import {
@@ -29,7 +30,7 @@ const STYLE_OPTIONS: {
 }[] = [
   { value: "breathing", label: "Respiration", Icon: Wind },
   { value: "sensory", label: "Sensoriel", Icon: Hand },
-  { value: "any", label: "Au choix (auto)", Icon: Sparkles },
+  { value: "any", label: "Au choix (alterné)", Icon: Sparkles },
 ];
 
 const RESOLVED_LABEL: Record<ResolvedStyle, string> = {
@@ -97,15 +98,52 @@ const EmotionDetail = () => {
 
   const toSteps = (arr: string[]): Step[] => arr.map((text) => ({ text }));
 
-  // Effective style: if user picked "any", use the auto-resolved one (or
-  // fall back to i18n until it loads).
+  // Tag steps with the style they belong to (breathing or sensory) so each
+  // card knows what it represents — needed for "any" alternation.
+  type TaggedStep = Step & { stepStyle?: "breathing" | "sensory" };
+  const tag = (steps: Step[], stepStyle: "breathing" | "sensory"): TaggedStep[] =>
+    steps.map((s) => ({ ...s, stepStyle }));
+
+  /**
+   * Build the alternating list when style === "any":
+   * starts with the dominant style (auto-resolved from today's mood) then
+   * zips the other one — so each card flips between breathing and sensory.
+   */
+  const buildAlternating = (
+    breathing: Step[],
+    sensory: Step[],
+    dominant: "breathing" | "sensory",
+  ): TaggedStep[] => {
+    const first = dominant === "breathing" ? tag(breathing, "breathing") : tag(sensory, "sensory");
+    const second = dominant === "breathing" ? tag(sensory, "sensory") : tag(breathing, "breathing");
+    const max = Math.max(first.length, second.length);
+    const out: TaggedStep[] = [];
+    for (let i = 0; i < max; i++) {
+      if (first[i]) out.push(first[i]);
+      if (second[i]) out.push(second[i]);
+    }
+    return out;
+  };
+
+  const supportsVariants = hasStyleVariants(key);
+  const variants = supportsVariants ? EMOTION_STYLE_VARIANTS[key] : null;
+
+  // Effective style for header/recording: when "any", we pick the dominant
+  // (auto-resolved) one but actual cards may alternate.
   const effectiveStyle: ActionStyle =
     style === "any" ? (autoResolved ?? "any") : style;
 
-  const variant = getStyleVariant(key, effectiveStyle);
-  const freeSteps: Step[] = variant?.free ?? toSteps(i18nFreeRaw);
-  const lockedSteps: Step[] = variant?.locked ?? toSteps(i18nLockedRaw);
-  const supportsVariants = hasStyleVariants(key);
+  let freeSteps: TaggedStep[];
+  let lockedSteps: TaggedStep[];
+
+  if (variants && style === "any" && autoResolved) {
+    freeSteps = buildAlternating(variants.breathing.free, variants.sensory.free, autoResolved);
+    lockedSteps = buildAlternating(variants.breathing.locked, variants.sensory.locked, autoResolved);
+  } else {
+    const variant = getStyleVariant(key, effectiveStyle);
+    freeSteps = variant ? tag(variant.free, effectiveStyle as "breathing" | "sensory") : toSteps(i18nFreeRaw);
+    lockedSteps = variant ? tag(variant.locked, effectiveStyle as "breathing" | "sensory") : toSteps(i18nLockedRaw);
+  }
 
   // Record the resolved style as the last one used (only when it's a real
   // variant page so we know which side won).
@@ -200,7 +238,25 @@ const EmotionDetail = () => {
                 {i + 1}
               </span>
               <div className="min-w-0 flex-1">
-                <p className="pt-0.5">{step.text}</p>
+                <div className="flex items-start justify-between gap-2">
+                  <p className="pt-0.5">{step.text}</p>
+                  {style === "any" && step.stepStyle && (
+                    <span
+                      className={`inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
+                        step.stepStyle === "breathing"
+                          ? "bg-primary/10 text-primary"
+                          : "bg-accent text-accent-foreground"
+                      }`}
+                    >
+                      {step.stepStyle === "breathing" ? (
+                        <Wind className="h-3 w-3" />
+                      ) : (
+                        <Hand className="h-3 w-3" />
+                      )}
+                      {step.stepStyle === "breathing" ? "Souffle" : "Sens"}
+                    </span>
+                  )}
+                </div>
                 {step.hint && (
                   <p className="mt-1 text-xs italic text-muted-foreground">
                     {step.hint}
