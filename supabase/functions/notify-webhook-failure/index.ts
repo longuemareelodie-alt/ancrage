@@ -124,10 +124,15 @@ async function sendSlackAlert(text: string, failures: FailureRow[], ctx: AlertCo
   }
 }
 
+function escapeHtml(s: string) {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
 async function sendEmailAlert(
   supabase: ReturnType<typeof createClient>,
   text: string,
   failures: FailureRow[],
+  ctx: AlertContext,
 ) {
   const rowsHtml = failures
     .slice(0, 10)
@@ -137,28 +142,61 @@ async function sendEmailAlert(
         <td style="padding:6px 10px;border-bottom:1px solid #eee;font-family:monospace;font-size:12px;">${f.status}</td>
         <td style="padding:6px 10px;border-bottom:1px solid #eee;font-size:12px;">${new Date(f.created_at).toISOString()}</td>
         <td style="padding:6px 10px;border-bottom:1px solid #eee;font-family:monospace;font-size:12px;">${f.payment_id ?? "—"}</td>
-        <td style="padding:6px 10px;border-bottom:1px solid #eee;font-size:12px;">${(f.message ?? "").replace(/</g, "&lt;")}</td>
+        <td style="padding:6px 10px;border-bottom:1px solid #eee;font-size:12px;">${escapeHtml(f.user_email ?? f.user_id ?? "—")}</td>
+        <td style="padding:6px 10px;border-bottom:1px solid #eee;font-size:12px;">${escapeHtml(f.message ?? "")}</td>
       </tr>`,
     )
     .join("");
 
+  const payloadJson = ctx.lastPayload
+    ? truncate(JSON.stringify(ctx.lastPayload, null, 2), 5000)
+    : "— aucun payload Mollie capturé —";
+
+  const summaryHtml = `
+    <table style="border-collapse:collapse;width:100%;margin-top:16px;font-size:13px;background:#fafafa;border:1px solid #eee;">
+      <tr><td style="padding:6px 10px;color:#666;width:170px;">Last payment_id</td>
+          <td style="padding:6px 10px;font-family:monospace;">${escapeHtml(ctx.lastPaymentId ?? "—")}</td></tr>
+      <tr><td style="padding:6px 10px;color:#666;">Last user email</td>
+          <td style="padding:6px 10px;font-family:monospace;">${escapeHtml(ctx.lastUserEmail ?? "—")}</td></tr>
+      <tr><td style="padding:6px 10px;color:#666;">Last user_id</td>
+          <td style="padding:6px 10px;font-family:monospace;">${escapeHtml(ctx.lastUserId ?? "—")}</td></tr>
+      <tr><td style="padding:6px 10px;color:#666;">First error (UTC)</td>
+          <td style="padding:6px 10px;font-family:monospace;">${escapeHtml(ctx.firstErrorAt ?? "—")}</td></tr>
+      <tr><td style="padding:6px 10px;color:#666;">Last error (UTC)</td>
+          <td style="padding:6px 10px;font-family:monospace;">${escapeHtml(ctx.lastErrorAt ?? "—")}</td></tr>
+      <tr><td style="padding:6px 10px;color:#666;">Last payload at</td>
+          <td style="padding:6px 10px;font-family:monospace;">${escapeHtml(ctx.lastPayloadAt ?? "—")}</td></tr>
+    </table>`;
+
   const html = `
-    <div style="font-family:system-ui,-apple-system,sans-serif;max-width:640px;margin:auto;padding:20px;">
+    <div style="font-family:system-ui,-apple-system,sans-serif;max-width:720px;margin:auto;padding:20px;">
       <h2 style="color:#b91c1c;">⚠️ Mollie webhook : seuil d'erreurs atteint</h2>
       <p>${text}</p>
       <p style="color:#666;font-size:13px;">Seuil : ${FAILURE_THRESHOLD} erreurs sur ${WINDOW_MINUTES} minutes.<br/>
       Anti-spam : pas de nouvelle alerte avant ${COOLDOWN_MINUTES} minutes.</p>
-      <table style="border-collapse:collapse;width:100%;margin-top:16px;font-size:13px;">
+
+      <h3 style="margin-top:20px;font-size:14px;color:#333;">Contexte clé</h3>
+      ${summaryHtml}
+
+      <h3 style="margin-top:20px;font-size:14px;color:#333;">Erreurs récentes</h3>
+      <table style="border-collapse:collapse;width:100%;margin-top:8px;font-size:13px;">
         <thead>
           <tr style="background:#f3f4f6;text-align:left;">
             <th style="padding:8px 10px;">Status</th>
             <th style="padding:8px 10px;">Date (UTC)</th>
             <th style="padding:8px 10px;">Payment ID</th>
+            <th style="padding:8px 10px;">User</th>
             <th style="padding:8px 10px;">Message</th>
           </tr>
         </thead>
         <tbody>${rowsHtml}</tbody>
       </table>
+
+      <h3 style="margin-top:20px;font-size:14px;color:#333;">Dernier payload Mollie reçu ${
+        ctx.lastPayloadAt ? `(${escapeHtml(ctx.lastPayloadAt)})` : ""
+      }</h3>
+      <pre style="background:#0f172a;color:#e2e8f0;padding:12px;border-radius:6px;font-size:11px;overflow:auto;max-height:360px;">${escapeHtml(payloadJson)}</pre>
+
       <p style="margin-top:24px;font-size:12px;color:#888;">
         Voir le journal complet : <a href="https://www.digitalmamanlibre.com/admin/premium-log">/admin/premium-log</a>
       </p>
