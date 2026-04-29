@@ -13,7 +13,7 @@ const Emergency = () => {
   const [step, setStep] = useState<EmergencyStep>("loading");
   const [breathCount, setBreathCount] = useState(0);
   const [usage, setUsage] = useState<{
-    plan_type: string; used_today: number; daily_limit: number; unlimited: boolean; remaining: number;
+    used_today: number; daily_limit: number; unlimited: boolean; remaining: number;
   } | null>(null);
 
   useEffect(() => {
@@ -22,7 +22,6 @@ const Emergency = () => {
       if (error) { console.error(error); setStep("breathe"); return; }
       const result = data as any;
       setUsage({
-        plan_type: result?.plan_type ?? "none",
         used_today: result?.used_today ?? 0,
         daily_limit: result?.daily_limit ?? 0,
         unlimited: !!result?.unlimited,
