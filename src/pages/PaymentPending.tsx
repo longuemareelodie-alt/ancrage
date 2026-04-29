@@ -416,20 +416,28 @@ const PaymentPending = () => {
               </div>
               <div className="space-y-2">
                 {screenshotButton}
+                {formButton}
                 <a
                   href={mailto}
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl border px-6 py-3 text-sm font-medium"
                 >
-                  {t("payment_pending.not_found.contact_support", "Contacter le support")}
+                  {t("payment_pending.not_found.contact_support_email", "Ou contacter par email")}
                 </a>
                 <Link
                   to="/dashboard"
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl border px-6 py-3 text-sm font-medium"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl px-6 py-3 text-xs text-muted-foreground"
                 >
                   {t("payment_pending.error.dashboard")}
-                  <ArrowRight className="h-4 w-4" />
+                  <ArrowRight className="h-3.5 w-3.5" />
                 </Link>
               </div>
+              <SupportContactDialog
+                open={supportOpen}
+                onOpenChange={setSupportOpen}
+                context={subject}
+                diagnostics={diagnosticsForDialog}
+                ticketId={ticketId}
+              />
             </>
           );
         })()}
