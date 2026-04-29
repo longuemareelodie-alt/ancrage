@@ -605,7 +605,11 @@
     },
     "error": {
       "title": "Activation is taking longer than expected",
-      "text": "Your payment may still be validating with your bank. This can take a few minutes. You can retry or go to your space — access will activate automatically.",
+      "text": "While we wait for your payment to be confirmed, your account stays limited to the payment page — the rest of Ancrage isn't available yet. Don't worry, your payment isn't lost: access will open automatically as soon as your bank validates it.",
+      "steps_title": "Quick steps:",
+      "step_1": "Wait 2–3 minutes, then tap “Check again”.",
+      "step_2": "Check the Mollie confirmation email in your inbox (and spam folder).",
+      "step_3": "If nothing changes after 10 minutes, contact us via the form below with your ticket number.",
       "retry": "Check again",
       "dashboard": "Go to my space",
       "support": "If nothing changes after 10 minutes, please contact us."

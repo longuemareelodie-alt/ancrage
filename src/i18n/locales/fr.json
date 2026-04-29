@@ -605,7 +605,11 @@
     },
     "error": {
       "title": "L'activation prend plus de temps que prévu",
-      "text": "Ton paiement est peut-être en cours de validation par la banque. Cela peut prendre quelques minutes. Tu peux réessayer ou aller à ton espace — l'accès s'activera automatiquement.",
+      "text": "En attendant la confirmation de ton paiement, ton compte reste limité à la page de paiement : les autres pages d'Ancrage ne sont pas encore accessibles. Pas d'inquiétude, ton paiement n'est pas perdu — l'accès s'ouvrira automatiquement dès la validation par la banque.",
+      "steps_title": "Étapes rapides :",
+      "step_1": "Patiente 2 à 3 minutes puis appuie sur « Vérifier à nouveau ».",
+      "step_2": "Vérifie l'email de confirmation Mollie dans ta boîte (et tes spams).",
+      "step_3": "Si rien ne change après 10 minutes, contacte-nous via le formulaire ci-dessous avec ton numéro de ticket.",
       "retry": "Vérifier à nouveau",
       "dashboard": "Aller à mon espace",
       "support": "Si rien ne change après 10 minutes, contacte-nous."

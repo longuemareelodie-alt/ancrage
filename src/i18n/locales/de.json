@@ -605,7 +605,11 @@
     },
     "error": {
       "title": "Die Aktivierung dauert länger als erwartet",
-      "text": "Deine Zahlung wird möglicherweise noch von deiner Bank bestätigt. Das kann ein paar Minuten dauern. Du kannst es erneut versuchen oder zu deinem Bereich gehen — der Zugang wird automatisch aktiviert.",
+      "text": "Solange wir auf die Bestätigung deiner Zahlung warten, bleibt dein Konto auf die Zahlungsseite beschränkt — die übrigen Bereiche von Ancrage sind noch nicht verfügbar. Keine Sorge, deine Zahlung ist nicht verloren: Sobald deine Bank sie bestätigt, wird der Zugang automatisch freigeschaltet.",
+      "steps_title": "Kurze Schritte:",
+      "step_1": "Warte 2–3 Minuten und tippe dann auf „Erneut prüfen“.",
+      "step_2": "Schau in deinem Posteingang (und Spam) nach der Mollie-Bestätigungsmail.",
+      "step_3": "Wenn sich nach 10 Minuten nichts ändert, kontaktiere uns über das Formular unten mit deiner Ticketnummer.",
       "retry": "Erneut prüfen",
       "dashboard": "Zu meinem Bereich",
       "support": "Falls sich nach 10 Minuten nichts ändert, kontaktiere uns."
