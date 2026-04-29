@@ -115,6 +115,26 @@ const logActivation = async (
       safeStringify({ error: serializeError(err), entry }),
     );
   }
+
+  // Fire-and-forget: trigger failure alert when status indicates an error.
+  if (entry.status === "error" || entry.status === "failed") {
+    try {
+      const url = `${supabaseUrl}/functions/v1/notify-webhook-failure`;
+      // We do NOT await — the webhook should respond fast to Mollie.
+      fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${serviceRoleKey}`,
+        },
+        body: JSON.stringify({ trigger: "mollie-webhook", status: entry.status }),
+      }).catch((e) =>
+        console.error("notify-webhook-failure trigger failed", serializeError(e)),
+      );
+    } catch (e) {
+      console.error("notify-webhook-failure invoke crashed", serializeError(e));
+    }
+  }
 };
 
 

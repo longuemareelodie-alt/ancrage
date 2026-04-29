@@ -653,6 +653,27 @@ export type Database = {
         }
         Relationships: []
       }
+      webhook_alert_state: {
+        Row: {
+          id: string
+          last_alert_at: string
+          last_failure_count: number
+          updated_at: string
+        }
+        Insert: {
+          id: string
+          last_alert_at?: string
+          last_failure_count?: number
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          last_alert_at?: string
+          last_failure_count?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
