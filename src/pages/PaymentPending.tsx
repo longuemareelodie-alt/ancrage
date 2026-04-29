@@ -10,6 +10,7 @@ import {
   UserX,
   Camera,
   Check,
+  MessageCircle,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/contexts/AuthContext";
