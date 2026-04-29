@@ -331,6 +331,7 @@ const SpeakableText = ({
     setState("idle");
     setActiveIndex(-1);
     setElapsed(0);
+    restorePreviousFocus();
   };
 
   const handleSkipNext = () => {
