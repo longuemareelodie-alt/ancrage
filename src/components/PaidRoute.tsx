@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { AlertTriangle, RefreshCw, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { withRetry } from "@/lib/supabaseRetry";
+import { isGrandfatheredAccount } from "@/lib/paywallPolicy";
 
 type Phase = "checking" | "retrying" | "ready" | "error";
 
