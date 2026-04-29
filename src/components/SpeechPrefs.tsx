@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Volume2, Gauge, Languages, Music2, Pause as PauseIcon, Wind } from "lucide-react";
+import { Volume2, Gauge, Languages, Music2, Pause as PauseIcon, Wind, Eye } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -23,6 +23,8 @@ import {
   setSpeechPitch,
   getSlowKeywords,
   setSlowKeywords,
+  getSilentMode,
+  setSilentMode,
 } from "@/lib/speechPrefs";
 
 const RATE_OPTIONS: SpeechRate[] = ["slow", "normal", "fast"];
