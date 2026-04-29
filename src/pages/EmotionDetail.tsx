@@ -41,6 +41,7 @@ const EmotionDetail = () => {
   const key = emotion || "";
 
   const [style, setStyle] = useState<ActionStyle>(() => getActionStyle());
+  const [autoResolved, setAutoResolved] = useState<ResolvedStyle | null>(null);
 
   useEffect(() => {
     const handler = (e: Event) => {
@@ -54,6 +55,21 @@ const EmotionDetail = () => {
         handler as EventListener,
       );
   }, []);
+
+  // Resolve "any" → breathing/sensory based on today's mood.
+  useEffect(() => {
+    if (style !== "any") {
+      setAutoResolved(null);
+      return;
+    }
+    let cancelled = false;
+    resolveAutoStyleFromToday().then((r) => {
+      if (!cancelled) setAutoResolved(r);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [style]);
 
   // Validate the emotion key against known translations.
   const titleKey = `emotion_detail.data.${key}.title`;
@@ -77,7 +93,12 @@ const EmotionDetail = () => {
     returnObjects: true,
   }) as string[];
 
-  const variant = getStyleVariant(key, style);
+  // Effective style: if user picked "any", use the auto-resolved one (or
+  // fall back to i18n until it loads).
+  const effectiveStyle: ActionStyle =
+    style === "any" ? (autoResolved ?? "any") : style;
+
+  const variant = getStyleVariant(key, effectiveStyle);
   const freeSteps = variant?.free ?? i18nFree;
   const lockedSteps = variant?.locked ?? i18nLocked;
   const supportsVariants = hasStyleVariants(key);
