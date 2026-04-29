@@ -45,8 +45,9 @@ const MentionsLegales = () => (
           <section>
             <h2 className="text-lg font-semibold text-foreground">2. Directrice de la publication</h2>
             <p>
-              La directrice de la publication est la représentante légale de
-              Digital Maman Libre. [Nom à compléter]
+              La directrice de la publication est{" "}
+              <strong>Mauger-Longuemare Élodie</strong>, représentante légale de
+              Digital Maman Libre.
             </p>
           </section>
 
