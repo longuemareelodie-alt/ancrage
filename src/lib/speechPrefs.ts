@@ -213,14 +213,8 @@ export function buildUtteranceSegments(
   const slowKeywords = opts?.slowKeywords ?? getSlowKeywords();
   const kwMul = opts?.keywordRateMultiplier ?? 0.7;
 
-  // 1. Sentence split (keep terminators).
-  const sentenceRegex = /[^.!?…]+[.!?…]+|\S[^.!?…]*$/g;
-  const sentences: string[] = [];
-  let m: RegExpExecArray | null;
-  while ((m = sentenceRegex.exec(fullText)) !== null) {
-    const t = m[0].trim();
-    if (t) sentences.push(t);
-  }
+  // 1. Sentence split — FR-aware (handles abbreviations, decimals, etc.).
+  const sentences = splitSentencesText(fullText);
   if (sentences.length === 0 && fullText.trim()) sentences.push(fullText.trim());
 
   const out: UtteranceSegment[] = [];
