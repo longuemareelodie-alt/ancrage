@@ -18,6 +18,7 @@ import { withRetry } from "@/lib/supabaseRetry";
 import {
   isScreenshotSupported,
   captureAndDownloadScreenshot,
+  type CaptureResult,
 } from "@/lib/captureScreenshot";
 import { toast } from "sonner";
 
