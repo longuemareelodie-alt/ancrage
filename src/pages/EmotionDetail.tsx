@@ -15,6 +15,7 @@ import {
 import {
   getStyleVariant,
   hasStyleVariants,
+  type Step,
 } from "@/data/emotionStyleVariants";
 import {
   resolveAutoStyleFromToday,
@@ -87,12 +88,14 @@ const EmotionDetail = () => {
   const title = t(titleKey);
   const validation = t(`emotion_detail.data.${key}.validation`);
 
-  const i18nFree = t(`emotion_detail.data.${key}.free`, {
+  const i18nFreeRaw = t(`emotion_detail.data.${key}.free`, {
     returnObjects: true,
   }) as string[];
-  const i18nLocked = t(`emotion_detail.data.${key}.locked`, {
+  const i18nLockedRaw = t(`emotion_detail.data.${key}.locked`, {
     returnObjects: true,
   }) as string[];
+
+  const toSteps = (arr: string[]): Step[] => arr.map((text) => ({ text }));
 
   // Effective style: if user picked "any", use the auto-resolved one (or
   // fall back to i18n until it loads).
@@ -100,8 +103,8 @@ const EmotionDetail = () => {
     style === "any" ? (autoResolved ?? "any") : style;
 
   const variant = getStyleVariant(key, effectiveStyle);
-  const freeSteps = variant?.free ?? i18nFree;
-  const lockedSteps = variant?.locked ?? i18nLocked;
+  const freeSteps: Step[] = variant?.free ?? toSteps(i18nFreeRaw);
+  const lockedSteps: Step[] = variant?.locked ?? toSteps(i18nLockedRaw);
   const supportsVariants = hasStyleVariants(key);
 
   // Record the resolved style as the last one used (only when it's a real
@@ -186,17 +189,24 @@ const EmotionDetail = () => {
         <div className="space-y-3">
           {freeSteps.map((step, i) => (
             <motion.div
-              key={`${style}-${step}`}
+              key={`${style}-${step.text}`}
               initial={{ opacity: 0, x: -15 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: i * 0.1 }}
               className="flex items-start gap-4 rounded-xl bg-card p-4 shadow-sm"
             >
-              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+              <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
                 {i + 1}
               </span>
-              <span className="flex-1 pt-0.5">{step}</span>
+              <div className="min-w-0 flex-1">
+                <p className="pt-0.5">{step.text}</p>
+                {step.hint && (
+                  <p className="mt-1 text-xs italic text-muted-foreground">
+                    {step.hint}
+                  </p>
+                )}
+              </div>
               {supportsVariants && (
                 <div
                   role="radiogroup"
@@ -234,13 +244,20 @@ const EmotionDetail = () => {
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/60 to-background z-10 rounded-xl" />
           {lockedSteps.map((step) => (
             <div
-              key={`${style}-${step}`}
-              className="flex items-center gap-4 rounded-xl bg-card p-4 shadow-sm opacity-40 blur-[2px]"
+              key={`${style}-${step.text}`}
+              className="flex items-start gap-4 rounded-xl bg-card p-4 shadow-sm opacity-40 blur-[2px]"
             >
-              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-bold text-muted-foreground">
+              <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-bold text-muted-foreground">
                 <Lock className="h-3.5 w-3.5" />
               </span>
-              <span>{step}</span>
+              <div className="min-w-0 flex-1">
+                <p>{step.text}</p>
+                {step.hint && (
+                  <p className="mt-1 text-xs italic text-muted-foreground">
+                    {step.hint}
+                  </p>
+                )}
+              </div>
             </div>
           ))}
         </div>
