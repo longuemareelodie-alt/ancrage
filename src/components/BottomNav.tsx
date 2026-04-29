@@ -5,14 +5,13 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 
 /**
- * Persistent bottom navigation bar for paid users.
+ * Persistent bottom navigation bar for paying users.
  * - Hidden for free users and on auth/landing/legal pages.
- * - Shows different items based on plan_type.
  */
 const BottomNav = () => {
   const { user, loading } = useAuth();
   const location = useLocation();
-  const [planType, setPlanType] = useState<string>("none");
+  const [isPaid, setIsPaid] = useState(false);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -24,12 +23,12 @@ const BottomNav = () => {
     let cancelled = false;
     supabase
       .from("profiles")
-      .select("plan_type")
+      .select("is_premium")
       .eq("user_id", user.id)
       .single()
       .then(({ data }) => {
         if (cancelled) return;
-        setPlanType((data as any)?.plan_type ?? "none");
+        setIsPaid(!!data?.is_premium);
         setReady(true);
       });
     return () => {
@@ -55,17 +54,16 @@ const BottomNav = () => {
 
   if (!ready) return null;
   if (!user) return null;
-  if (planType === "none") return null;
+  if (!isPaid) return null;
   if (hiddenRoutes.includes(location.pathname)) return null;
   if (location.pathname.startsWith("/fiche-urgence/")) return null;
 
-  // Build nav items — same set for lifetime & subscription (Santé hub gates internally)
   const items = [
-    { to: "/dashboard", label: "Accueil", icon: Home, show: true },
-    { to: "/checkin", label: "Rituel", icon: Heart, show: true },
-    { to: "/sante", label: "Santé", icon: HeartPulse, show: true },
-    { to: "/profil", label: "Espace", icon: User, show: true },
-  ].filter((i) => i.show);
+    { to: "/dashboard", label: "Accueil", icon: Home },
+    { to: "/checkin", label: "Rituel", icon: Heart },
+    { to: "/sante", label: "Santé", icon: HeartPulse },
+    { to: "/profil", label: "Espace", icon: User },
+  ];
 
   return (
     <>
