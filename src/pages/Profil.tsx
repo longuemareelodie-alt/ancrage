@@ -465,6 +465,14 @@ const Profil = () => {
                 <StyleSyncStatus className="mt-2" showAction />
               </div>
 
+              {/* Préférences audio (guidage vocal) */}
+              <div className="mt-4">
+                <p className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                  Guidage audio
+                </p>
+                <SpeechPrefs />
+              </div>
+
               {/* RGPD : export et suppression */}
               <div className="mt-4">
                 <DataActions />
