@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import SectionBlock from "@/components/SectionBlock";
 import CTAButton from "@/components/CTAButton";
 import QuickBackLinks from "@/components/QuickBackLinks";
+import SpeakButton from "@/components/SpeakButton";
 import { motion } from "framer-motion";
 import { Lock, Wind, Hand, Sparkles, Activity, ArrowRight, Check } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
