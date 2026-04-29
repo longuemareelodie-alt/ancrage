@@ -1,21 +1,23 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, ChevronRight, Heart, Lock, Sparkles } from "lucide-react";
+import { ArrowLeft, ChevronRight, Heart, Lock, Sparkles, Check } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { updateStreakAndBadges, type BadgeDef } from "@/lib/streaks";
 import { emotions, type EmotionData } from "@/data/emotions";
 import { getStreakLabel } from "@/data/streakLabels";
+import { useMolliePayment } from "@/hooks/useMolliePayment";
 import BadgeCelebration from "@/components/BadgeCelebration";
 import MicroRewardPopup from "@/components/MicroRewardPopup";
 import QuickBackLinks from "@/components/QuickBackLinks";
 
-type Step = "select" | "response" | "action" | "after" | "evolution" | "validation" | "summary";
+type Step = "select" | "response" | "teaser" | "action" | "after" | "evolution" | "validation" | "summary";
 
 const progressLabels: Record<Step, string> = {
   select: "Écoute-toi",
   response: "On t'entend",
+  teaser: "Va plus loin",
   action: "Redescends",
   after: "Et maintenant ?",
   evolution: "Ce qui a changé",
@@ -24,7 +26,8 @@ const progressLabels: Record<Step, string> = {
 };
 
 const Checkin = () => {
-  const { user } = useAuth();
+  const { user, isPaid } = useAuth();
+  const { startPayment, loading: paymentLoading } = useMolliePayment();
   const navigate = useNavigate();
   const [step, setStep] = useState<Step>("select");
   const [selected, setSelected] = useState<EmotionData | null>(null);
@@ -58,15 +61,18 @@ const Checkin = () => {
   const handleSelect = async (emotion: EmotionData) => {
     setSelected(emotion);
     setStep("response");
-    setShowReward(true); // Show micro reward
 
-    if (!user) return;
+    // Aperçu non payant : pas de sauvegarde, pas de streak/badges.
+    if (!user || !isPaid) {
+      return;
+    }
+
+    setShowReward(true);
     await supabase.from("emotion_checkins").insert({
       user_id: user.id,
       emotion: emotion.id,
       emotion_type: emotion.type,
     });
-    // Update last_emotion only — last_checkin_date is handled by updateStreakAndBadges
     await supabase
       .from("profiles")
       .update({ last_emotion: emotion.id })
@@ -78,6 +84,22 @@ const Checkin = () => {
     if (result?.streak) {
       setStreakCount(result.streak);
     }
+  };
+
+  const handleContinueAfterResponse = () => {
+    if (!isPaid) {
+      setStep("teaser");
+    } else {
+      setStep("action");
+    }
+  };
+
+  const handleUnlock = () => {
+    if (!user) {
+      navigate("/auth?redirect=/checkin&action=pay");
+      return;
+    }
+    startPayment();
   };
 
   const handleActionComplete = () => {
@@ -287,12 +309,70 @@ const Checkin = () => {
               animate={{ opacity: 1 }}
               transition={{ delay: 1.3 }}
               whileTap={{ scale: 0.96 }}
-              onClick={() => setStep("action")}
+              onClick={handleContinueAfterResponse}
               className="flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25"
             >
-              Aide-moi à redescendre
+              {isPaid ? "Aide-moi à redescendre" : "Continuer"}
               <ChevronRight className="h-4 w-4" />
             </motion.button>
+          </motion.div>
+        )}
+
+        {/* STEP 2.5: TEASER (paywall après aperçu pour non payants) */}
+        {step === "teaser" && selected && (
+          <motion.div
+            key="teaser"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="mt-10 flex flex-1 flex-col items-center justify-center text-center space-y-6"
+          >
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", stiffness: 200, damping: 15 }}
+              className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10"
+            >
+              <Lock className="h-7 w-7 text-primary" />
+            </motion.div>
+
+            <div className="space-y-2 max-w-sm">
+              <h2 className="text-xl font-bold">Tu as commencé. Continue jusqu'au bout.</h2>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Tu viens d'identifier ce que tu ressens. La suite — l'exercice qui apaise ton corps, le suivi de ton évolution et ton résumé hebdo — t'attend.
+              </p>
+            </div>
+
+            <ul className="w-full max-w-sm space-y-2 rounded-2xl bg-card p-5 shadow-sm text-left">
+              {[
+                "L'exercice ciblé pour faire redescendre ton corps",
+                "Le bilan « avant / après » pour mesurer ce qui change",
+                "Ton résumé hebdo et tes badges de progression",
+                "Accès à toute l'app à vie, sans abonnement",
+              ].map((f) => (
+                <li key={f} className="flex items-start gap-2 text-sm">
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                  <span>{f}</span>
+                </li>
+              ))}
+            </ul>
+
+            <motion.button
+              whileTap={{ scale: 0.96 }}
+              onClick={handleUnlock}
+              disabled={paymentLoading}
+              className="flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 disabled:opacity-60"
+            >
+              <Sparkles className="h-4 w-4" />
+              {paymentLoading ? "Chargement…" : "Débloquer la suite"}
+            </motion.button>
+
+            <button
+              onClick={() => setStep("select")}
+              className="text-xs text-muted-foreground underline underline-offset-4"
+            >
+              Choisir une autre émotion
+            </button>
           </motion.div>
         )}
 
