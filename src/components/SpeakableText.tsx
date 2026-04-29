@@ -293,6 +293,8 @@ const SpeakableText = ({
         setState("idle");
         setActiveIndex(-1);
         setElapsed(estimatedTotal); // snap to 100% on natural completion
+        clearProgress(fullText);
+        setSavedProgress(null);
         restorePreviousFocus();
         return;
       }
