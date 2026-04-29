@@ -19,6 +19,7 @@ const Paywall = () => {
   const { startPayment, loading: paymentLoading } = useMolliePayment();
   const [isPaid, setIsPaid] = useState(false);
   const [statusLoading, setStatusLoading] = useState<boolean>(!!user);
+  const [profileCreatedAt, setProfileCreatedAt] = useState<string | null>(null);
   const location = useLocation();
   const fromPath = (location.state as { from?: string } | null)?.from ?? null;
   const resumeBtnRef = useRef<HTMLButtonElement | null>(null);
@@ -26,6 +27,7 @@ const Paywall = () => {
   useEffect(() => {
     if (!user) {
       setIsPaid(false);
+      setProfileCreatedAt(null);
       setStatusLoading(false);
       return;
     }
@@ -36,13 +38,15 @@ const Paywall = () => {
         () =>
           supabase
             .from("profiles")
-            .select("is_premium")
+            .select("is_premium, created_at")
             .eq("user_id", user.id)
             .single(),
         { maxAttempts: 3, baseDelayMs: 400 },
       );
       if (cancelled) return;
-      setIsPaid(!!(data as any)?.is_premium);
+      const row = data as { is_premium?: boolean; created_at?: string } | null;
+      setIsPaid(!!row?.is_premium);
+      setProfileCreatedAt(row?.created_at ?? null);
       setStatusLoading(false);
     })();
     return () => {
