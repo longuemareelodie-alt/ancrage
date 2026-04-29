@@ -284,6 +284,31 @@ const PaymentPending = () => {
             `[${ticketId}] ${subject}`,
           )}&body=${encodeURIComponent(body)}`;
 
+          // Diagnostic block re-used by the in-app support form (no intro line,
+          // no email metadata — those are surfaced as separate fields).
+          const diagnosticsForDialog = [
+            `Dernier état : ${stateLabels[lastState]} (${lastState})`,
+            `Horodatage état : ${lastStateAt}`,
+            `Tentatives : ${attempts}/${MAX_ATTEMPTS}`,
+            lastError ? `Dernière erreur : ${lastError}` : null,
+            `User ID : ${user?.id ?? "—"}`,
+            screenshotNote ? "" : null,
+            screenshotNote,
+          ]
+            .filter((l) => l !== null && l !== undefined)
+            .join("\n");
+
+          const formButton = (
+            <button
+              type="button"
+              onClick={() => setSupportOpen(true)}
+              className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground"
+            >
+              <MessageCircle className="h-4 w-4" />
+              {t("payment_pending.support.open_form", "Ouvrir le formulaire support")}
+            </button>
+          );
+
           const screenshotButton = screenshotsAvailable ? (
             <button
               type="button"
