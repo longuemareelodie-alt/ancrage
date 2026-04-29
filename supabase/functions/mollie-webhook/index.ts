@@ -662,8 +662,20 @@ Deno.serve(async (req) => {
       });
     }
 
+    const amountCents =
+      payment?.amount?.value && !Number.isNaN(parseFloat(payment.amount.value))
+        ? Math.round(parseFloat(payment.amount.value) * 100)
+        : null;
+
     if (payment.status !== "paid") {
       logDebug("Payment not paid", { paymentId, status: payment?.status ?? null });
+      await logActivation(supabaseUrl, serviceRoleKey, {
+        payment_id: paymentId,
+        status: payment?.status === "failed" ? "failed" : "pending",
+        amount: amountCents,
+        message: `Mollie payment status: ${payment?.status ?? "unknown"}`,
+        raw: { mollie_status: payment?.status, event_type: eventType },
+      });
       return webhookAck({ status: payment.status, action: "none" });
     }
 
