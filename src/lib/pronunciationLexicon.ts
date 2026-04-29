@@ -130,8 +130,11 @@ function spellOut(replacement: string): string {
  */
 export function applyLexicon(
   text: string,
-  entries: PronunciationEntry[] = getLexicon(),
+  entriesOrLang?: PronunciationEntry[] | SpeechLang | string,
 ): string {
+  const entries = Array.isArray(entriesOrLang)
+    ? entriesOrLang
+    : getLexicon(entriesOrLang);
   if (!text || entries.length === 0) return text;
   let out = text;
   // Apply longer source words first so "Saint-Étienne" wins over "Saint".
