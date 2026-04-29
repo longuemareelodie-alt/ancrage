@@ -173,17 +173,17 @@ export function setCommaPauseMs(ms: number) {
   window.dispatchEvent(new CustomEvent("calm-speech-prefs-change"));
 }
 
-export function getSpeechPitch(lang?: SpeechLang): number {
+export function getSpeechPitch(lang?: SpeechLang | string): number {
   if (typeof window === "undefined") return PITCH_DEFAULT;
-  const target = lang ?? getSpeechLang();
+  const target = lang ? normalizeSpeechLang(lang) : getSpeechLang();
   const perLang = readNumber(pitchKeyFor(target), Number.NaN, 0.5, 1.5);
   if (Number.isFinite(perLang)) return perLang;
   // Fallback to legacy global pitch.
   return readNumber(PITCH_KEY, PITCH_DEFAULT, 0.5, 1.5);
 }
-export function setSpeechPitch(pitch: number, lang?: SpeechLang) {
+export function setSpeechPitch(pitch: number, lang?: SpeechLang | string) {
   if (typeof window === "undefined") return;
-  const target = lang ?? getSpeechLang();
+  const target = lang ? normalizeSpeechLang(lang) : getSpeechLang();
   localStorage.setItem(pitchKeyFor(target), pitch.toFixed(2));
   window.dispatchEvent(new CustomEvent("calm-speech-prefs-change"));
 }
