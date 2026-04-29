@@ -274,17 +274,34 @@ const PremiumAuditList = () => {
             </div>
           )}
         </div>
-        <Button onClick={runAudit} disabled={loading} variant="outline">
-          {loading ? (
-            <>
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" /> Analyse…
-            </>
-          ) : (
-            <>
-              <RefreshCw className="h-4 w-4 mr-2" /> Relancer l'audit
-            </>
-          )}
-        </Button>
+        <div className="flex flex-col items-end gap-2">
+          <Button onClick={runAudit} disabled={loading} variant="outline">
+            {loading ? (
+              <>
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" /> Analyse…
+              </>
+            ) : (
+              <>
+                <RefreshCw className="h-4 w-4 mr-2" /> Relancer l'audit
+              </>
+            )}
+          </Button>
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <label htmlFor="dedup-window">Anti-spam (min)</label>
+            <Select value={String(dedupWindowMin)} onValueChange={(v) => setDedupWindowMin(Number(v))}>
+              <SelectTrigger id="dedup-window" className="h-7 w-20 text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="5">5</SelectItem>
+                <SelectItem value="15">15</SelectItem>
+                <SelectItem value="60">60</SelectItem>
+                <SelectItem value="240">240</SelectItem>
+                <SelectItem value="1440">1440</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
       </header>
 
       {/* Compteurs par type */}
