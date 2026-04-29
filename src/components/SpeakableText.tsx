@@ -66,15 +66,18 @@ const SpeakableText = ({
   const [state, setState] = useState<SpeechState>("idle");
   const [supported, setSupported] = useState(true);
   const [activeIndex, setActiveIndex] = useState<number>(-1);
+  const [elapsed, setElapsed] = useState(0); // seconds
+  const [estimatedTotal, setEstimatedTotal] = useState(0); // seconds
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const pauseTimerRef = useRef<number | null>(null);
   const playbackIdRef = useRef(0); // increments on each new playback to invalidate old chains
   const skipToSegmentRef = useRef<number | null>(null);
-  const segmentSentenceMapRef = useRef<number[]>([]); // sentence index per segment
-  const sentenceSegmentStartRef = useRef<number[]>([]); // first segment index per sentence
-  const cursorRef = useRef(0); // current segment index
+  const segmentSentenceMapRef = useRef<number[]>([]);
+  const sentenceSegmentStartRef = useRef<number[]>([]);
+  const cursorRef = useRef(0);
   const sentenceCursorRef = useRef(0);
   const playNextRef = useRef<(() => void) | null>(null);
+  const tickerRef = useRef<number | null>(null);
 
   const fullText = hint ? `${text}. ${hint}` : text;
   const sentences = splitSentences(fullText);
