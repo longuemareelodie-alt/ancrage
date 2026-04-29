@@ -68,7 +68,7 @@ const PaymentPending = () => {
     return () => {
       cancelled.current = true;
     };
-  }, [user, authLoading, navigate]);
+  }, [user?.id, authLoading, navigate]);
 
   const progressPct = Math.min(100, Math.round((attempts / MAX_ATTEMPTS) * 100));
 

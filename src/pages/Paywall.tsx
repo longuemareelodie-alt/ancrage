@@ -41,7 +41,7 @@ const Paywall = () => {
     return () => {
       cancelled = true;
     };
-  }, [user]);
+  }, [user?.id]);
 
   const handlePurchase = () => {
     if (!user) {
