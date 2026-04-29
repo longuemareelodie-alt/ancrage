@@ -408,13 +408,71 @@ const Profil = () => {
                   </button>
                 )}
 
-                {/* Lifetime access info */}
-                {profile?.is_premium && (
+                {/* Premium access status — three explicit states */}
+                {profileLoadError ? (
+                  <div className="space-y-3 rounded-xl border border-destructive/30 bg-destructive/5 p-4">
+                    <div className="flex items-start gap-3">
+                      <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-destructive" aria-hidden="true" />
+                      <div className="space-y-1">
+                        <p className="text-sm font-semibold text-foreground">
+                          Impossible de vérifier ton accès premium
+                        </p>
+                        <p className="text-xs text-muted-foreground leading-relaxed">
+                          On n'a pas pu récupérer ton statut. Vérifie ta connexion puis réessaie.
+                          Si rien ne change, contacte-nous : on te débloque manuellement.
+                        </p>
+                        <p className="pt-1 text-[11px] font-mono text-muted-foreground">
+                          Ticket : {profileTicketId}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-2 sm:flex-row">
+                      <button
+                        type="button"
+                        onClick={loadData}
+                        className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-input px-4 py-2 text-sm font-medium hover:bg-muted/50"
+                      >
+                        Réessayer
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setSupportOpen(true)}
+                        className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
+                      >
+                        <MessageCircle className="h-4 w-4" />
+                        Contacter le support
+                      </button>
+                    </div>
+                  </div>
+                ) : profileLoaded && profile && !profile.is_premium ? (
+                  <div className="space-y-3 rounded-xl border border-border bg-muted/30 p-4">
+                    <div className="flex items-start gap-3">
+                      <Lock className="mt-0.5 h-5 w-5 shrink-0 text-muted-foreground" aria-hidden="true" />
+                      <div className="space-y-1">
+                        <p className="text-sm font-semibold text-foreground">
+                          Aucun accès premium activé
+                        </p>
+                        <p className="text-xs text-muted-foreground leading-relaxed">
+                          Ton compte est créé, mais l'accès complet à Ancrage n'est pas encore débloqué.
+                          Active ton accès à vie en un paiement unique pour profiter de tout le parcours,
+                          des notes et du contenu premium.
+                        </p>
+                      </div>
+                    </div>
+                    <Link
+                      to="/paywall"
+                      className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground"
+                    >
+                      <Crown className="h-4 w-4" />
+                      Activer mon accès à vie
+                    </Link>
+                  </div>
+                ) : profile?.is_premium ? (
                   <div className="rounded-xl border border-border bg-card p-4">
                     <p className="text-sm font-semibold">Accès à vie</p>
                     <p className="text-xs text-muted-foreground">Tu as accès à tout le contenu d'Ancrage. Aucun abonnement, rien à renouveler.</p>
                   </div>
-                )}
+                ) : null}
               </div>
 
               {/* Style préféré */}
