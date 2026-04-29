@@ -575,6 +575,13 @@
       "retry": "Vérifier à nouveau",
       "dashboard": "Aller à mon espace",
       "support": "Si rien ne change après 10 minutes, contacte-nous."
+    },
+    "not_found": {
+      "title": "Profil introuvable",
+      "text": "Nous n'avons pas trouvé ton profil. Contacte le support pour qu'on active ton accès manuellement.",
+      "contact_support": "Contacter le support",
+      "support_subject": "Profil introuvable après paiement",
+      "support_body": "Bonjour, mon profil semble introuvable après le paiement."
     }
   },
   "paid_route": {
