@@ -28,12 +28,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       (_event, session) => {
         setSession(session);
         setLoading(false);
+        if (session?.user) {
+          setTimeout(() => { void pullStyleFromRemote(); }, 0);
+        }
       }
     );
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setLoading(false);
+      if (session?.user) {
+        setTimeout(() => { void pullStyleFromRemote(); }, 0);
+      }
     });
 
     return () => subscription.unsubscribe();
