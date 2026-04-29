@@ -154,7 +154,10 @@ export function loadVoices(): Promise<SpeechSynthesisVoice[]> {
 }
 
 export function resolveVoice(voices: SpeechSynthesisVoice[], lang = "fr-FR"): SpeechSynthesisVoice | null {
-  const stored = getSpeechVoiceURI();
+  // Honour the per-language stored voice first. This is what makes the
+  // fallback "stick": e.g. for fr-CA without an exact voice, the user can
+  // pick a fr-FR voice and it will be remembered for fr-CA only.
+  const stored = getSpeechVoiceURI(lang);
   if (stored) {
     const found = voices.find((v) => v.voiceURI === stored);
     if (found) return found;
