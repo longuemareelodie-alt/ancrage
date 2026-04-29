@@ -87,9 +87,14 @@ const PronunciationLexicon = ({ className = "" }: { className?: string }) => {
         <div className="flex items-center gap-2">
           <BookOpen className="h-4 w-4 text-primary" aria-hidden="true" />
           <div>
-            <h3 className="text-sm font-semibold">Lexique de prononciation</h3>
+            <h3 className="flex flex-wrap items-center gap-2 text-sm font-semibold">
+              Lexique de prononciation
+              <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-normal text-muted-foreground">
+                {LANG_LABELS[lang]}
+              </span>
+            </h3>
             <p className="text-xs text-muted-foreground">
-              Apprends à la voix comment lire certains mots (ou les épeler).
+              Apprends à la voix comment lire certains mots (ou les épeler) pour cette langue.
               Le texte affiché reste inchangé.
             </p>
           </div>
