@@ -3,7 +3,7 @@ import { splitSentencesText } from "./sentenceSplit";
 export type SpeechRate = "slow" | "normal" | "fast";
 export type SpeechLang = "fr-FR" | "fr-CA" | "en-US";
 
-const VOICE_KEY = "calm_speech_voice";
+const VOICE_KEY = "calm_speech_voice"; // legacy global voice (migrated per-lang)
 const RATE_KEY = "calm_speech_rate"; // legacy global rate (migrated per-lang)
 const LANG_KEY = "calm_speech_lang";
 // Legacy global keys (kept as fallback during migration to per-lang values).
