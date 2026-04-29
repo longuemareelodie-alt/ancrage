@@ -212,7 +212,7 @@ const SpeakableText = ({
     }
   };
 
-  const handlePlay = async (fromSentence = 0) => {
+  const handlePlay = async (fromSentence = 0, fromElapsed = 0) => {
     if (!supported) return;
     cancelAll();
 
