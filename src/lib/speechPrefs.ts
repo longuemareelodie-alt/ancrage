@@ -22,6 +22,7 @@ const commaPauseKeyFor = (lang: SpeechLang) => `calm_speech_comma_pause__${lang}
 const slowKeywordsKeyFor = (lang: SpeechLang) => `calm_speech_slow_keywords__${lang}`;
 const silentModeKeyFor = (lang: SpeechLang) => `calm_speech_silent_mode__${lang}`;
 const focusFollowKeyFor = (lang: SpeechLang) => `calm_speech_focus_follow__${lang}`;
+const voiceKeyFor = (lang: SpeechLang) => `calm_speech_voice__${lang}`;
 
 export const SENTENCE_PAUSE_DEFAULT = 400; // ms
 export const COMMA_PAUSE_DEFAULT = 150; // ms
