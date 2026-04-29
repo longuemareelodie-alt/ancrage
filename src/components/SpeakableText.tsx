@@ -267,7 +267,7 @@ const SpeakableText = ({
     }
     const speechSeconds = charCount / (14 * Math.max(0.5, baseRate));
     setEstimatedTotal(Math.max(1, speechSeconds + pauseSeconds));
-    setElapsed(0);
+    setElapsed(Math.max(0, fromElapsed));
 
     setState("speaking");
     setActiveIndex(sentences.length > 0 ? startSentence : -1);
