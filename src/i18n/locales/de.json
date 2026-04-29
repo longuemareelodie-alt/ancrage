@@ -581,7 +581,10 @@
     "retrying": "Langsame Verbindung, neuer Versuch…",
     "error_title": "Vorübergehender Fehler",
     "error_text": "Wir konnten deinen Zugang gerade nicht prüfen. Überprüfe deine Verbindung und versuche es erneut.",
-    "retry": "Erneut versuchen"
+    "retry": "Erneut versuchen",
+    "contact_support": "Support kontaktieren",
+    "support_subject": "Problem beim Zugriff auf mein Konto",
+    "support_body_intro": "Hallo, ich habe Probleme beim Überprüfen des Zugriffs auf mein Konto."
   },
   "common": {
     "loading": "Lädt…",
