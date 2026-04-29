@@ -26,7 +26,17 @@ const PaymentPending = () => {
   const navigate = useNavigate();
   const [status, setStatus] = useState<Status>("pending");
   const [attempts, setAttempts] = useState(0);
+  const [lastState, setLastState] = useState<LastState>("checking");
+  const [lastStateAt, setLastStateAt] = useState<string>(() => new Date().toISOString());
+  const [lastError, setLastError] = useState<string | null>(null);
+  const [ticketId] = useState<string>(() => generateTicketId());
   const cancelled = useRef(false);
+
+  const updateLastState = (next: LastState, errorMsg?: string | null) => {
+    setLastState(next);
+    setLastStateAt(new Date().toISOString());
+    setLastError(errorMsg ?? null);
+  };
 
   useEffect(() => {
     if (authLoading) return;
