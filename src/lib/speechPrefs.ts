@@ -120,3 +120,146 @@ export function resolveVoice(voices: SpeechSynthesisVoice[], lang = "fr-FR"): Sp
   const primary = lower.split("-")[0];
   return voices.find((v) => v.lang.toLowerCase().startsWith(primary)) ?? null;
 }
+
+// ---------- Énonciation ----------
+
+function readNumber(key: string, fallback: number, min: number, max: number): number {
+  if (typeof window === "undefined") return fallback;
+  const raw = localStorage.getItem(key);
+  if (raw === null) return fallback;
+  const n = Number(raw);
+  if (!Number.isFinite(n)) return fallback;
+  return Math.min(max, Math.max(min, n));
+}
+
+export function getSentencePauseMs(): number {
+  return readNumber(SENTENCE_PAUSE_KEY, SENTENCE_PAUSE_DEFAULT, 0, 1500);
+}
+export function setSentencePauseMs(ms: number) {
+  if (typeof window === "undefined") return;
+  localStorage.setItem(SENTENCE_PAUSE_KEY, String(Math.round(ms)));
+  window.dispatchEvent(new CustomEvent("calm-speech-prefs-change"));
+}
+
+export function getCommaPauseMs(): number {
+  return readNumber(COMMA_PAUSE_KEY, COMMA_PAUSE_DEFAULT, 0, 800);
+}
+export function setCommaPauseMs(ms: number) {
+  if (typeof window === "undefined") return;
+  localStorage.setItem(COMMA_PAUSE_KEY, String(Math.round(ms)));
+  window.dispatchEvent(new CustomEvent("calm-speech-prefs-change"));
+}
+
+export function getSpeechPitch(): number {
+  return readNumber(PITCH_KEY, PITCH_DEFAULT, 0.5, 1.5);
+}
+export function setSpeechPitch(pitch: number) {
+  if (typeof window === "undefined") return;
+  localStorage.setItem(PITCH_KEY, pitch.toFixed(2));
+  window.dispatchEvent(new CustomEvent("calm-speech-prefs-change"));
+}
+
+export function getSlowKeywords(): boolean {
+  if (typeof window === "undefined") return SLOW_KEYWORDS_DEFAULT;
+  const v = localStorage.getItem(SLOW_KEYWORDS_KEY);
+  if (v === null) return SLOW_KEYWORDS_DEFAULT;
+  return v === "1";
+}
+export function setSlowKeywords(enabled: boolean) {
+  if (typeof window === "undefined") return;
+  localStorage.setItem(SLOW_KEYWORDS_KEY, enabled ? "1" : "0");
+  window.dispatchEvent(new CustomEvent("calm-speech-prefs-change"));
+}
+
+/**
+ * Découpe un texte en segments destinés à être prononcés séquentiellement,
+ * en insérant des pauses (silences) et en ralentissant les mots-clés respiration.
+ *
+ * Chaque segment est soit:
+ *  - { text, rate } : à parler avec ce taux de lecture
+ *  - { pauseMs }    : silence (pause artificielle entre énoncés)
+ */
+export interface UtteranceSegment {
+  text?: string;
+  rateMultiplier?: number; // multiplied with base rate
+  pauseMs?: number;
+}
+
+export function buildUtteranceSegments(
+  fullText: string,
+  opts?: {
+    sentencePauseMs?: number;
+    commaPauseMs?: number;
+    slowKeywords?: boolean;
+    keywordRateMultiplier?: number;
+  },
+): UtteranceSegment[] {
+  const sentencePause = opts?.sentencePauseMs ?? getSentencePauseMs();
+  const commaPause = opts?.commaPauseMs ?? getCommaPauseMs();
+  const slowKeywords = opts?.slowKeywords ?? getSlowKeywords();
+  const kwMul = opts?.keywordRateMultiplier ?? 0.7;
+
+  // 1. Sentence split (keep terminators).
+  const sentenceRegex = /[^.!?…]+[.!?…]+|\S[^.!?…]*$/g;
+  const sentences: string[] = [];
+  let m: RegExpExecArray | null;
+  while ((m = sentenceRegex.exec(fullText)) !== null) {
+    const t = m[0].trim();
+    if (t) sentences.push(t);
+  }
+  if (sentences.length === 0 && fullText.trim()) sentences.push(fullText.trim());
+
+  const out: UtteranceSegment[] = [];
+
+  sentences.forEach((sentence, sIdx) => {
+    // 2. Comma split inside each sentence.
+    const parts = commaPause > 0 ? sentence.split(/,\s*/) : [sentence];
+    parts.forEach((part, pIdx) => {
+      if (!part.trim()) return;
+
+      if (slowKeywords) {
+        // Word-level split, slowing down keyword runs.
+        const words = part.match(/\S+|\s+/g) ?? [part];
+        let buf = "";
+        let bufIsKw = false;
+        const flush = () => {
+          if (!buf.trim()) {
+            buf = "";
+            return;
+          }
+          out.push({
+            text: buf.trim(),
+            rateMultiplier: bufIsKw ? kwMul : 1,
+          });
+          buf = "";
+        };
+        for (const w of words) {
+          const norm = w
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/[^a-z]/g, "");
+          const isKw = norm.length > 0 && BREATH_KEYWORDS.some((kw) => kw.replace(/[^a-z]/g, "") === norm);
+          if (isKw !== bufIsKw && buf.trim()) flush();
+          bufIsKw = isKw || bufIsKw && !w.trim() ? bufIsKw : isKw;
+          buf += w;
+        }
+        flush();
+      } else {
+        out.push({ text: part.trim(), rateMultiplier: 1 });
+      }
+
+      // Comma pause between parts (not after last part of sentence).
+      if (pIdx < parts.length - 1 && commaPause > 0) {
+        out.push({ pauseMs: commaPause });
+      }
+    });
+
+    // Sentence pause between sentences.
+    if (sIdx < sentences.length - 1 && sentencePause > 0) {
+      out.push({ pauseMs: sentencePause });
+    }
+  });
+
+  return out;
+}
