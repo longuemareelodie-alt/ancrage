@@ -88,12 +88,17 @@ export function loadVoices(): Promise<SpeechSynthesisVoice[]> {
   });
 }
 
-export function resolveVoice(voices: SpeechSynthesisVoice[], lang = "fr"): SpeechSynthesisVoice | null {
+export function resolveVoice(voices: SpeechSynthesisVoice[], lang = "fr-FR"): SpeechSynthesisVoice | null {
   const stored = getSpeechVoiceURI();
   if (stored) {
     const found = voices.find((v) => v.voiceURI === stored);
     if (found) return found;
   }
-  // Default: first voice matching the requested language.
-  return voices.find((v) => v.lang.toLowerCase().startsWith(lang.toLowerCase())) ?? null;
+  const lower = lang.toLowerCase();
+  // 1. Exact locale match (e.g. fr-CA).
+  const exact = voices.find((v) => v.lang.toLowerCase() === lower);
+  if (exact) return exact;
+  // 2. Same primary language (e.g. fr-* when fr-CA not available).
+  const primary = lower.split("-")[0];
+  return voices.find((v) => v.lang.toLowerCase().startsWith(primary)) ?? null;
 }
