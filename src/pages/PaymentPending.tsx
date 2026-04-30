@@ -425,13 +425,18 @@ const PaymentPending = () => {
                   </p>
                 </div>
                 <div className="space-y-2">
+                  {resumeCheckinButton}
                   <button
                     onClick={() => {
                       setStatus("pending");
                       setAttempts(0);
                       window.location.reload();
                     }}
-                    className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground"
+                    className={`inline-flex w-full items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold ${
+                      hasPendingCheckin
+                        ? "border bg-background text-foreground"
+                        : "bg-primary text-primary-foreground"
+                    }`}
                   >
                     <RefreshCw className="h-4 w-4" />
                     {t("payment_pending.error.retry")}
