@@ -9,6 +9,15 @@ import { useTranslation } from "react-i18next";
 import { useAuth } from "@/contexts/AuthContext";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
 import logo from "@/assets/logo-ancrage.png";
+import avatarCamille from "@/assets/avatar-camille.jpg";
+import avatarInes from "@/assets/avatar-ines.jpg";
+import avatarLea from "@/assets/avatar-lea.jpg";
+
+const TESTIMONIAL_AVATARS: Record<string, string> = {
+  Camille: avatarCamille,
+  Inès: avatarInes,
+  Léa: avatarLea,
+};
 
 const Index = () => {
   const { user } = useAuth();
