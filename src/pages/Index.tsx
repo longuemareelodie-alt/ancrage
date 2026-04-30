@@ -100,7 +100,10 @@ const Index = () => {
             <p className="font-semibold">{t("home.hero.rea1")}</p>
             <p className="text-sm text-primary font-medium">{t("home.hero.rea2")}</p>
           </div>
-          <div className="pt-2">
+          <div className="pt-2 space-y-2">
+            <p className="text-xs text-muted-foreground">
+              🤍 {t("home.hero.reassurance")}
+            </p>
             <CTAButton to="/emotions">{t("home.hero.cta")}</CTAButton>
           </div>
         </motion.div>
