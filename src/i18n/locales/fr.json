@@ -20,12 +20,32 @@
   },
   "home": {
     "hero": {
-      "line1": "Tu réfléchis trop.",
-      "line2": "Tu t'épuises sans comprendre.",
-      "line3": "Et ton corps ne redescend pas.",
-      "rea1": "Ce n'est pas toi.",
-      "rea2": "👉 Ton système nerveux est en mode alerte.",
-      "cta": "Essayer gratuitement"
+      "line1": "Tu n'es pas fatiguée.",
+      "line2": "Tu es en mode survie.",
+      "line3": "Et personne ne te l'a dit.",
+      "rea1": "Ce n'est pas toi le problème.",
+      "rea2": "👉 C'est ton système nerveux qui n'a jamais pu redescendre.",
+      "cta": "Je veux comprendre — c'est gratuit"
+    },
+    "recognize": {
+      "title": "Tu te reconnais ?",
+      "subtitle": "Si une seule de ces scènes te parle, tu es au bon endroit.",
+      "s1_emoji": "😶‍🌫️",
+      "s1": "17h. Tu cries pour un verre renversé. Et tu te détestes dans la seconde qui suit.",
+      "s2_emoji": "🌙",
+      "s2": "23h. Tu es épuisée mais ton cerveau ne s'éteint pas. Tu scrolles. Tu culpabilises de scroller.",
+      "s3_emoji": "🫥",
+      "s3": "Tu souris à l'école. Tu réponds « ça va ». Mais à l'intérieur, c'est le vide ou le chaos.",
+      "s4_emoji": "💢",
+      "s4": "Ton corps est tendu en permanence. Mâchoires serrées. Épaules en haut. Tu ne te souviens plus du contraire.",
+      "outro": "Tu n'es pas cassée. Tu es juste restée trop longtemps en alerte."
+    },
+    "enemy": {
+      "title": "Ce n'est pas toi le problème.",
+      "p1": "Le problème, c'est qu'on a appris aux mamans à serrer les dents.",
+      "p2": "À être douces, disponibles, organisées, patientes — sans jamais leur montrer comment décharger ce que leur corps encaisse chaque jour.",
+      "p3": "Résultat : ton système nerveux tourne à 110% depuis des années. Et tu crois que c'est ta personnalité.",
+      "highlight": "Ce n'est pas ta personnalité. C'est un état. Et un état, ça se change."
     },
     "mechanism": {
       "title": "Tu n'as pas un problème de volonté",
@@ -47,31 +67,57 @@
       "p2": "👉 ça devient ton « normal »",
       "p3": "Et ça ne disparaît pas tout seul."
     },
+    "before_after": {
+      "title": "Ta journée aujourd'hui vs dans 30 jours",
+      "subtitle": "Pas une promesse magique. Juste ce que ton système nerveux fait quand on lui réapprend à redescendre.",
+      "before_label": "Aujourd'hui",
+      "after_label": "Dans 30 jours",
+      "before": [
+        "Tu te réveilles déjà tendue, mâchoires serrées.",
+        "À 11h tu cours, à 17h tu cries, à 22h tu pleures.",
+        "Tu te couches en te disant : « demain je gère mieux ».",
+        "Tu te sens seule même entourée."
+      ],
+      "after": [
+        "Tu te réveilles, tu poses une main sur ton ventre, tu respires. 30 secondes.",
+        "À 17h, le verre se renverse — et tu ne cries pas. Tu sais quoi faire dans ton corps.",
+        "Tu te couches en te disant : « j'ai tenu, et c'était plus doux ».",
+        "Tu te reconnais à nouveau."
+      ]
+    },
+    "identity": {
+      "title": "Tu n'achètes pas un outil.",
+      "subtitle": "Tu rejoins une version de toi qui existe déjà — sous l'épuisement.",
+      "promise": "La maman ancrée.",
+      "p1": "Celle qui ne s'oublie plus pour tenir.",
+      "p2": "Celle qui peut être traversée par une émotion sans être emportée.",
+      "p3": "Celle dont les enfants se souviendront comme d'un repère, pas d'une tempête."
+    },
     "projection": {
-      "title": "Dans quelques minutes :",
+      "title": "Dans quelques minutes déjà :",
       "i1": "ton corps redescend",
       "i2": "ton mental ralentit",
       "i3": "tu respires enfin"
     },
     "social": {
-      "p1": "Tu n'es pas la seule à ressentir ça.",
-      "p2": "Des femmes utilisent Ancrage pour ces moments-là.",
-      "p3": "J'ai créé ça parce que j'en avais besoin moi aussi."
+      "p1": "Plus de 2 000 mamans francophones ont commencé ce chemin.",
+      "p2": "« J'ai pleuré dès le premier exercice. Pas de tristesse. De soulagement. Personne ne m'avait jamais expliqué que mon corps avait le droit de redescendre. » — Sarah, 34 ans, 2 enfants",
+      "p3": "J'ai créé Ancrage parce que j'en avais besoin moi aussi. Et parce qu'aucune maman ne devrait avoir à choisir entre tenir et exister."
     },
     "price": {
       "access": "Accéder à",
       "amount": "39€",
-      "subtitle": "Paiement unique · Accès à vie",
-      "cta": "Je veux me sentir mieux — 39€",
+      "subtitle": "Paiement unique · Accès à vie · Sans abonnement",
+      "cta": "Je récupère mon calme — 39€",
       "note": "Paiement unique. Accès à vie. 100% sécurisé via Mollie.",
       "secure": "Paiement 100% sécurisé via Mollie"
     },
     "final": {
-      "title": "Tu peux commencer maintenant",
-      "p1": "👉 sans te justifier",
-      "p2": "👉 sans te forcer",
-      "p3": "👉 à ton rythme",
-      "cta": "Essayer gratuitement"
+      "title": "Chaque jour sans ça, c'est un jour de plus en mode survie.",
+      "p1": "👉 Tu n'as pas besoin d'aller mieux pour commencer.",
+      "p2": "👉 Tu n'as pas besoin de plus de temps. 30 secondes suffisent.",
+      "p3": "👉 Tu as juste besoin de poser le premier geste.",
+      "cta": "Je pose le premier geste — gratuit"
     }
   },
   "faq": {

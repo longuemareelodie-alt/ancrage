@@ -29,6 +29,19 @@ const Index = () => {
     { num: "3", text: t("home.how.step3") },
   ];
   const projection = [t("home.projection.i1"), t("home.projection.i2"), t("home.projection.i3")];
+  const recognizeScenes = [
+    { emoji: t("home.recognize.s1_emoji"), text: t("home.recognize.s1") },
+    { emoji: t("home.recognize.s2_emoji"), text: t("home.recognize.s2") },
+    { emoji: t("home.recognize.s3_emoji"), text: t("home.recognize.s3") },
+    { emoji: t("home.recognize.s4_emoji"), text: t("home.recognize.s4") },
+  ];
+  const beforeItems = t("home.before_after.before", { returnObjects: true }) as string[];
+  const afterItems = t("home.before_after.after", { returnObjects: true }) as string[];
+  const identityPoints = [
+    t("home.identity.p1"),
+    t("home.identity.p2"),
+    t("home.identity.p3"),
+  ];
   const features = [
     t("paywall.features.ritual"),
     t("paywall.features.emergency"),
@@ -78,6 +91,45 @@ const Index = () => {
             <CTAButton to="/emotions">{t("home.hero.cta")}</CTAButton>
           </div>
         </motion.div>
+      </SectionBlock>
+
+      {/* Recognize — "Tu te reconnais ?" : douleur incarnée */}
+      <SectionBlock>
+        <div className="space-y-5">
+          <div className="text-center space-y-2">
+            <h2 className="text-xl font-bold md:text-2xl">{t("home.recognize.title")}</h2>
+            <p className="text-sm text-muted-foreground">{t("home.recognize.subtitle")}</p>
+          </div>
+          <div className="space-y-3">
+            {recognizeScenes.map((s, i) => (
+              <div
+                key={i}
+                className="flex items-start gap-3 rounded-xl border border-border bg-card p-4 shadow-sm"
+              >
+                <span className="text-2xl leading-none shrink-0" aria-hidden>{s.emoji}</span>
+                <p className="text-sm leading-relaxed">{s.text}</p>
+              </div>
+            ))}
+          </div>
+          <p className="text-center text-sm font-semibold text-primary pt-2">
+            {t("home.recognize.outro")}
+          </p>
+        </div>
+      </SectionBlock>
+
+      {/* Enemy — "Ce n'est pas toi le problème" */}
+      <SectionBlock variant="blue">
+        <div className="space-y-4 text-center">
+          <h2 className="text-xl font-bold md:text-2xl">{t("home.enemy.title")}</h2>
+          <div className="space-y-3 text-sm text-muted-foreground leading-relaxed">
+            <p>{t("home.enemy.p1")}</p>
+            <p>{t("home.enemy.p2")}</p>
+            <p>{t("home.enemy.p3")}</p>
+          </div>
+          <p className="rounded-xl bg-primary/10 border border-primary/20 p-4 font-semibold text-primary">
+            {t("home.enemy.highlight")}
+          </p>
+        </div>
       </SectionBlock>
 
       <SectionBlock>
@@ -132,10 +184,67 @@ const Index = () => {
         </div>
       </SectionBlock>
 
+      {/* Before / After — récit transformationnel */}
+      <SectionBlock>
+        <div className="space-y-5">
+          <div className="text-center space-y-2">
+            <h2 className="text-xl font-bold md:text-2xl">{t("home.before_after.title")}</h2>
+            <p className="text-sm text-muted-foreground">{t("home.before_after.subtitle")}</p>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="rounded-2xl border border-destructive/20 bg-destructive/5 p-5 space-y-3">
+              <p className="text-xs font-bold uppercase tracking-wider text-destructive">
+                {t("home.before_after.before_label")}
+              </p>
+              <ul className="space-y-2.5 text-sm leading-relaxed">
+                {beforeItems.map((item, i) => (
+                  <li key={i} className="flex gap-2">
+                    <span aria-hidden>·</span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="rounded-2xl border border-primary/30 bg-primary/5 p-5 space-y-3">
+              <p className="text-xs font-bold uppercase tracking-wider text-primary">
+                {t("home.before_after.after_label")}
+              </p>
+              <ul className="space-y-2.5 text-sm leading-relaxed">
+                {afterItems.map((item, i) => (
+                  <li key={i} className="flex gap-2">
+                    <Check className="h-4 w-4 shrink-0 text-primary mt-0.5" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </SectionBlock>
+
+      {/* Identity — la nouvelle version d'elle-même */}
+      <SectionBlock variant="blue">
+        <div className="space-y-4 text-center">
+          <h2 className="text-xl font-bold md:text-2xl">{t("home.identity.title")}</h2>
+          <p className="text-sm text-muted-foreground">{t("home.identity.subtitle")}</p>
+          <p className="font-serif text-2xl font-semibold text-primary pt-2">
+            {t("home.identity.promise")}
+          </p>
+          <ul className="space-y-2 text-sm leading-relaxed pt-1">
+            {identityPoints.map((p, i) => (
+              <li key={i} className="text-foreground/90">{p}</li>
+            ))}
+          </ul>
+        </div>
+      </SectionBlock>
+
+      {/* Preuve sociale enrichie */}
       <SectionBlock>
         <div className="space-y-4 text-center">
-          <p className="text-sm text-muted-foreground">{t("home.social.p1")}</p>
-          <p className="font-semibold">{t("home.social.p2")}</p>
+          <p className="text-sm font-semibold text-primary">{t("home.social.p1")}</p>
+          <blockquote className="rounded-2xl bg-card border border-border p-5 text-sm italic leading-relaxed shadow-sm text-start">
+            {t("home.social.p2")}
+          </blockquote>
           <p className="text-sm text-muted-foreground italic">{t("home.social.p3")}</p>
         </div>
       </SectionBlock>
