@@ -85,7 +85,19 @@ const Checkin = () => {
 
   const dismissBadges = useCallback(() => setNewBadges([]), []);
 
-  const paymentStatusPending = !!user && isPaid === null;
+  const hasPaidAccess = isPaid === true || isPremium;
+  const paymentStatusPending = !!user && isPaid === null && !isPremium;
+
+  const refreshLocalProfile = useCallback(async () => {
+    if (!user) return;
+    const { data } = await supabase
+      .from("profiles")
+      .select("is_premium, current_streak")
+      .eq("user_id", user.id)
+      .single();
+    setIsPremium(data?.is_premium ?? false);
+    setStreakCount(data?.current_streak ?? 0);
+  }, [user]);
 
   useEffect(() => {
     if (!user) return;
@@ -93,18 +105,8 @@ const Checkin = () => {
   }, [user, refreshEligibility]);
 
   useEffect(() => {
-    if (!user) return;
-    const fetchProfile = async () => {
-      const { data } = await supabase
-        .from("profiles")
-        .select("is_premium, current_streak")
-        .eq("user_id", user.id)
-        .single();
-      setIsPremium(data?.is_premium ?? false);
-      setStreakCount(data?.current_streak ?? 0);
-    };
-    fetchProfile();
-  }, [user]);
+    void refreshLocalProfile();
+  }, [refreshLocalProfile]);
 
   // Reprise après paiement : si une émotion a été choisie en mode essai
   // puis que la personne est revenue payante, on enregistre le check-in
