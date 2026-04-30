@@ -389,7 +389,10 @@ const Index = () => {
             </div>
           </div>
 
-          <div className="mt-4">
+          <p className="mt-4 mb-2 text-xs text-muted-foreground italic px-2">
+            🤍 {t("home.price.reassurance")}
+          </p>
+          <div>
             <CTAButton to="#" onClick={handlePayment} loading={paymentLoading}>
               {t("home.price.cta")}
             </CTAButton>
