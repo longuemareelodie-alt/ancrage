@@ -85,6 +85,13 @@ const Checkin = () => {
 
   const dismissBadges = useCallback(() => setNewBadges([]), []);
 
+  const paymentStatusPending = !!user && isPaid === null;
+
+  useEffect(() => {
+    if (!user) return;
+    void refreshEligibility();
+  }, [user, refreshEligibility]);
+
   useEffect(() => {
     if (!user) return;
     const fetchProfile = async () => {
@@ -103,7 +110,7 @@ const Checkin = () => {
   // puis que la personne est revenue payante, on enregistre le check-in
   // et on saute directement à l'étape exercice.
   useEffect(() => {
-    if (!user || !isPaid) return;
+    if (!user || isPaid !== true) return;
     const pending = readPendingCheckin();
     if (!pending) return;
     const emotion = emotions.find((e) => e.id === pending.emotionId);
@@ -127,6 +134,7 @@ const Checkin = () => {
       if (result?.newBadges?.length) setNewBadges(result.newBadges);
       if (result?.streak) setStreakCount(result.streak);
       setSelected(emotion);
+      setPaymentFailure(null);
       setStep("action");
       setShowReward(true);
       clearPendingCheckin();
@@ -135,6 +143,12 @@ const Checkin = () => {
       cancelled = true;
     };
   }, [user, isPaid]);
+
+  useEffect(() => {
+    if (step !== "teaser" || !selected || isPaid !== true) return;
+    setPaymentFailure(null);
+    setStep("action");
+  }, [step, selected, isPaid]);
 
   // Polling discret sur l'écran teaser : tant que la personne attend la
   // confirmation du paiement Mollie, on re-vérifie son éligibilité toutes
