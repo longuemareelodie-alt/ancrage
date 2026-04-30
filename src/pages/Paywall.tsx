@@ -246,6 +246,19 @@ const Paywall = () => {
                         : t("paywall.redirected.resume_cta")}
                     <ArrowRight className="h-3.5 w-3.5" />
                   </button>
+                  {user && (
+                    <button
+                      type="button"
+                      onClick={handleRefreshAccess}
+                      disabled={refreshing}
+                      className="ms-2 mt-1 inline-flex items-center gap-1.5 rounded-xl border border-primary/40 bg-background px-3 py-2 text-xs font-semibold text-primary hover:bg-primary/10 disabled:opacity-60"
+                    >
+                      <RefreshCw className={`h-3.5 w-3.5 ${refreshing ? "animate-spin" : ""}`} />
+                      {refreshing
+                        ? t("paywall.refresh.loading", "Vérification…")
+                        : t("paywall.refresh.cta", "J'ai déjà payé — rafraîchir")}
+                    </button>
+                  )}
                 </div>
               </div>
             </motion.div>
