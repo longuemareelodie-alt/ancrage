@@ -163,6 +163,33 @@ const Checkin = () => {
     };
   }, [step, user, isPaid, refreshEligibility]);
 
+  // Détection d'un échec de paiement Mollie : on arrive ici via
+  // /checkin?payment=failed&reason=...&ticket=... depuis PaymentPending.
+  // On restaure l'émotion sélectionnée avant le paiement et on remet la
+  // personne sur le teaser avec un bandeau d'échec + bouton "Réessayer".
+  useEffect(() => {
+    if (searchParams.get("payment") !== "failed") return;
+    const reason = searchParams.get("reason") ?? "unknown";
+    const ticket = searchParams.get("ticket") ?? undefined;
+    setPaymentFailure({ reason, ticket });
+
+    const pending = readPendingCheckin();
+    if (pending) {
+      const emotion = emotions.find((e) => e.id === pending.emotionId);
+      if (emotion) {
+        setSelected(emotion);
+        setStep("teaser");
+      }
+    }
+
+    // Nettoie l'URL pour éviter de rejouer le bandeau au refresh.
+    const next = new URLSearchParams(searchParams);
+    next.delete("payment");
+    next.delete("reason");
+    next.delete("ticket");
+    setSearchParams(next, { replace: true });
+  }, [searchParams, setSearchParams]);
+
   const negativeEmotions = emotions.filter((e) => e.type === "negative");
   const positiveEmotions = emotions.filter((e) => e.type === "positive");
 
