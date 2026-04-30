@@ -398,6 +398,19 @@ const Paywall = () => {
                     })
                   : t("paywall.cta")}
             </button>
+            {user && !isPaid && (
+              <button
+                type="button"
+                onClick={handleRefreshAccess}
+                disabled={refreshing}
+                className="inline-flex w-full items-center justify-center gap-1.5 rounded-xl border border-primary/30 bg-background py-2.5 text-xs font-semibold text-primary hover:bg-primary/5 disabled:opacity-60"
+              >
+                <RefreshCw className={`h-3.5 w-3.5 ${refreshing ? "animate-spin" : ""}`} />
+                {refreshing
+                  ? t("paywall.refresh.loading", "Vérification…")
+                  : t("paywall.refresh.cta_long", "J'ai déjà payé — vérifier mon accès")}
+              </button>
+            )}
             <p className="text-center text-xs text-muted-foreground">{t("paywall.secure_short")}</p>
             <p className="text-center text-[11px] leading-relaxed text-muted-foreground">
               <Trans
