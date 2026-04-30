@@ -100,7 +100,10 @@ const Index = () => {
             <p className="font-semibold">{t("home.hero.rea1")}</p>
             <p className="text-sm text-primary font-medium">{t("home.hero.rea2")}</p>
           </div>
-          <div className="pt-2">
+          <div className="pt-2 space-y-2">
+            <p className="text-xs text-muted-foreground">
+              🤍 {t("home.hero.reassurance")}
+            </p>
             <CTAButton to="/emotions">{t("home.hero.cta")}</CTAButton>
           </div>
         </motion.div>
@@ -386,7 +389,10 @@ const Index = () => {
             </div>
           </div>
 
-          <div className="mt-4">
+          <p className="mt-4 mb-2 text-xs text-muted-foreground italic px-2">
+            🤍 {t("home.price.reassurance")}
+          </p>
+          <div>
             <CTAButton to="#" onClick={handlePayment} loading={paymentLoading}>
               {t("home.price.cta")}
             </CTAButton>
@@ -409,7 +415,10 @@ const Index = () => {
             <p>{t("home.final.p2")}</p>
             <p>{t("home.final.p3")}</p>
           </div>
-          <div className="mt-4">
+          <div className="mt-4 space-y-2">
+            <p className="text-xs text-muted-foreground">
+              🤍 {t("home.final.reassurance")}
+            </p>
             <CTAButton to="/emotions">{t("home.final.cta")}</CTAButton>
           </div>
         </div>
