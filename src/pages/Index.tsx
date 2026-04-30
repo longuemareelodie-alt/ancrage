@@ -42,6 +42,17 @@ const Index = () => {
     t("home.identity.p2"),
     t("home.identity.p3"),
   ];
+  type Testimonial = {
+    name: string;
+    context: string;
+    delay: string;
+    before: string;
+    result: string;
+    metric: string;
+  };
+  const testimonials = t("home.testimonials.items", { returnObjects: true }) as Testimonial[];
+  type TimelineStep = { label: string; text: string };
+  const timelineSteps = t("home.timeline.steps", { returnObjects: true }) as TimelineStep[];
   const features = [
     t("paywall.features.ritual"),
     t("paywall.features.emergency"),
