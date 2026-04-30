@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
-import { Lock, Check, Infinity as InfinityIcon, ArrowRight, AlertCircle, Tag, X } from "lucide-react";
+import { Lock, Check, Infinity as InfinityIcon, ArrowRight, AlertCircle, Tag, X, RefreshCw } from "lucide-react";
 import { useTranslation, Trans } from "react-i18next";
+import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,12 +15,13 @@ import {
 import Breadcrumb from "@/components/Breadcrumb";
 
 const Paywall = () => {
-  const { user } = useAuth();
+  const { user, refreshEligibility, isPaid: ctxIsPaid } = useAuth();
   const { t } = useTranslation();
   const { startPayment, loading: paymentLoading } = useMolliePayment();
   const [isPaid, setIsPaid] = useState(false);
   const [statusLoading, setStatusLoading] = useState<boolean>(!!user);
   const [profileCreatedAt, setProfileCreatedAt] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
   const location = useLocation();
   const fromPath = (location.state as { from?: string } | null)?.from ?? null;
   const resumeBtnRef = useRef<HTMLButtonElement | null>(null);
@@ -96,6 +98,49 @@ const Paywall = () => {
       return;
     }
     startPayment({ promoCode: appliedPromo });
+  };
+
+  const handleRefreshAccess = async () => {
+    if (!user || refreshing) return;
+    setRefreshing(true);
+    try {
+      // Re-read profile locally (drives this page's banner) and refresh the
+      // global auth eligibility (drives PaidRoute / redirects).
+      const [{ data }] = await Promise.all([
+        withRetry(
+          () =>
+            supabase
+              .from("profiles")
+              .select("is_premium, created_at")
+              .eq("user_id", user.id)
+              .single(),
+          { maxAttempts: 3, baseDelayMs: 400 },
+        ),
+        refreshEligibility(),
+      ]);
+      const row = data as { is_premium?: boolean; created_at?: string } | null;
+      const paid = !!row?.is_premium;
+      setIsPaid(paid);
+      setProfileCreatedAt(row?.created_at ?? null);
+      if (paid || ctxIsPaid) {
+        toast.success(t("paywall.refresh.success", "Accès débloqué ! Bon retour 💛"));
+        // Send them to where they tried to go, or the dashboard.
+        window.location.href = fromPath ?? "/dashboard";
+      } else {
+        toast.info(
+          t(
+            "paywall.refresh.still_blocked",
+            "Aucun paiement confirmé pour le moment. Réessaie dans quelques instants.",
+          ),
+        );
+      }
+    } catch {
+      toast.error(
+        t("paywall.refresh.error", "Impossible de vérifier ton accès. Réessaie."),
+      );
+    } finally {
+      setRefreshing(false);
+    }
   };
 
   const features = [
@@ -201,6 +246,19 @@ const Paywall = () => {
                         : t("paywall.redirected.resume_cta")}
                     <ArrowRight className="h-3.5 w-3.5" />
                   </button>
+                  {user && (
+                    <button
+                      type="button"
+                      onClick={handleRefreshAccess}
+                      disabled={refreshing}
+                      className="ms-2 mt-1 inline-flex items-center gap-1.5 rounded-xl border border-primary/40 bg-background px-3 py-2 text-xs font-semibold text-primary hover:bg-primary/10 disabled:opacity-60"
+                    >
+                      <RefreshCw className={`h-3.5 w-3.5 ${refreshing ? "animate-spin" : ""}`} />
+                      {refreshing
+                        ? t("paywall.refresh.loading", "Vérification…")
+                        : t("paywall.refresh.cta", "J'ai déjà payé — rafraîchir")}
+                    </button>
+                  )}
                 </div>
               </div>
             </motion.div>
@@ -340,6 +398,19 @@ const Paywall = () => {
                     })
                   : t("paywall.cta")}
             </button>
+            {user && !isPaid && (
+              <button
+                type="button"
+                onClick={handleRefreshAccess}
+                disabled={refreshing}
+                className="inline-flex w-full items-center justify-center gap-1.5 rounded-xl border border-primary/30 bg-background py-2.5 text-xs font-semibold text-primary hover:bg-primary/5 disabled:opacity-60"
+              >
+                <RefreshCw className={`h-3.5 w-3.5 ${refreshing ? "animate-spin" : ""}`} />
+                {refreshing
+                  ? t("paywall.refresh.loading", "Vérification…")
+                  : t("paywall.refresh.cta_long", "J'ai déjà payé — vérifier mon accès")}
+              </button>
+            )}
             <p className="text-center text-xs text-muted-foreground">{t("paywall.secure_short")}</p>
             <p className="text-center text-[11px] leading-relaxed text-muted-foreground">
               <Trans
