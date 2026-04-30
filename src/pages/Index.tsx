@@ -415,7 +415,10 @@ const Index = () => {
             <p>{t("home.final.p2")}</p>
             <p>{t("home.final.p3")}</p>
           </div>
-          <div className="mt-4">
+          <div className="mt-4 space-y-2">
+            <p className="text-xs text-muted-foreground">
+              🤍 {t("home.final.reassurance")}
+            </p>
             <CTAButton to="/emotions">{t("home.final.cta")}</CTAButton>
           </div>
         </div>
