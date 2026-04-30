@@ -9,6 +9,15 @@ import { useTranslation } from "react-i18next";
 import { useAuth } from "@/contexts/AuthContext";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
 import logo from "@/assets/logo-ancrage.png";
+import avatarCamille from "@/assets/avatar-camille.jpg";
+import avatarInes from "@/assets/avatar-ines.jpg";
+import avatarLea from "@/assets/avatar-lea.jpg";
+
+const TESTIMONIAL_AVATARS: Record<string, string> = {
+  Camille: avatarCamille,
+  Inès: avatarInes,
+  Léa: avatarLea,
+};
 
 const Index = () => {
   const { user } = useAuth();
@@ -351,9 +360,21 @@ const Index = () => {
                 className="rounded-2xl bg-card border border-border p-5 shadow-sm space-y-3"
               >
                 <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="font-semibold text-sm">{tst.name}</p>
-                    <p className="text-xs text-muted-foreground">{tst.context}</p>
+                  <div className="flex items-center gap-3 min-w-0">
+                    {TESTIMONIAL_AVATARS[tst.name] && (
+                      <img
+                        src={TESTIMONIAL_AVATARS[tst.name]}
+                        alt={`Portrait illustré de ${tst.name}`}
+                        loading="lazy"
+                        width={56}
+                        height={56}
+                        className="h-14 w-14 shrink-0 rounded-full object-cover ring-2 ring-primary/15 shadow-sm"
+                      />
+                    )}
+                    <div className="min-w-0">
+                      <p className="font-semibold text-sm truncate">{tst.name}</p>
+                      <p className="text-xs text-muted-foreground">{tst.context}</p>
+                    </div>
                   </div>
                   <span className="shrink-0 rounded-full bg-primary/10 border border-primary/20 px-2.5 py-1 text-xs font-bold text-primary">
                     {tst.delay}
