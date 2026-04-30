@@ -278,14 +278,14 @@ const Parcours = () => {
 
                       <button
                         onClick={() => toggleComplete(phase.id)}
-                        className={`mt-2 flex w-full items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-medium transition-colors ${
+                        className={`calm-press mt-2 flex w-full items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-medium ${
                           completed.has(phase.id)
-                            ? "bg-green-100 text-green-700"
+                            ? "bg-green-100 text-green-700 safe-glow"
                             : "bg-secondary text-foreground hover:bg-secondary/80"
-                        }`}
+                        } ${!completed.has(phase.id) ? "" : "safe-confirm"}`}
                       >
                         <Check className="h-4 w-4" />
-                        {completed.has(phase.id) ? "Terminé ✓" : "Marquer comme terminé"}
+                        {completed.has(phase.id) ? "Tu es en sécurité ✓" : "Marquer comme terminé"}
                       </button>
                     </div>
                   </motion.div>
