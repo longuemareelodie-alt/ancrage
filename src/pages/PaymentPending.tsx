@@ -11,6 +11,7 @@ import {
   Camera,
   Check,
   MessageCircle,
+  Heart,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/contexts/AuthContext";
@@ -350,6 +351,25 @@ const PaymentPending = () => {
             </button>
           );
 
+          // Si la personne avait commencé un check-in (émotion sélectionnée
+          // avant le paiement), on lui propose de retourner au teaser pour
+          // réessayer le paiement plutôt que de la perdre dans le dashboard.
+          const hasPendingCheckin =
+            typeof window !== "undefined" &&
+            !!window.localStorage.getItem("ancrage:pendingCheckin");
+
+          const reasonParam = isNotFound ? "profile_not_found" : "activation_error";
+          const resumeCheckinHref = `/checkin?payment=failed&reason=${reasonParam}&ticket=${ticketId}`;
+
+          const resumeCheckinButton = hasPendingCheckin ? (
+            <Link
+              to={resumeCheckinHref}
+              className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground"
+            >
+              <Heart className="h-4 w-4" />
+              {t("payment_pending.resume_checkin", "Reprendre mon check-in")}
+            </Link>
+          ) : null;
           const screenshotButton = screenshotsAvailable ? (
             <button
               type="button"
@@ -405,13 +425,18 @@ const PaymentPending = () => {
                   </p>
                 </div>
                 <div className="space-y-2">
+                  {resumeCheckinButton}
                   <button
                     onClick={() => {
                       setStatus("pending");
                       setAttempts(0);
                       window.location.reload();
                     }}
-                    className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground"
+                    className={`inline-flex w-full items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold ${
+                      hasPendingCheckin
+                        ? "border bg-background text-foreground"
+                        : "bg-primary text-primary-foreground"
+                    }`}
                   >
                     <RefreshCw className="h-4 w-4" />
                     {t("payment_pending.error.retry")}
@@ -466,6 +491,7 @@ const PaymentPending = () => {
                 </p>
               </div>
               <div className="space-y-2">
+                {resumeCheckinButton}
                 {screenshotButton}
                 {formButton}
                 <a
