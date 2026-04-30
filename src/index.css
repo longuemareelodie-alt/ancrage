@@ -73,4 +73,72 @@
   .shadow-soft-lg {
     box-shadow: 0 18px 50px -18px hsl(258 70% 52% / 0.25), 0 4px 14px -4px hsl(258 70% 52% / 0.10);
   }
+
+  /* === Micro-interactions "je récupère mon calme" === */
+
+  /* Halo qui respire en continu — rythme inspiration/expiration lent (6s) */
+  .calm-breathe {
+    animation: calm-breathe 6s ease-in-out infinite;
+  }
+
+  /* Pression au clic : enfonce doucement, comme on pose la main sur soi */
+  .calm-press {
+    transition:
+      transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 0.4s ease;
+  }
+  .calm-press:active {
+    transform: scale(0.97);
+    transition-duration: 0.1s;
+  }
+
+  /* Hover apaisant : élargit doucement le halo, sans rebond */
+  .calm-hover {
+    transition: box-shadow 0.6s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .calm-hover:hover {
+    box-shadow: 0 0 0 6px hsl(var(--primary) / 0.08), 0 12px 32px -10px hsl(var(--primary) / 0.25);
+  }
+
+  /* Confirmation "passage en sécurité" — onde verte douce qui s'efface */
+  .safe-confirm {
+    animation: safe-confirm 1.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* Halo statique de sécurité (pour cartes validées) */
+  .safe-glow {
+    box-shadow: 0 0 0 2px hsl(142 50% 60% / 0.25), 0 8px 24px -8px hsl(142 40% 50% / 0.18);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .calm-breathe,
+    .safe-confirm {
+      animation: none !important;
+    }
+  }
 }
+
+@layer base {
+  @keyframes calm-breathe {
+    0%, 100% {
+      box-shadow: 0 0 0 0 hsl(var(--primary) / 0.0), 0 8px 24px -10px hsl(var(--primary) / 0.18);
+    }
+    50% {
+      box-shadow: 0 0 0 10px hsl(var(--primary) / 0.07), 0 14px 36px -10px hsl(var(--primary) / 0.28);
+    }
+  }
+
+  @keyframes safe-confirm {
+    0% {
+      box-shadow: 0 0 0 0 hsl(142 60% 55% / 0.45);
+    }
+    60% {
+      box-shadow: 0 0 0 14px hsl(142 60% 55% / 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 hsl(142 60% 55% / 0);
+    }
+  }
+}
+

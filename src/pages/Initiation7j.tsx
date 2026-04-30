@@ -179,7 +179,12 @@ const Initiation7j = () => {
               />
             </div>
 
-            <CTAButton to="#" onClick={handleComplete}>
+            <CTAButton
+              to="#"
+              onClick={handleComplete}
+              confirmSafe={!alreadyDone}
+              confirmLabel="Tu es en sécurité"
+            >
               {alreadyDone ? "Mettre à jour ma réponse" : `Valider le jour ${day.day}`}
             </CTAButton>
           </motion.article>
