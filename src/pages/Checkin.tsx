@@ -469,17 +469,42 @@ const Checkin = () => {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ type: "spring", stiffness: 200, damping: 15 }}
-              className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10"
+              className={`flex h-16 w-16 items-center justify-center rounded-full ${
+                paymentFailure ? "bg-destructive/10" : "bg-primary/10"
+              }`}
             >
-              <Lock className="h-7 w-7 text-primary" />
+              {paymentFailure ? (
+                <AlertTriangle className="h-7 w-7 text-destructive" />
+              ) : (
+                <Lock className="h-7 w-7 text-primary" />
+              )}
             </motion.div>
 
-            <div className="space-y-2 max-w-sm">
-              <h2 className="text-xl font-bold">Tu as commencé. Continue jusqu'au bout.</h2>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Tu viens d'identifier ce que tu ressens. La suite — l'exercice qui apaise ton corps, le suivi de ton évolution et ton résumé hebdo — t'attend.
-              </p>
-            </div>
+            {paymentFailure ? (
+              <div className="space-y-2 max-w-sm">
+                <h2 className="text-xl font-bold">Le paiement n'a pas été confirmé</h2>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {paymentFailure.reason === "profile_not_found"
+                    ? "On n'a pas pu retrouver ton profil après le paiement. Si tu as bien été débitée, réessaie ci-dessous ou contacte le support."
+                    : "Ton paiement a peut-être été annulé, refusé par ta banque, ou la confirmation Mollie n'est pas arrivée. Aucune somme n'a été retenue tant que le paiement n'est pas confirmé."}
+                </p>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Ton émotion est gardée — tu peux réessayer maintenant et reprendre exactement là où tu en étais.
+                </p>
+                {paymentFailure.ticket && (
+                  <p className="text-[11px] font-mono text-muted-foreground">
+                    Ticket : {paymentFailure.ticket}
+                  </p>
+                )}
+              </div>
+            ) : (
+              <div className="space-y-2 max-w-sm">
+                <h2 className="text-xl font-bold">Tu as commencé. Continue jusqu'au bout.</h2>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Tu viens d'identifier ce que tu ressens. La suite — l'exercice qui apaise ton corps, le suivi de ton évolution et ton résumé hebdo — t'attend.
+                </p>
+              </div>
+            )}
 
             <ul className="w-full max-w-sm space-y-2 rounded-2xl bg-card p-5 shadow-sm text-left">
               {[
@@ -502,7 +527,11 @@ const Checkin = () => {
               className="flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 disabled:opacity-60"
             >
               <Sparkles className="h-4 w-4" />
-              {paymentLoading ? "Chargement…" : "Débloquer la suite"}
+              {paymentLoading
+                ? "Chargement…"
+                : paymentFailure
+                  ? "Réessayer le paiement"
+                  : "Débloquer la suite"}
             </motion.button>
 
             {user && !isPaid && (
