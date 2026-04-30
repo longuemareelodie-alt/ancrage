@@ -11,6 +11,7 @@ import {
   Camera,
   Check,
   MessageCircle,
+  Heart,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/contexts/AuthContext";
