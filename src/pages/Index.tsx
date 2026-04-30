@@ -51,6 +51,10 @@ const Index = () => {
     identity: string;
     concrete: string;
     proof: string;
+    metric_label: string;
+    metric_baseline: string;
+    forecast_7d: string;
+    forecast_30d: string;
   };
   const identityPillars = t("home.identity.pillars", { returnObjects: true }) as IdentityPillar[];
   type TestimonialMetric = { label: string; before: string; after: string };
@@ -324,9 +328,35 @@ const Index = () => {
                     {p.proof}
                   </p>
                 </div>
+
+                {/* Indicateur mesurable + mini prévision réaliste */}
+                <div className="rounded-xl border border-border bg-background/60 p-3 space-y-2">
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-primary/80">
+                    📊 {p.metric_label}
+                  </p>
+                  <div className="grid grid-cols-1 gap-1.5 text-xs leading-relaxed">
+                    <p className="text-muted-foreground">
+                      <span className="font-semibold text-foreground/70">Aujourd'hui : </span>
+                      {p.metric_baseline}
+                    </p>
+                    <p className="text-foreground/85">
+                      <span className="font-semibold text-primary">À J+7 : </span>
+                      {p.forecast_7d}
+                    </p>
+                    <p className="text-foreground/85">
+                      <span className="font-semibold text-primary">À J+30 : </span>
+                      {p.forecast_30d}
+                    </p>
+                  </div>
+                </div>
               </article>
             ))}
           </div>
+
+          {/* Caveat : pas de promesse universelle */}
+          <p className="text-center text-[11px] text-muted-foreground italic leading-relaxed max-w-md mx-auto pt-1">
+            {t("home.identity.metric_caveat")}
+          </p>
 
           {/* Pont émotionnel */}
           <p className="text-center text-sm font-medium text-foreground/90 italic max-w-md mx-auto pt-1">

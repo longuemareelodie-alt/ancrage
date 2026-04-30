@@ -113,21 +113,34 @@
           "icon": "🌳",
           "identity": "Je ne m'oublie plus pour tenir.",
           "concrete": "Je sais reconnaître quand mon corps part en alerte, et j'ai un geste précis pour le ramener. 30 secondes, n'importe où.",
-          "proof": "Outil \"Mode survie → OFF\" + 12 ancrages corporels guidés disponibles 24/7."
+          "proof": "Outil \"Mode survie → OFF\" + 12 ancrages corporels guidés disponibles 24/7.",
+          "metric_label": "Temps de retour au calme",
+          "metric_baseline": "30 à 60 minutes (parfois plus)",
+          "forecast_7d": "À J+7 : la plupart redescendent en 5 à 10 minutes",
+          "forecast_30d": "À J+30 : 1 à 3 minutes avec un ancrage choisi"
         },
         {
           "icon": "🌊",
           "identity": "Je peux être traversée par une émotion sans être emportée.",
           "concrete": "Quand la colère monte à 17h, je la sens, je la nomme, je la laisse passer. Sans crier. Sans me détester après.",
-          "proof": "Check-ins émotionnels quotidiens + bibliothèque de 30+ exercices selon ton état (colère, panique, vide, débordement)."
+          "proof": "Check-ins émotionnels quotidiens + bibliothèque de 30+ exercices selon ton état (colère, panique, vide, débordement).",
+          "metric_label": "Fréquence des crises (cris, larmes, débordements)",
+          "metric_baseline": "Plusieurs fois par jour",
+          "forecast_7d": "À J+7 : on commence à repérer la vague avant qu'elle déborde — 1 à 2 crises évitées par jour",
+          "forecast_30d": "À J+30 : la plupart passent à 0–1 crise par semaine"
         },
         {
           "icon": "🪞",
           "identity": "Mes enfants se souviendront d'un repère, pas d'une tempête.",
           "concrete": "Ils apprennent en me regardant. Quand je redescends, ils apprennent qu'une émotion, ça se traverse. C'est l'héritage que je leur laisse.",
-          "proof": "Suivi de progression + badges + historique 30 jours pour voir ton évolution noir sur blanc."
+          "proof": "Suivi de progression + badges + historique 30 jours pour voir ton évolution noir sur blanc.",
+          "metric_label": "Durée des ruminations au coucher",
+          "metric_baseline": "1 heure ou plus à refaire les scénarios",
+          "forecast_7d": "À J+7 : 20 à 30 min — tu repères que tu rumines, tu peux poser un geste",
+          "forecast_30d": "À J+30 : moins de 10 min — endormissement plus apaisé pour la majorité"
         }
       ],
+      "metric_caveat": "Prévisions indicatives basées sur les retours de la phase bêta (régularité : 1 ancrage/jour). Chaque système nerveux a son rythme — ce ne sont pas des promesses.",
       "bridge": "Tu ne deviens pas quelqu'un d'autre. Tu redeviens toi — la version qui existait avant que tout devienne trop.",
       "cta_label": "Devenir cette maman →"
     },
