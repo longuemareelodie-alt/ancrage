@@ -15,12 +15,13 @@ import {
 import Breadcrumb from "@/components/Breadcrumb";
 
 const Paywall = () => {
-  const { user } = useAuth();
+  const { user, refreshEligibility, isPaid: ctxIsPaid } = useAuth();
   const { t } = useTranslation();
   const { startPayment, loading: paymentLoading } = useMolliePayment();
   const [isPaid, setIsPaid] = useState(false);
   const [statusLoading, setStatusLoading] = useState<boolean>(!!user);
   const [profileCreatedAt, setProfileCreatedAt] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
   const location = useLocation();
   const fromPath = (location.state as { from?: string } | null)?.from ?? null;
   const resumeBtnRef = useRef<HTMLButtonElement | null>(null);
