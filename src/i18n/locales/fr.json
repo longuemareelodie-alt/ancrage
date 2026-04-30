@@ -20,12 +20,32 @@
   },
   "home": {
     "hero": {
-      "line1": "Tu réfléchis trop.",
-      "line2": "Tu t'épuises sans comprendre.",
-      "line3": "Et ton corps ne redescend pas.",
-      "rea1": "Ce n'est pas toi.",
-      "rea2": "👉 Ton système nerveux est en mode alerte.",
-      "cta": "Essayer gratuitement"
+      "line1": "Tu n'es pas fatiguée.",
+      "line2": "Tu es en mode survie.",
+      "line3": "Et personne ne te l'a dit.",
+      "rea1": "Ce n'est pas toi le problème.",
+      "rea2": "👉 C'est ton système nerveux qui n'a jamais pu redescendre.",
+      "cta": "Je veux comprendre — c'est gratuit"
+    },
+    "recognize": {
+      "title": "Tu te reconnais ?",
+      "subtitle": "Si une seule de ces scènes te parle, tu es au bon endroit.",
+      "s1_emoji": "😶‍🌫️",
+      "s1": "17h. Tu cries pour un verre renversé. Et tu te détestes dans la seconde qui suit.",
+      "s2_emoji": "🌙",
+      "s2": "23h. Tu es épuisée mais ton cerveau ne s'éteint pas. Tu scrolles. Tu culpabilises de scroller.",
+      "s3_emoji": "🫥",
+      "s3": "Tu souris à l'école. Tu réponds « ça va ». Mais à l'intérieur, c'est le vide ou le chaos.",
+      "s4_emoji": "💢",
+      "s4": "Ton corps est tendu en permanence. Mâchoires serrées. Épaules en haut. Tu ne te souviens plus du contraire.",
+      "outro": "Tu n'es pas cassée. Tu es juste restée trop longtemps en alerte."
+    },
+    "enemy": {
+      "title": "Ce n'est pas toi le problème.",
+      "p1": "Le problème, c'est qu'on a appris aux mamans à serrer les dents.",
+      "p2": "À être douces, disponibles, organisées, patientes — sans jamais leur montrer comment décharger ce que leur corps encaisse chaque jour.",
+      "p3": "Résultat : ton système nerveux tourne à 110% depuis des années. Et tu crois que c'est ta personnalité.",
+      "highlight": "Ce n'est pas ta personnalité. C'est un état. Et un état, ça se change."
     },
     "mechanism": {
       "title": "Tu n'as pas un problème de volonté",
