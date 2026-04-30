@@ -360,9 +360,21 @@ const Index = () => {
                 className="rounded-2xl bg-card border border-border p-5 shadow-sm space-y-3"
               >
                 <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="font-semibold text-sm">{tst.name}</p>
-                    <p className="text-xs text-muted-foreground">{tst.context}</p>
+                  <div className="flex items-center gap-3 min-w-0">
+                    {TESTIMONIAL_AVATARS[tst.name] && (
+                      <img
+                        src={TESTIMONIAL_AVATARS[tst.name]}
+                        alt={`Portrait illustré de ${tst.name}`}
+                        loading="lazy"
+                        width={56}
+                        height={56}
+                        className="h-14 w-14 shrink-0 rounded-full object-cover ring-2 ring-primary/15 shadow-sm"
+                      />
+                    )}
+                    <div className="min-w-0">
+                      <p className="font-semibold text-sm truncate">{tst.name}</p>
+                      <p className="text-xs text-muted-foreground">{tst.context}</p>
+                    </div>
                   </div>
                   <span className="shrink-0 rounded-full bg-primary/10 border border-primary/20 px-2.5 py-1 text-xs font-bold text-primary">
                     {tst.delay}
