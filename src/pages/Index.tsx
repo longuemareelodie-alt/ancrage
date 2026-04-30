@@ -365,10 +365,28 @@ const Index = () => {
                 <blockquote className="text-sm leading-relaxed border-l-2 border-primary/40 pl-3">
                   {tst.result}
                 </blockquote>
-                <div className="flex items-center gap-2 pt-1">
-                  <Check className="h-4 w-4 shrink-0 text-primary" />
-                  <span className="text-xs font-semibold text-primary">{tst.metric}</span>
-                </div>
+                <ul className="space-y-2 pt-1">
+                  {tst.metrics.map((m, mi) => (
+                    <li
+                      key={mi}
+                      className="flex items-start gap-2 rounded-lg bg-primary/5 border border-primary/10 px-3 py-2"
+                    >
+                      <Check className="h-4 w-4 shrink-0 text-primary mt-0.5" aria-hidden />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[11px] font-semibold uppercase tracking-wider text-primary/80">
+                          {m.label}
+                        </p>
+                        <p className="text-xs text-foreground/85 leading-snug mt-0.5">
+                          <span className="text-muted-foreground line-through decoration-muted-foreground/40">
+                            {m.before}
+                          </span>
+                          <span className="mx-1.5 text-primary font-bold" aria-hidden>→</span>
+                          <span className="font-semibold text-primary">{m.after}</span>
+                        </p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
               </article>
             ))}
           </div>
