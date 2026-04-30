@@ -37,11 +37,13 @@ const Index = () => {
   ];
   const beforeItems = t("home.before_after.before", { returnObjects: true }) as string[];
   const afterItems = t("home.before_after.after", { returnObjects: true }) as string[];
-  const identityPoints = [
-    t("home.identity.p1"),
-    t("home.identity.p2"),
-    t("home.identity.p3"),
-  ];
+  type IdentityPillar = {
+    icon: string;
+    identity: string;
+    concrete: string;
+    proof: string;
+  };
+  const identityPillars = t("home.identity.pillars", { returnObjects: true }) as IdentityPillar[];
   type Testimonial = {
     name: string;
     context: string;
@@ -233,19 +235,58 @@ const Index = () => {
         </div>
       </SectionBlock>
 
-      {/* Identity — la nouvelle version d'elle-même */}
+      {/* Identity — promesse d'identité reliée à preuves & bénéfices concrets */}
       <SectionBlock variant="blue">
-        <div className="space-y-4 text-center">
-          <h2 className="text-xl font-bold md:text-2xl">{t("home.identity.title")}</h2>
-          <p className="text-sm text-muted-foreground">{t("home.identity.subtitle")}</p>
-          <p className="font-serif text-2xl font-semibold text-primary pt-2">
-            {t("home.identity.promise")}
-          </p>
-          <ul className="space-y-2 text-sm leading-relaxed pt-1">
-            {identityPoints.map((p, i) => (
-              <li key={i} className="text-foreground/90">{p}</li>
+        <div className="space-y-6">
+          <div className="text-center space-y-2">
+            <h2 className="text-xl font-bold md:text-2xl">{t("home.identity.title")}</h2>
+            <p className="text-sm text-muted-foreground">{t("home.identity.subtitle")}</p>
+          </div>
+
+          {/* Promesse centrale */}
+          <div className="rounded-2xl bg-gradient-to-b from-primary/10 to-primary/5 border border-primary/20 p-6 text-center space-y-2">
+            <p className="text-[11px] font-bold uppercase tracking-wider text-primary/70">
+              La version de toi qui t'attend
+            </p>
+            <p className="font-serif text-3xl font-semibold text-primary">
+              {t("home.identity.promise")}
+            </p>
+            <p className="text-sm text-foreground/80 leading-relaxed pt-1 max-w-md mx-auto">
+              {t("home.identity.definition")}
+            </p>
+          </div>
+
+          {/* 3 piliers : identité → concret → preuve */}
+          <div className="space-y-4">
+            {identityPillars.map((p, i) => (
+              <article
+                key={i}
+                className="rounded-2xl bg-card border border-border p-5 shadow-sm space-y-3"
+              >
+                <div className="flex items-start gap-3">
+                  <span className="text-2xl leading-none shrink-0" aria-hidden>{p.icon}</span>
+                  <p className="font-serif text-base font-semibold leading-snug">
+                    « {p.identity} »
+                  </p>
+                </div>
+                <p className="text-sm text-foreground/85 leading-relaxed">
+                  {p.concrete}
+                </p>
+                <div className="flex items-start gap-2 rounded-xl bg-primary/5 border border-primary/10 px-3 py-2">
+                  <Check className="h-4 w-4 shrink-0 text-primary mt-0.5" />
+                  <p className="text-xs text-foreground/75 leading-relaxed">
+                    <span className="font-semibold text-primary">Concrètement dans Ancrage : </span>
+                    {p.proof}
+                  </p>
+                </div>
+              </article>
             ))}
-          </ul>
+          </div>
+
+          {/* Pont émotionnel */}
+          <p className="text-center text-sm font-medium text-foreground/90 italic max-w-md mx-auto pt-1">
+            {t("home.identity.bridge")}
+          </p>
         </div>
       </SectionBlock>
 
