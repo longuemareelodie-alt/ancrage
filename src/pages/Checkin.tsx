@@ -467,9 +467,14 @@ const Checkin = () => {
               transition={{ delay: 1.3 }}
               whileTap={{ scale: 0.96 }}
               onClick={handleContinueAfterResponse}
+              disabled={paymentStatusPending}
               className="flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25"
             >
-              {isPaid ? "Aide-moi à redescendre" : "Continuer"}
+              {paymentStatusPending
+                ? "Vérification…"
+                : isPaid === true
+                  ? "Aide-moi à redescendre"
+                  : "Continuer"}
               <ChevronRight className="h-4 w-4" />
             </motion.button>
           </motion.div>
@@ -553,7 +558,7 @@ const Checkin = () => {
                   : "Débloquer la suite"}
             </motion.button>
 
-            {user && !isPaid && (
+            {user && isPaid !== true && (
               <p className="text-[11px] text-muted-foreground max-w-xs">
                 Dès que ton paiement est confirmé, la suite se débloque ici automatiquement.
               </p>
