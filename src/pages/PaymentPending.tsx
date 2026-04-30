@@ -491,6 +491,7 @@ const PaymentPending = () => {
                 </p>
               </div>
               <div className="space-y-2">
+                {resumeCheckinButton}
                 {screenshotButton}
                 {formButton}
                 <a
