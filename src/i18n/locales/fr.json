@@ -89,9 +89,29 @@
       "title": "Tu n'achètes pas un outil.",
       "subtitle": "Tu rejoins une version de toi qui existe déjà — sous l'épuisement.",
       "promise": "La maman ancrée.",
-      "p1": "Celle qui ne s'oublie plus pour tenir.",
-      "p2": "Celle qui peut être traversée par une émotion sans être emportée.",
-      "p3": "Celle dont les enfants se souviendront comme d'un repère, pas d'une tempête."
+      "definition": "Pas une maman parfaite. Pas une maman zen tout le temps. Une maman qui tient debout dans la tempête — parce qu'elle sait revenir à elle.",
+      "pillars": [
+        {
+          "icon": "🌳",
+          "identity": "Je ne m'oublie plus pour tenir.",
+          "concrete": "Je sais reconnaître quand mon corps part en alerte, et j'ai un geste précis pour le ramener. 30 secondes, n'importe où.",
+          "proof": "Outil \"Mode survie → OFF\" + 12 ancrages corporels guidés disponibles 24/7."
+        },
+        {
+          "icon": "🌊",
+          "identity": "Je peux être traversée par une émotion sans être emportée.",
+          "concrete": "Quand la colère monte à 17h, je la sens, je la nomme, je la laisse passer. Sans crier. Sans me détester après.",
+          "proof": "Check-ins émotionnels quotidiens + bibliothèque de 30+ exercices selon ton état (colère, panique, vide, débordement)."
+        },
+        {
+          "icon": "🪞",
+          "identity": "Mes enfants se souviendront d'un repère, pas d'une tempête.",
+          "concrete": "Ils apprennent en me regardant. Quand je redescends, ils apprennent qu'une émotion, ça se traverse. C'est l'héritage que je leur laisse.",
+          "proof": "Suivi de progression + badges + historique 30 jours pour voir ton évolution noir sur blanc."
+        }
+      ],
+      "bridge": "Tu ne deviens pas quelqu'un d'autre. Tu redeviens toi — la version qui existait avant que tout devienne trop.",
+      "cta_label": "Devenir cette maman →"
     },
     "projection": {
       "title": "Dans quelques minutes déjà :",
