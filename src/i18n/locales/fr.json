@@ -183,7 +183,11 @@
             { "label": "Reconnexion à soi", "before": "« Je suis devenue une étrangère »", "after": "« Je me reconnais à nouveau »" }
           ]
         }
-      ]
+      ],
+      "cta_lead": "Toi aussi, tu peux écrire ton J+5.",
+      "cta_sub": "Camille, Inès et Léa ont commencé exactement là où tu es ce soir : épuisées, sceptiques, à bout. Le seul truc qu'elles ont fait de différent, c'est de cliquer.",
+      "cta": "Je commence maintenant",
+      "cta_justify": "🤍 30 secondes. Pas de carte bancaire. Pas d'inscription forcée. Tu peux essayer le premier ancrage tout de suite — et arrêter quand tu veux."
     },
     "timeline": {
       "title": "Ce qui change, semaine après semaine",
