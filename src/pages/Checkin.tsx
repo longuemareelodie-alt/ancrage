@@ -164,6 +164,7 @@ const Checkin = () => {
 
     const interval = window.setInterval(() => {
       void refreshEligibility();
+      void refreshLocalProfile();
     }, 4000);
 
     const onVisibility = () => {
@@ -215,7 +216,7 @@ const Checkin = () => {
     setStep("response");
 
     // Aperçu non payant : pas de sauvegarde, pas de streak/badges.
-    if (!user || isPaid !== true) {
+    if (!user || !hasPaidAccess) {
       return;
     }
 
@@ -244,7 +245,7 @@ const Checkin = () => {
       return;
     }
 
-    if (isPaid !== true) {
+    if (!hasPaidAccess) {
       setStep("teaser");
     } else {
       setStep("action");
@@ -273,7 +274,7 @@ const Checkin = () => {
   };
 
   const handleEvolutionContinue = () => {
-    if (isPremium || isPaid === true) {
+    if (hasPaidAccess) {
       loadWeeklySummary();
       setStep("summary");
     } else {
