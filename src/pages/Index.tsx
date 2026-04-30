@@ -51,6 +51,10 @@ const Index = () => {
     identity: string;
     concrete: string;
     proof: string;
+    metric_label: string;
+    metric_baseline: string;
+    forecast_7d: string;
+    forecast_30d: string;
   };
   const identityPillars = t("home.identity.pillars", { returnObjects: true }) as IdentityPillar[];
   type TestimonialMetric = { label: string; before: string; after: string };
