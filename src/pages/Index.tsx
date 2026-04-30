@@ -93,6 +93,45 @@ const Index = () => {
         </motion.div>
       </SectionBlock>
 
+      {/* Recognize — "Tu te reconnais ?" : douleur incarnée */}
+      <SectionBlock>
+        <div className="space-y-5">
+          <div className="text-center space-y-2">
+            <h2 className="text-xl font-bold md:text-2xl">{t("home.recognize.title")}</h2>
+            <p className="text-sm text-muted-foreground">{t("home.recognize.subtitle")}</p>
+          </div>
+          <div className="space-y-3">
+            {recognizeScenes.map((s, i) => (
+              <div
+                key={i}
+                className="flex items-start gap-3 rounded-xl border border-border bg-card p-4 shadow-sm"
+              >
+                <span className="text-2xl leading-none shrink-0" aria-hidden>{s.emoji}</span>
+                <p className="text-sm leading-relaxed">{s.text}</p>
+              </div>
+            ))}
+          </div>
+          <p className="text-center text-sm font-semibold text-primary pt-2">
+            {t("home.recognize.outro")}
+          </p>
+        </div>
+      </SectionBlock>
+
+      {/* Enemy — "Ce n'est pas toi le problème" */}
+      <SectionBlock variant="blue">
+        <div className="space-y-4 text-center">
+          <h2 className="text-xl font-bold md:text-2xl">{t("home.enemy.title")}</h2>
+          <div className="space-y-3 text-sm text-muted-foreground leading-relaxed">
+            <p>{t("home.enemy.p1")}</p>
+            <p>{t("home.enemy.p2")}</p>
+            <p>{t("home.enemy.p3")}</p>
+          </div>
+          <p className="rounded-xl bg-primary/10 border border-primary/20 p-4 font-semibold text-primary">
+            {t("home.enemy.highlight")}
+          </p>
+        </div>
+      </SectionBlock>
+
       <SectionBlock>
         <div className="space-y-4 text-center">
           <p className="text-lg font-bold">{t("home.mechanism.title")}</p>
