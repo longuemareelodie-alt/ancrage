@@ -467,7 +467,7 @@ const Index = () => {
                 href="/initiation-7-jours"
                 className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline"
               >
-                Commence par les 7 jours d'initiation — gratuit →
+                Commencer mes 7 jours d'ancrage — gratuit →
               </a>
             </div>
           </div>
