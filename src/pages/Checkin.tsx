@@ -476,7 +476,7 @@ const Checkin = () => {
             >
               {paymentStatusPending
                 ? "Vérification…"
-                : isPaid === true
+                : hasPaidAccess
                   ? "Aide-moi à redescendre"
                   : "Continuer"}
               <ChevronRight className="h-4 w-4" />
@@ -562,7 +562,7 @@ const Checkin = () => {
                   : "Débloquer la suite"}
             </motion.button>
 
-            {user && isPaid !== true && (
+            {user && !hasPaidAccess && (
               <p className="text-[11px] text-muted-foreground max-w-xs">
                 Dès que ton paiement est confirmé, la suite se débloque ici automatiquement.
               </p>
