@@ -42,6 +42,17 @@ const Index = () => {
     t("home.identity.p2"),
     t("home.identity.p3"),
   ];
+  type Testimonial = {
+    name: string;
+    context: string;
+    delay: string;
+    before: string;
+    result: string;
+    metric: string;
+  };
+  const testimonials = t("home.testimonials.items", { returnObjects: true }) as Testimonial[];
+  type TimelineStep = { label: string; text: string };
+  const timelineSteps = t("home.timeline.steps", { returnObjects: true }) as TimelineStep[];
   const features = [
     t("paywall.features.ritual"),
     t("paywall.features.emergency"),
@@ -246,6 +257,74 @@ const Index = () => {
             {t("home.social.p2")}
           </blockquote>
           <p className="text-sm text-muted-foreground italic">{t("home.social.p3")}</p>
+        </div>
+      </SectionBlock>
+
+      {/* Témoignages nommés avec délais et résultats mesurables */}
+      <SectionBlock variant="blue">
+        <div className="space-y-5">
+          <div className="text-center space-y-2">
+            <h2 className="text-xl font-bold md:text-2xl">{t("home.testimonials.title")}</h2>
+            <p className="text-sm text-muted-foreground">{t("home.testimonials.subtitle")}</p>
+          </div>
+          <div className="space-y-4">
+            {testimonials.map((tst, i) => (
+              <article
+                key={i}
+                className="rounded-2xl bg-card border border-border p-5 shadow-sm space-y-3"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="font-semibold text-sm">{tst.name}</p>
+                    <p className="text-xs text-muted-foreground">{tst.context}</p>
+                  </div>
+                  <span className="shrink-0 rounded-full bg-primary/10 border border-primary/20 px-2.5 py-1 text-xs font-bold text-primary">
+                    {tst.delay}
+                  </span>
+                </div>
+                <p className="text-xs text-muted-foreground italic">
+                  Avant : {tst.before}
+                </p>
+                <blockquote className="text-sm leading-relaxed border-l-2 border-primary/40 pl-3">
+                  {tst.result}
+                </blockquote>
+                <div className="flex items-center gap-2 pt-1">
+                  <Check className="h-4 w-4 shrink-0 text-primary" />
+                  <span className="text-xs font-semibold text-primary">{tst.metric}</span>
+                </div>
+              </article>
+            ))}
+          </div>
+          <p className="text-center text-[11px] text-muted-foreground italic pt-1">
+            {t("home.testimonials.disclaimer")}
+          </p>
+        </div>
+      </SectionBlock>
+
+      {/* Timeline globale — ce qui change semaine après semaine */}
+      <SectionBlock>
+        <div className="space-y-5">
+          <div className="text-center space-y-2">
+            <h2 className="text-xl font-bold md:text-2xl">{t("home.timeline.title")}</h2>
+            <p className="text-sm text-muted-foreground">{t("home.timeline.subtitle")}</p>
+          </div>
+          <ol className="relative border-l-2 border-primary/20 pl-5 space-y-5">
+            {timelineSteps.map((step, i) => (
+              <li key={i} className="relative">
+                <span
+                  className="absolute -left-[27px] flex h-4 w-4 items-center justify-center rounded-full bg-primary ring-4 ring-background"
+                  aria-hidden
+                />
+                <p className="text-xs font-bold uppercase tracking-wider text-primary">
+                  {step.label}
+                </p>
+                <p className="mt-1 text-sm leading-relaxed">{step.text}</p>
+              </li>
+            ))}
+          </ol>
+          <p className="text-center text-[11px] text-muted-foreground italic">
+            {t("home.timeline.footnote")}
+          </p>
         </div>
       </SectionBlock>
 
