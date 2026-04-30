@@ -193,6 +193,10 @@ const Parcours = () => {
       </SectionBlock>
 
       <SectionBlock>
+        <OnboardingQuiz pillarsHref="" />
+      </SectionBlock>
+
+      <SectionBlock>
         <div className="space-y-4">
           {phases.map((phase) => (
             <motion.div
