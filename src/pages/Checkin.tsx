@@ -68,7 +68,7 @@ const progressLabels: Record<Step, string> = {
 };
 
 const Checkin = () => {
-  const { user, isPaid, refreshEligibility } = useAuth();
+  const { user, isPaid, eligibilityPhase, refreshEligibility } = useAuth();
   const { startPayment, loading: paymentLoading } = useMolliePayment();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -86,7 +86,8 @@ const Checkin = () => {
   const dismissBadges = useCallback(() => setNewBadges([]), []);
 
   const hasPaidAccess = isPaid === true || isPremium;
-  const paymentStatusPending = !!user && isPaid === null && !isPremium;
+  const paymentStatusPending =
+    !!user && !isPremium && (isPaid === null || eligibilityPhase === "checking");
 
   const refreshLocalProfile = useCallback(async () => {
     if (!user) return;
