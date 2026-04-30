@@ -153,7 +153,11 @@
           "delay": "J+5",
           "before": "Je criais 3 fois par jour. Je m'endormais en pleurant.",
           "result": "« Au 5e jour, je n'ai pas crié une seule fois. J'ai compris que je pouvais sentir la vague monter et la laisser passer. »",
-          "metric": "0 crise sur les 7 derniers jours"
+          "metrics": [
+            { "label": "Fréquence des crises", "before": "3/jour", "after": "0 sur 7 jours" },
+            { "label": "Durée d'apaisement", "before": "45 min pour redescendre", "after": "2 min avec un ancrage" },
+            { "label": "Clarté mentale au coucher", "before": "Ruminations 1h+", "after": "Endormie en 15 min" }
+          ]
         },
         {
           "name": "Inès",
@@ -161,7 +165,11 @@
           "delay": "J+12",
           "before": "Mon corps ne dormait plus. Je me réveillais à 4h, en alerte, le cœur qui battait.",
           "result": "« Au bout de deux semaines, mes nuits ont changé. Je ne me réveille plus en panique. Je me réveille fatiguée — mais entière. »",
-          "metric": "Réveils nocturnes : de 4/nuit à 1/nuit"
+          "metrics": [
+            { "label": "Réveils nocturnes en alerte", "before": "4/nuit", "after": "1/nuit" },
+            { "label": "Tensions corporelles (mâchoires/épaules)", "before": "Permanentes", "after": "Repérées et relâchées en 30s" },
+            { "label": "Sentiment d'être débordée", "before": "8/10 chaque jour", "after": "3/10 en moyenne" }
+          ]
         },
         {
           "name": "Léa",
@@ -169,7 +177,11 @@
           "delay": "J+21",
           "before": "Je ne me reconnaissais plus. Je pensais que c'était ma nouvelle personnalité.",
           "result": "« Trois semaines. C'est ce qu'il m'a fallu pour réaliser que je riais à nouveau sans me forcer. Je ne savais même plus que ça me manquait. »",
-          "metric": "Score de calme : 28% → 71%"
+          "metrics": [
+            { "label": "Score de calme global", "before": "28%", "after": "71%" },
+            { "label": "Moments de joie spontanée", "before": "Quasi nuls", "after": "Plusieurs par jour" },
+            { "label": "Reconnexion à soi", "before": "« Je suis devenue une étrangère »", "after": "« Je me reconnais à nouveau »" }
+          ]
         }
       ]
     },
