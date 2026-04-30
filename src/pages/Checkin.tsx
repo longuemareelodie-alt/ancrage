@@ -159,7 +159,7 @@ const Checkin = () => {
   useEffect(() => {
     if (step !== "teaser") return;
     if (!user) return;
-    if (isPaid) return;
+    if (hasPaidAccess) return;
     if (typeof document !== "undefined" && document.visibilityState === "hidden") return;
 
     const interval = window.setInterval(() => {
