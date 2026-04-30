@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
-import { Lock, Check, Infinity as InfinityIcon, ArrowRight, AlertCircle, Tag, X } from "lucide-react";
+import { Lock, Check, Infinity as InfinityIcon, ArrowRight, AlertCircle, Tag, X, RefreshCw } from "lucide-react";
 import { useTranslation, Trans } from "react-i18next";
+import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
 import { supabase } from "@/integrations/supabase/client";
