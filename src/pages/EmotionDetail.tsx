@@ -26,6 +26,7 @@ import {
   resolveAutoStyleFromToday,
   type ResolvedStyle,
 } from "@/lib/autoStyle";
+import { getEmotionCTA } from "@/data/emotionCTAs";
 
 const STYLE_OPTIONS: {
   value: ActionStyle;
@@ -507,9 +508,36 @@ const EmotionDetail = () => {
       </SectionBlock>
 
       <SectionBlock>
-        <div className="space-y-4 text-center">
-          <CTAButton to="/post-flow">{t("emotion_detail.next")}</CTAButton>
-        </div>
+        {(() => {
+          const cta = getEmotionCTA(key);
+          const toneClass =
+            cta.tone === "accent"
+              ? "from-accent/15 to-accent/5 border-accent/25"
+              : cta.tone === "secondary"
+              ? "from-secondary/30 to-secondary/10 border-secondary/40"
+              : "from-primary/15 to-primary/5 border-primary/25";
+          return (
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className={`rounded-2xl border bg-gradient-to-b ${toneClass} p-5 space-y-4 text-center`}
+            >
+              <p className="font-serif text-lg font-semibold leading-snug text-foreground">
+                {cta.promise}
+              </p>
+              <p className="text-sm text-foreground/80">{cta.mechanism}</p>
+              <CTAButton to={cta.to} confirmSafe confirmLabel="Tu es en sécurité">
+                <span className="inline-flex items-center gap-1.5">
+                  {cta.action}
+                  <ArrowRight className="h-4 w-4" />
+                </span>
+              </CTAButton>
+              <p className="text-xs text-muted-foreground">{cta.reassurance}</p>
+            </motion.div>
+          );
+        })()}
       </SectionBlock>
     </div>
   );
