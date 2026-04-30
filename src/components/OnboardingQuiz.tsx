@@ -160,10 +160,10 @@ const OnboardingQuiz = ({ pillarsHref = "", onComplete }: OnboardingQuizProps) =
         </span>
         <div>
           <h2 className="font-serif text-xl font-semibold leading-tight">
-            Par où commencer pour toi ?
+            Par où sortir du mode survie ?
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            3 questions courtes — on t'oriente vers les 3 piliers les plus utiles maintenant.
+            3 questions courtes — on t'oriente vers les 3 ancrages les plus utiles maintenant.
           </p>
         </div>
       </header>
@@ -221,8 +221,8 @@ const OnboardingQuiz = ({ pillarsHref = "", onComplete }: OnboardingQuizProps) =
           className="space-y-4"
         >
           <p className="rounded-xl bg-primary/5 p-3 text-sm text-foreground/85">
-            Voici les <span className="font-semibold">3 piliers les plus pertinents</span> pour toi
-            en ce moment, dans l'ordre.
+            Voici les <span className="font-semibold">3 ancrages les plus pertinents</span> pour
+            sortir du mode survie maintenant.
           </p>
 
           <ol className="space-y-3">
