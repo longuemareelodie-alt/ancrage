@@ -29,6 +29,19 @@ const Index = () => {
     { num: "3", text: t("home.how.step3") },
   ];
   const projection = [t("home.projection.i1"), t("home.projection.i2"), t("home.projection.i3")];
+  const recognizeScenes = [
+    { emoji: t("home.recognize.s1_emoji"), text: t("home.recognize.s1") },
+    { emoji: t("home.recognize.s2_emoji"), text: t("home.recognize.s2") },
+    { emoji: t("home.recognize.s3_emoji"), text: t("home.recognize.s3") },
+    { emoji: t("home.recognize.s4_emoji"), text: t("home.recognize.s4") },
+  ];
+  const beforeItems = t("home.before_after.before", { returnObjects: true }) as string[];
+  const afterItems = t("home.before_after.after", { returnObjects: true }) as string[];
+  const identityPoints = [
+    t("home.identity.p1"),
+    t("home.identity.p2"),
+    t("home.identity.p3"),
+  ];
   const features = [
     t("paywall.features.ritual"),
     t("paywall.features.emergency"),
