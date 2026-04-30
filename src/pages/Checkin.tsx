@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, ChevronRight, Heart, Lock, Sparkles, Check } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { ArrowLeft, ChevronRight, Heart, Lock, Sparkles, Check, AlertTriangle } from "lucide-react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { updateStreakAndBadges, type BadgeDef } from "@/lib/streaks";
