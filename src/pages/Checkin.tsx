@@ -212,7 +212,7 @@ const Checkin = () => {
     setStep("response");
 
     // Aperçu non payant : pas de sauvegarde, pas de streak/badges.
-    if (!user || !isPaid) {
+    if (!user || isPaid !== true) {
       return;
     }
 
@@ -236,7 +236,12 @@ const Checkin = () => {
   };
 
   const handleContinueAfterResponse = () => {
-    if (!isPaid) {
+    if (paymentStatusPending) {
+      void refreshEligibility();
+      return;
+    }
+
+    if (isPaid !== true) {
       setStep("teaser");
     } else {
       setStep("action");
@@ -265,7 +270,7 @@ const Checkin = () => {
   };
 
   const handleEvolutionContinue = () => {
-    if (isPremium || isPaid) {
+    if (isPremium || isPaid === true) {
       loadWeeklySummary();
       setStep("summary");
     } else {
