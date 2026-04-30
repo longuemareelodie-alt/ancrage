@@ -172,7 +172,8 @@
       "access": "Accéder à",
       "amount": "39€",
       "subtitle": "Paiement unique · Accès à vie · Sans abonnement",
-      "cta": "Je récupère mon calme — 39€",
+      "reassurance": "Pas d'abonnement. Pas de prélèvement automatique. Tu paies une fois, tu reviens quand tu veux. Pour toujours.",
+      "cta": "Je récupère mon calme — 39€ une fois pour toutes",
       "note": "Paiement unique. Accès à vie. 100% sécurisé via Mollie.",
       "secure": "Paiement 100% sécurisé via Mollie"
     },
@@ -181,7 +182,8 @@
       "p1": "👉 Tu n'as pas besoin d'aller mieux pour commencer.",
       "p2": "👉 Tu n'as pas besoin de plus de temps. 30 secondes suffisent.",
       "p3": "👉 Tu as juste besoin de poser le premier geste.",
-      "cta": "Je pose le premier geste — gratuit"
+      "reassurance": "Ce premier pas ne t'engage à rien. Pas de carte. Pas de mail obligatoire. Juste toi et 30 secondes.",
+      "cta": "Je redeviens moi — je commence maintenant"
     }
   },
   "faq": {
