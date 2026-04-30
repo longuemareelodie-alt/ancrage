@@ -203,11 +203,13 @@ const Parcours = () => {
               key={phase.id}
               id={`phase-${phase.id}`}
               layout
-              className="overflow-hidden rounded-xl bg-card shadow-sm scroll-mt-24"
+              className={`overflow-hidden rounded-xl bg-card shadow-sm scroll-mt-24 calm-hover ${
+                completed.has(phase.id) ? "safe-glow" : ""
+              }`}
             >
               <button
                 onClick={() => setOpenPhase(openPhase === phase.id ? null : phase.id)}
-                className="flex w-full items-center justify-between p-5 text-left"
+                className="calm-press flex w-full items-center justify-between p-5 text-left"
               >
                 <div className="flex items-center gap-3">
                   <span className="text-xl">{phase.emoji}</span>
