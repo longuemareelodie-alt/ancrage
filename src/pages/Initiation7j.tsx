@@ -60,10 +60,10 @@ const Initiation7j = () => {
             Parcours d'initiation
           </p>
           <h1 className="font-serif text-3xl font-semibold leading-tight">
-            7 jours pour devenir la maman ancrée
+            7 jours pour passer du mode survie au calme
           </h1>
           <p className="text-sm text-foreground/80">
-            Une seule action par jour. Quelques minutes. Aucun matériel.
+            Un ancrage par jour. Quelques minutes. Aucun matériel.
             <br />
             Pas une performance — un retour vers toi.
           </p>
@@ -185,7 +185,7 @@ const Initiation7j = () => {
               confirmSafe={!alreadyDone}
               confirmLabel="Tu es en sécurité"
             >
-              {alreadyDone ? "Mettre à jour ma réponse" : `Valider le jour ${day.day}`}
+              {alreadyDone ? "Mettre à jour ma réponse" : `Ancrer le jour ${day.day}`}
             </CTAButton>
           </motion.article>
         </AnimatePresence>
