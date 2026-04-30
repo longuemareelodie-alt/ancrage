@@ -112,7 +112,7 @@ const Checkin = () => {
   // puis que la personne est revenue payante, on enregistre le check-in
   // et on saute directement à l'étape exercice.
   useEffect(() => {
-    if (!user || isPaid !== true) return;
+    if (!user || !hasPaidAccess) return;
     const pending = readPendingCheckin();
     if (!pending) return;
     const emotion = emotions.find((e) => e.id === pending.emotionId);
@@ -144,13 +144,13 @@ const Checkin = () => {
     return () => {
       cancelled = true;
     };
-  }, [user, isPaid]);
+  }, [user, hasPaidAccess]);
 
   useEffect(() => {
-    if (step !== "teaser" || !selected || isPaid !== true) return;
+    if (step !== "teaser" || !selected || !hasPaidAccess) return;
     setPaymentFailure(null);
     setStep("action");
-  }, [step, selected, isPaid]);
+  }, [step, selected, hasPaidAccess]);
 
   // Polling discret sur l'écran teaser : tant que la personne attend la
   // confirmation du paiement Mollie, on re-vérifie son éligibilité toutes
@@ -169,6 +169,7 @@ const Checkin = () => {
     const onVisibility = () => {
       if (document.visibilityState === "visible") {
         void refreshEligibility();
+        void refreshLocalProfile();
       }
     };
     document.addEventListener("visibilitychange", onVisibility);
@@ -177,7 +178,7 @@ const Checkin = () => {
       window.clearInterval(interval);
       document.removeEventListener("visibilitychange", onVisibility);
     };
-  }, [step, user, isPaid, refreshEligibility]);
+  }, [step, user, isPaid, refreshEligibility, refreshLocalProfile]);
 
   // Détection d'un échec de paiement Mollie : on arrive ici via
   // /checkin?payment=failed&reason=...&ticket=... depuis PaymentPending.
