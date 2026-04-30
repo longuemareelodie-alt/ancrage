@@ -25,8 +25,8 @@
       "line3": "Et personne ne te l'a dit.",
       "rea1": "Ce n'est pas toi le problème.",
       "rea2": "👉 C'est ton système nerveux qui n'a jamais pu redescendre.",
-      "reassurance": "30 secondes. Sans inscription. Tu peux essayer maintenant, sans rien donner.",
-      "cta": "Je sors du mode survie — gratuit"
+      "reassurance": "30 secondes · sans carte bancaire · tu peux arrêter quand tu veux.",
+      "cta": "Sortir du mode survie · 30 s"
     },
     "recognize": {
       "title": "Tu te reconnais ?",
@@ -199,8 +199,8 @@
       ],
       "cta_lead": "Toi aussi, tu peux écrire ton J+5.",
       "cta_sub": "Camille, Inès et Léa ont commencé exactement là où tu es ce soir : épuisées, sceptiques, à bout. Le seul truc qu'elles ont fait de différent, c'est de cliquer.",
-      "cta": "Je commence maintenant",
-      "cta_justify": "🤍 30 secondes. Pas de carte bancaire. Pas d'inscription forcée. Tu peux essayer le premier ancrage tout de suite — et arrêter quand tu veux."
+      "cta": "Je récupère mon calme",
+      "cta_justify": "🤍 30 secondes · sans carte bancaire · tu peux arrêter quand tu veux."
     },
     "timeline": {
       "title": "Ce qui change, semaine après semaine",
@@ -218,8 +218,8 @@
       "access": "Accéder à",
       "amount": "39€",
       "subtitle": "Paiement unique · Accès à vie · Sans abonnement",
-      "reassurance": "Pas d'abonnement. Pas de prélèvement automatique. Tu paies une fois, tu reviens quand tu veux. Pour toujours.",
-      "cta": "Je récupère mon calme — 39€ une fois pour toutes",
+      "reassurance": "Une seule fois — pas d'abonnement, pas de prélèvement caché. 14 jours pour changer d'avis.",
+      "cta": "Je récupère mon calme — 39 €",
       "note": "Paiement unique. Accès à vie. 100% sécurisé via Mollie.",
       "secure": "Paiement 100% sécurisé via Mollie"
     },
@@ -228,8 +228,8 @@
       "p1": "👉 Tu n'as pas besoin d'aller mieux pour commencer.",
       "p2": "👉 Tu n'as pas besoin de plus de temps. 30 secondes suffisent.",
       "p3": "👉 Tu as juste besoin de poser le premier geste.",
-      "reassurance": "Ce premier pas ne t'engage à rien. Pas de carte. Pas de mail obligatoire. Juste toi et 30 secondes.",
-      "cta": "Je redeviens moi — je commence maintenant"
+      "reassurance": "30 secondes · sans carte bancaire · tu peux arrêter quand tu veux.",
+      "cta": "Je récupère mon calme"
     }
   },
   "faq": {
