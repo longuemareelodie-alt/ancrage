@@ -29,11 +29,11 @@ const Index = () => {
     { num: "3", text: t("home.how.step3") },
   ];
   const projection = [t("home.projection.i1"), t("home.projection.i2"), t("home.projection.i3")];
-  const recognizeScenes = [
+  type RecognizeScene = { tag: string; emoji: string; body: string; punch: string };
+  const recognizeMainScenes = t("home.recognize.scenes", { returnObjects: true }) as RecognizeScene[];
+  const recognizeExtras = [
     { emoji: t("home.recognize.s1_emoji"), text: t("home.recognize.s1") },
     { emoji: t("home.recognize.s2_emoji"), text: t("home.recognize.s2") },
-    { emoji: t("home.recognize.s3_emoji"), text: t("home.recognize.s3") },
-    { emoji: t("home.recognize.s4_emoji"), text: t("home.recognize.s4") },
   ];
   const beforeItems = t("home.before_after.before", { returnObjects: true }) as string[];
   const afterItems = t("home.before_after.after", { returnObjects: true }) as string[];
@@ -109,25 +109,57 @@ const Index = () => {
         </motion.div>
       </SectionBlock>
 
-      {/* Recognize — "Tu te reconnais ?" : douleur incarnée */}
+      {/* Recognize — ouverture par la douleur incarnée (3 micro-scènes : soir / corps / tête) */}
       <SectionBlock>
-        <div className="space-y-5">
+        <div className="space-y-6">
           <div className="text-center space-y-2">
             <h2 className="text-xl font-bold md:text-2xl">{t("home.recognize.title")}</h2>
-            <p className="text-sm text-muted-foreground">{t("home.recognize.subtitle")}</p>
+            <p className="text-sm text-muted-foreground max-w-md mx-auto">
+              {t("home.recognize.subtitle")}
+            </p>
           </div>
-          <div className="space-y-3">
-            {recognizeScenes.map((s, i) => (
+
+          {/* 3 scènes principales — corps / tête / soir */}
+          <div className="space-y-4">
+            {recognizeMainScenes.map((s, i) => (
+              <article
+                key={i}
+                className="rounded-2xl border border-border bg-card p-5 shadow-sm space-y-3"
+              >
+                <div className="flex items-center gap-2">
+                  <span className="text-xl leading-none" aria-hidden>{s.emoji}</span>
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-primary">
+                    {s.tag}
+                  </span>
+                </div>
+                <p className="text-sm leading-relaxed text-foreground/90">
+                  {s.body}
+                </p>
+                <p className="border-l-2 border-primary/40 pl-3 text-sm font-semibold italic leading-snug">
+                  {s.punch}
+                </p>
+              </article>
+            ))}
+          </div>
+
+          {/* Scènes bonus — reconnaissance élargie */}
+          <div className="space-y-3 pt-2">
+            <p className="text-center text-xs text-muted-foreground italic">
+              {t("home.recognize.extra_intro")}
+            </p>
+            {recognizeExtras.map((s, i) => (
               <div
                 key={i}
-                className="flex items-start gap-3 rounded-xl border border-border bg-card p-4 shadow-sm"
+                className="flex items-start gap-3 rounded-xl border border-border/60 bg-card/60 p-3 shadow-sm"
               >
-                <span className="text-2xl leading-none shrink-0" aria-hidden>{s.emoji}</span>
+                <span className="text-lg leading-none shrink-0" aria-hidden>{s.emoji}</span>
                 <p className="text-sm leading-relaxed">{s.text}</p>
               </div>
             ))}
           </div>
-          <p className="text-center text-sm font-semibold text-primary pt-2">
+
+          {/* Outro — pont vers la solution */}
+          <p className="text-center text-sm font-semibold text-primary leading-relaxed pt-2 max-w-md mx-auto">
             {t("home.recognize.outro")}
           </p>
         </div>
