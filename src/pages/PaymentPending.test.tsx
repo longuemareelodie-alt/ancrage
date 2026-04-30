@@ -34,6 +34,7 @@ let returnNullProfile = false;
 vi.mock("@/integrations/supabase/client", () => ({
   supabase: {
     from: () => ({
+      insert: () => Promise.resolve({ error: null }),
       select: () => ({
         eq: () => ({
           maybeSingle: () =>

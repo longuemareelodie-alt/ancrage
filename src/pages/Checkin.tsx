@@ -68,7 +68,7 @@ const progressLabels: Record<Step, string> = {
 };
 
 const Checkin = () => {
-  const { user, isPaid, refreshEligibility } = useAuth();
+  const { user, isPaid, eligibilityPhase, refreshEligibility } = useAuth();
   const { startPayment, loading: paymentLoading } = useMolliePayment();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -85,25 +85,35 @@ const Checkin = () => {
 
   const dismissBadges = useCallback(() => setNewBadges([]), []);
 
+  const hasPaidAccess = isPaid === true || isPremium;
+  const paymentStatusPending =
+    !!user && !isPremium && (isPaid === null || eligibilityPhase === "checking");
+
+  const refreshLocalProfile = useCallback(async () => {
+    if (!user) return;
+    const { data } = await supabase
+      .from("profiles")
+      .select("is_premium, current_streak")
+      .eq("user_id", user.id)
+      .single();
+    setIsPremium(data?.is_premium ?? false);
+    setStreakCount(data?.current_streak ?? 0);
+  }, [user]);
+
   useEffect(() => {
     if (!user) return;
-    const fetchProfile = async () => {
-      const { data } = await supabase
-        .from("profiles")
-        .select("is_premium, current_streak")
-        .eq("user_id", user.id)
-        .single();
-      setIsPremium(data?.is_premium ?? false);
-      setStreakCount(data?.current_streak ?? 0);
-    };
-    fetchProfile();
-  }, [user]);
+    void refreshEligibility();
+  }, [user, refreshEligibility]);
+
+  useEffect(() => {
+    void refreshLocalProfile();
+  }, [refreshLocalProfile]);
 
   // Reprise après paiement : si une émotion a été choisie en mode essai
   // puis que la personne est revenue payante, on enregistre le check-in
   // et on saute directement à l'étape exercice.
   useEffect(() => {
-    if (!user || !isPaid) return;
+    if (!user || !hasPaidAccess) return;
     const pending = readPendingCheckin();
     if (!pending) return;
     const emotion = emotions.find((e) => e.id === pending.emotionId);
@@ -127,6 +137,7 @@ const Checkin = () => {
       if (result?.newBadges?.length) setNewBadges(result.newBadges);
       if (result?.streak) setStreakCount(result.streak);
       setSelected(emotion);
+      setPaymentFailure(null);
       setStep("action");
       setShowReward(true);
       clearPendingCheckin();
@@ -134,7 +145,13 @@ const Checkin = () => {
     return () => {
       cancelled = true;
     };
-  }, [user, isPaid]);
+  }, [user, hasPaidAccess]);
+
+  useEffect(() => {
+    if (step !== "teaser" || !selected || !hasPaidAccess) return;
+    setPaymentFailure(null);
+    setStep("action");
+  }, [step, selected, hasPaidAccess]);
 
   // Polling discret sur l'écran teaser : tant que la personne attend la
   // confirmation du paiement Mollie, on re-vérifie son éligibilité toutes
@@ -143,16 +160,18 @@ const Checkin = () => {
   useEffect(() => {
     if (step !== "teaser") return;
     if (!user) return;
-    if (isPaid) return;
+    if (hasPaidAccess) return;
     if (typeof document !== "undefined" && document.visibilityState === "hidden") return;
 
     const interval = window.setInterval(() => {
       void refreshEligibility();
+      void refreshLocalProfile();
     }, 4000);
 
     const onVisibility = () => {
       if (document.visibilityState === "visible") {
         void refreshEligibility();
+        void refreshLocalProfile();
       }
     };
     document.addEventListener("visibilitychange", onVisibility);
@@ -161,7 +180,7 @@ const Checkin = () => {
       window.clearInterval(interval);
       document.removeEventListener("visibilitychange", onVisibility);
     };
-  }, [step, user, isPaid, refreshEligibility]);
+  }, [step, user, isPaid, refreshEligibility, refreshLocalProfile]);
 
   // Détection d'un échec de paiement Mollie : on arrive ici via
   // /checkin?payment=failed&reason=...&ticket=... depuis PaymentPending.
@@ -198,7 +217,7 @@ const Checkin = () => {
     setStep("response");
 
     // Aperçu non payant : pas de sauvegarde, pas de streak/badges.
-    if (!user || !isPaid) {
+    if (!user || !hasPaidAccess) {
       return;
     }
 
@@ -222,7 +241,12 @@ const Checkin = () => {
   };
 
   const handleContinueAfterResponse = () => {
-    if (!isPaid) {
+    if (paymentStatusPending) {
+      void refreshEligibility();
+      return;
+    }
+
+    if (!hasPaidAccess) {
       setStep("teaser");
     } else {
       setStep("action");
@@ -251,7 +275,7 @@ const Checkin = () => {
   };
 
   const handleEvolutionContinue = () => {
-    if (isPremium || isPaid) {
+    if (hasPaidAccess) {
       loadWeeklySummary();
       setStep("summary");
     } else {
@@ -448,9 +472,14 @@ const Checkin = () => {
               transition={{ delay: 1.3 }}
               whileTap={{ scale: 0.96 }}
               onClick={handleContinueAfterResponse}
+              disabled={paymentStatusPending}
               className="flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25"
             >
-              {isPaid ? "Aide-moi à redescendre" : "Continuer"}
+              {paymentStatusPending
+                ? "Vérification…"
+                : hasPaidAccess
+                  ? "Aide-moi à redescendre"
+                  : "Continuer"}
               <ChevronRight className="h-4 w-4" />
             </motion.button>
           </motion.div>
@@ -534,7 +563,7 @@ const Checkin = () => {
                   : "Débloquer la suite"}
             </motion.button>
 
-            {user && !isPaid && (
+            {user && !hasPaidAccess && (
               <p className="text-[11px] text-muted-foreground max-w-xs">
                 Dès que ton paiement est confirmé, la suite se débloque ici automatiquement.
               </p>
