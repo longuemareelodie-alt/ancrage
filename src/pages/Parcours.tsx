@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import SectionBlock from "@/components/SectionBlock";
 import CTAButton from "@/components/CTAButton";
+import OnboardingQuiz from "@/components/OnboardingQuiz";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, Check } from "lucide-react";
 import confetti from "canvas-confetti";
@@ -123,6 +124,20 @@ const Parcours = () => {
     }
   }, [allDone]);
 
+  // Si on arrive avec un hash #phase-N, ouvrir et scroller la carte correspondante
+  useEffect(() => {
+    const hash = window.location.hash;
+    const m = hash.match(/^#phase-(\d+)$/);
+    if (!m) return;
+    const id = Number(m[1]);
+    if (!phases.some((p) => p.id === id)) return;
+    setOpenPhase(id);
+    // Laisse le DOM peindre la carte ouverte avant de scroller
+    setTimeout(() => {
+      document.getElementById(`phase-${id}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 200);
+  }, []);
+
   const toggleComplete = (id: number) => {
     setCompleted((prev) => {
       const next = new Set(prev);
@@ -178,12 +193,17 @@ const Parcours = () => {
       </SectionBlock>
 
       <SectionBlock>
+        <OnboardingQuiz pillarsHref="" />
+      </SectionBlock>
+
+      <SectionBlock>
         <div className="space-y-4">
           {phases.map((phase) => (
             <motion.div
               key={phase.id}
+              id={`phase-${phase.id}`}
               layout
-              className="overflow-hidden rounded-xl bg-card shadow-sm"
+              className="overflow-hidden rounded-xl bg-card shadow-sm scroll-mt-24"
             >
               <button
                 onClick={() => setOpenPhase(openPhase === phase.id ? null : phase.id)}
