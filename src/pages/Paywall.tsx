@@ -100,6 +100,49 @@ const Paywall = () => {
     startPayment({ promoCode: appliedPromo });
   };
 
+  const handleRefreshAccess = async () => {
+    if (!user || refreshing) return;
+    setRefreshing(true);
+    try {
+      // Re-read profile locally (drives this page's banner) and refresh the
+      // global auth eligibility (drives PaidRoute / redirects).
+      const [{ data }] = await Promise.all([
+        withRetry(
+          () =>
+            supabase
+              .from("profiles")
+              .select("is_premium, created_at")
+              .eq("user_id", user.id)
+              .single(),
+          { maxAttempts: 3, baseDelayMs: 400 },
+        ),
+        refreshEligibility(),
+      ]);
+      const row = data as { is_premium?: boolean; created_at?: string } | null;
+      const paid = !!row?.is_premium;
+      setIsPaid(paid);
+      setProfileCreatedAt(row?.created_at ?? null);
+      if (paid || ctxIsPaid) {
+        toast.success(t("paywall.refresh.success", "Accès débloqué ! Bon retour 💛"));
+        // Send them to where they tried to go, or the dashboard.
+        window.location.href = fromPath ?? "/dashboard";
+      } else {
+        toast.info(
+          t(
+            "paywall.refresh.still_blocked",
+            "Aucun paiement confirmé pour le moment. Réessaie dans quelques instants.",
+          ),
+        );
+      }
+    } catch {
+      toast.error(
+        t("paywall.refresh.error", "Impossible de vérifier ton accès. Réessaie."),
+      );
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
   const features = [
     t("paywall.features.ritual"),
     t("paywall.features.emergency"),
