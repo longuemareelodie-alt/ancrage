@@ -37,11 +37,13 @@ const Index = () => {
   ];
   const beforeItems = t("home.before_after.before", { returnObjects: true }) as string[];
   const afterItems = t("home.before_after.after", { returnObjects: true }) as string[];
-  const identityPoints = [
-    t("home.identity.p1"),
-    t("home.identity.p2"),
-    t("home.identity.p3"),
-  ];
+  type IdentityPillar = {
+    icon: string;
+    identity: string;
+    concrete: string;
+    proof: string;
+  };
+  const identityPillars = t("home.identity.pillars", { returnObjects: true }) as IdentityPillar[];
   type Testimonial = {
     name: string;
     context: string;
