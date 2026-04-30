@@ -44,13 +44,14 @@ const Index = () => {
     proof: string;
   };
   const identityPillars = t("home.identity.pillars", { returnObjects: true }) as IdentityPillar[];
+  type TestimonialMetric = { label: string; before: string; after: string };
   type Testimonial = {
     name: string;
     context: string;
     delay: string;
     before: string;
     result: string;
-    metric: string;
+    metrics: TestimonialMetric[];
   };
   const testimonials = t("home.testimonials.items", { returnObjects: true }) as Testimonial[];
   type TimelineStep = { label: string; text: string };
