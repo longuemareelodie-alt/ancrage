@@ -457,8 +457,19 @@ const Index = () => {
               <CTAButton to="/emotions">{t("home.testimonials.cta")}</CTAButton>
             </div>
             <p className="text-xs text-muted-foreground leading-relaxed max-w-sm mx-auto">
-              {t("home.testimonials.cta_justify")}
+            {t("home.testimonials.cta_justify")}
             </p>
+            <div className="pt-3 border-t border-primary/10">
+              <p className="text-xs text-muted-foreground mb-2">
+                Pas encore prête à t'engager ?
+              </p>
+              <a
+                href="/initiation-7-jours"
+                className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline"
+              >
+                Commence par les 7 jours d'initiation — gratuit →
+              </a>
+            </div>
           </div>
         </div>
       </SectionBlock>
