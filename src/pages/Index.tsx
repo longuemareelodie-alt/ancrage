@@ -414,6 +414,22 @@ const Index = () => {
           <p className="text-center text-[11px] text-muted-foreground italic pt-1">
             {t("home.testimonials.disclaimer")}
           </p>
+
+          {/* CTA témoignages : transition émotionnelle → bouton → réassurance */}
+          <div className="rounded-2xl bg-gradient-to-b from-primary/10 to-primary/5 border border-primary/20 p-5 mt-2 space-y-3 text-center">
+            <p className="font-serif text-lg font-semibold text-primary leading-snug">
+              {t("home.testimonials.cta_lead")}
+            </p>
+            <p className="text-sm text-foreground/85 leading-relaxed max-w-md mx-auto">
+              {t("home.testimonials.cta_sub")}
+            </p>
+            <div className="pt-1">
+              <CTAButton to="/emotions">{t("home.testimonials.cta")}</CTAButton>
+            </div>
+            <p className="text-xs text-muted-foreground leading-relaxed max-w-sm mx-auto">
+              {t("home.testimonials.cta_justify")}
+            </p>
+          </div>
         </div>
       </SectionBlock>
 
