@@ -71,6 +71,7 @@ const Checkin = () => {
   const { user, isPaid, refreshEligibility } = useAuth();
   const { startPayment, loading: paymentLoading } = useMolliePayment();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [step, setStep] = useState<Step>("select");
   const [selected, setSelected] = useState<EmotionData | null>(null);
   const [afterEmotion, setAfterEmotion] = useState<EmotionData | null>(null);
@@ -80,6 +81,7 @@ const Checkin = () => {
   const [newBadges, setNewBadges] = useState<BadgeDef[]>([]);
   const [streakCount, setStreakCount] = useState(0);
   const [showReward, setShowReward] = useState(false);
+  const [paymentFailure, setPaymentFailure] = useState<{ reason: string; ticket?: string } | null>(null);
 
   const dismissBadges = useCallback(() => setNewBadges([]), []);
 
