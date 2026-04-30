@@ -52,11 +52,11 @@ export const EMOTION_CTAS: Record<string, EmotionCTA> = {
 };
 
 export const DEFAULT_EMOTION_CTA: EmotionCTA = {
-  promise: "Tu mérites une minute pour toi.",
-  mechanism: "Une action courte vaut mieux qu'une grande résolution.",
-  action: "Continuer en douceur",
-  to: "/post-flow",
-  reassurance: "Aucun engagement.",
+  promise: "Tu mérites une minute de calme.",
+  mechanism: "Un ancrage court vaut mieux qu'une grande résolution.",
+  action: "Récupérer mon calme · 30 s",
+  to: "/calme",
+  reassurance: "Sans carte bancaire · tu gardes la main.",
   tone: "primary",
 };
 
