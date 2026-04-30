@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import SectionBlock from "@/components/SectionBlock";
 import CTAButton from "@/components/CTAButton";
+import OnboardingQuiz from "@/components/OnboardingQuiz";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, Check } from "lucide-react";
 import confetti from "canvas-confetti";
