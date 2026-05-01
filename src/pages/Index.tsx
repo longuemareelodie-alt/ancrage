@@ -49,8 +49,32 @@ const Index = () => {
     { num: "3", text: t("home.how.step3") },
   ];
   const projection = [t("home.projection.i1"), t("home.projection.i2"), t("home.projection.i3")];
-  type RecognizeScene = { tag: string; emoji: string; body: string; punch: string };
+  type RecognizeScene = {
+    tag: string;
+    emoji: string;
+    body: string;
+    punch: string;
+    state?: "panique" | "hypervigilance" | "rumination" | "explosion";
+    stateLabel?: string;
+    cta?: string;
+  };
   const recognizeMainScenes = t("home.recognize.scenes", { returnObjects: true }) as RecognizeScene[];
+
+  // Each "state" maps to the page that delivers its concrete action,
+  // mirroring the destinations defined in src/data/emotionCTAs.ts.
+  const STATE_ROUTES: Record<NonNullable<RecognizeScene["state"]>, string> = {
+    panique: "/calme",
+    hypervigilance: "/calme",
+    rumination: "/post-flow",
+    explosion: "/calme",
+  };
+  const sceneCtaHref = (scene: RecognizeScene): string => {
+    if (!scene.state) return "/emotions";
+    const target = STATE_ROUTES[scene.state];
+    // /calme and /post-flow are gated; send anonymous visitors through auth
+    // with a redirect back to the right page so the transition stays direct.
+    return user ? target : `/auth?redirect=${encodeURIComponent(target)}`;
+  };
   const recognizeExtras = [
     { emoji: t("home.recognize.s1_emoji"), text: t("home.recognize.s1") },
     { emoji: t("home.recognize.s2_emoji"), text: t("home.recognize.s2") },
@@ -163,6 +187,28 @@ const Index = () => {
                 <p className="border-l-2 border-primary/40 pl-3 text-sm font-semibold italic leading-snug">
                   {s.punch}
                 </p>
+                {s.state && s.cta && (
+                  <Link
+                    to={sceneCtaHref(s)}
+                    aria-label={`${s.stateLabel ?? s.state} — ${s.cta}`}
+                    className="group mt-2 flex items-center justify-between gap-3 rounded-xl bg-primary/10 hover:bg-primary/15 border border-primary/20 px-4 py-3 transition-colors"
+                  >
+                    <span className="flex flex-col items-start text-left">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-primary/80">
+                        {s.stateLabel ?? s.state}
+                      </span>
+                      <span className="text-sm font-semibold text-primary leading-tight">
+                        {s.cta}
+                      </span>
+                    </span>
+                    <span
+                      aria-hidden
+                      className="text-primary transition-transform group-hover:translate-x-0.5"
+                    >
+                      →
+                    </span>
+                  </Link>
+                )}
               </article>
             ))}
           </div>
