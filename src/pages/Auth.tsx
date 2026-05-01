@@ -117,14 +117,14 @@ const Auth = () => {
                 Pas encore de compte ?
               </p>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Les comptes ne sont créés qu'après un paiement. Découvre
-                l'Initiation 7 jours à 4,99 € pour commencer.
+                Les comptes ne sont créés qu'après un paiement. Découvre l'offre
+                Premium qui inclut l'Initiation 7 jours et tout le programme.
               </p>
               <Link
-                to="/initiation-7-jours"
+                to="/"
                 className="inline-block rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
               >
-                Découvrir l'Initiation 7 jours
+                Découvrir l'offre Premium
               </Link>
             </div>
 

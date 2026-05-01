@@ -44,16 +44,9 @@ const Index = () => {
     startPayment();
   };
 
-  const handleInitiationPayment = () => {
-    if (!user) {
-      window.location.href = "/auth?redirect=/initiation-7-jours&action=initiation";
-      return;
-    }
-    startPayment({
-      product: "initiation_7d",
-      redirectUrl: `${window.location.origin}/payment-pending?return=/initiation-7-jours`,
-    });
-  };
+  // Note : l'offre "Initiation 7 jours" à 4,99 € a été fusionnée dans
+  // l'offre Premium. Plus de CTA dédié — le contenu reste accessible aux
+  // utilisateurs Premium via /initiation-7-jours.
 
   const steps = [
     { num: "1", text: t("home.how.step1") },
