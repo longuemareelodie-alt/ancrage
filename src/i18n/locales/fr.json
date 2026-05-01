@@ -42,15 +42,6 @@
           "cta": "Évacuer en 90 s →"
         },
         {
-          "tag": "Le soir, vers 21h",
-          "emoji": "🌙",
-          "body": "Les enfants dorment. La maison est enfin calme. Et toi, tu es assise sur le canapé, le téléphone à la main, incapable de te lever pour aller te coucher. Tu sais que tu vas le payer demain. Tu y vas pas quand même. Tu scrolles. Tu manges debout dans la cuisine. Tu pleures sous la douche, sans savoir pourquoi exactement.",
-          "punch": "Tu attends quelque chose qui ne vient pas. Du repos, peut-être. Ou juste un moment qui soit à toi.",
-          "state": "panique",
-          "stateLabel": "Mode panique sourde",
-          "cta": "Respirer avec moi · 60 s →"
-        },
-        {
           "tag": "Dans ton corps",
           "emoji": "💢",
           "body": "Tes mâchoires sont serrées en permanence — tu t'en rends compte seulement quand quelqu'un te le fait remarquer. Tes épaules sont collées à tes oreilles. Ton ventre est noué depuis si longtemps que tu as oublié à quoi ressemble un ventre détendu. Tu sursautes au moindre bruit. Et la nuit, tu te réveilles à 4h, le cœur qui cogne, sans raison.",
@@ -67,6 +58,15 @@
           "state": "rumination",
           "stateLabel": "Mode rumination",
           "cta": "Poser ma pensée · 2 min →"
+        },
+        {
+          "tag": "21h07, le canapé",
+          "emoji": "🌙",
+          "body": "Les enfants dorment enfin. La vaisselle du dîner sèche encore. Tu t'assois sur le canapé — et ton corps reste dur, comme s'il n'avait pas reçu le message que la journée est finie. Tes épaules sont au même endroit qu'à 7h12 ce matin. Ta mâchoire serre toujours. Tu ouvres ton téléphone « deux minutes ». Il est 21h47. Tu n'as pas bougé. Tu sais qu'il faut aller te coucher, mais te lever, c'est admettre que demain recommence — et que ton corps n'aura pas redescendu entre les deux.",
+          "punch": "Le matin t'a mise en alerte. La soirée n'a rien désarmé. Tu vas dormir avec la même tension dans la nuque — et la reprendre demain à 7h12.",
+          "state": "panique",
+          "stateLabel": "Mode panique sourde",
+          "cta": "Redescendre avant la nuit · 60 s →"
         }
       ],
       "extra_intro": "Et si une de ces scènes te parle aussi…",
