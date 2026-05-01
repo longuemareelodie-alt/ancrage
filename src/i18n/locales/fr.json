@@ -238,31 +238,31 @@
     "items": {
       "what_is": {
         "q": "Ancrage, c'est quoi exactement ?",
-        "a": "Un outil de bien-être pensé pour t'aider à faire redescendre ton corps quand ton système nerveux est en alerte. Pas une thérapie, pas un diagnostic : des actions simples, courtes, à faire seule, à ton rythme."
+        "a": "Un outil pour sortir du mode survie et retrouver ton calme en 30 secondes. Des ancrages courts qui font redescendre ton système nerveux quand il est en alerte. Pas une thérapie, pas un diagnostic : des gestes simples, à faire seule, à ton rythme."
       },
       "price": {
         "q": "C'est gratuit ou payant ?",
-        "a": "Tu peux essayer gratuitement les écrans émotion et le rituel de base, sans créer de compte. L'accès complet est à 39€ en paiement unique, sans abonnement."
+        "a": "Tu peux essayer gratuitement les ancrages émotion et le rituel de base, sans créer de compte. L'accès complet pour devenir la maman ancrée est à 39 € en paiement unique, sans abonnement."
       },
       "subscription": {
         "q": "Est-ce que c'est un abonnement ?",
-        "a": "Non. Paiement unique de 39€, accès à vie aux fonctionnalités payantes existantes au moment de l'achat."
+        "a": "Non. Paiement unique de 39 €, accès à vie aux ancrages et au parcours complet pour sortir du mode survie."
       },
       "medical": {
         "q": "Est-ce que ça remplace un suivi médical ou un thérapeute ?",
-        "a": "Non, jamais. Ancrage est un outil de bien-être : il ne pose pas de diagnostic et ne remplace pas un professionnel de santé."
+        "a": "Non, jamais. Ancrage t'aide à redescendre dans l'instant : il ne pose pas de diagnostic et ne remplace pas un professionnel de santé."
       },
       "privacy": {
         "q": "Mes données sont-elles privées ?",
-        "a": "Oui. Tes notes et tes états émotionnels sont stockés de façon sécurisée et restent strictement les tiens. Tu peux tout exporter ou supprimer depuis ton profil. Détails complets dans la <lnk>Politique de confidentialité</lnk>."
+        "a": "Oui. Tes ancrages et tes états émotionnels sont stockés de façon sécurisée et restent strictement les tiens. Tu peux tout exporter ou supprimer depuis ton profil. Détails complets dans la <lnk>Politique de confidentialité</lnk>."
       },
       "duration": {
         "q": "Combien de temps faut-il par jour ?",
-        "a": "Quelques minutes suffisent. La plupart des actions durent entre 1 et 5 minutes."
+        "a": "30 secondes suffisent pour amorcer la sortie du mode survie. La plupart des ancrages durent entre 30 secondes et 5 minutes."
       },
       "devices": {
         "q": "Sur quels appareils ça marche ?",
-        "a": "Sur n'importe quel téléphone, tablette ou ordinateur récent, directement depuis ton navigateur."
+        "a": "Sur n'importe quel téléphone, tablette ou ordinateur récent, directement depuis ton navigateur. Tes ancrages te suivent partout."
       },
       "refund": {
         "q": "Puis-je être remboursée ?",

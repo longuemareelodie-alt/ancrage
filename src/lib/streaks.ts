@@ -8,54 +8,55 @@ export interface BadgeDef {
   condition: (streak: number, totalCheckins: number) => boolean;
 }
 
+// Axe : MODE SURVIE → CALME. Vocabulaire : ancrage, sécurité, ancrée.
 export const BADGES: BadgeDef[] = [
   {
     key: "first_checkin",
     emoji: "🌱",
-    label: "Tu as commencé",
-    description: "Tu as osé regarder ce que tu ressens. C'est déjà énorme.",
+    label: "Premier ancrage",
+    description: "Tu as osé regarder ton mode survie. Le calme commence là.",
     condition: (_, total) => total >= 1,
   },
   {
     key: "streak_3",
     emoji: "🔥",
-    label: "3 jours pour toi",
-    description: "3 jours de suite où tu as pris soin de toi. Ton corps s'en souvient.",
+    label: "3 jours d'ancrage",
+    description: "3 jours de suite à sortir du mode survie. Ton corps s'en souvient.",
     condition: (s) => s >= 3,
   },
   {
     key: "streak_7",
     emoji: "⭐",
-    label: "Une semaine de présence",
+    label: "Une semaine ancrée",
     description: "7 jours à t'écouter. Tu crées un espace de sécurité pour toi.",
     condition: (s) => s >= 7,
   },
   {
     key: "streak_14",
     emoji: "💪",
-    label: "Ton système se régule",
-    description: "14 jours. Ton système nerveux commence à se reprogrammer.",
+    label: "Ton système se réancre",
+    description: "14 jours. Ton système nerveux apprend à redescendre tout seul.",
     condition: (s) => s >= 14,
   },
   {
     key: "streak_30",
     emoji: "👑",
-    label: "Un mois de transformation",
-    description: "30 jours. Tu n'es plus la même. Et c'est toi qui as fait ça.",
+    label: "La maman ancrée",
+    description: "30 jours hors du mode survie. Tu es devenue la maman ancrée.",
     condition: (s) => s >= 30,
   },
   {
     key: "checkins_10",
     emoji: "💜",
-    label: "10 moments pour toi",
-    description: "10 fois où tu as choisi de t'écouter plutôt que de t'ignorer.",
+    label: "10 ancrages posés",
+    description: "10 fois où tu as choisi le calme plutôt que le mode survie.",
     condition: (_, total) => total >= 10,
   },
   {
     key: "checkins_50",
     emoji: "💎",
-    label: "Tu as changé ta relation à toi",
-    description: "50 check-ins. Prendre soin de toi est devenu un réflexe.",
+    label: "L'ancrage est devenu un réflexe",
+    description: "50 ancrages. Sortir du mode survie n'est plus un effort.",
     condition: (_, total) => total >= 50,
   },
 ];
