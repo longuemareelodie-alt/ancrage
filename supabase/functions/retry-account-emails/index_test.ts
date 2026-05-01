@@ -110,7 +110,7 @@ async function callRetry(): Promise<{ status: number; body: any }> {
 // ---------------------------------------------------------------------------
 Deno.test({
   name: "retry-account-emails rejects unauthenticated callers (401)",
-  ignore: skip,
+  ignore: skipAll,
   async fn() {
     const res = await fetch(FN_URL, { method: "POST" });
     const body = await res.json().catch(() => ({}));
@@ -123,7 +123,7 @@ Deno.test({
 // ---------------------------------------------------------------------------
 Deno.test({
   name: "retry-account-emails sends pending row (e2e, real email)",
-  ignore: skip,
+  ignore: skipServiceRole,
   async fn() {
     const paymentId = `e2e_success_${Date.now()}`;
     const rowId = await insertPending({
@@ -159,7 +159,7 @@ Deno.test({
 // ---------------------------------------------------------------------------
 Deno.test({
   name: "retry-account-emails reschedules on failure (no email sent)",
-  ignore: skip,
+  ignore: skipServiceRole,
   async fn() {
     const paymentId = `e2e_fail_${Date.now()}`;
     const badEmail = `not a valid email`; // espace = rejet par auth
@@ -200,7 +200,7 @@ Deno.test({
 // ---------------------------------------------------------------------------
 Deno.test({
   name: "retry-account-emails skips rows whose next_attempt_at is in the future",
-  ignore: skip,
+  ignore: skipServiceRole,
   async fn() {
     const paymentId = `e2e_skip_${Date.now()}`;
     const rowId = await insertPending({
