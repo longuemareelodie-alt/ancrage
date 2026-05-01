@@ -23,6 +23,12 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 const SUPABASE_URL = Deno.env.get("VITE_SUPABASE_URL") ?? Deno.env.get("SUPABASE_URL");
 const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
+console.log(
+  "[debug] SUPABASE_URL=", SUPABASE_URL,
+  "SERVICE_ROLE_KEY length=", SERVICE_ROLE_KEY?.length ?? 0,
+  "starts=", SERVICE_ROLE_KEY?.slice(0, 8),
+);
+
 const skipAll = !SUPABASE_URL;
 const skipServiceRole = !SUPABASE_URL || !SERVICE_ROLE_KEY;
 
