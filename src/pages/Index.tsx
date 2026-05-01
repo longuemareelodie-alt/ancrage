@@ -309,7 +309,19 @@ const Index = () => {
                 {s.state && s.cta && (
                   <button
                     type="button"
-                    onClick={() => navigateWithTransition(sceneCtaHref(s))}
+                    onClick={() => {
+                      if (s.state) {
+                        rememberLastQuickState({
+                          state: s.state,
+                          label: s.stateLabel ?? s.state,
+                          emoji: s.emoji,
+                          hint: s.cta ?? "",
+                          href: sceneCtaHref(s),
+                          source: "scene",
+                        });
+                      }
+                      navigateWithTransition(sceneCtaHref(s));
+                    }}
                     aria-label={`${s.stateLabel ?? s.state} — ${s.cta}`}
                     className="group mt-2 flex w-full items-center justify-between gap-3 rounded-xl bg-primary/10 hover:bg-primary/15 active:scale-[0.98] border border-primary/20 px-4 py-3 transition-all"
                   >
