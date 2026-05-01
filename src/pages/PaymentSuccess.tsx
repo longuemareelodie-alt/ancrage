@@ -178,6 +178,32 @@ const PaymentSuccess = () => {
           </Link>
         </motion.div>
 
+        {latestPaymentId && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1, duration: 0.5 }}
+            className="space-y-2"
+          >
+            <button
+              type="button"
+              onClick={handleDownloadInvoice}
+              disabled={downloadingInvoice}
+              className="inline-flex items-center justify-center gap-2 rounded-lg border border-border bg-card px-4 py-2 text-sm font-medium text-foreground hover:bg-accent disabled:opacity-60"
+            >
+              {downloadingInvoice ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Download className="h-4 w-4" />
+              )}
+              {latestProduct === "initiation_7d"
+                ? "Télécharger ma facture · Initiation 7 jours · 4,99 €"
+                : "Télécharger ma facture"}
+            </button>
+            <p className="text-[11px] text-muted-foreground">PDF · ANCRAGE</p>
+          </motion.div>
+        )}
+
         <p className="text-xs text-muted-foreground">
           Ton corps peut enfin redescendre. Tu es au bon endroit.
         </p>
