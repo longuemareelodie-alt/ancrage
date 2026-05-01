@@ -735,19 +735,6 @@ const Index = () => {
             <p className="text-xs text-muted-foreground leading-relaxed max-w-sm mx-auto">
             {t("home.testimonials.cta_justify")}
             </p>
-            <div className="pt-3 border-t border-primary/10">
-              <p className="text-xs text-muted-foreground mb-2">
-                Tu veux d'abord tester avec les 7 jours d'ancrage ?
-              </p>
-              <button
-                type="button"
-                onClick={handleInitiationPayment}
-                disabled={paymentLoading}
-                className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline disabled:opacity-60 disabled:cursor-not-allowed"
-              >
-                Démarrer les 7 jours · 4,99 € →
-              </button>
-            </div>
           </div>
         </div>
       </SectionBlock>
