@@ -46,40 +46,62 @@ Deno.serve(async (req) => {
       return jsonResponse({ error: "Unauthorized" }, 401);
     }
 
-    // Parse optional redirect URL + promo code from request body
+    // Parse optional redirect URL + promo code + product from request body
     let redirectUrl = "https://ancrage.lovable.app/dashboard?payment=success";
     let webhookUrl = `${supabaseUrl}/functions/v1/mollie-webhook`;
     let rawPromoCode: string | null = null;
+    let rawProduct: string | null = null;
 
     try {
       const body = await req.json();
       if (body?.redirectUrl) redirectUrl = body.redirectUrl;
       if (body?.webhookUrl) webhookUrl = body.webhookUrl;
       if (typeof body?.promoCode === "string") rawPromoCode = body.promoCode;
+      if (typeof body?.product === "string") rawProduct = body.product;
     } catch {
       // No body or invalid JSON — use defaults
     }
 
+    // ---- Product catalog (server-authoritative) ----
+    // Two products are offered:
+    //   - "premium"        → 39,00 € lifetime full access (default)
+    //   - "initiation_7d"  → 4,99 € one-time access to the 7-day initiation
+    type ProductKey = "premium" | "initiation_7d";
+    const PRODUCT_CATALOG: Record<ProductKey, { priceCents: number; description: string; allowPromo: boolean }> = {
+      premium: {
+        priceCents: 3900,
+        description: "ANCRAGE — Accès Premium",
+        allowPromo: true,
+      },
+      initiation_7d: {
+        priceCents: 499,
+        description: "ANCRAGE — Initiation 7 jours",
+        allowPromo: false,
+      },
+    };
+
+    const productKey: ProductKey =
+      rawProduct === "initiation_7d" ? "initiation_7d" : "premium";
+    const product = PRODUCT_CATALOG[productKey];
+
     // ---- Promo code validation (server-authoritative) ----
-    // Catalog of accepted promo codes. Discounts are in EUR cents.
-    // Keep this list short and explicit; never trust the client.
+    // Promos only apply to the premium product.
     const PROMO_CATALOG: Record<string, { discountCents: number; label: string }> = {
       ANCRAGE15: { discountCents: 1500, label: "Ancrage15 (-15€)" },
     };
 
-    const BASE_PRICE_CENTS = 3900; // 39.00 EUR
-
     const normalizedPromo = (rawPromoCode ?? "").trim().toUpperCase();
-    const promo = normalizedPromo ? PROMO_CATALOG[normalizedPromo] : null;
+    const promo = normalizedPromo && product.allowPromo ? PROMO_CATALOG[normalizedPromo] : null;
 
-    // If client sent a code but it's invalid → reject explicitly so the UI can
-    // tell the user. Empty/null = no promo, proceed at full price.
-    if (normalizedPromo && !promo) {
+    // If client sent a code but it's invalid (and the product accepts promos)
+    // → reject explicitly so the UI can tell the user.
+    if (normalizedPromo && product.allowPromo && !promo) {
       return jsonResponse({ error: "invalid_promo_code", code: normalizedPromo }, 400);
     }
 
+    const basePriceCents = product.priceCents;
     const discountCents = promo?.discountCents ?? 0;
-    const finalCents = Math.max(0, BASE_PRICE_CENTS - discountCents);
+    const finalCents = Math.max(0, basePriceCents - discountCents);
     // Mollie minimum is 1 cent for EUR — guard against a free total.
     if (finalCents < 100) {
       return jsonResponse({ error: "amount_below_minimum" }, 400);
@@ -87,8 +109,8 @@ Deno.serve(async (req) => {
     const finalAmountEur = (finalCents / 100).toFixed(2);
 
     const description = promo
-      ? `ANCRAGE — Accès Premium (${promo.label})`
-      : "ANCRAGE — Accès Premium";
+      ? `${product.description} (${promo.label})`
+      : product.description;
 
     // Create Mollie payment with user metadata
     const molliePayload = {
@@ -99,8 +121,9 @@ Deno.serve(async (req) => {
       metadata: {
         user_id: user.id,
         email: user.email,
-        type: "lifetime",
-        base_price_cents: BASE_PRICE_CENTS,
+        type: productKey === "premium" ? "lifetime" : "initiation_7d",
+        product: productKey,
+        base_price_cents: basePriceCents,
         discount_cents: discountCents,
         final_cents: finalCents,
         promo_code: promo ? normalizedPromo : null,

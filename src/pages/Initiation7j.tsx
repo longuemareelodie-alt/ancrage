@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, RotateCcw, ArrowRight } from "lucide-react";
+import { Check, RotateCcw, ArrowRight, Lock, Sparkles, ShieldCheck } from "lucide-react";
 import SectionBlock from "@/components/SectionBlock";
 import CTAButton from "@/components/CTAButton";
+import { useAuth } from "@/contexts/AuthContext";
+import { useMolliePayment } from "@/hooks/useMolliePayment";
 import {
   INITIATION_DAYS,
   loadState,
@@ -12,7 +14,99 @@ import {
   type InitiationState,
 } from "@/lib/initiation7j";
 
-const Initiation7j = () => {
+const INITIATION_PRICE_LABEL = "4,99 €";
+
+const InitiationPaywall = () => {
+  const { user, hasInitiation, loading } = useAuth();
+  const { startPayment, loading: paymentLoading } = useMolliePayment();
+
+  const handleBuy = () => {
+    if (!user) {
+      window.location.href = "/auth?redirect=/initiation-7-jours&action=initiation";
+      return;
+    }
+    void startPayment({
+      product: "initiation_7d",
+      redirectUrl: `${window.location.origin}/payment-pending?return=/initiation-7-jours`,
+    });
+  };
+
+  return (
+    <main className="min-h-screen bg-gradient-to-b from-secondary/30 via-background to-background pb-32">
+      <SectionBlock variant="blue">
+        <header className="space-y-3 text-center">
+          <p className="text-xs uppercase tracking-widest text-muted-foreground">
+            Parcours d'initiation
+          </p>
+          <h1 className="font-serif text-3xl font-semibold leading-tight">
+            7 jours pour passer du mode survie au calme
+          </h1>
+          <p className="text-sm text-foreground/80">
+            Un ancrage par jour. Quelques minutes. Aucun matériel.
+          </p>
+        </header>
+      </SectionBlock>
+
+      <SectionBlock>
+        <div className="rounded-2xl bg-card border border-border p-6 shadow-sm space-y-5">
+          <div className="flex items-center gap-2 text-primary">
+            <Sparkles className="h-5 w-5" />
+            <p className="text-xs font-bold uppercase tracking-wider">
+              Ce que tu débloques
+            </p>
+          </div>
+
+          <ul className="space-y-2.5 text-sm">
+            {[
+              "7 jours guidés, un ancrage par jour",
+              "Tes notes et progression conservées",
+              "Sans engagement, accès à vie aux 7 jours",
+              "Si ça résonne, le programme complet ANCRAGE est ensuite accessible",
+            ].map((item) => (
+              <li key={item} className="flex items-start gap-2">
+                <Check className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+
+          <div className="rounded-xl bg-primary/5 border border-primary/10 p-4 text-center space-y-1">
+            <p className="text-3xl font-bold">{INITIATION_PRICE_LABEL}</p>
+            <p className="text-xs text-muted-foreground">
+              Paiement unique · accès à vie aux 7 jours
+            </p>
+          </div>
+
+          <p className="text-xs text-muted-foreground italic text-center">
+            🤍 Pas d'abonnement. Tu paies une fois, tu gardes l'accès.
+          </p>
+
+          <CTAButton
+            to="#"
+            onClick={handleBuy}
+            loading={paymentLoading || loading}
+          >
+            <Lock className="mr-1.5 h-4 w-4 inline" />
+            {user ? `Démarrer les 7 jours · ${INITIATION_PRICE_LABEL}` : `Créer mon compte · ${INITIATION_PRICE_LABEL}`}
+          </CTAButton>
+
+          <div className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground pt-1">
+            <ShieldCheck className="h-3.5 w-3.5" />
+            <span>Paiement sécurisé Mollie · CB, Bancontact, etc.</span>
+          </div>
+
+          {hasInitiation === false && user && (
+            <p className="text-center text-[11px] text-muted-foreground italic pt-1">
+              Tu viens de payer ? Patiente quelques secondes puis recharge la page.
+            </p>
+          )}
+        </div>
+      </SectionBlock>
+    </main>
+  );
+};
+
+const Initiation7jContent = () => {
   const [state, setState] = useState<InitiationState>({ startedAt: null, completed: {} });
   const [activeDay, setActiveDay] = useState<number>(1);
   const [note, setNote] = useState("");
@@ -240,6 +334,27 @@ const Initiation7j = () => {
       )}
     </main>
   );
+};
+
+const Initiation7j = () => {
+  const { user, hasInitiation, loading } = useAuth();
+
+  // Public landing : not logged-in or eligibility unknown but not loading anymore
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+      </div>
+    );
+  }
+
+  // Logged in AND has access (premium, grandfathered, or paid 4,99€)
+  if (user && hasInitiation === true) {
+    return <Initiation7jContent />;
+  }
+
+  // Otherwise → paywall (visible to anonymous visitors AND to logged-in users without access)
+  return <InitiationPaywall />;
 };
 
 export default Initiation7j;

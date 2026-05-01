@@ -395,6 +395,7 @@ export type Database = {
           current_streak: number
           email: string | null
           first_name: string
+          has_initiation_access: boolean
           id: string
           is_premium: boolean
           last_checkin_date: string | null
@@ -411,6 +412,7 @@ export type Database = {
           current_streak?: number
           email?: string | null
           first_name?: string
+          has_initiation_access?: boolean
           id?: string
           is_premium?: boolean
           last_checkin_date?: string | null
@@ -427,6 +429,7 @@ export type Database = {
           current_streak?: number
           email?: string | null
           first_name?: string
+          has_initiation_access?: boolean
           id?: string
           is_premium?: boolean
           last_checkin_date?: string | null

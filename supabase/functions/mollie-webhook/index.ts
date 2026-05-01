@@ -734,14 +734,20 @@ Deno.serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, serviceRoleKey);
 
-    let profile: { user_id: string; email: string | null; is_premium: boolean; plan_type: string } | null = null;
+    let profile: {
+      user_id: string;
+      email: string | null;
+      is_premium: boolean;
+      plan_type: string;
+      has_initiation_access: boolean;
+    } | null = null;
 
     try {
       if (userId) {
         logDebug("Looking up profile by user_id", { userId, paymentId, metadata: paymentMetadata });
         const { data, error } = await supabase
           .from("profiles")
-          .select("user_id, email, is_premium, plan_type")
+          .select("user_id, email, is_premium, plan_type, has_initiation_access")
           .eq("user_id", userId)
           .maybeSingle();
 
@@ -767,7 +773,7 @@ Deno.serve(async (req) => {
         logDebug("Looking up profile by email", { email, paymentId, metadata: paymentMetadata });
         const { data, error } = await supabase
           .from("profiles")
-          .select("user_id, email, is_premium, plan_type")
+          .select("user_id, email, is_premium, plan_type, has_initiation_access")
           .eq("email", email)
           .maybeSingle();
 
@@ -833,12 +839,107 @@ Deno.serve(async (req) => {
       });
     }
 
-    // --- Determine plan_type from payment metadata ---
-    // Ancrage no longer offers subscriptions: any successful payment grants
-    // lifetime "paid" access. Subscription-related metadata is ignored.
+    // --- Determine product type from payment metadata ---
+    // Two products are supported:
+    //   - "initiation_7d" → 4,99 € : grants only has_initiation_access
+    //   - "premium" (default / "lifetime") → 39 € : grants is_premium + initiation
+    const rawProduct = firstString(paymentMetadata?.product);
+    const rawType = firstString(paymentMetadata?.type);
+    const isInitiationProduct =
+      rawProduct === "initiation_7d" || rawType === "initiation_7d";
+
+    if (isInitiationProduct) {
+      // ---- Initiation 7d activation path ----
+      if (profile.has_initiation_access) {
+        logDebug("Profile already has initiation access", { profile, paymentId });
+        await logActivation(supabaseUrl, serviceRoleKey, {
+          user_id: profile.user_id,
+          payment_id: paymentId,
+          status: "already_active",
+          amount: amountCents,
+          message: "Profile already has_initiation_access=true",
+        });
+        return webhookAck({
+          status: "initiation_already_active",
+          user_id: profile.user_id,
+          email: profile.email,
+        });
+      }
+
+      logDebug("Running initiation update query", {
+        targetUserId: profile.user_id,
+        paymentId,
+      });
+
+      const { data: updatedProfile, error: updateError } = await supabase
+        .from("profiles")
+        .update({ has_initiation_access: true })
+        .eq("user_id", profile.user_id)
+        .select("user_id, email, has_initiation_access")
+        .single();
+
+      if (updateError || !updatedProfile?.user_id) {
+        logError("Initiation activation update failed", updateError ?? new Error("empty_result"), {
+          targetUserId: profile.user_id,
+          paymentId,
+        });
+        await logActivation(supabaseUrl, serviceRoleKey, {
+          user_id: profile.user_id,
+          payment_id: paymentId,
+          status: "error",
+          amount: amountCents,
+          message: `initiation_update_failed: ${updateError?.message ?? "empty_result"}`,
+        });
+        return webhookAck({
+          status: "error",
+          error: "initiation_update_failed",
+          user_id: profile.user_id,
+        });
+      }
+
+      await logActivation(supabaseUrl, serviceRoleKey, {
+        user_id: updatedProfile.user_id,
+        payment_id: paymentId,
+        status: "paid",
+        amount: amountCents,
+        message: "has_initiation_access activated",
+        raw: {
+          product: "initiation_7d",
+          currency: payment?.amount?.currency ?? null,
+          method: payment?.method ?? null,
+        },
+      });
+
+      // Admin notification (no welcome-premium email for the initiation product)
+      try {
+        await supabase.functions.invoke("send-transactional-email", {
+          body: {
+            templateName: "admin-payment-notification",
+            recipientEmail: "longuemareelodie9@gmail.com",
+            idempotencyKey: `admin-notify-${paymentId}`,
+            templateData: {
+              customerEmail: updatedProfile.email || email || "Inconnu",
+              customerName: "",
+              amount: payment?.amount ? `${payment.amount.value} ${payment.amount.currency}` : "",
+              paymentId: paymentId,
+            },
+          },
+        });
+      } catch (emailErr) {
+        logError("Failed to send initiation admin notification (non-fatal)", emailErr, { paymentId });
+      }
+
+      return webhookAck({
+        status: "initiation_activated",
+        user_id: updatedProfile.user_id,
+        email: updatedProfile.email,
+      });
+    }
+
+    // ---- Premium activation path (default / lifetime) ----
     const finalPlanType = "paid";
 
-    if (profile.is_premium && profile.plan_type === finalPlanType) {
+    if (profile.is_premium && profile.plan_type === finalPlanType && profile.has_initiation_access) {
       logDebug("Profile already at this plan", { profile, paymentId, finalPlanType });
       await logActivation(supabaseUrl, serviceRoleKey, {
         user_id: profile.user_id,
@@ -857,13 +958,13 @@ Deno.serve(async (req) => {
 
     logDebug("Running premium update query", {
       targetUserId: profile.user_id,
-      update: { is_premium: true, plan_type: finalPlanType },
+      update: { is_premium: true, plan_type: finalPlanType, has_initiation_access: true },
       paymentId,
     });
 
     const { data: updatedProfile, error: updateError } = await supabase
       .from("profiles")
-      .update({ is_premium: true, plan_type: finalPlanType })
+      .update({ is_premium: true, plan_type: finalPlanType, has_initiation_access: true })
       .eq("user_id", profile.user_id)
       .select("user_id, email, is_premium, plan_type")
       .single();
