@@ -9,7 +9,7 @@ export type BreadcrumbItem = {
 interface BreadcrumbProps {
   /** Items du fil d'Ariane (Accueil ajouté automatiquement en premier). */
   items: BreadcrumbItem[];
-  /** Affiche les raccourcis « FAQ » et « Essayer gratuitement » à droite. Défaut : true. */
+  /** Affiche les raccourcis « FAQ » et « Essayer l'outil » à droite. Défaut : true. */
   showQuickLinks?: boolean;
 }
 
