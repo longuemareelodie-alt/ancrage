@@ -26,6 +26,7 @@ const PUBLIC_PATHS = new Set<string>([
   "/aller-plus-loin",
   "/auth",
   "/reset-password",
+  "/set-password",
   "/unsubscribe",
 ]);
 
