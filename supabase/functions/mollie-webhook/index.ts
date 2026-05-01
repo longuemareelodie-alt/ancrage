@@ -734,14 +734,20 @@ Deno.serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, serviceRoleKey);
 
-    let profile: { user_id: string; email: string | null; is_premium: boolean; plan_type: string } | null = null;
+    let profile: {
+      user_id: string;
+      email: string | null;
+      is_premium: boolean;
+      plan_type: string;
+      has_initiation_access: boolean;
+    } | null = null;
 
     try {
       if (userId) {
         logDebug("Looking up profile by user_id", { userId, paymentId, metadata: paymentMetadata });
         const { data, error } = await supabase
           .from("profiles")
-          .select("user_id, email, is_premium, plan_type")
+          .select("user_id, email, is_premium, plan_type, has_initiation_access")
           .eq("user_id", userId)
           .maybeSingle();
 
@@ -767,7 +773,7 @@ Deno.serve(async (req) => {
         logDebug("Looking up profile by email", { email, paymentId, metadata: paymentMetadata });
         const { data, error } = await supabase
           .from("profiles")
-          .select("user_id, email, is_premium, plan_type")
+          .select("user_id, email, is_premium, plan_type, has_initiation_access")
           .eq("email", email)
           .maybeSingle();
 
