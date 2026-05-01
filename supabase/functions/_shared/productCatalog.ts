@@ -68,7 +68,7 @@ export const PRODUCT_CATALOG: Readonly<Record<ProductKey, ProductDefinition>> =
  * Format: `<sha256-hex-truncated-to-16>` — the same value is asserted by
  * `tests/productCatalog.spec.ts`.
  */
-export const PRODUCT_CATALOG_FINGERPRINT = "9d51dab0c0d4d320";
+export const PRODUCT_CATALOG_FINGERPRINT = "7215cb1deb509941";
 
 /** Canonical, stable serialization used by the fingerprint algorithm. */
 export function canonicalCatalogString(): string {
