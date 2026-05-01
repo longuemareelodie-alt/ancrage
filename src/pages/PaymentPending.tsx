@@ -51,6 +51,12 @@ const PaymentPending = () => {
   const [screenshotFilename, setScreenshotFilename] = useState<string | null>(null);
   const [capturing, setCapturing] = useState(false);
   const [supportOpen, setSupportOpen] = useState(false);
+  // Detect "initiation_7d" flow once at mount via the ?return= query param
+  // injected at checkout. Stored in state so render code can branch on it.
+  const [isInitiationFlow] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    return new URLSearchParams(window.location.search).get("return") === "/initiation-7-jours";
+  });
   const screenshotsAvailable = isScreenshotSupported();
   const cancelled = useRef(false);
   const loggedRef = useRef(false);
@@ -147,10 +153,7 @@ const PaymentPending = () => {
       return;
     }
 
-    // Detect "initiation_7d" flow via the ?return= query param injected at checkout.
-    const params = new URLSearchParams(window.location.search);
-    const returnTo = params.get("return");
-    const isInitiationFlow = returnTo === "/initiation-7-jours";
+    // isInitiationFlow is captured at mount via component state above.
 
     cancelled.current = false;
     let attempt = 0;
@@ -236,9 +239,18 @@ const PaymentPending = () => {
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
             <div className="space-y-2">
-              <h1 className="text-xl font-bold">{t("payment_pending.pending.title")}</h1>
+              <h1 className="text-xl font-bold">
+                {isInitiationFlow
+                  ? t("payment_pending.pending.title_initiation", "Activation des 7 jours d'ancrage…")
+                  : t("payment_pending.pending.title")}
+              </h1>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                {t("payment_pending.pending.text")}
+                {isInitiationFlow
+                  ? t(
+                      "payment_pending.pending.text_initiation",
+                      "Ton paiement (4,99 €) est bien reçu. On débloque ton accès aux 7 jours dans quelques secondes.",
+                    )
+                  : t("payment_pending.pending.text")}
               </p>
             </div>
             <div className="space-y-2">
@@ -266,12 +278,30 @@ const PaymentPending = () => {
               <CheckCircle2 className="h-9 w-9 text-primary" />
             </motion.div>
             <div className="space-y-2">
-              <h1 className="text-xl font-bold">{t("payment_pending.confirmed.title")}</h1>
-              <p className="text-sm text-muted-foreground">{t("payment_pending.confirmed.text")}</p>
+              <h1 className="text-xl font-bold">
+                {isInitiationFlow
+                  ? t("payment_pending.confirmed.title_initiation", "Tes 7 jours sont débloqués 💛")
+                  : t("payment_pending.confirmed.title")}
+              </h1>
+              <p className="text-sm text-muted-foreground">
+                {isInitiationFlow
+                  ? t(
+                      "payment_pending.confirmed.text_initiation",
+                      "L'initiation 7 jours est ouverte dans ton compte. On t'y emmène.",
+                    )
+                  : t("payment_pending.confirmed.text")}
+              </p>
             </div>
             <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
               <Loader2 className="h-3.5 w-3.5 animate-spin" />
-              <span>{t("payment_pending.confirmed.redirect")}</span>
+              <span>
+                {isInitiationFlow
+                  ? t(
+                      "payment_pending.confirmed.redirect_initiation",
+                      "Redirection vers les 7 jours d'ancrage…",
+                    )
+                  : t("payment_pending.confirmed.redirect")}
+              </span>
             </div>
           </>
         )}
@@ -422,9 +452,21 @@ const PaymentPending = () => {
                   <AlertCircle className="h-8 w-8 text-destructive" />
                 </div>
                 <div className="space-y-3">
-                  <h1 className="text-xl font-bold">{t("payment_pending.error.title")}</h1>
+                  <h1 className="text-xl font-bold">
+                    {isInitiationFlow
+                      ? t(
+                          "payment_pending.error.title_initiation",
+                          "L'activation des 7 jours prend plus de temps que prévu",
+                        )
+                      : t("payment_pending.error.title")}
+                  </h1>
                   <p className="text-sm text-muted-foreground leading-relaxed">
-                    {t("payment_pending.error.text")}
+                    {isInitiationFlow
+                      ? t(
+                          "payment_pending.error.text_initiation",
+                          "Ton paiement (4,99 €) n'est pas perdu. Dès que la banque le valide, ton accès aux 7 jours d'ancrage s'ouvre automatiquement.",
+                        )
+                      : t("payment_pending.error.text")}
                   </p>
                   <div className="rounded-xl border bg-muted/30 p-4 text-left">
                     <p className="mb-2 text-xs font-semibold text-foreground">
@@ -466,10 +508,12 @@ const PaymentPending = () => {
                     {t("payment_pending.error.contact_support_email", "Ou contacter par email")}
                   </a>
                   <Link
-                    to="/dashboard"
+                    to={isInitiationFlow ? "/initiation-7-jours" : "/dashboard"}
                     className="inline-flex w-full items-center justify-center gap-2 rounded-xl px-6 py-3 text-xs text-muted-foreground"
                   >
-                    {t("payment_pending.error.dashboard")}
+                    {isInitiationFlow
+                      ? t("payment_pending.error.back_initiation", "Retour aux 7 jours d'ancrage")
+                      : t("payment_pending.error.dashboard")}
                     <ArrowRight className="h-3.5 w-3.5" />
                   </Link>
                   <p className="text-[11px] text-muted-foreground">
@@ -517,10 +561,12 @@ const PaymentPending = () => {
                   {t("payment_pending.not_found.contact_support_email", "Ou contacter par email")}
                 </a>
                 <Link
-                  to="/dashboard"
+                  to={isInitiationFlow ? "/initiation-7-jours" : "/dashboard"}
                   className="inline-flex w-full items-center justify-center gap-2 rounded-xl px-6 py-3 text-xs text-muted-foreground"
                 >
-                  {t("payment_pending.error.dashboard")}
+                  {isInitiationFlow
+                    ? t("payment_pending.error.back_initiation", "Retour aux 7 jours d'ancrage")
+                    : t("payment_pending.error.dashboard")}
                   <ArrowRight className="h-3.5 w-3.5" />
                 </Link>
               </div>
