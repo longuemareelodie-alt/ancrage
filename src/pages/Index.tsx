@@ -155,9 +155,9 @@ const Index = () => {
           className="space-y-6 text-center"
         >
           <h1 className="text-2xl font-bold leading-tight tracking-tight md:text-3xl">
-            {t("home.hero.line1")}
+            {t(parentType === "papa" ? "home.hero.line1_papa" : "home.hero.line1")}
             <br />
-            {t("home.hero.line2")}
+            {t(parentType === "papa" ? "home.hero.line2_papa" : "home.hero.line2")}
             <br />
             <span className="text-primary">{t("home.hero.line3")}</span>
           </h1>
