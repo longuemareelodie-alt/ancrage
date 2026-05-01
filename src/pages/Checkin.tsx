@@ -305,10 +305,12 @@ const Checkin = () => {
     );
   };
 
+  const [parentType] = useParentType();
+
   const getStreakMessage = () => {
     const info = getStreakLabel(streakCount);
     if (streakCount <= 0) return "Tu viens de poser un premier geste pour toi.";
-    return `${info.emoji} ${info.label} — ${streakCount} jour${streakCount > 1 ? "s" : ""}`;
+    return `${info.emoji} ${parentize(info.label, parentType)} — ${streakCount} jour${streakCount > 1 ? "s" : ""}`;
   };
 
   const getEvolutionMessage = () => {
