@@ -404,6 +404,22 @@ Deno.serve(async (req) => {
   }
 
   try {
+    // Server-authoritative product catalog must match its locked fingerprint
+    // before we touch profile flags. Drift refuses processing until the
+    // catalog and its companion test are explicitly updated together.
+    try {
+      assertCatalogIntegrity();
+    } catch (e) {
+      if (e instanceof ProductCatalogIntegrityError) {
+        logError("Catalog integrity violation in webhook", e, {});
+        return jsonResponse(
+          { received: false, error: "product_catalog_integrity_violation" },
+          503,
+        );
+      }
+      throw e;
+    }
+
     const contentType = req.headers.get("content-type") || "";
     const requestClone = req.clone();
     const rawBody = await req.text();
