@@ -6,6 +6,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { getDailyMessage } from "@/data/dailyMessages";
 import { getStreakLabel } from "@/data/streakLabels";
+import { parentize } from "@/lib/parentize";
+import { useParentType } from "@/hooks/useParentType";
 import logo from "@/assets/logo-ancrage.png";
 import InstallPWAPrompt from "@/components/InstallPWAPrompt";
 import ResumeBanner from "@/components/ResumeBanner";
