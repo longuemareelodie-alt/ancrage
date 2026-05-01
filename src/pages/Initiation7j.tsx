@@ -106,7 +106,7 @@ const InitiationPaywall = () => {
   );
 };
 
-const Initiation7j = () => {
+const Initiation7jContent = () => {
   const [state, setState] = useState<InitiationState>({ startedAt: null, completed: {} });
   const [activeDay, setActiveDay] = useState<number>(1);
   const [note, setNote] = useState("");
