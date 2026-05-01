@@ -184,6 +184,40 @@ const Index = () => {
             </p>
           </div>
 
+          {/* Toggle profil maman / papa — adapte le ton des micro-scènes */}
+          <div
+            role="group"
+            aria-label={t("home.recognize.profile_toggle_label")}
+            className="mx-auto flex max-w-xs flex-col items-center gap-2"
+          >
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+              {t("home.recognize.profile_toggle_label")}
+            </p>
+            <div className="inline-flex rounded-full border border-border bg-card p-1 shadow-sm">
+              {(["maman", "papa"] as const).map((p) => {
+                const active = parentType === p;
+                return (
+                  <button
+                    key={p}
+                    type="button"
+                    onClick={() => setParentType(p)}
+                    aria-pressed={active}
+                    className={`min-w-[84px] rounded-full px-4 py-1.5 text-sm font-semibold transition-all ${
+                      active
+                        ? "bg-primary text-primary-foreground shadow"
+                        : "text-foreground/70 hover:text-foreground"
+                    }`}
+                  >
+                    {t(p === "maman" ? "home.recognize.profile_maman" : "home.recognize.profile_papa")}
+                  </button>
+                );
+              })}
+            </div>
+            <p className="text-[11px] italic text-muted-foreground">
+              {t("home.recognize.profile_toggle_hint")}
+            </p>
+          </div>
+
           {/* 3 scènes principales — corps / tête / soir */}
           <div className="space-y-4">
             {recognizeMainScenes.map((s, i) => (
