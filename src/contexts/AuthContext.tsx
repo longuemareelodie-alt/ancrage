@@ -130,6 +130,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       void checkEligibility(uid);
       if (initial?.user) {
         setTimeout(() => { void pullStyleFromRemote(); }, 0);
+        setTimeout(() => { void pullParentTypeFromRemote(); }, 0);
       }
     });
 
