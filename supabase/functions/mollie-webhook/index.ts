@@ -785,7 +785,34 @@ Deno.serve(async (req) => {
       return webhookAck({ status: payment.status, action: "none" });
     }
 
-    const paymentMetadata = asRecord(payment?.metadata);
+    // ---- IDEMPOTENCY GUARD ----
+    // Mollie can re-deliver the same "paid" event (network retries, manual
+    // re-trigger, double notification). If we've already activated this
+    // exact payment, ack immediately and skip ALL side effects:
+    // no createUser, no profile update, no welcome email, no admin notif.
+    // The DB unique index `premium_activation_log_paid_payment_id_key`
+    // backs this up against concurrent execution.
+    const existingPaid = await findExistingPaidActivation(
+      supabaseUrl,
+      serviceRoleKey,
+      paymentId,
+    );
+    if (existingPaid) {
+      logDebug("Idempotent webhook: payment already activated, skipping", {
+        paymentId,
+        existingUserId: existingPaid.user_id,
+        firstActivatedAt: existingPaid.created_at,
+      });
+      return webhookAck({
+        status: "already_processed",
+        action: "none",
+        reason: "payment_already_activated",
+        payment_id: paymentId,
+        first_activated_at: existingPaid.created_at,
+        user_id: existingPaid.user_id,
+      });
+    }
+
     const userId = firstString(paymentMetadata?.user_id, paymentMetadata?.userId);
     const email = extractPaymentEmail(payment);
 
