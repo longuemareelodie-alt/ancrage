@@ -66,18 +66,23 @@ const Index = () => {
   };
   const scenesKey = parentType === "papa" ? "home.recognize.scenes_papa" : "home.recognize.scenes";
   const baseScenes = t(scenesKey, { returnObjects: true }) as RecognizeScene[];
-  // Holiday overrides: merged on top of the base scenes by index — only the
-  // matin / soir scenes are rewritten, the body / mind scenes stay identical.
-  const holidayOverridesKey =
-    parentType === "papa"
-      ? "home.recognize.scenes_papa_holiday_overrides"
-      : "home.recognize.scenes_holiday_overrides";
-  const holidayOverrides = (t(holidayOverridesKey, { returnObjects: true }) as
-    | Record<string, Partial<RecognizeScene>>
-    | string) || {};
+  // Context overrides (holiday / work): merged on top of the base scenes by
+  // index — only the matin / soir scenes are rewritten, the body / mind
+  // scenes stay identical.
+  const overridesKey =
+    schoolContext === "school"
+      ? null
+      : parentType === "papa"
+        ? `home.recognize.scenes_papa_${schoolContext}_overrides`
+        : `home.recognize.scenes_${schoolContext}_overrides`;
+  const contextOverrides = overridesKey
+    ? ((t(overridesKey, { returnObjects: true }) as
+        | Record<string, Partial<RecognizeScene>>
+        | string) || {})
+    : {};
   const recognizeMainScenes: RecognizeScene[] =
-    schoolContext === "holiday" && typeof holidayOverrides === "object"
-      ? baseScenes.map((scene, i) => ({ ...scene, ...(holidayOverrides[String(i)] ?? {}) }))
+    overridesKey && typeof contextOverrides === "object"
+      ? baseScenes.map((scene, i) => ({ ...scene, ...(contextOverrides[String(i)] ?? {}) }))
       : baseScenes;
 
   // Each "state" maps to the page that delivers its concrete action,
@@ -95,27 +100,15 @@ const Index = () => {
     // with a redirect back to the right page so the transition stays direct.
     return user ? target : `/auth?redirect=${encodeURIComponent(target)}`;
   };
+  const extraText = (slot: "s1" | "s2"): string => {
+    if (schoolContext !== "school") {
+      return t(`home.recognize.${slot}_${schoolContext}`);
+    }
+    return t(parentType === "papa" ? `home.recognize.${slot}_papa` : `home.recognize.${slot}`);
+  };
   const recognizeExtras = [
-    {
-      emoji: t("home.recognize.s1_emoji"),
-      text: t(
-        schoolContext === "holiday"
-          ? "home.recognize.s1_holiday"
-          : parentType === "papa"
-            ? "home.recognize.s1_papa"
-            : "home.recognize.s1",
-      ),
-    },
-    {
-      emoji: t("home.recognize.s2_emoji"),
-      text: t(
-        schoolContext === "holiday"
-          ? "home.recognize.s2_holiday"
-          : parentType === "papa"
-            ? "home.recognize.s2_papa"
-            : "home.recognize.s2",
-      ),
-    },
+    { emoji: t("home.recognize.s1_emoji"), text: extraText("s1") },
+    { emoji: t("home.recognize.s2_emoji"), text: extraText("s2") },
   ];
   type QuickState = {
     state: NonNullable<RecognizeScene["state"]>;
@@ -251,35 +244,37 @@ const Index = () => {
             </p>
           </div>
 
-          {/* Toggle scolarisation — adapte le texte des scènes matin / soir */}
+          {/* Toggle contexte — adapte le texte des scènes matin / soir */}
           <div
             role="group"
             aria-label={t("home.recognize.school_toggle_label")}
-            className="mx-auto flex max-w-xs flex-col items-center gap-2"
+            className="mx-auto flex w-full max-w-md flex-col items-center gap-2"
           >
             <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
               {t("home.recognize.school_toggle_label")}
             </p>
-            <div className="inline-flex rounded-full border border-border bg-card p-1 shadow-sm">
-              {(["school", "holiday"] as const).map((c) => {
+            <div className="grid w-full grid-cols-3 gap-1 rounded-2xl border border-border bg-card p-1 shadow-sm">
+              {(["school", "work", "holiday"] as const).map((c) => {
                 const active = schoolContext === c;
+                const labelKey =
+                  c === "school"
+                    ? "home.recognize.school_toggle_school"
+                    : c === "work"
+                      ? "home.recognize.school_toggle_work"
+                      : "home.recognize.school_toggle_holiday";
                 return (
                   <button
                     key={c}
                     type="button"
                     onClick={() => setSchoolContext(c)}
                     aria-pressed={active}
-                    className={`min-w-[120px] rounded-full px-4 py-1.5 text-sm font-semibold transition-all ${
+                    className={`rounded-xl px-2 py-1.5 text-xs font-semibold leading-tight transition-all ${
                       active
                         ? "bg-primary text-primary-foreground shadow"
                         : "text-foreground/70 hover:text-foreground"
                     }`}
                   >
-                    {t(
-                      c === "school"
-                        ? "home.recognize.school_toggle_school"
-                        : "home.recognize.school_toggle_holiday",
-                    )}
+                    {t(labelKey)}
                   </button>
                 );
               })}

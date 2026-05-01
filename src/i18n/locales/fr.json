@@ -190,7 +190,46 @@
         }
       },
       "s1_holiday": "16h. Tu cries pour un jouet qui dispute. Et tu te détestes dans la seconde qui suit.",
-      "s2_holiday": "Tu fais semblant de profiter. Tu réponds « tout va bien ». Mais à l'intérieur, c'est le vide ou le chaos."
+      "s2_holiday": "Tu fais semblant de profiter. Tu réponds « tout va bien ». Mais à l'intérieur, c'est le vide ou le chaos.",
+      "school_toggle_work": "Avant le boulot",
+      "scenes_work_overrides": {
+        "0": {
+          "tag": "7h12, avant le boulot",
+          "emoji": "☕",
+          "body": "Le réveil a sonné trois fois. Tu n'as pas dormi. Tu enfiles la chemise d'hier, tu lances le café, tu cherches ton badge, tes clés, ton téléphone. Le mail du chef est déjà arrivé à 6h47 — « tu peux gérer ça avant la réunion ? ». Tu sens la chaleur monter dans ta nuque. Tu serres ton mug trop fort. Et là, tu craques — pas sur quelqu'un, sur une porte qui claque, un trousseau qui tombe. Le silence d'après est pire. Dans la voiture (ou le métro), tu refais déjà la réunion dans ta tête, tu te dis « c'est encore raté avant 9h ».",
+          "punch": "Il n'est pas encore 9h, et tu es déjà en dette de calme pour toute la journée.",
+          "stateLabel": "Mode explosion",
+          "cta": "Évacuer en 90 s →"
+        },
+        "3": {
+          "tag": "21h07, le canapé",
+          "emoji": "🌙",
+          "body": "La journée est techniquement finie. Tu as posé le sac, fermé l'ordinateur, regardé le dernier mail « pour info ». Tu t'assois sur le canapé — et ton corps reste dur, comme s'il n'avait pas reçu le message que la journée est finie. Tes épaules sont au même endroit qu'à 7h12 ce matin. Ta mâchoire serre toujours. Tu ouvres ton téléphone « deux minutes » — c'est encore le boulot qui défile. Tu sais qu'il faut aller te coucher, mais te lever, c'est admettre que demain recommence — et que ton corps n'aura pas redescendu entre les deux.",
+          "punch": "Le matin t'a mise en alerte. La soirée n'a rien désarmé. Tu vas dormir avec la même tension dans la nuque — et la reprendre demain à 7h12.",
+          "stateLabel": "Mode panique sourde",
+          "cta": "Redescendre avant la nuit · 60 s →"
+        }
+      },
+      "scenes_papa_work_overrides": {
+        "0": {
+          "tag": "7h12, avant le boulot",
+          "emoji": "☕",
+          "body": "Le réveil a sonné trois fois. Tu n'as pas dormi. Tu enfiles la chemise d'hier, tu lances le café, tu cherches ton badge, tes clés, ton téléphone. Le mail du chef est déjà arrivé à 6h47 — « tu peux gérer ça avant la réunion ? ». Tu sens la chaleur monter dans ta nuque. Tu serres ton mug trop fort. Et là, tu craques — pas sur quelqu'un, sur une porte qui claque, un trousseau qui tombe. Le silence d'après est pire. Dans la voiture (ou le métro), tu refais déjà la réunion dans ta tête, tu te dis « c'est encore raté avant 9h ».",
+          "punch": "Il n'est pas encore 9h, et tu es déjà en dette de calme pour toute la journée.",
+          "stateLabel": "Mode explosion",
+          "cta": "Évacuer en 90 s →"
+        },
+        "3": {
+          "tag": "21h07, le canapé",
+          "emoji": "🌙",
+          "body": "La journée est techniquement finie. Tu as posé le sac, fermé l'ordinateur, regardé le dernier mail « pour info ». Tu t'assois sur le canapé — et ton corps reste dur, comme s'il n'avait pas reçu le message que la journée est finie. Tes épaules sont au même endroit qu'à 7h12 ce matin. Ta mâchoire serre toujours. Tu ouvres ton téléphone « deux minutes » — c'est encore le boulot qui défile. Tu sais qu'il faut aller te coucher, mais te lever, c'est admettre que demain recommence — et que ton corps n'aura pas redescendu entre les deux.",
+          "punch": "Le matin t'a mis en alerte. La soirée n'a rien désarmé. Tu vas dormir avec la même tension dans la nuque — et la reprendre demain à 7h12.",
+          "stateLabel": "Mode panique sourde",
+          "cta": "Redescendre avant la nuit · 60 s →"
+        }
+      },
+      "s1_work": "18h. Tu raccroches sec. Tu claques la porte du bureau. Et tu te détestes dans la seconde qui suit.",
+      "s2_work": "Tu souris en réunion. Tu réponds « ça va, ça avance ». Mais à l'intérieur, c'est le vide ou le chaos."
     },
     "enemy": {
       "title": "Ce n'est pas toi le problème.",

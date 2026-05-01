@@ -1,26 +1,29 @@
 /**
- * School-day vs holiday context for the home micro-scenes.
+ * Daily-context for the home micro-scenes.
  *
- * Local-only preference (no backend sync — context changes often).
- * Default = "school" (preserves the historical voice of the product).
+ * Three values: "school" (avant l'école), "work" (avant le boulot, sans
+ * enfants à gérer le matin) and "holiday" (vacances / week-end).
+ *
+ * Local-only preference (context changes often). Default = "school".
  */
 
 import { useEffect, useState } from "react";
 
-export type SchoolContext = "school" | "holiday";
+export type SchoolContext = "school" | "work" | "holiday";
 
 const STORAGE_KEY = "ancrage_school_context";
 export const DEFAULT_SCHOOL_CONTEXT: SchoolContext = "school";
 
 export const SCHOOL_CONTEXT_LABELS: Record<SchoolContext, string> = {
   school: "Avant l'école",
+  work: "Avant le boulot",
   holiday: "Vacances / week-end",
 };
 
 export function getSchoolContext(): SchoolContext {
   if (typeof window === "undefined") return DEFAULT_SCHOOL_CONTEXT;
   const v = localStorage.getItem(STORAGE_KEY);
-  return v === "holiday" || v === "school" ? v : DEFAULT_SCHOOL_CONTEXT;
+  return v === "holiday" || v === "school" || v === "work" ? v : DEFAULT_SCHOOL_CONTEXT;
 }
 
 export function setSchoolContext(value: SchoolContext) {
@@ -40,7 +43,10 @@ export function useSchoolContext(): [SchoolContext, (v: SchoolContext) => void] 
     };
     window.addEventListener("ancrage-school-context-change", onChange);
     const onStorage = (e: StorageEvent) => {
-      if (e.key === STORAGE_KEY && (e.newValue === "school" || e.newValue === "holiday")) {
+      if (
+        e.key === STORAGE_KEY &&
+        (e.newValue === "school" || e.newValue === "work" || e.newValue === "holiday")
+      ) {
         setValue(e.newValue);
       }
     };
