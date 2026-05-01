@@ -43,7 +43,10 @@ export function useSchoolContext(): [SchoolContext, (v: SchoolContext) => void] 
     };
     window.addEventListener("ancrage-school-context-change", onChange);
     const onStorage = (e: StorageEvent) => {
-      if (e.key === STORAGE_KEY && (e.newValue === "school" || e.newValue === "holiday")) {
+      if (
+        e.key === STORAGE_KEY &&
+        (e.newValue === "school" || e.newValue === "work" || e.newValue === "holiday")
+      ) {
         setValue(e.newValue);
       }
     };
