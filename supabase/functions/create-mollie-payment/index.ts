@@ -1,4 +1,10 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import {
+  PRODUCT_CATALOG,
+  ProductCatalogIntegrityError,
+  assertCatalogIntegrity,
+  type ProductKey,
+} from "../_shared/productCatalog.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
