@@ -105,8 +105,8 @@ describe("validatePaymentAmount", () => {
       productKey: "initiation_7d",
       paidCents: 100,
       currency: "EUR",
-    });
-    if (r.ok) throw new Error("expected mismatch");
+    }) as { ok: false; reason: string; expectedCents: number };
+    expect(r.ok).toBe(false);
     expect(r.expectedCents).toBe(499);
     expect(r.reason).toMatch(/^amount_mismatch:/);
   });
@@ -116,8 +116,8 @@ describe("validatePaymentAmount", () => {
       productKey: "premium",
       paidCents: 3900,
       currency: "USD",
-    });
-    if (r.ok) throw new Error("expected mismatch");
+    }) as { ok: false; reason: string; expectedCents: number };
+    expect(r.ok).toBe(false);
     expect(r.reason).toBe("currency_mismatch:USD");
   });
 
@@ -128,8 +128,8 @@ describe("validatePaymentAmount", () => {
       paidCents: 200,
       discountCents: 299,
       currency: "EUR",
-    });
-    if (r.ok) throw new Error("expected mismatch");
+    }) as { ok: false; reason: string; expectedCents: number };
+    expect(r.ok).toBe(false);
     expect(r.expectedCents).toBe(499);
   });
 
