@@ -93,6 +93,7 @@ const Profil = () => {
   const [savingName, setSavingName] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [actionStyle, setActionStyleState] = useState<ActionStyle>(() => getActionStyle());
+  const [parentType] = useParentType();
 
   useEffect(() => {
     const handler = (e: Event) => {
