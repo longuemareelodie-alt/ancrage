@@ -26,6 +26,7 @@ const Index = () => {
   const { t } = useTranslation();
   const { startPayment, loading: paymentLoading } = useMolliePayment();
   const { navigateWithTransition } = useRouteTransition();
+  const [parentType, setParentType] = useParentType();
 
   const handlePayment = () => {
     if (!user) {
