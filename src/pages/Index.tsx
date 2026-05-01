@@ -65,7 +65,20 @@ const Index = () => {
     cta?: string;
   };
   const scenesKey = parentType === "papa" ? "home.recognize.scenes_papa" : "home.recognize.scenes";
-  const recognizeMainScenes = t(scenesKey, { returnObjects: true }) as RecognizeScene[];
+  const baseScenes = t(scenesKey, { returnObjects: true }) as RecognizeScene[];
+  // Holiday overrides: merged on top of the base scenes by index — only the
+  // matin / soir scenes are rewritten, the body / mind scenes stay identical.
+  const holidayOverridesKey =
+    parentType === "papa"
+      ? "home.recognize.scenes_papa_holiday_overrides"
+      : "home.recognize.scenes_holiday_overrides";
+  const holidayOverrides = (t(holidayOverridesKey, { returnObjects: true }) as
+    | Record<string, Partial<RecognizeScene>>
+    | string) || {};
+  const recognizeMainScenes: RecognizeScene[] =
+    schoolContext === "holiday" && typeof holidayOverrides === "object"
+      ? baseScenes.map((scene, i) => ({ ...scene, ...(holidayOverrides[String(i)] ?? {}) }))
+      : baseScenes;
 
   // Each "state" maps to the page that delivers its concrete action,
   // mirroring the destinations defined in src/data/emotionCTAs.ts.
