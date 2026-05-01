@@ -187,6 +187,28 @@ const Index = () => {
                 <p className="border-l-2 border-primary/40 pl-3 text-sm font-semibold italic leading-snug">
                   {s.punch}
                 </p>
+                {s.state && s.cta && (
+                  <Link
+                    to={sceneCtaHref(s)}
+                    aria-label={`${s.stateLabel ?? s.state} — ${s.cta}`}
+                    className="group mt-2 flex items-center justify-between gap-3 rounded-xl bg-primary/10 hover:bg-primary/15 border border-primary/20 px-4 py-3 transition-colors"
+                  >
+                    <span className="flex flex-col items-start text-left">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-primary/80">
+                        {s.stateLabel ?? s.state}
+                      </span>
+                      <span className="text-sm font-semibold text-primary leading-tight">
+                        {s.cta}
+                      </span>
+                    </span>
+                    <span
+                      aria-hidden
+                      className="text-primary transition-transform group-hover:translate-x-0.5"
+                    >
+                      →
+                    </span>
+                  </Link>
+                )}
               </article>
             ))}
           </div>
