@@ -147,6 +147,11 @@ const PaymentPending = () => {
       return;
     }
 
+    // Detect "initiation_7d" flow via the ?return= query param injected at checkout.
+    const params = new URLSearchParams(window.location.search);
+    const returnTo = params.get("return");
+    const isInitiationFlow = returnTo === "/initiation-7-jours";
+
     cancelled.current = false;
     let attempt = 0;
 
@@ -160,7 +165,7 @@ const PaymentPending = () => {
         () =>
           supabase
             .from("profiles")
-            .select("is_premium")
+            .select("is_premium, has_initiation_access")
             .eq("user_id", user.id)
             .maybeSingle(),
         { maxAttempts: 2, baseDelayMs: 400, timeoutMs: 6000 },
@@ -168,12 +173,23 @@ const PaymentPending = () => {
 
       if (cancelled.current) return;
 
-      // Confirm ONLY when the profile row exists AND is_premium is strictly true.
-      if (!error && data && data.is_premium === true) {
+      // Confirmation conditions:
+      //  - Premium flow: is_premium === true
+      //  - Initiation flow: has_initiation_access === true (or is_premium covers everything)
+      const confirmed = isInitiationFlow
+        ? data?.has_initiation_access === true || data?.is_premium === true
+        : data?.is_premium === true;
+
+      if (!error && data && confirmed) {
         setStatus("confirmed");
         updateLastState("confirmed");
         setTimeout(() => {
-          if (!cancelled.current) navigate("/payment-success", { replace: true });
+          if (cancelled.current) return;
+          if (isInitiationFlow) {
+            navigate("/initiation-7-jours", { replace: true });
+          } else {
+            navigate("/payment-success", { replace: true });
+          }
         }, 1200);
         return;
       }
