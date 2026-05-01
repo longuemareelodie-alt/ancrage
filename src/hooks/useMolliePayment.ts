@@ -9,6 +9,12 @@ interface StartPaymentOptions {
   product?: "premium" | "initiation_7d";
   /** Override the redirect URL after Mollie checkout. */
   redirectUrl?: string;
+  /**
+   * Email to use when the visitor is NOT authenticated (guest checkout).
+   * Required when `user` is null. Ignored when a session exists — the
+   * authed email is always used in that case.
+   */
+  guestEmail?: string;
 }
 
 /** Products that do NOT accept promo codes (kept in sync with the edge function catalog). */
@@ -21,18 +27,24 @@ const PRODUCT_LABELS: Record<NonNullable<StartPaymentOptions["product"]>, string
   initiation_7d: "l'initiation 7 jours (4,99 €)",
 };
 
+const isValidEmail = (v: string) =>
+  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) && v.trim().length <= 254;
+
 export const useMolliePayment = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
 
   const startPayment = async (options: StartPaymentOptions = {}) => {
-    if (!user) {
-      toast.error("Tu dois être connectée pour accéder au paiement.");
-      return;
-    }
-
     const product = options.product ?? "premium";
     const promoCode = options.promoCode?.trim() || null;
+    const guestEmail = options.guestEmail?.trim().toLowerCase() || null;
+
+    // Guest checkout requires a valid email — we can't create the account
+    // server-side without one. Authed users always use their session email.
+    if (!user && (!guestEmail || !isValidEmail(guestEmail))) {
+      toast.error("Indique ton email pour démarrer le paiement.");
+      return;
+    }
 
     // Front-side guard: refuse promo codes on products that don't support them
     // (mirrors the server-side rule in create-mollie-payment).
@@ -53,6 +65,8 @@ export const useMolliePayment = () => {
               options.redirectUrl ?? `${window.location.origin}/payment-pending`,
             promoCode,
             product,
+            // Server ignores guestEmail when a session is present.
+            guestEmail: user ? undefined : guestEmail,
           },
         }
       );
@@ -71,6 +85,11 @@ export const useMolliePayment = () => {
 
       if (structuredError === "invalid_promo_code") {
         toast.error("Code promo invalide.");
+        return;
+      }
+
+      if (structuredError === "guest_email_required") {
+        toast.error("Email invalide. Vérifie l'orthographe.");
         return;
       }
 
