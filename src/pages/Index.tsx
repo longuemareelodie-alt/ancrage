@@ -3,7 +3,7 @@ import CTAButton from "@/components/CTAButton";
 import Footer from "@/components/Footer";
 import HomeFAQ from "@/components/HomeFAQ";
 import { motion } from "framer-motion";
-import { Check, User, Lock } from "lucide-react";
+import { Check, User, Lock, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useRouteTransition } from "@/components/RouteTransition";
 import { useTranslation } from "react-i18next";
@@ -11,6 +11,11 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
 import { useParentType } from "@/hooks/useParentType";
 import { useSchoolContext } from "@/lib/schoolContext";
+import {
+  forgetLastQuickState,
+  rememberLastQuickState,
+  useLastQuickState,
+} from "@/lib/lastQuickState";
 import logo from "@/assets/logo-ancrage.png";
 import avatarCamille from "@/assets/avatar-camille.jpg";
 import avatarInes from "@/assets/avatar-ines.jpg";
@@ -29,6 +34,7 @@ const Index = () => {
   const { navigateWithTransition } = useRouteTransition();
   const [parentType, setParentType] = useParentType();
   const [schoolContext, setSchoolContext] = useSchoolContext();
+  const lastQuickState = useLastQuickState();
 
   const handlePayment = () => {
     if (!user) {
@@ -303,7 +309,19 @@ const Index = () => {
                 {s.state && s.cta && (
                   <button
                     type="button"
-                    onClick={() => navigateWithTransition(sceneCtaHref(s))}
+                    onClick={() => {
+                      if (s.state) {
+                        rememberLastQuickState({
+                          state: s.state,
+                          label: s.stateLabel ?? s.state,
+                          emoji: s.emoji,
+                          hint: s.cta ?? "",
+                          href: sceneCtaHref(s),
+                          source: "scene",
+                        });
+                      }
+                      navigateWithTransition(sceneCtaHref(s));
+                    }}
                     aria-label={`${s.stateLabel ?? s.state} — ${s.cta}`}
                     className="group mt-2 flex w-full items-center justify-between gap-3 rounded-xl bg-primary/10 hover:bg-primary/15 active:scale-[0.98] border border-primary/20 px-4 py-3 transition-all"
                   >
@@ -353,12 +371,72 @@ const Index = () => {
                 {t("home.recognize.quick_states_hint")}
               </p>
             </div>
+
+            {/* Rappel — propose le dernier raccourci sélectionné */}
+            {lastQuickState && (
+              <div className="relative rounded-2xl border border-primary/30 bg-primary/10 p-4 shadow-sm">
+                <button
+                  type="button"
+                  onClick={forgetLastQuickState}
+                  aria-label={t("home.recognize.last_state_dismiss")}
+                  className="absolute right-2 top-2 rounded-full p-1 text-foreground/60 hover:bg-primary/15 hover:text-foreground transition-colors"
+                >
+                  <X className="h-3.5 w-3.5" aria-hidden />
+                </button>
+                <p className="text-[11px] font-bold uppercase tracking-wider text-primary">
+                  {t("home.recognize.last_state_title")}
+                </p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {t("home.recognize.last_state_hint")}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    rememberLastQuickState({
+                      state: lastQuickState.state,
+                      label: lastQuickState.label,
+                      emoji: lastQuickState.emoji,
+                      hint: lastQuickState.hint,
+                      href: lastQuickState.href,
+                      source: lastQuickState.source,
+                    });
+                    navigateWithTransition(lastQuickState.href);
+                  }}
+                  className="mt-3 flex w-full items-center justify-between gap-3 rounded-xl bg-primary text-primary-foreground hover:opacity-90 active:scale-[0.98] px-4 py-3 transition-all"
+                  aria-label={`${t("home.recognize.last_state_cta")} — ${lastQuickState.label}`}
+                >
+                  <span className="flex items-center gap-2 text-left">
+                    <span className="text-lg leading-none" aria-hidden>{lastQuickState.emoji}</span>
+                    <span className="flex flex-col">
+                      <span className="text-sm font-semibold leading-tight">{lastQuickState.label}</span>
+                      {lastQuickState.hint && (
+                        <span className="text-[11px] opacity-90 leading-tight">{lastQuickState.hint}</span>
+                      )}
+                    </span>
+                  </span>
+                  <span className="text-xs font-semibold">
+                    {t("home.recognize.last_state_cta")} →
+                  </span>
+                </button>
+              </div>
+            )}
+
             <div className="grid grid-cols-2 gap-2.5">
               {quickStates.map((q) => (
                 <button
                   key={q.state}
                   type="button"
-                  onClick={() => navigateWithTransition(quickStateHref(q.state))}
+                  onClick={() => {
+                    rememberLastQuickState({
+                      state: q.state,
+                      label: q.label,
+                      emoji: q.emoji,
+                      hint: q.hint,
+                      href: quickStateHref(q.state),
+                      source: "quick",
+                    });
+                    navigateWithTransition(quickStateHref(q.state));
+                  }}
                   aria-label={`${q.label} — ${q.hint}`}
                   className="group flex flex-col items-start gap-1 rounded-xl border border-primary/20 bg-primary/5 hover:bg-primary/10 active:scale-[0.98] px-3 py-3 text-left transition-all"
                 >
