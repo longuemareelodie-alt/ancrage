@@ -100,27 +100,15 @@ const Index = () => {
     // with a redirect back to the right page so the transition stays direct.
     return user ? target : `/auth?redirect=${encodeURIComponent(target)}`;
   };
+  const extraText = (slot: "s1" | "s2"): string => {
+    if (schoolContext !== "school") {
+      return t(`home.recognize.${slot}_${schoolContext}`);
+    }
+    return t(parentType === "papa" ? `home.recognize.${slot}_papa` : `home.recognize.${slot}`);
+  };
   const recognizeExtras = [
-    {
-      emoji: t("home.recognize.s1_emoji"),
-      text: t(
-        schoolContext === "holiday"
-          ? "home.recognize.s1_holiday"
-          : parentType === "papa"
-            ? "home.recognize.s1_papa"
-            : "home.recognize.s1",
-      ),
-    },
-    {
-      emoji: t("home.recognize.s2_emoji"),
-      text: t(
-        schoolContext === "holiday"
-          ? "home.recognize.s2_holiday"
-          : parentType === "papa"
-            ? "home.recognize.s2_papa"
-            : "home.recognize.s2",
-      ),
-    },
+    { emoji: t("home.recognize.s1_emoji"), text: extraText("s1") },
+    { emoji: t("home.recognize.s2_emoji"), text: extraText("s2") },
   ];
   type QuickState = {
     state: NonNullable<RecognizeScene["state"]>;
