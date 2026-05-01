@@ -111,11 +111,34 @@
     box-shadow: 0 0 0 2px hsl(142 50% 60% / 0.25), 0 8px 24px -8px hsl(142 40% 50% / 0.18);
   }
 
+  /* Réduction de mouvement : OS-level (`prefers-reduced-motion`) ou heuristique
+     low-end mobile via `html.no-deco-motion` (posée au démarrage par
+     `src/lib/motionPrefs.ts`). Les deux paths désactivent les animations
+     décoratives qui causent des repaints continus (box-shadow animée, etc.)
+     et raccourcissent les transitions de hover/press qui peuvent saccader. */
   @media (prefers-reduced-motion: reduce) {
     .calm-breathe,
     .safe-confirm {
       animation: none !important;
     }
+    .calm-press,
+    .calm-hover {
+      transition: none !important;
+    }
+  }
+
+  :root.no-deco-motion .calm-breathe,
+  :root.no-deco-motion .safe-confirm {
+    animation: none !important;
+  }
+  :root.no-deco-motion .calm-press,
+  :root.no-deco-motion .calm-hover {
+    /* Garde un retour visuel minimal (100ms) pour le feedback tactile sans
+       déclencher d'animation longue de box-shadow qui repaint en continu. */
+    transition-duration: 0.1s !important;
+  }
+  :root.no-deco-motion .calm-hover:hover {
+    box-shadow: none !important;
   }
 }
 
