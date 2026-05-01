@@ -503,6 +503,9 @@ const Profil = () => {
                 <StyleSyncStatus className="mt-2" showAction />
               </div>
 
+              {/* Profil parental — personnalise le ton des micro-scènes */}
+              <ParentTypeCard />
+
               {/* Préférences audio (guidage vocal) */}
               <div className="mt-4">
                 <p className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
