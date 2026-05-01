@@ -378,10 +378,10 @@ const Profil = () => {
                           className={`flex flex-col items-center gap-1 rounded-xl p-2.5 text-center transition-all ${
                             earned ? "bg-primary/10" : "bg-secondary/30 opacity-40 grayscale"
                           }`}
-                          title={require && false ? "" : ""}
+                          title={parentize(badge.description, parentType)}
                         >
                           <span className="text-xl">{badge.emoji}</span>
-                          <span className="text-[9px] font-medium leading-tight">{require && false ? "" : ""}</span>
+                          <span className="text-[9px] font-medium leading-tight">{parentize(badge.label, parentType)}</span>
                         </div>
                       );
                     })}
