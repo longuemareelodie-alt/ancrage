@@ -13,6 +13,7 @@ import PageTransition from "@/components/PageTransition";
 import BottomNav from "@/components/BottomNav";
 import TopNav from "@/components/TopNav";
 import ScrollToHash from "@/components/ScrollToHash";
+import { RouteTransitionProvider } from "@/components/RouteTransition";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import Emotions from "./pages/Emotions";
@@ -74,7 +75,7 @@ const AnimatedRoutes = () => {
   const location = useLocation();
 
   return (
-    <>
+    <RouteTransitionProvider>
       <ScrollToHash />
       <TopNav />
       <AnimatePresence mode="wait">
@@ -121,7 +122,7 @@ const AnimatedRoutes = () => {
         </RoutesWrapper>
       </AnimatePresence>
       <BottomNav />
-    </>
+    </RouteTransitionProvider>
   );
 };
 
