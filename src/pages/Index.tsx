@@ -10,6 +10,7 @@ import { useTranslation } from "react-i18next";
 import { useAuth } from "@/contexts/AuthContext";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
 import { useParentType } from "@/hooks/useParentType";
+import { useSchoolContext } from "@/lib/schoolContext";
 import logo from "@/assets/logo-ancrage.png";
 import avatarCamille from "@/assets/avatar-camille.jpg";
 import avatarInes from "@/assets/avatar-ines.jpg";
@@ -27,6 +28,7 @@ const Index = () => {
   const { startPayment, loading: paymentLoading } = useMolliePayment();
   const { navigateWithTransition } = useRouteTransition();
   const [parentType, setParentType] = useParentType();
+  const [schoolContext, setSchoolContext] = useSchoolContext();
 
   const handlePayment = () => {
     if (!user) {
@@ -63,7 +65,20 @@ const Index = () => {
     cta?: string;
   };
   const scenesKey = parentType === "papa" ? "home.recognize.scenes_papa" : "home.recognize.scenes";
-  const recognizeMainScenes = t(scenesKey, { returnObjects: true }) as RecognizeScene[];
+  const baseScenes = t(scenesKey, { returnObjects: true }) as RecognizeScene[];
+  // Holiday overrides: merged on top of the base scenes by index — only the
+  // matin / soir scenes are rewritten, the body / mind scenes stay identical.
+  const holidayOverridesKey =
+    parentType === "papa"
+      ? "home.recognize.scenes_papa_holiday_overrides"
+      : "home.recognize.scenes_holiday_overrides";
+  const holidayOverrides = (t(holidayOverridesKey, { returnObjects: true }) as
+    | Record<string, Partial<RecognizeScene>>
+    | string) || {};
+  const recognizeMainScenes: RecognizeScene[] =
+    schoolContext === "holiday" && typeof holidayOverrides === "object"
+      ? baseScenes.map((scene, i) => ({ ...scene, ...(holidayOverrides[String(i)] ?? {}) }))
+      : baseScenes;
 
   // Each "state" maps to the page that delivers its concrete action,
   // mirroring the destinations defined in src/data/emotionCTAs.ts.
@@ -81,8 +96,26 @@ const Index = () => {
     return user ? target : `/auth?redirect=${encodeURIComponent(target)}`;
   };
   const recognizeExtras = [
-    { emoji: t("home.recognize.s1_emoji"), text: t(parentType === "papa" ? "home.recognize.s1_papa" : "home.recognize.s1") },
-    { emoji: t("home.recognize.s2_emoji"), text: t(parentType === "papa" ? "home.recognize.s2_papa" : "home.recognize.s2") },
+    {
+      emoji: t("home.recognize.s1_emoji"),
+      text: t(
+        schoolContext === "holiday"
+          ? "home.recognize.s1_holiday"
+          : parentType === "papa"
+            ? "home.recognize.s1_papa"
+            : "home.recognize.s1",
+      ),
+    },
+    {
+      emoji: t("home.recognize.s2_emoji"),
+      text: t(
+        schoolContext === "holiday"
+          ? "home.recognize.s2_holiday"
+          : parentType === "papa"
+            ? "home.recognize.s2_papa"
+            : "home.recognize.s2",
+      ),
+    },
   ];
   type QuickState = {
     state: NonNullable<RecognizeScene["state"]>;
@@ -216,6 +249,41 @@ const Index = () => {
             <p className="text-[11px] italic text-muted-foreground">
               {t("home.recognize.profile_toggle_hint")}
             </p>
+          </div>
+
+          {/* Toggle scolarisation — adapte le texte des scènes matin / soir */}
+          <div
+            role="group"
+            aria-label={t("home.recognize.school_toggle_label")}
+            className="mx-auto flex max-w-xs flex-col items-center gap-2"
+          >
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+              {t("home.recognize.school_toggle_label")}
+            </p>
+            <div className="inline-flex rounded-full border border-border bg-card p-1 shadow-sm">
+              {(["school", "holiday"] as const).map((c) => {
+                const active = schoolContext === c;
+                return (
+                  <button
+                    key={c}
+                    type="button"
+                    onClick={() => setSchoolContext(c)}
+                    aria-pressed={active}
+                    className={`min-w-[120px] rounded-full px-4 py-1.5 text-sm font-semibold transition-all ${
+                      active
+                        ? "bg-primary text-primary-foreground shadow"
+                        : "text-foreground/70 hover:text-foreground"
+                    }`}
+                  >
+                    {t(
+                      c === "school"
+                        ? "home.recognize.school_toggle_school"
+                        : "home.recognize.school_toggle_holiday",
+                    )}
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           {/* 3 scènes principales — corps / tête / soir */}
