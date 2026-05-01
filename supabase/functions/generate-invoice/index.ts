@@ -6,10 +6,15 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
+// Human-friendly labels keyed by either subscription.plan (legacy) or
+// product code stored in premium_activation_log.raw.product.
 const planLabels: Record<string, string> = {
   monthly: "Abonnement mensuel",
   yearly: "Abonnement annuel",
   one_time: "Accès unique",
+  initiation_7d: "ANCRAGE — Initiation 7 jours",
+  premium: "ANCRAGE — Accès complet",
+  lifetime: "ANCRAGE — Accès complet",
 };
 
 // Simple PDF builder - generates a valid PDF without external libs
@@ -170,50 +175,97 @@ Deno.serve(async (req) => {
       });
     }
 
-    const { subscriptionId } = await req.json();
-    if (!subscriptionId) {
-      return new Response(JSON.stringify({ error: "Missing subscriptionId" }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+    const body = await req.json().catch(() => ({}));
+    const { subscriptionId, paymentId } = body as {
+      subscriptionId?: string;
+      paymentId?: string;
+    };
+
+    if (!subscriptionId && !paymentId) {
+      return new Response(
+        JSON.stringify({ error: "Missing subscriptionId or paymentId" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
     }
 
     const supabase = createClient(supabaseUrl, serviceRoleKey);
 
-    // Fetch subscription (verify ownership)
-    const { data: sub, error: subErr } = await supabase
-      .from("subscriptions")
-      .select("*")
-      .eq("id", subscriptionId)
-      .eq("user_id", user.id)
-      .single();
-
-    if (subErr || !sub) {
-      return new Response(JSON.stringify({ error: "Subscription not found" }), {
-        status: 404,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    // Fetch profile
+    // Fetch profile (used by both branches)
     const { data: profile } = await supabase
       .from("profiles")
       .select("first_name, email")
       .eq("user_id", user.id)
       .single();
 
-    const date = new Date(sub.created_at);
-    const formattedDate = date.toLocaleDateString("fr-FR", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    });
+    let invoiceNumber: string;
+    let formattedDate: string;
+    let plan: string;
+    let amountStr: string;
+    let fileSlug: string;
+
+    const formatDate = (d: Date) =>
+      d.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+
+    if (paymentId) {
+      // ----- Mollie payment path (initiation_7d, premium, ...) -----
+      // Find the activation log for this payment AND verify the user owns it.
+      const { data: log, error: logErr } = await supabase
+        .from("premium_activation_log")
+        .select("id, user_id, payment_id, amount, status, raw, created_at")
+        .eq("payment_id", paymentId)
+        .eq("user_id", user.id)
+        .in("status", ["paid", "already_active"])
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (logErr || !log) {
+        return new Response(
+          JSON.stringify({ error: "Payment not found for this account" }),
+          { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        );
+      }
+
+      const product =
+        (log.raw && typeof log.raw === "object" && (log.raw as any).product) || "premium";
+      const date = new Date(log.created_at);
+      formattedDate = formatDate(date);
+      plan = String(product);
+      // Initiation 7d is fixed at 4,99 €. Fall back to log.amount otherwise.
+      const cents =
+        plan === "initiation_7d" ? 499 : (typeof log.amount === "number" ? log.amount : 499);
+      amountStr = (cents / 100).toFixed(2).replace(".", ",");
+      invoiceNumber = `ANC-${date.getFullYear()}-${paymentId.replace(/^tr_/, "").slice(0, 10).toUpperCase()}`;
+      fileSlug = paymentId.replace(/^tr_/, "").slice(0, 10);
+    } else {
+      // ----- Legacy subscriptions path -----
+      const { data: sub, error: subErr } = await supabase
+        .from("subscriptions")
+        .select("*")
+        .eq("id", subscriptionId!)
+        .eq("user_id", user.id)
+        .single();
+
+      if (subErr || !sub) {
+        return new Response(JSON.stringify({ error: "Subscription not found" }), {
+          status: 404,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      const date = new Date(sub.created_at);
+      formattedDate = formatDate(date);
+      plan = sub.plan;
+      amountStr = (sub.amount / 100).toFixed(2).replace(".", ",");
+      invoiceNumber = `ANC-${date.getFullYear()}-${sub.id.slice(0, 8).toUpperCase()}`;
+      fileSlug = sub.id.slice(0, 8);
+    }
 
     const pdfBytes = buildInvoicePDF({
-      invoiceNumber: `ANC-${date.getFullYear()}-${sub.id.slice(0, 8).toUpperCase()}`,
+      invoiceNumber,
       date: formattedDate,
-      plan: sub.plan,
-      amount: (sub.amount / 100).toFixed(2).replace(".", ","),
+      plan,
+      amount: amountStr,
       email: profile?.email || user.email || "",
       firstName: profile?.first_name || "",
     });
@@ -223,7 +275,7 @@ Deno.serve(async (req) => {
       headers: {
         ...corsHeaders,
         "Content-Type": "application/pdf",
-        "Content-Disposition": `attachment; filename="facture-ancrage-${sub.id.slice(0, 8)}.pdf"`,
+        "Content-Disposition": `attachment; filename="facture-ancrage-${fileSlug}.pdf"`,
       },
     });
   } catch (err) {

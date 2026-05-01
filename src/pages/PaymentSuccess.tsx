@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { CheckCircle, Sparkles, ArrowRight } from "lucide-react";
+import { CheckCircle, Sparkles, ArrowRight, Download, Loader2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
 import logo from "@/assets/logo-ancrage.png";
 import confetti from "canvas-confetti";
 
@@ -11,6 +12,9 @@ const PaymentSuccess = () => {
   const { user } = useAuth();
   const [firstName, setFirstName] = useState("");
   const [hasPendingCheckin, setHasPendingCheckin] = useState(false);
+  const [latestPaymentId, setLatestPaymentId] = useState<string | null>(null);
+  const [latestProduct, setLatestProduct] = useState<string | null>(null);
+  const [downloadingInvoice, setDownloadingInvoice] = useState(false);
 
   useEffect(() => {
     confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
@@ -43,7 +47,69 @@ const PaymentSuccess = () => {
       .then(({ data }) => {
         if (data?.first_name) setFirstName(data.first_name);
       });
+
+    // Find this user's most recent successful payment so we can offer
+    // a downloadable invoice. Scoped by user_id (RLS-safe) and limited to
+    // payment outcomes (paid / already_active).
+    supabase
+      .from("premium_activation_log")
+      .select("payment_id, raw")
+      .eq("user_id", user.id)
+      .in("status", ["paid", "already_active"])
+      .not("payment_id", "is", null)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (data?.payment_id) {
+          setLatestPaymentId(data.payment_id);
+          const product =
+            (data.raw && typeof data.raw === "object" && (data.raw as any).product) || null;
+          setLatestProduct(product);
+        }
+      });
   }, [user]);
+
+  const handleDownloadInvoice = async () => {
+    if (!latestPaymentId || downloadingInvoice) return;
+    setDownloadingInvoice(true);
+    try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const accessToken = sessionData.session?.access_token;
+      if (!accessToken) throw new Error("Session expirée");
+
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
+      const res = await fetch(`${supabaseUrl}/functions/v1/generate-invoice`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({ paymentId: latestPaymentId }),
+      });
+      if (!res.ok) {
+        const errBody = await res.json().catch(() => ({}));
+        throw new Error(errBody?.error || `Erreur ${res.status}`);
+      }
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `facture-ancrage-${latestPaymentId.replace(/^tr_/, "").slice(0, 10)}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      toast({
+        title: "Téléchargement impossible",
+        description: e instanceof Error ? e.message : "Réessaie dans un instant.",
+        variant: "destructive",
+      });
+    } finally {
+      setDownloadingInvoice(false);
+    }
+  };
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background px-6">
@@ -111,6 +177,32 @@ const PaymentSuccess = () => {
             <ArrowRight className="h-4 w-4" />
           </Link>
         </motion.div>
+
+        {latestPaymentId && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1, duration: 0.5 }}
+            className="space-y-2"
+          >
+            <button
+              type="button"
+              onClick={handleDownloadInvoice}
+              disabled={downloadingInvoice}
+              className="inline-flex items-center justify-center gap-2 rounded-lg border border-border bg-card px-4 py-2 text-sm font-medium text-foreground hover:bg-accent disabled:opacity-60"
+            >
+              {downloadingInvoice ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Download className="h-4 w-4" />
+              )}
+              {latestProduct === "initiation_7d"
+                ? "Télécharger ma facture · Initiation 7 jours · 4,99 €"
+                : "Télécharger ma facture"}
+            </button>
+            <p className="text-[11px] text-muted-foreground">PDF · ANCRAGE</p>
+          </motion.div>
+        )}
 
         <p className="text-xs text-muted-foreground">
           Ton corps peut enfin redescendre. Tu es au bon endroit.
