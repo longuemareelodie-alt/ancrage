@@ -12,18 +12,16 @@ const jsonResponse = (payload: unknown, status = 200) =>
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
 
+// Basic email validator (RFC 5322 lite — sufficient for guest checkout)
+const isValidEmail = (v: unknown): v is string =>
+  typeof v === "string" && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) && v.trim().length <= 254;
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
 
   try {
-    // Authenticate the user
-    const authHeader = req.headers.get("authorization");
-    if (!authHeader) {
-      return jsonResponse({ error: "Missing authorization header" }, 401);
-    }
-
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
     const mollieKey = Deno.env.get("MOLLIE_API_KEY");
@@ -33,24 +31,30 @@ Deno.serve(async (req) => {
       return jsonResponse({ error: "Server config error" }, 500);
     }
 
-    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-      global: { headers: { Authorization: authHeader } },
-    });
-
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return jsonResponse({ error: "Unauthorized" }, 401);
+    // Try to authenticate the caller — but auth is OPTIONAL (guest checkout allowed).
+    // If no Authorization header or invalid token, we treat the call as a guest.
+    let authedUser: { id: string; email: string | null } | null = null;
+    const authHeader = req.headers.get("authorization");
+    if (authHeader && authHeader.toLowerCase() !== "bearer ") {
+      try {
+        const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+          global: { headers: { Authorization: authHeader } },
+        });
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          authedUser = { id: user.id, email: user.email ?? null };
+        }
+      } catch (e) {
+        console.warn("Optional auth lookup failed (treating as guest):", (e as Error)?.message);
+      }
     }
 
-    // Parse optional redirect URL + promo code + product from request body
+    // Parse body: redirectUrl, promoCode, product, and (for guests) guestEmail
     let redirectUrl = "https://ancrage.lovable.app/dashboard?payment=success";
     let webhookUrl = `${supabaseUrl}/functions/v1/mollie-webhook`;
     let rawPromoCode: string | null = null;
     let rawProduct: string | null = null;
+    let guestEmail: string | null = null;
 
     try {
       const body = await req.json();
@@ -58,6 +62,7 @@ Deno.serve(async (req) => {
       if (body?.webhookUrl) webhookUrl = body.webhookUrl;
       if (typeof body?.promoCode === "string") rawPromoCode = body.promoCode;
       if (typeof body?.product === "string") rawProduct = body.product;
+      if (typeof body?.guestEmail === "string") guestEmail = body.guestEmail.trim().toLowerCase();
     } catch {
       // No body or invalid JSON — use defaults
     }
