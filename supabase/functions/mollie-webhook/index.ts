@@ -1019,6 +1019,42 @@ Deno.serve(async (req) => {
     const isInitiationProduct =
       rawProduct === "initiation_7d" || rawType === "initiation_7d";
 
+    // ---- Server-authoritative amount validation ----
+    // Refuse activation if Mollie's actual charged amount does not match the
+    // catalog price for the declared product (accounting for any recorded
+    // promo discount). This catches metadata tampering and partial refunds.
+    {
+      const productKey: ProductKey = isInitiationProduct ? "initiation_7d" : "premium";
+      const discountCents = Number(paymentMetadata?.discount_cents ?? 0);
+      const amountCheck = validatePaymentAmount({
+        productKey,
+        paidCents: amountCents,
+        discountCents: Number.isFinite(discountCents) ? discountCents : 0,
+        currency: payment?.amount?.currency ?? null,
+      });
+      if (!amountCheck.ok) {
+        logError("Refusing activation: amount mismatch", new Error(amountCheck.reason), {
+          paymentId,
+          productKey,
+          paidCents: amountCents,
+          expectedCents: amountCheck.expectedCents,
+          metadata: paymentMetadata,
+        });
+        await logActivation(supabaseUrl, serviceRoleKey, {
+          user_id: profile.user_id,
+          payment_id: paymentId,
+          status: "error",
+          amount: amountCents,
+          message: `amount_validation_failed: ${amountCheck.reason}`,
+        });
+        return webhookAck({
+          status: "error",
+          error: "amount_validation_failed",
+          reason: amountCheck.reason,
+        });
+      }
+    }
+
     if (isInitiationProduct) {
       // ---- Initiation 7d activation path ----
       if (profile.has_initiation_access) {
