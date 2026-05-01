@@ -106,11 +106,9 @@ describe("validatePaymentAmount", () => {
       paidCents: 100,
       currency: "EUR",
     });
-    expect(r.ok).toBe(false);
-    if (!r.ok) {
-      expect(r.expectedCents).toBe(499);
-      expect(r.reason).toMatch(/^amount_mismatch:/);
-    }
+    if (r.ok) throw new Error("expected mismatch");
+    expect(r.expectedCents).toBe(499);
+    expect(r.reason).toMatch(/^amount_mismatch:/);
   });
 
   it("rejects a currency switch", () => {
@@ -119,8 +117,8 @@ describe("validatePaymentAmount", () => {
       paidCents: 3900,
       currency: "USD",
     });
-    expect(r.ok).toBe(false);
-    if (!r.ok) expect(r.reason).toBe("currency_mismatch:USD");
+    if (r.ok) throw new Error("expected mismatch");
+    expect(r.reason).toBe("currency_mismatch:USD");
   });
 
   it("ignores discount on a product that disallows promos", () => {
@@ -131,8 +129,8 @@ describe("validatePaymentAmount", () => {
       discountCents: 299,
       currency: "EUR",
     });
-    expect(r.ok).toBe(false);
-    if (!r.ok) expect(r.expectedCents).toBe(499);
+    if (r.ok) throw new Error("expected mismatch");
+    expect(r.expectedCents).toBe(499);
   });
 
   it("applies discount on a promo-eligible product", () => {
