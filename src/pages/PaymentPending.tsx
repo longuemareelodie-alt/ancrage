@@ -452,9 +452,21 @@ const PaymentPending = () => {
                   <AlertCircle className="h-8 w-8 text-destructive" />
                 </div>
                 <div className="space-y-3">
-                  <h1 className="text-xl font-bold">{t("payment_pending.error.title")}</h1>
+                  <h1 className="text-xl font-bold">
+                    {isInitiationFlow
+                      ? t(
+                          "payment_pending.error.title_initiation",
+                          "L'activation des 7 jours prend plus de temps que prévu",
+                        )
+                      : t("payment_pending.error.title")}
+                  </h1>
                   <p className="text-sm text-muted-foreground leading-relaxed">
-                    {t("payment_pending.error.text")}
+                    {isInitiationFlow
+                      ? t(
+                          "payment_pending.error.text_initiation",
+                          "Ton paiement (4,99 €) n'est pas perdu. Dès que la banque le valide, ton accès aux 7 jours d'ancrage s'ouvre automatiquement.",
+                        )
+                      : t("payment_pending.error.text")}
                   </p>
                   <div className="rounded-xl border bg-muted/30 p-4 text-left">
                     <p className="mb-2 text-xs font-semibold text-foreground">
