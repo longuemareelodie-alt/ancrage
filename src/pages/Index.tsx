@@ -5,6 +5,7 @@ import HomeFAQ from "@/components/HomeFAQ";
 import { motion } from "framer-motion";
 import { Check, User, Lock } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useRouteTransition } from "@/components/RouteTransition";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/contexts/AuthContext";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
@@ -23,6 +24,7 @@ const Index = () => {
   const { user } = useAuth();
   const { t } = useTranslation();
   const { startPayment, loading: paymentLoading } = useMolliePayment();
+  const { navigateWithTransition } = useRouteTransition();
 
   const handlePayment = () => {
     if (!user) {
@@ -199,10 +201,11 @@ const Index = () => {
                   {s.punch}
                 </p>
                 {s.state && s.cta && (
-                  <Link
-                    to={sceneCtaHref(s)}
+                  <button
+                    type="button"
+                    onClick={() => navigateWithTransition(sceneCtaHref(s))}
                     aria-label={`${s.stateLabel ?? s.state} — ${s.cta}`}
-                    className="group mt-2 flex items-center justify-between gap-3 rounded-xl bg-primary/10 hover:bg-primary/15 border border-primary/20 px-4 py-3 transition-colors"
+                    className="group mt-2 flex w-full items-center justify-between gap-3 rounded-xl bg-primary/10 hover:bg-primary/15 active:scale-[0.98] border border-primary/20 px-4 py-3 transition-all"
                   >
                     <span className="flex flex-col items-start text-left">
                       <span className="text-[10px] font-bold uppercase tracking-wider text-primary/80">
@@ -218,7 +221,7 @@ const Index = () => {
                     >
                       →
                     </span>
-                  </Link>
+                  </button>
                 )}
               </article>
             ))}
@@ -252,11 +255,12 @@ const Index = () => {
             </div>
             <div className="grid grid-cols-2 gap-2.5">
               {quickStates.map((q) => (
-                <Link
+                <button
                   key={q.state}
-                  to={quickStateHref(q.state)}
+                  type="button"
+                  onClick={() => navigateWithTransition(quickStateHref(q.state))}
                   aria-label={`${q.label} — ${q.hint}`}
-                  className="group flex flex-col items-start gap-1 rounded-xl border border-primary/20 bg-primary/5 hover:bg-primary/10 px-3 py-3 text-left transition-colors"
+                  className="group flex flex-col items-start gap-1 rounded-xl border border-primary/20 bg-primary/5 hover:bg-primary/10 active:scale-[0.98] px-3 py-3 text-left transition-all"
                 >
                   <span className="flex items-center gap-2">
                     <span className="text-lg leading-none" aria-hidden>{q.emoji}</span>
@@ -268,7 +272,7 @@ const Index = () => {
                     <span>{q.hint}</span>
                     <span aria-hidden className="transition-transform group-hover:translate-x-0.5">→</span>
                   </span>
-                </Link>
+                </button>
               ))}
             </div>
           </div>
