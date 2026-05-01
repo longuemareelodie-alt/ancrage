@@ -1,6 +1,8 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { getRandomReward } from "@/data/microRewards";
+import { parentize } from "@/lib/parentize";
+import { useParentType } from "@/hooks/useParentType";
 
 interface Props {
   show: boolean;
@@ -9,6 +11,7 @@ interface Props {
 
 const MicroRewardPopup = ({ show, onDone }: Props) => {
   const [reward, setReward] = useState(getRandomReward());
+  const [parentType] = useParentType();
 
   useEffect(() => {
     if (show) {
@@ -37,7 +40,7 @@ const MicroRewardPopup = ({ show, onDone }: Props) => {
           >
             {reward.emoji}
           </motion.span>
-          <p className="text-sm font-medium">{reward.text}</p>
+          <p className="text-sm font-medium">{parentize(reward.text, parentType)}</p>
         </motion.div>
       )}
     </AnimatePresence>

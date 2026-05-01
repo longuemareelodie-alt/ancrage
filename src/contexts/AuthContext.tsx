@@ -2,6 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useRef, useState, Re
 import { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { pullStyleFromRemote } from "@/lib/actionStyle";
+import { pullParentTypeFromRemote } from "@/lib/parentType";
 import { withRetry } from "@/lib/supabaseRetry";
 import { classifyProfileCreatedAt, isGrandfatheredAccount } from "@/lib/paywallPolicy";
 
@@ -116,6 +117,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         void checkEligibility(uid);
         if (nextSession?.user) {
           setTimeout(() => { void pullStyleFromRemote(); }, 0);
+          setTimeout(() => { void pullParentTypeFromRemote(); }, 0);
         }
       },
     );
@@ -128,6 +130,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       void checkEligibility(uid);
       if (initial?.user) {
         setTimeout(() => { void pullStyleFromRemote(); }, 0);
+        setTimeout(() => { void pullParentTypeFromRemote(); }, 0);
       }
     });
 

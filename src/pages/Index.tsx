@@ -9,6 +9,7 @@ import { useRouteTransition } from "@/components/RouteTransition";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/contexts/AuthContext";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
+import { useParentType } from "@/hooks/useParentType";
 import logo from "@/assets/logo-ancrage.png";
 import avatarCamille from "@/assets/avatar-camille.jpg";
 import avatarInes from "@/assets/avatar-ines.jpg";
@@ -25,6 +26,7 @@ const Index = () => {
   const { t } = useTranslation();
   const { startPayment, loading: paymentLoading } = useMolliePayment();
   const { navigateWithTransition } = useRouteTransition();
+  const [parentType, setParentType] = useParentType();
 
   const handlePayment = () => {
     if (!user) {
@@ -60,7 +62,8 @@ const Index = () => {
     stateLabel?: string;
     cta?: string;
   };
-  const recognizeMainScenes = t("home.recognize.scenes", { returnObjects: true }) as RecognizeScene[];
+  const scenesKey = parentType === "papa" ? "home.recognize.scenes_papa" : "home.recognize.scenes";
+  const recognizeMainScenes = t(scenesKey, { returnObjects: true }) as RecognizeScene[];
 
   // Each "state" maps to the page that delivers its concrete action,
   // mirroring the destinations defined in src/data/emotionCTAs.ts.
@@ -78,8 +81,8 @@ const Index = () => {
     return user ? target : `/auth?redirect=${encodeURIComponent(target)}`;
   };
   const recognizeExtras = [
-    { emoji: t("home.recognize.s1_emoji"), text: t("home.recognize.s1") },
-    { emoji: t("home.recognize.s2_emoji"), text: t("home.recognize.s2") },
+    { emoji: t("home.recognize.s1_emoji"), text: t(parentType === "papa" ? "home.recognize.s1_papa" : "home.recognize.s1") },
+    { emoji: t("home.recognize.s2_emoji"), text: t(parentType === "papa" ? "home.recognize.s2_papa" : "home.recognize.s2") },
   ];
   type QuickState = {
     state: NonNullable<RecognizeScene["state"]>;
@@ -152,9 +155,9 @@ const Index = () => {
           className="space-y-6 text-center"
         >
           <h1 className="text-2xl font-bold leading-tight tracking-tight md:text-3xl">
-            {t("home.hero.line1")}
+            {t(parentType === "papa" ? "home.hero.line1_papa" : "home.hero.line1")}
             <br />
-            {t("home.hero.line2")}
+            {t(parentType === "papa" ? "home.hero.line2_papa" : "home.hero.line2")}
             <br />
             <span className="text-primary">{t("home.hero.line3")}</span>
           </h1>
@@ -178,6 +181,40 @@ const Index = () => {
             <h2 className="text-xl font-bold md:text-2xl">{t("home.recognize.title")}</h2>
             <p className="text-sm text-muted-foreground max-w-md mx-auto">
               {t("home.recognize.subtitle")}
+            </p>
+          </div>
+
+          {/* Toggle profil maman / papa — adapte le ton des micro-scènes */}
+          <div
+            role="group"
+            aria-label={t("home.recognize.profile_toggle_label")}
+            className="mx-auto flex max-w-xs flex-col items-center gap-2"
+          >
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+              {t("home.recognize.profile_toggle_label")}
+            </p>
+            <div className="inline-flex rounded-full border border-border bg-card p-1 shadow-sm">
+              {(["maman", "papa"] as const).map((p) => {
+                const active = parentType === p;
+                return (
+                  <button
+                    key={p}
+                    type="button"
+                    onClick={() => setParentType(p)}
+                    aria-pressed={active}
+                    className={`min-w-[84px] rounded-full px-4 py-1.5 text-sm font-semibold transition-all ${
+                      active
+                        ? "bg-primary text-primary-foreground shadow"
+                        : "text-foreground/70 hover:text-foreground"
+                    }`}
+                  >
+                    {t(p === "maman" ? "home.recognize.profile_maman" : "home.recognize.profile_papa")}
+                  </button>
+                );
+              })}
+            </div>
+            <p className="text-[11px] italic text-muted-foreground">
+              {t("home.recognize.profile_toggle_hint")}
             </p>
           </div>
 

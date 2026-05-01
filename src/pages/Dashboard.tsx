@@ -6,6 +6,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { getDailyMessage } from "@/data/dailyMessages";
 import { getStreakLabel } from "@/data/streakLabels";
+import { parentize } from "@/lib/parentize";
+import { useParentType } from "@/hooks/useParentType";
 import logo from "@/assets/logo-ancrage.png";
 import InstallPWAPrompt from "@/components/InstallPWAPrompt";
 import ResumeBanner from "@/components/ResumeBanner";
@@ -95,8 +97,11 @@ const Dashboard = () => {
     if (error) console.error("mood upsert failed", error);
   };
 
-  const dailyMsg = getDailyMessage();
-  const streakInfo = getStreakLabel(streak);
+  const [parentType] = useParentType();
+  const dailyMsgRaw = getDailyMessage();
+  const dailyMsg = { ...dailyMsgRaw, text: parentize(dailyMsgRaw.text, parentType) };
+  const streakInfoRaw = getStreakLabel(streak);
+  const streakInfo = { ...streakInfoRaw, label: parentize(streakInfoRaw.label, parentType) };
   const hour = new Date().getHours();
   const isMorning = hour < 14;
 

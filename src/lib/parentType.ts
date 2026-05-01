@@ -1,0 +1,99 @@
+/**
+ * Parent type preference — "maman" (default) or "papa".
+ *
+ * Used to personalize the home micro-scenes and a few key narrative texts
+ * (lexicon identity / hero gender agreement). The value is stored locally in
+ * localStorage and synced best-effort to the user's profile when authenticated.
+ *
+ * Default = "maman" (preserves the historical voice of the product).
+ */
+
+import { supabase } from "@/integrations/supabase/client";
+
+export type ParentType = "maman" | "papa";
+
+const STORAGE_KEY = "ancrage_parent_type";
+const SYNC_KEY = "ancrage_parent_type_sync";
+
+export const PARENT_TYPE_LABELS: Record<ParentType, string> = {
+  maman: "Maman",
+  papa: "Papa",
+};
+
+export const DEFAULT_PARENT_TYPE: ParentType = "maman";
+
+export function getParentType(): ParentType {
+  if (typeof window === "undefined") return DEFAULT_PARENT_TYPE;
+  const v = localStorage.getItem(STORAGE_KEY);
+  return v === "papa" || v === "maman" ? v : DEFAULT_PARENT_TYPE;
+}
+
+function writeLocal(value: ParentType) {
+  if (typeof window === "undefined") return;
+  localStorage.setItem(STORAGE_KEY, value);
+  window.dispatchEvent(
+    new CustomEvent<ParentType>("ancrage-parent-type-change", { detail: value })
+  );
+}
+
+export function setParentType(value: ParentType) {
+  writeLocal(value);
+  void syncToRemote(value);
+}
+
+async function syncToRemote(value: ParentType) {
+  if (typeof window === "undefined") return;
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    const nowIso = new Date().toISOString();
+    await supabase
+      .from("profiles")
+      .update({
+        parent_type: value,
+        parent_type_synced_at: nowIso,
+      } as any)
+      .eq("user_id", user.id);
+    if (typeof window !== "undefined") {
+      localStorage.setItem(SYNC_KEY, nowIso);
+    }
+  } catch {
+    // best-effort
+  }
+}
+
+/**
+ * On login / app start: pull the value from the user's profile, with a
+ * "remote wins if newer" strategy mirroring the action style sync.
+ */
+export async function pullParentTypeFromRemote(): Promise<void> {
+  if (typeof window === "undefined") return;
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("parent_type, parent_type_synced_at" as any)
+      .eq("user_id", user.id)
+      .maybeSingle();
+    if (error || !data) return;
+
+    const remoteValue = ((data as any).parent_type ?? null) as ParentType | null;
+    const remoteAt = ((data as any).parent_type_synced_at ?? null) as string | null;
+    const localAt = localStorage.getItem(SYNC_KEY);
+
+    const remoteTime = remoteAt ? new Date(remoteAt).getTime() : 0;
+    const localTime = localAt ? new Date(localAt).getTime() : 0;
+
+    if (remoteValue && remoteTime >= localTime) {
+      if (remoteValue !== getParentType()) writeLocal(remoteValue);
+      localStorage.setItem(SYNC_KEY, remoteAt ?? new Date().toISOString());
+    } else {
+      // Push local up if user already chose something locally before login.
+      const local = getParentType();
+      await syncToRemote(local);
+    }
+  } catch {
+    // ignore
+  }
+}
