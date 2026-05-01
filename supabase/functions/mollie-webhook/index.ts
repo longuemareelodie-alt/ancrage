@@ -910,7 +910,38 @@ Deno.serve(async (req) => {
 
       // 3) Generate a recovery link so the buyer can set their password.
       //    The link redirects to /reset-password (already wired in the app).
+      //
+      // Fallback policy:
+      //   - If generateLink fails, OR if the transactional email invoke fails,
+      //     we enqueue a row in `pending_account_emails`. A scheduled worker
+      //     (`retry-account-emails`, runs every 5 min) will regenerate a fresh
+      //     action_link and retry sending up to `max_attempts` times with
+      //     exponential backoff. Magic links expire (~1 h), so the worker
+      //     always regenerates one — never reuses the original.
       const siteOrigin = "https://www.digitalmamanlibre.com";
+      const enqueueFallback = async (reason: string) => {
+        try {
+          await supabase
+            .from("pending_account_emails")
+            .upsert(
+              {
+                email,
+                payment_id: paymentId,
+                user_id: profile?.user_id ?? null,
+                template_name: "welcome-initiation",
+                status: "pending",
+                attempts: 0,
+                next_attempt_at: new Date(Date.now() + 60_000).toISOString(),
+                last_error: reason,
+              },
+              { onConflict: "payment_id,template_name" },
+            );
+          logDebug("Activation email enqueued for retry", { email, paymentId, reason });
+        } catch (e) {
+          logError("Failed to enqueue activation email retry", e, { email, paymentId, reason });
+        }
+      };
+
       try {
         const { data: linkData, error: linkErr } = await supabase.auth.admin.generateLink({
           type: "recovery",
@@ -924,23 +955,35 @@ Deno.serve(async (req) => {
           ?? null;
 
         if (actionLink) {
-          // Fire-and-forget welcome email with the activation link.
-          supabase.functions.invoke("send-transactional-email", {
-            body: {
-              templateName: "welcome-initiation",
-              recipientEmail: email,
-              idempotencyKey: `account-activation-${paymentId}`,
-              templateData: { firstName: "", actionUrl: actionLink },
-            },
-          }).catch((e) => logError("activation email send failed (non-fatal)", e, { paymentId }));
+          // Try to send immediately — but await so we can fall back on failure.
+          try {
+            const { error: sendErr } = await supabase.functions.invoke(
+              "send-transactional-email",
+              {
+                body: {
+                  templateName: "welcome-initiation",
+                  recipientEmail: email,
+                  idempotencyKey: `account-activation-${paymentId}`,
+                  templateData: { firstName: "", actionUrl: actionLink },
+                },
+              },
+            );
+            if (sendErr) throw sendErr;
+          } catch (sendErr) {
+            logError("activation email send failed, queuing retry", sendErr, { paymentId });
+            await enqueueFallback(`send_failed: ${(sendErr as Error)?.message ?? "unknown"}`);
+          }
         } else {
           logError("generateLink returned no action_link", new Error("no_action_link"), { paymentId });
+          await enqueueFallback("no_action_link");
         }
       } catch (linkErr) {
         // Account exists, payment will still be activated below — but the
-        // user won't get the activation email. They can use "forgot password"
-        // from /auth as a recovery path. We log loudly so support can intervene.
-        logError("Failed to generate activation link (non-fatal)", linkErr, { email, paymentId });
+        // user won't get the activation email yet. Queue it for retry.
+        logError("Failed to generate activation link, queuing retry", linkErr, { email, paymentId });
+        await enqueueFallback(
+          `generate_link_failed: ${(linkErr as Error)?.message ?? "unknown"}`,
+        );
       }
     }
 
