@@ -244,35 +244,37 @@ const Index = () => {
             </p>
           </div>
 
-          {/* Toggle scolarisation — adapte le texte des scènes matin / soir */}
+          {/* Toggle contexte — adapte le texte des scènes matin / soir */}
           <div
             role="group"
             aria-label={t("home.recognize.school_toggle_label")}
-            className="mx-auto flex max-w-xs flex-col items-center gap-2"
+            className="mx-auto flex w-full max-w-md flex-col items-center gap-2"
           >
             <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
               {t("home.recognize.school_toggle_label")}
             </p>
-            <div className="inline-flex rounded-full border border-border bg-card p-1 shadow-sm">
-              {(["school", "holiday"] as const).map((c) => {
+            <div className="grid w-full grid-cols-3 gap-1 rounded-2xl border border-border bg-card p-1 shadow-sm">
+              {(["school", "work", "holiday"] as const).map((c) => {
                 const active = schoolContext === c;
+                const labelKey =
+                  c === "school"
+                    ? "home.recognize.school_toggle_school"
+                    : c === "work"
+                      ? "home.recognize.school_toggle_work"
+                      : "home.recognize.school_toggle_holiday";
                 return (
                   <button
                     key={c}
                     type="button"
                     onClick={() => setSchoolContext(c)}
                     aria-pressed={active}
-                    className={`min-w-[120px] rounded-full px-4 py-1.5 text-sm font-semibold transition-all ${
+                    className={`rounded-xl px-2 py-1.5 text-xs font-semibold leading-tight transition-all ${
                       active
                         ? "bg-primary text-primary-foreground shadow"
                         : "text-foreground/70 hover:text-foreground"
                     }`}
                   >
-                    {t(
-                      c === "school"
-                        ? "home.recognize.school_toggle_school"
-                        : "home.recognize.school_toggle_holiday",
-                    )}
+                    {t(labelKey)}
                   </button>
                 );
               })}
