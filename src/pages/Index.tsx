@@ -32,6 +32,17 @@ const Index = () => {
     startPayment();
   };
 
+  const handleInitiationPayment = () => {
+    if (!user) {
+      window.location.href = "/auth?redirect=/initiation-7-jours&action=initiation";
+      return;
+    }
+    startPayment({
+      product: "initiation_7d",
+      redirectUrl: `${window.location.origin}/payment-pending?return=/initiation-7-jours`,
+    });
+  };
+
   const steps = [
     { num: "1", text: t("home.how.step1") },
     { num: "2", text: t("home.how.step2") },
@@ -461,14 +472,16 @@ const Index = () => {
             </p>
             <div className="pt-3 border-t border-primary/10">
               <p className="text-xs text-muted-foreground mb-2">
-                Tu veux découvrir le parcours avant ?
+                Tu veux d'abord tester avec les 7 jours d'ancrage ?
               </p>
-              <a
-                href="/initiation-7-jours"
-                className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline"
+              <button
+                type="button"
+                onClick={handleInitiationPayment}
+                disabled={paymentLoading}
+                className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                Voir les 7 jours d'ancrage →
-              </a>
+                Démarrer les 7 jours · 4,99 € →
+              </button>
             </div>
           </div>
         </div>
