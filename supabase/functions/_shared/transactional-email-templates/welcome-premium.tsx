@@ -14,7 +14,7 @@ interface WelcomePremiumProps {
 const WelcomePremiumEmail = ({ firstName }: WelcomePremiumProps) => (
   <Html lang="fr" dir="ltr">
     <Head />
-    <Preview>Ton accès premium ANCRAGE est activé 💛</Preview>
+    <Preview>Tu sors du mode survie — ton accès ANCRAGE est activé 💛</Preview>
     <Body style={main}>
       <Container style={container}>
         <Section style={logoSection}>
@@ -26,25 +26,25 @@ const WelcomePremiumEmail = ({ firstName }: WelcomePremiumProps) => (
         </Heading>
 
         <Text style={text}>
-          Ton accès premium est maintenant actif. Tu as fait un pas important pour toi, et c'est tout ce qui compte.
+          Tu viens de choisir de sortir du mode survie. À partir de maintenant, tu as tout ce qu'il faut pour devenir la maman ancrée — un ancrage de 30 secondes à la fois.
         </Text>
 
         <Section style={featureBox}>
           <Text style={featureTitle}>Ce qui t'attend :</Text>
-          <Text style={featureItem}>✅ Tous les exercices débloqués</Text>
-          <Text style={featureItem}>✅ Le parcours guidé complet</Text>
-          <Text style={featureItem}>✅ Les outils de suivi et de progression</Text>
-          <Text style={featureItem}>✅ Un espace sécurisé, à ton rythme</Text>
+          <Text style={featureItem}>✅ Tous les ancrages débloqués</Text>
+          <Text style={featureItem}>✅ Le parcours « 7 jours pour devenir la maman ancrée »</Text>
+          <Text style={featureItem}>✅ Le suivi de ton retour au calme</Text>
+          <Text style={featureItem}>✅ Un espace de sécurité, à ton rythme</Text>
         </Section>
 
         <Section style={ctaSection}>
           <Button style={button} href={`${SITE_URL}/dashboard`}>
-            Accéder à mon espace
+            Récupérer mon calme — 30 s
           </Button>
         </Section>
 
         <Text style={footerText}>
-          Ton corps peut enfin redescendre. Tu es au bon endroit.
+          Tu n'es plus en mode survie. Tu es en sécurité ici.
         </Text>
 
         <Text style={signature}>
@@ -57,7 +57,7 @@ const WelcomePremiumEmail = ({ firstName }: WelcomePremiumProps) => (
 
 export const template = {
   component: WelcomePremiumEmail,
-  subject: 'Ton accès premium ANCRAGE est activé 💛',
+  subject: 'Tu sors du mode survie — ton accès ANCRAGE est activé 💛',
   displayName: 'Welcome Premium',
   previewData: { firstName: 'Marie' },
 } satisfies TemplateEntry

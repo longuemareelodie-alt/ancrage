@@ -47,8 +47,8 @@ const BadgeCelebration = ({ badges, onDone }: Props) => {
           >
             💜
           </motion.p>
-          <p className="text-lg font-bold">Quelque chose a changé en toi</p>
-          <p className="text-sm text-muted-foreground">Et tu mérites de le voir</p>
+          <p className="text-lg font-bold">Tu sors du mode survie</p>
+          <p className="text-sm text-muted-foreground">Un ancrage de plus — tu es en sécurité</p>
           <div className="flex flex-wrap items-center justify-center gap-3">
             {badges.map((badge, i) => (
               <motion.div
@@ -68,7 +68,7 @@ const BadgeCelebration = ({ badges, onDone }: Props) => {
             onClick={onDone}
             className="mt-2 rounded-full bg-primary px-5 py-2 text-sm font-bold text-primary-foreground"
           >
-            Continuer 💛
+            Ancrer ce calme 💛
           </button>
         </motion.div>
       </motion.div>
