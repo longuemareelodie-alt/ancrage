@@ -117,7 +117,7 @@
         {
           "tag": "7h12, avant l'école",
           "emoji": "🥣",
-          "body": "Le réveil a sonné trois fois. Tu n'as pas dormi. Tu enfiles le pull d'hier, tu lances le café, tu cherches la deuxième chaussette. Ton aîné refuse son pantalon. Le petit renverse les céréales sur la table. Tu sens la chaleur monter dans ta nuque. Tu serres ton mug trop fort. Et là, tu cries — plus fort que tu ne le voulais — pour qu'il mette ses chaussures. Le silence d'après est pire que le cri. Dans la voiture, tu rates le feu vert, personne ne parle, tu te dis « c'est encore raté avant 8h ».",
+          "body": "Le réveil a sonné trois fois. Tu n'as pas vraiment dormi — le dernier mail boulot tournait encore dans ta tête à 1h. Tu enfiles le t-shirt d'hier, tu lances le café, tu cherches la chaussette manquante avant de sortir. L'aîné refuse son pantalon. Le petit renverse les céréales. Tu sens la mâchoire qui serre, la voix qui descend d'un ton — celle que tu t'étais juré de ne pas reprendre. Et là, tu hausses la voix pour les chaussures, plus sec que tu ne le voulais. Le silence dans la voiture est pire que le cri. Tu te dis « j'ai encore fait comme mon père », et tu serres le volant pour ne pas y repenser.",
           "punch": "Il n'est pas encore 8h, et tu es déjà en dette de calme pour toute la journée.",
           "state": "explosion",
           "stateLabel": "Mode explosion",
@@ -126,7 +126,7 @@
         {
           "tag": "Dans ton corps",
           "emoji": "💢",
-          "body": "Tes mâchoires sont serrées en permanence — tu t'en rends compte seulement quand quelqu'un te le fait remarquer. Tes épaules sont collées à tes oreilles. Ton ventre est noué depuis si longtemps que tu as oublié à quoi ressemble un ventre détendu. Tu sursautes au moindre bruit. Et la nuit, tu te réveilles à 4h, le cœur qui cogne, sans raison.",
+          "body": "Mâchoire serrée en permanence — tu t'en rends compte seulement quand ta compagne te dit « tu grinces des dents la nuit ». Trapèzes en béton. Le bas du dos qui tire depuis des mois. Tu te réveilles à 4h, le cœur qui cogne, sans raison claire — sauf une vague liste de trucs à régler au boulot ou à la maison. Et tu te rendors mal, parce que ton corps croit qu'il doit déjà être debout, prêt, opérationnel.",
           "punch": "Ton corps n'est pas fatigué. Ton corps est en alerte. Tout le temps.",
           "state": "hypervigilance",
           "stateLabel": "Mode hypervigilance",
@@ -135,7 +135,7 @@
         {
           "tag": "Dans ta tête",
           "emoji": "🌀",
-          "body": "Tu repenses à la phrase que tu as dite à ton enfant ce matin. Tu refais le scénario. Tu te juges. Tu te dis que tu n'es pas un bon père. Tu te promets que demain tu seras plus patient. Tu sais déjà que tu n'y arriveras pas — pas parce que tu ne veux pas, mais parce que ton corps ne suit pas. Et ça, ça te fait encore plus culpabiliser.",
+          "body": "Tu repenses à la phrase sèche du matin. Tu refais le film. Tu te dis « je veux pas être ce père-là ». Tu te promets que demain tu vas tenir, être plus posé, plus présent. Tu sais déjà que tu n'y arriveras pas — pas par manque de volonté, mais parce que ton corps ne redescend jamais entre la réunion de 18h et le bain de 19h30. Et personne autour de toi ne va te demander si ça va : on attend de toi que tu encaisses, que tu pourvoies, que tu tiennes la baraque.",
           "punch": "Ton cerveau ne s'arrête jamais. Pas parce qu'il est défaillant. Parce qu'il croit qu'il doit te protéger d'un danger qui n'existe plus.",
           "state": "rumination",
           "stateLabel": "Mode rumination",
@@ -144,16 +144,16 @@
         {
           "tag": "21h07, le canapé",
           "emoji": "🌙",
-          "body": "Les enfants dorment enfin. La vaisselle du dîner sèche encore. Tu t'assois sur le canapé — et ton corps reste dur, comme s'il n'avait pas reçu le message que la journée est finie. Tes épaules sont au même endroit qu'à 7h12 ce matin. Ta mâchoire serre toujours. Tu ouvres ton téléphone « deux minutes ». Il est 21h47. Tu n'as pas bougé. Tu sais qu'il faut aller te coucher, mais te lever, c'est admettre que demain recommence — et que ton corps n'aura pas redescendu entre les deux.",
+          "body": "Les enfants dorment enfin. Tu t'assois sur le canapé — et ton corps reste dur, comme à 7h12 ce matin. Tu ouvres le téléphone « deux minutes » : Slack, mails, scores, scroll. Il est 21h47. Tu n'as pas bougé. Tu sais qu'il faudrait monter te coucher, mais c'est admettre que demain recommence — réveil, transports, réunions, dîner, bain — et que ton corps n'aura pas redescendu entre les deux. Alors tu restes là, à doser la dose d'écran qui anesthésie sans vraiment reposer.",
           "punch": "Le matin t'a mis en alerte. La soirée n'a rien désarmé. Tu vas dormir avec la même tension dans la nuque — et la reprendre demain à 7h12.",
           "state": "panique",
           "stateLabel": "Mode panique sourde",
           "cta": "Redescendre avant la nuit · 60 s →"
         }
       ],
-      "s1_papa": "17h. Tu cries pour un verre renversé. Et tu te détestes dans la seconde qui suit.",
-      "s2_papa": "Tu souris à l'école. Tu réponds « ça va ». Mais à l'intérieur, c'est le vide ou le chaos.",
-      "outro_papa": "Tu n'es pas cassé. Tu n'es pas faible. Tu es juste resté trop longtemps en alerte — et personne ne t'a appris à redescendre.",
+      "s1_papa": "17h. Tu hausses la voix pour un verre renversé. Et tu te détestes dans la seconde qui suit — parce que c'est exactement ce que tu t'étais juré de ne plus faire.",
+      "s2_papa": "Tu serres la main des autres parents à la sortie d'école. Tu réponds « ça va, ça gère ». Mais à l'intérieur, c'est le vide ou la pression sourde.",
+      "outro_papa": "Tu n'es pas cassé. Tu n'es pas faible. On ne t'a juste jamais montré comment décharger ce que ton corps encaisse — on t'a appris à serrer les dents et à tenir.",
       "school_toggle_label": "Quel matin ?",
       "school_toggle_school": "Avant l'école",
       "school_toggle_holiday": "Vacances / week-end",
