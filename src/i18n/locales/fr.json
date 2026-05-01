@@ -26,7 +26,9 @@
       "rea1": "Ce n'est pas toi le problème.",
       "rea2": "👉 C'est ton système nerveux qui n'a jamais pu redescendre.",
       "reassurance": "30 secondes · sans carte bancaire · tu peux arrêter quand tu veux.",
-      "cta": "Sortir du mode survie · 30 s"
+      "cta": "Sortir du mode survie · 30 s",
+      "line1_papa": "Tu n'es pas fatigué.",
+      "line2_papa": "Tu es en mode survie."
     },
     "recognize": {
       "title": "Tu te reconnais ?",
@@ -78,11 +80,76 @@
       "quick_states_title": "Là, maintenant, tu es plutôt…",
       "quick_states_hint": "Choisis ton état — j'ouvre l'outil qui correspond.",
       "quick_states": [
-        { "state": "panique", "emoji": "🌊", "label": "Panique sourde", "hint": "Respirer · 60 s" },
-        { "state": "hypervigilance", "emoji": "👁️", "label": "Hypervigilance", "hint": "Ancrer mes 5 sens · 90 s" },
-        { "state": "rumination", "emoji": "🌀", "label": "Rumination", "hint": "Poser ma pensée · 2 min" },
-        { "state": "explosion", "emoji": "💥", "label": "Explosion", "hint": "Évacuer · 90 s" }
-      ]
+        {
+          "state": "panique",
+          "emoji": "🌊",
+          "label": "Panique sourde",
+          "hint": "Respirer · 60 s"
+        },
+        {
+          "state": "hypervigilance",
+          "emoji": "👁️",
+          "label": "Hypervigilance",
+          "hint": "Ancrer mes 5 sens · 90 s"
+        },
+        {
+          "state": "rumination",
+          "emoji": "🌀",
+          "label": "Rumination",
+          "hint": "Poser ma pensée · 2 min"
+        },
+        {
+          "state": "explosion",
+          "emoji": "💥",
+          "label": "Explosion",
+          "hint": "Évacuer · 90 s"
+        }
+      ],
+      "profile_toggle_label": "Adapter à mon profil",
+      "profile_toggle_hint": "On adapte le ton, jamais l'outil.",
+      "profile_maman": "Maman",
+      "profile_papa": "Papa",
+      "scenes_papa": [
+        {
+          "tag": "7h12, avant l'école",
+          "emoji": "🥣",
+          "body": "Le réveil a sonné trois fois. Tu n'as pas dormi. Tu enfiles le pull d'hier, tu lances le café, tu cherches la deuxième chaussette. Ton aîné refuse son pantalon. Le petit renverse les céréales sur la table. Tu sens la chaleur monter dans ta nuque. Tu serres ton mug trop fort. Et là, tu cries — plus fort que tu ne le voulais — pour qu'il mette ses chaussures. Le silence d'après est pire que le cri. Dans la voiture, tu rates le feu vert, personne ne parle, tu te dis « c'est encore raté avant 8h ».",
+          "punch": "Il n'est pas encore 8h, et tu es déjà en dette de calme pour toute la journée.",
+          "state": "explosion",
+          "stateLabel": "Mode explosion",
+          "cta": "Évacuer en 90 s →"
+        },
+        {
+          "tag": "Dans ton corps",
+          "emoji": "💢",
+          "body": "Tes mâchoires sont serrées en permanence — tu t'en rends compte seulement quand quelqu'un te le fait remarquer. Tes épaules sont collées à tes oreilles. Ton ventre est noué depuis si longtemps que tu as oublié à quoi ressemble un ventre détendu. Tu sursautes au moindre bruit. Et la nuit, tu te réveilles à 4h, le cœur qui cogne, sans raison.",
+          "punch": "Ton corps n'est pas fatigué. Ton corps est en alerte. Tout le temps.",
+          "state": "hypervigilance",
+          "stateLabel": "Mode hypervigilance",
+          "cta": "Ancrer mes 5 sens · 90 s →"
+        },
+        {
+          "tag": "Dans ta tête",
+          "emoji": "🌀",
+          "body": "Tu repenses à la phrase que tu as dite à ton enfant ce matin. Tu refais le scénario. Tu te juges. Tu te dis que tu n'es pas un bon père. Tu te promets que demain tu seras plus patient. Tu sais déjà que tu n'y arriveras pas — pas parce que tu ne veux pas, mais parce que ton corps ne suit pas. Et ça, ça te fait encore plus culpabiliser.",
+          "punch": "Ton cerveau ne s'arrête jamais. Pas parce qu'il est défaillant. Parce qu'il croit qu'il doit te protéger d'un danger qui n'existe plus.",
+          "state": "rumination",
+          "stateLabel": "Mode rumination",
+          "cta": "Poser ma pensée · 2 min →"
+        },
+        {
+          "tag": "21h07, le canapé",
+          "emoji": "🌙",
+          "body": "Les enfants dorment enfin. La vaisselle du dîner sèche encore. Tu t'assois sur le canapé — et ton corps reste dur, comme s'il n'avait pas reçu le message que la journée est finie. Tes épaules sont au même endroit qu'à 7h12 ce matin. Ta mâchoire serre toujours. Tu ouvres ton téléphone « deux minutes ». Il est 21h47. Tu n'as pas bougé. Tu sais qu'il faut aller te coucher, mais te lever, c'est admettre que demain recommence — et que ton corps n'aura pas redescendu entre les deux.",
+          "punch": "Le matin t'a mis en alerte. La soirée n'a rien désarmé. Tu vas dormir avec la même tension dans la nuque — et la reprendre demain à 7h12.",
+          "state": "panique",
+          "stateLabel": "Mode panique sourde",
+          "cta": "Redescendre avant la nuit · 60 s →"
+        }
+      ],
+      "s1_papa": "17h. Tu cries pour un verre renversé. Et tu te détestes dans la seconde qui suit.",
+      "s2_papa": "Tu souris à l'école. Tu réponds « ça va ». Mais à l'intérieur, c'est le vide ou le chaos.",
+      "outro_papa": "Tu n'es pas cassé. Tu n'es pas faible. Tu es juste resté trop longtemps en alerte — et personne ne t'a appris à redescendre."
     },
     "enemy": {
       "title": "Ce n'est pas toi le problème.",
@@ -193,9 +260,21 @@
           "before": "Je criais 3 fois par jour. Je m'endormais en pleurant.",
           "result": "« Au 5e jour, je n'ai pas crié une seule fois. J'ai compris que je pouvais sentir la vague monter et la laisser passer. »",
           "metrics": [
-            { "label": "Fréquence des crises", "before": "3/jour", "after": "0 sur 7 jours" },
-            { "label": "Durée d'apaisement", "before": "45 min pour redescendre", "after": "2 min avec un ancrage" },
-            { "label": "Clarté mentale au coucher", "before": "Ruminations 1h+", "after": "Endormie en 15 min" }
+            {
+              "label": "Fréquence des crises",
+              "before": "3/jour",
+              "after": "0 sur 7 jours"
+            },
+            {
+              "label": "Durée d'apaisement",
+              "before": "45 min pour redescendre",
+              "after": "2 min avec un ancrage"
+            },
+            {
+              "label": "Clarté mentale au coucher",
+              "before": "Ruminations 1h+",
+              "after": "Endormie en 15 min"
+            }
           ]
         },
         {
@@ -205,9 +284,21 @@
           "before": "Mon corps ne dormait plus. Je me réveillais à 4h, en alerte, le cœur qui battait.",
           "result": "« Au bout de deux semaines, mes nuits ont changé. Je ne me réveille plus en panique. Je me réveille fatiguée — mais entière. »",
           "metrics": [
-            { "label": "Réveils nocturnes en alerte", "before": "4/nuit", "after": "1/nuit" },
-            { "label": "Tensions corporelles (mâchoires/épaules)", "before": "Permanentes", "after": "Repérées et relâchées en 30s" },
-            { "label": "Sentiment d'être débordée", "before": "8/10 chaque jour", "after": "3/10 en moyenne" }
+            {
+              "label": "Réveils nocturnes en alerte",
+              "before": "4/nuit",
+              "after": "1/nuit"
+            },
+            {
+              "label": "Tensions corporelles (mâchoires/épaules)",
+              "before": "Permanentes",
+              "after": "Repérées et relâchées en 30s"
+            },
+            {
+              "label": "Sentiment d'être débordée",
+              "before": "8/10 chaque jour",
+              "after": "3/10 en moyenne"
+            }
           ]
         },
         {
@@ -217,9 +308,21 @@
           "before": "Je ne me reconnaissais plus. Je pensais que c'était ma nouvelle personnalité.",
           "result": "« Trois semaines. C'est ce qu'il m'a fallu pour réaliser que je riais à nouveau sans me forcer. Je ne savais même plus que ça me manquait. »",
           "metrics": [
-            { "label": "Score de calme global", "before": "28%", "after": "71%" },
-            { "label": "Moments de joie spontanée", "before": "Quasi nuls", "after": "Plusieurs par jour" },
-            { "label": "Reconnexion à soi", "before": "« Je suis devenue une étrangère »", "after": "« Je me reconnais à nouveau »" }
+            {
+              "label": "Score de calme global",
+              "before": "28%",
+              "after": "71%"
+            },
+            {
+              "label": "Moments de joie spontanée",
+              "before": "Quasi nuls",
+              "after": "Plusieurs par jour"
+            },
+            {
+              "label": "Reconnexion à soi",
+              "before": "« Je suis devenue une étrangère »",
+              "after": "« Je me reconnais à nouveau »"
+            }
           ]
         }
       ],
@@ -232,11 +335,26 @@
       "title": "Ce qui change, semaine après semaine",
       "subtitle": "Basé sur ce que ton système nerveux fait quand on lui réapprend à redescendre — et sur les retours des premières mamans.",
       "steps": [
-        { "label": "Jour 1", "text": "Premier ancrage. Ton corps découvre qu'il a le droit de redescendre. Souvent : larmes de soulagement." },
-        { "label": "Jour 3", "text": "Tu commences à repérer le moment où la vague monte — avant qu'elle te submerge." },
-        { "label": "Jour 7", "text": "Premier « j'aurais crié hier, je n'ai pas crié aujourd'hui ». La preuve par ton corps." },
-        { "label": "Jour 21", "text": "Ton sommeil change. Ton réveil change. Tu commences à te reconnaître." },
-        { "label": "Jour 30", "text": "Ce n'est plus un effort. C'est devenu un réflexe. Tu es la maman ancrée." }
+        {
+          "label": "Jour 1",
+          "text": "Premier ancrage. Ton corps découvre qu'il a le droit de redescendre. Souvent : larmes de soulagement."
+        },
+        {
+          "label": "Jour 3",
+          "text": "Tu commences à repérer le moment où la vague monte — avant qu'elle te submerge."
+        },
+        {
+          "label": "Jour 7",
+          "text": "Premier « j'aurais crié hier, je n'ai pas crié aujourd'hui ». La preuve par ton corps."
+        },
+        {
+          "label": "Jour 21",
+          "text": "Ton sommeil change. Ton réveil change. Tu commences à te reconnaître."
+        },
+        {
+          "label": "Jour 30",
+          "text": "Ce n'est plus un effort. C'est devenu un réflexe. Tu es la maman ancrée."
+        }
       ],
       "footnote": "Délais indicatifs basés sur la régularité (1 ancrage / jour). Chaque système nerveux a son rythme."
     },
