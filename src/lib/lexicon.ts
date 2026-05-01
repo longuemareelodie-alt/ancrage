@@ -98,7 +98,7 @@ export const PROMISE_LIBRARY = {
 export const REASSURANCE_LIBRARY = {
   /** Top of funnel — premier contact */
   free_first:
-    "30 secondes · sans carte bancaire · tu peux arrêter quand tu veux.",
+    "Paiement unique · accès à vie · 14 jours satisfait ou remboursé.",
 
   /** Mid funnel — après preuve */
   free_short: "30 secondes pour essayer. Tu gardes la main.",

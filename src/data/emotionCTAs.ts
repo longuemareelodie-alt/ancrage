@@ -56,7 +56,7 @@ export const DEFAULT_EMOTION_CTA: EmotionCTA = {
   mechanism: "Un ancrage court vaut mieux qu'une grande résolution.",
   action: "Récupérer mon calme · 30 s",
   to: "/calme",
-  reassurance: "Sans carte bancaire · tu gardes la main.",
+  reassurance: "Tu gardes la main, à ton rythme.",
   tone: "primary",
 };
 

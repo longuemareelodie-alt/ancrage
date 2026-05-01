@@ -194,7 +194,7 @@ const Index = () => {
             <p className="text-xs text-muted-foreground">
               🤍 {t("home.hero.reassurance")}
             </p>
-            <CTAButton to="/emotions">{t("home.hero.cta")}</CTAButton>
+            <CTAButton to="#" onClick={handlePayment} loading={paymentLoading}>{t("home.hero.cta")}</CTAButton>
           </div>
         </motion.div>
       </SectionBlock>
@@ -730,7 +730,7 @@ const Index = () => {
               {t("home.testimonials.cta_sub")}
             </p>
             <div className="pt-1">
-              <CTAButton to="/emotions">{t("home.testimonials.cta")}</CTAButton>
+              <CTAButton to="#" onClick={handlePayment} loading={paymentLoading}>{t("home.testimonials.cta")}</CTAButton>
             </div>
             <p className="text-xs text-muted-foreground leading-relaxed max-w-sm mx-auto">
             {t("home.testimonials.cta_justify")}
@@ -813,7 +813,7 @@ const Index = () => {
             <p className="text-xs text-muted-foreground">
               🤍 {t("home.final.reassurance")}
             </p>
-            <CTAButton to="/emotions">{t("home.final.cta")}</CTAButton>
+            <CTAButton to="#" onClick={handlePayment} loading={paymentLoading}>{t("home.final.cta")}</CTAButton>
           </div>
         </div>
       </SectionBlock>
