@@ -336,4 +336,25 @@ const Initiation7jContent = () => {
   );
 };
 
+const Initiation7j = () => {
+  const { user, hasInitiation, loading } = useAuth();
+
+  // Public landing : not logged-in or eligibility unknown but not loading anymore
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+      </div>
+    );
+  }
+
+  // Logged in AND has access (premium, grandfathered, or paid 4,99€)
+  if (user && hasInitiation === true) {
+    return <Initiation7jContent />;
+  }
+
+  // Otherwise → paywall (visible to anonymous visitors AND to logged-in users without access)
+  return <InitiationPaywall />;
+};
+
 export default Initiation7j;
