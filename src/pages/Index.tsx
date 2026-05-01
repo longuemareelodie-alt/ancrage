@@ -134,7 +134,7 @@ const Index = () => {
         </motion.div>
       </SectionBlock>
 
-      {/* Recognize — ouverture par la douleur incarnée (3 micro-scènes : soir / corps / tête) */}
+      {/* Recognize — ouverture par la douleur incarnée (4 micro-scènes : matin / soir / corps / tête) */}
       <SectionBlock>
         <div className="space-y-6">
           <div className="text-center space-y-2">
