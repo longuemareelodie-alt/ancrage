@@ -3,7 +3,7 @@ import CTAButton from "@/components/CTAButton";
 import Footer from "@/components/Footer";
 import HomeFAQ from "@/components/HomeFAQ";
 import { motion } from "framer-motion";
-import { Check, User, Lock } from "lucide-react";
+import { Check, User, Lock, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useRouteTransition } from "@/components/RouteTransition";
 import { useTranslation } from "react-i18next";
@@ -11,6 +11,11 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
 import { useParentType } from "@/hooks/useParentType";
 import { useSchoolContext } from "@/lib/schoolContext";
+import {
+  forgetLastQuickState,
+  rememberLastQuickState,
+  useLastQuickState,
+} from "@/lib/lastQuickState";
 import logo from "@/assets/logo-ancrage.png";
 import avatarCamille from "@/assets/avatar-camille.jpg";
 import avatarInes from "@/assets/avatar-ines.jpg";
