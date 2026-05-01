@@ -9,6 +9,7 @@ import {
   INITIATION_DAYS,
   loadState,
   markDayComplete,
+  markLaunched,
   resetState,
   completedCount,
   type InitiationState,
@@ -145,7 +146,22 @@ const Initiation7jContent = () => {
   const [note, setNote] = useState("");
 
   useEffect(() => {
-    const s = loadState();
+    // Detect arrival from the welcome email (CTA `?launch=1`). When present,
+    // mark the parcours as launched (sets `startedAt` once) and clean the URL
+    // so a refresh doesn't re-trigger any side effects.
+    let s = loadState();
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("launch") === "1") {
+        s = markLaunched();
+        params.delete("launch");
+        params.delete("utm_source");
+        params.delete("utm_campaign");
+        const qs = params.toString();
+        const cleanUrl = window.location.pathname + (qs ? `?${qs}` : "") + window.location.hash;
+        window.history.replaceState({}, "", cleanUrl);
+      }
+    }
     setState(s);
     // Ouvrir le premier jour non terminé
     const firstUndone = INITIATION_DAYS.find((d) => !s.completed[d.day]);

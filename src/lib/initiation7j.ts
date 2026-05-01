@@ -137,6 +137,24 @@ export function resetState(): InitiationState {
   return fresh;
 }
 
+/**
+ * Marks the parcours as "launched" — sets `startedAt` to now if it isn't
+ * already set. Idempotent: calling it twice does NOT overwrite the original
+ * launch timestamp. Returns the (possibly updated) state.
+ *
+ * Used when the buyer arrives from the welcome email (CTA `?launch=1`).
+ */
+export function markLaunched(): InitiationState {
+  const state = loadState();
+  if (state.startedAt) return state;
+  const next: InitiationState = {
+    ...state,
+    startedAt: new Date().toISOString(),
+  };
+  saveState(next);
+  return next;
+}
+
 export function completedCount(state: InitiationState): number {
   return Object.keys(state.completed).length;
 }
