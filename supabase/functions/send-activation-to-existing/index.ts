@@ -35,7 +35,21 @@ Deno.serve(async (req) => {
   const presented = (req.headers.get("authorization") ?? "").replace(/^Bearer\s+/i, "")
     || req.headers.get("apikey")
     || "";
-  if (presented !== serviceRoleKey) {
+  // Accept either the runtime service role JWT or the vault-stored key used by pg_cron.
+  const supabaseInit = createClient(supabaseUrl, serviceRoleKey, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
+  let vaultKey: string | null = null;
+  try {
+    const { data } = await supabaseInit
+      .schema("vault" as any)
+      .from("decrypted_secrets")
+      .select("decrypted_secret")
+      .eq("name", "email_queue_service_role_key")
+      .maybeSingle();
+    vaultKey = (data as any)?.decrypted_secret ?? null;
+  } catch { /* ignore */ }
+  if (presented !== serviceRoleKey && (!vaultKey || presented !== vaultKey)) {
     return new Response(JSON.stringify({ error: "unauthorized" }), {
       status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
