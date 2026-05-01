@@ -118,7 +118,7 @@ const Auth = () => {
               </p>
               <p className="text-xs text-muted-foreground leading-relaxed">
                 Les comptes ne sont créés qu'après un paiement. Découvre l'offre
-                Premium qui inclut l'Initiation 7 jours et tout le programme.
+                Premium et son programme complet.
               </p>
               <Link
                 to="/"
