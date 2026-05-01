@@ -179,15 +179,15 @@
         "0": {
           "tag": "9h12, en pyjama",
           "emoji": "🥣",
-          "body": "Pas d'école aujourd'hui — donc personne n'a pris le pli. Le grand est encore au lit, la petite réclame des céréales depuis 7h, l'écran tourne en fond depuis 1h. Tu n'as pas pris ton café tranquille. Tu cherches déjà à occuper la matinée, à arbitrer entre dessin animé et tablette, à empêcher la dispute pour le coussin du canapé. Et là, tu craques — pas sur un retard, mais sur le bruit. Tu cries pour qu'on baisse la télé. Le silence d'après est pire que le cri.",
-          "punch": "Il n'est pas encore 10h, et la journée vacances pèse déjà plus qu'une journée d'école.",
+          "body": "Pas d'école aujourd'hui — donc pas de cadre. Le grand est encore au lit, le petit réclame des céréales depuis 7h, l'écran tourne en fond depuis 1h. Tu n'as pas pris ton café tranquille. Tu cherches déjà à arbitrer entre dessin animé et console, à empêcher la dispute pour la manette. Et là, tu craques — pas sur un retard, sur le bruit. Tu lèves la voix pour qu'on baisse la télé. Le silence d'après est pire que le cri. Et derrière, la petite voix : « tu étais censé être détendu aujourd'hui ».",
+          "punch": "Il n'est pas encore 10h, et la journée vacances pèse déjà plus qu'une journée de boulot.",
           "stateLabel": "Mode explosion",
           "cta": "Évacuer en 90 s →"
         },
         "3": {
           "tag": "21h07, le canapé",
           "emoji": "🌙",
-          "body": "Les enfants dorment enfin — ou se rendorment difficilement parce qu'ils ne sont pas calés sur leur rythme d'école. Tu t'assois sur le canapé, et ton corps reste dur. Pas de réveil tôt demain, mais ton système ne le sait pas. Tes épaules sont au même endroit qu'à 9h12 ce matin. Ta mâchoire serre toujours. Tu te dis que tu devrais profiter de la pause — et c'est cette injonction qui te fatigue le plus.",
+          "body": "Les enfants dorment — ou pas, parce qu'ils ne sont plus calés. Tu t'assois sur le canapé, et ton corps reste dur. Pas de réveil tôt demain, mais ton système ne le sait pas. Tu ouvres le téléphone : pas de Slack ce soir, alors tu scrolles autre chose. Tu te dis que tu devrais profiter de la pause, faire un truc pour toi — et c'est précisément cette injonction qui t'épuise.",
           "punch": "Les vacances n'ont rien désarmé. Ton corps est resté en alerte sans rendez-vous précis. Et c'est ça, le piège.",
           "stateLabel": "Mode panique sourde",
           "cta": "Redescendre avant la nuit · 60 s →"
