@@ -97,8 +97,11 @@ const Dashboard = () => {
     if (error) console.error("mood upsert failed", error);
   };
 
-  const dailyMsg = getDailyMessage();
-  const streakInfo = getStreakLabel(streak);
+  const [parentType] = useParentType();
+  const dailyMsgRaw = getDailyMessage();
+  const dailyMsg = { ...dailyMsgRaw, text: parentize(dailyMsgRaw.text, parentType) };
+  const streakInfoRaw = getStreakLabel(streak);
+  const streakInfo = { ...streakInfoRaw, label: parentize(streakInfoRaw.label, parentType) };
   const hour = new Date().getHours();
   const isMorning = hour < 14;
 
