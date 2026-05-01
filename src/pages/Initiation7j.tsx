@@ -4,7 +4,6 @@ import { Check, RotateCcw, ArrowRight, Lock, Sparkles, ShieldCheck } from "lucid
 import SectionBlock from "@/components/SectionBlock";
 import CTAButton from "@/components/CTAButton";
 import { useAuth } from "@/contexts/AuthContext";
-import { useMolliePayment } from "@/hooks/useMolliePayment";
 import {
   INITIATION_DAYS,
   loadState,
@@ -15,10 +14,6 @@ import {
   type InitiationState,
 } from "@/lib/initiation7j";
 
-const INITIATION_PRICE_LABEL = "4,99 €";
-// Doit rester EXACTEMENT identique au champ `description` envoyé à Mollie
-// dans supabase/functions/create-mollie-payment (PRODUCT_CATALOG.initiation_7d).
-const INITIATION_TRANSACTION_LABEL = "ANCRAGE — Initiation 7 jours";
 
 // L'offre "Initiation 7 jours" autonome (4,99 €) a été retirée : le contenu
 // est désormais inclus dans l'offre Premium. Les visiteurs sans accès sont
