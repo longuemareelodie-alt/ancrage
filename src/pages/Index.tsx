@@ -66,18 +66,23 @@ const Index = () => {
   };
   const scenesKey = parentType === "papa" ? "home.recognize.scenes_papa" : "home.recognize.scenes";
   const baseScenes = t(scenesKey, { returnObjects: true }) as RecognizeScene[];
-  // Holiday overrides: merged on top of the base scenes by index — only the
-  // matin / soir scenes are rewritten, the body / mind scenes stay identical.
-  const holidayOverridesKey =
-    parentType === "papa"
-      ? "home.recognize.scenes_papa_holiday_overrides"
-      : "home.recognize.scenes_holiday_overrides";
-  const holidayOverrides = (t(holidayOverridesKey, { returnObjects: true }) as
-    | Record<string, Partial<RecognizeScene>>
-    | string) || {};
+  // Context overrides (holiday / work): merged on top of the base scenes by
+  // index — only the matin / soir scenes are rewritten, the body / mind
+  // scenes stay identical.
+  const overridesKey =
+    schoolContext === "school"
+      ? null
+      : parentType === "papa"
+        ? `home.recognize.scenes_papa_${schoolContext}_overrides`
+        : `home.recognize.scenes_${schoolContext}_overrides`;
+  const contextOverrides = overridesKey
+    ? ((t(overridesKey, { returnObjects: true }) as
+        | Record<string, Partial<RecognizeScene>>
+        | string) || {})
+    : {};
   const recognizeMainScenes: RecognizeScene[] =
-    schoolContext === "holiday" && typeof holidayOverrides === "object"
-      ? baseScenes.map((scene, i) => ({ ...scene, ...(holidayOverrides[String(i)] ?? {}) }))
+    overridesKey && typeof contextOverrides === "object"
+      ? baseScenes.map((scene, i) => ({ ...scene, ...(contextOverrides[String(i)] ?? {}) }))
       : baseScenes;
 
   // Each "state" maps to the page that delivers its concrete action,
