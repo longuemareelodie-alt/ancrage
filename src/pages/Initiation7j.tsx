@@ -13,6 +13,7 @@ import {
   completedCount,
   type InitiationState,
 } from "@/lib/initiation7j";
+import { cleanCurrentUrl } from "@/lib/cleanUrlParams";
 
 
 // L'offre "Initiation 7 jours" autonome (4,99 €) a été retirée : le contenu
@@ -95,17 +96,17 @@ const Initiation7jContent = () => {
     // Detect arrival from the welcome email (CTA `?launch=1`). When present,
     // mark the parcours as launched (sets `startedAt` once) and clean the URL
     // so a refresh doesn't re-trigger any side effects.
+    //
+    // The cleanup helper:
+    //   - removes ONLY `launch` + the standard tracking params (utm_*, gclid,
+    //     fbclid, …), preserving any other useful query string;
+    //   - preserves `window.location.hash` (e.g. anchors, auth callback hashes).
     let s = loadState();
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
       if (params.get("launch") === "1") {
         s = markLaunched();
-        params.delete("launch");
-        params.delete("utm_source");
-        params.delete("utm_campaign");
-        const qs = params.toString();
-        const cleanUrl = window.location.pathname + (qs ? `?${qs}` : "") + window.location.hash;
-        window.history.replaceState({}, "", cleanUrl);
+        cleanCurrentUrl({ extraKeys: ["launch"] });
       }
     }
     setState(s);
