@@ -787,6 +787,7 @@ Deno.serve(async (req) => {
 
     const paymentMetadata = asRecord(payment?.metadata);
 
+    // ---- IDEMPOTENCY GUARD (single-activation invariant) ----
     // Mollie can re-deliver the same "paid" event (network retries, manual
     // re-trigger, double notification). If we've already activated this
     // exact payment, ack immediately and skip ALL side effects:
