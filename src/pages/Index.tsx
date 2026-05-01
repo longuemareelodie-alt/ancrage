@@ -62,7 +62,8 @@ const Index = () => {
     stateLabel?: string;
     cta?: string;
   };
-  const recognizeMainScenes = t("home.recognize.scenes", { returnObjects: true }) as RecognizeScene[];
+  const scenesKey = parentType === "papa" ? "home.recognize.scenes_papa" : "home.recognize.scenes";
+  const recognizeMainScenes = t(scenesKey, { returnObjects: true }) as RecognizeScene[];
 
   // Each "state" maps to the page that delivers its concrete action,
   // mirroring the destinations defined in src/data/emotionCTAs.ts.
