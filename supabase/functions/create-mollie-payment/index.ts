@@ -159,7 +159,7 @@ Deno.serve(async (req) => {
         user_id: authedUser?.id ?? null,
         email: effectiveEmail,
         is_guest: isGuest,
-        type: productKey === "premium" ? "lifetime" : "initiation_7d",
+        type: product.metadataType,
         product: productKey,
         base_price_cents: basePriceCents,
         discount_cents: discountCents,
