@@ -7,6 +7,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { updateStreakAndBadges, type BadgeDef } from "@/lib/streaks";
 import { emotions, type EmotionData } from "@/data/emotions";
 import { getStreakLabel } from "@/data/streakLabels";
+import { parentize } from "@/lib/parentize";
+import { useParentType } from "@/hooks/useParentType";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
 import BadgeCelebration from "@/components/BadgeCelebration";
 import MicroRewardPopup from "@/components/MicroRewardPopup";
