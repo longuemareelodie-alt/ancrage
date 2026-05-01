@@ -5,6 +5,10 @@ import { toast } from "sonner";
 
 interface StartPaymentOptions {
   promoCode?: string | null;
+  /** "premium" (default, 39€ lifetime) or "initiation_7d" (4,99€). */
+  product?: "premium" | "initiation_7d";
+  /** Override the redirect URL after Mollie checkout. */
+  redirectUrl?: string;
 }
 
 export const useMolliePayment = () => {
@@ -23,8 +27,10 @@ export const useMolliePayment = () => {
         "create-mollie-payment",
         {
           body: {
-            redirectUrl: `${window.location.origin}/payment-pending`,
+            redirectUrl:
+              options.redirectUrl ?? `${window.location.origin}/payment-pending`,
             promoCode: options.promoCode ?? null,
+            product: options.product ?? "premium",
           },
         }
       );
