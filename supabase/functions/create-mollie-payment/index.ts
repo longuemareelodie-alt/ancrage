@@ -89,6 +89,26 @@ Deno.serve(async (req) => {
       rawProduct === "initiation_7d" ? "initiation_7d" : "premium";
     const product = PRODUCT_CATALOG[productKey];
 
+    // ---- Resolve effective email + identity ----
+    // Guests (no auth) MUST provide a valid email so the webhook can
+    // create their account on payment success. Authed users always
+    // win over guestEmail (single source of truth = the session).
+    const effectiveEmail = authedUser?.email ?? guestEmail;
+    const isGuest = !authedUser;
+
+    if (isGuest && !isValidEmail(guestEmail)) {
+      return jsonResponse({ error: "guest_email_required" }, 400);
+    }
+    if (isGuest) {
+      // Guests are only allowed to buy products that produce a fresh account.
+      // Premium and initiation both qualify; we keep the rule explicit so
+      // future products opt-in deliberately.
+      const GUEST_ALLOWED: ProductKey[] = ["premium", "initiation_7d"];
+      if (!GUEST_ALLOWED.includes(productKey)) {
+        return jsonResponse({ error: "guest_not_allowed_for_product", product: productKey }, 400);
+      }
+    }
+
     // ---- Promo code validation (server-authoritative) ----
     // Promos only apply to the premium product.
     const PROMO_CATALOG: Record<string, { discountCents: number; label: string }> = {
