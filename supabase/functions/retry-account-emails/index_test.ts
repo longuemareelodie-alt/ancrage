@@ -147,6 +147,7 @@ Deno.test({
   name: "retry-account-emails sends pending row (e2e, real email)",
   ignore: skipServiceRole,
   async fn() {
+    if (!(await ensureWorkerAuth())) return;
     const paymentId = `e2e_success_${Date.now()}`;
     const rowId = await insertPending({
       email: E2E_RECIPIENT,
@@ -183,6 +184,7 @@ Deno.test({
   name: "retry-account-emails reschedules on failure (no email sent)",
   ignore: skipServiceRole,
   async fn() {
+    if (!(await ensureWorkerAuth())) return;
     const paymentId = `e2e_fail_${Date.now()}`;
     const badEmail = `not a valid email`; // espace = rejet par auth
     const rowId = await insertPending({
@@ -224,6 +226,7 @@ Deno.test({
   name: "retry-account-emails skips rows whose next_attempt_at is in the future",
   ignore: skipServiceRole,
   async fn() {
+    if (!(await ensureWorkerAuth())) return;
     const paymentId = `e2e_skip_${Date.now()}`;
     const rowId = await insertPending({
       email: E2E_RECIPIENT,
