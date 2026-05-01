@@ -785,7 +785,8 @@ Deno.serve(async (req) => {
       return webhookAck({ status: payment.status, action: "none" });
     }
 
-    // ---- IDEMPOTENCY GUARD ----
+    const paymentMetadata = asRecord(payment?.metadata);
+
     // Mollie can re-deliver the same "paid" event (network retries, manual
     // re-trigger, double notification). If we've already activated this
     // exact payment, ack immediately and skip ALL side effects:
