@@ -9,58 +9,79 @@ const SITE_URL = "https://ancrage.lovable.app"
 
 interface WelcomeInitiationProps {
   firstName?: string
+  /**
+   * When present, the buyer is a brand-new account that needs to define
+   * their password before logging in. The CTA points to this activation
+   * link instead of /initiation-7-jours, and a dedicated block explains why.
+   */
+  actionUrl?: string
 }
 
-const WelcomeInitiationEmail = ({ firstName }: WelcomeInitiationProps) => (
-  <Html lang="fr" dir="ltr">
-    <Head />
-    <Preview>Tes 7 jours d'ancrage commencent maintenant 🌱</Preview>
-    <Body style={main}>
-      <Container style={container}>
-        <Section style={logoSection}>
-          <Text style={logoText}>ANCRAGE</Text>
-        </Section>
+const WelcomeInitiationEmail = ({ firstName, actionUrl }: WelcomeInitiationProps) => {
+  const ctaUrl = actionUrl || `${SITE_URL}/initiation-7-jours`
+  const ctaLabel = actionUrl ? "Activer mon compte" : "Commencer mon jour 1"
+  return (
+    <Html lang="fr" dir="ltr">
+      <Head />
+      <Preview>Tes 7 jours d'ancrage commencent maintenant 🌱</Preview>
+      <Body style={main}>
+        <Container style={container}>
+          <Section style={logoSection}>
+            <Text style={logoText}>ANCRAGE</Text>
+          </Section>
 
-        <Heading style={h1}>
-          {firstName ? `C'est parti, ${firstName} 🌱` : `C'est parti 🌱`}
-        </Heading>
+          <Heading style={h1}>
+            {firstName ? `C'est parti, ${firstName} 🌱` : `C'est parti 🌱`}
+          </Heading>
 
-        <Text style={text}>
-          Ton initiation de 7 jours est activée. Pendant une semaine, tu vas
-          recevoir un petit ancrage par jour — quelques minutes pour souffler
-          avant que la journée ne t'emporte.
-        </Text>
+          <Text style={text}>
+            Ton initiation de 7 jours est activée. Pendant une semaine, tu vas
+            recevoir un petit ancrage par jour — quelques minutes pour souffler
+            avant que la journée ne t'emporte.
+          </Text>
 
-        <Section style={featureBox}>
-          <Text style={featureTitle}>Comment ça marche :</Text>
-          <Text style={featureItem}>🗓️ 1 ancrage par jour, pendant 7 jours</Text>
-          <Text style={featureItem}>⏱️ Moins de 5 minutes à chaque fois</Text>
-          <Text style={featureItem}>💛 À ton rythme, sans pression</Text>
-        </Section>
+          {actionUrl ? (
+            <Section style={featureBox}>
+              <Text style={featureTitle}>Première étape : active ton compte</Text>
+              <Text style={featureItem}>
+                Clique sur le bouton ci-dessous pour définir ton mot de passe.
+                Ensuite, tu pourras te connecter quand tu veux pour reprendre
+                ton parcours.
+              </Text>
+            </Section>
+          ) : (
+            <Section style={featureBox}>
+              <Text style={featureTitle}>Comment ça marche :</Text>
+              <Text style={featureItem}>🗓️ 1 ancrage par jour, pendant 7 jours</Text>
+              <Text style={featureItem}>⏱️ Moins de 5 minutes à chaque fois</Text>
+              <Text style={featureItem}>💛 À ton rythme, sans pression</Text>
+            </Section>
+          )}
 
-        <Section style={ctaSection}>
-          <Button style={button} href={`${SITE_URL}/initiation-7-jours`}>
-            Commencer mon jour 1
-          </Button>
-        </Section>
+          <Section style={ctaSection}>
+            <Button style={button} href={ctaUrl}>
+              {ctaLabel}
+            </Button>
+          </Section>
 
-        <Text style={footerText}>
-          On se retrouve de l'autre côté du mode survie.
-        </Text>
+          <Text style={footerText}>
+            On se retrouve de l'autre côté du mode survie.
+          </Text>
 
-        <Text style={signature}>
-          L'équipe {SITE_NAME}
-        </Text>
-      </Container>
-    </Body>
-  </Html>
-)
+          <Text style={signature}>
+            L'équipe {SITE_NAME}
+          </Text>
+        </Container>
+      </Body>
+    </Html>
+  )
+}
 
 export const template = {
   component: WelcomeInitiationEmail,
   subject: "Tes 7 jours d'ancrage commencent maintenant 🌱",
   displayName: 'Welcome Initiation 7 jours',
-  previewData: { firstName: 'Marie' },
+  previewData: { firstName: 'Marie', actionUrl: 'https://example.com/reset-password' },
 } satisfies TemplateEntry
 
 const main = { backgroundColor: '#ffffff', fontFamily: "'DM Sans', Arial, sans-serif" }
