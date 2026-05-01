@@ -105,14 +105,10 @@ Deno.serve(async (req) => {
     if (isGuest && !isValidEmail(guestEmail)) {
       return jsonResponse({ error: "guest_email_required" }, 400);
     }
-    if (isGuest) {
-      // Guests are only allowed to buy products that produce a fresh account.
-      // Premium and initiation both qualify; we keep the rule explicit so
-      // future products opt-in deliberately.
-      const GUEST_ALLOWED: ProductKey[] = ["premium", "initiation_7d"];
-      if (!GUEST_ALLOWED.includes(productKey)) {
-        return jsonResponse({ error: "guest_not_allowed_for_product", product: productKey }, 400);
-      }
+    if (isGuest && !product.allowGuestCheckout) {
+      // Guest eligibility is now declared on the product itself in the
+      // shared catalog — adding a non-guest product is a one-line opt-out.
+      return jsonResponse({ error: "guest_not_allowed_for_product", product: productKey }, 400);
     }
 
     // ---- Promo code validation (server-authoritative) ----
