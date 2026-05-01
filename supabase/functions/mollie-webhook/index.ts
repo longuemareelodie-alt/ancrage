@@ -144,6 +144,69 @@ const logActivation = async (
   }
 };
 
+/**
+ * Pre-check: has this exact Mollie payment ALREADY been activated?
+ *
+ * Mollie may legitimately call our webhook multiple times for the same
+ * `paymentId` (retries on transient failure, or a double "paid" event).
+ * Without idempotency we'd risk: creating duplicate auth users, sending
+ * the welcome email twice, double-emitting "paid" rows in the activation
+ * log. We use `premium_activation_log` as the source of truth: if there
+ * is already a row with `status='paid'` for this payment_id, the user
+ * has been activated and we MUST short-circuit before doing any of:
+ *   - auth.admin.createUser
+ *   - profiles update
+ *   - send-transactional-email invoke
+ *
+ * The DB also has a partial unique index on (payment_id WHERE status='paid')
+ * as the ultimate guard against concurrent webhook executions slipping past
+ * this check at the same time — see migration adding
+ * `premium_activation_log_paid_payment_id_key`.
+ */
+const findExistingPaidActivation = async (
+  supabaseUrl: string | undefined,
+  serviceRoleKey: string | undefined,
+  paymentId: string,
+): Promise<{ user_id: string | null; created_at: string | null } | null> => {
+  if (!supabaseUrl || !serviceRoleKey || !paymentId) return null;
+  try {
+    const url =
+      `${supabaseUrl}/rest/v1/premium_activation_log` +
+      `?payment_id=eq.${encodeURIComponent(paymentId)}` +
+      `&status=eq.paid` +
+      `&select=user_id,created_at` +
+      `&limit=1`;
+    const res = await fetch(url, {
+      headers: {
+        apikey: serviceRoleKey,
+        Authorization: `Bearer ${serviceRoleKey}`,
+      },
+    });
+    if (!res.ok) {
+      console.error(
+        "findExistingPaidActivation lookup failed",
+        safeStringify({ status: res.status, paymentId }),
+      );
+      // Conservative: if we can't verify, assume NOT processed and let
+      // the SQL unique index be the final backstop. Returning `null`
+      // means "no existing activation found — proceed".
+      return null;
+    }
+    const rows = (await res.json().catch(() => [])) as Array<{
+      user_id: string | null;
+      created_at: string | null;
+    }>;
+    return Array.isArray(rows) && rows.length > 0 ? rows[0] : null;
+  } catch (err) {
+    console.error(
+      "findExistingPaidActivation crashed",
+      safeStringify({ error: serializeError(err), paymentId }),
+    );
+    return null;
+  }
+};
+
+
 
 const firstString = (...values: unknown[]) => {
   for (const value of values) {
