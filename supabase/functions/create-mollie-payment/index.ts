@@ -1,4 +1,10 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import {
+  PRODUCT_CATALOG,
+  ProductCatalogIntegrityError,
+  assertCatalogIntegrity,
+  type ProductKey,
+} from "../_shared/productCatalog.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -22,6 +28,23 @@ Deno.serve(async (req) => {
   }
 
   try {
+    // Server-authoritative product catalog must match its locked fingerprint
+    // before we touch Mollie. Any drift (label, amount, currency, flags)
+    // refuses payment creation until the catalog and its companion test
+    // (`tests/productCatalog.spec.ts`) are explicitly updated together.
+    try {
+      assertCatalogIntegrity();
+    } catch (e) {
+      if (e instanceof ProductCatalogIntegrityError) {
+        console.error("[create-mollie-payment] catalog integrity violation", e.message);
+        return jsonResponse(
+          { error: "product_catalog_integrity_violation" },
+          503,
+        );
+      }
+      throw e;
+    }
+
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
     const mollieKey = Deno.env.get("MOLLIE_API_KEY");
@@ -67,24 +90,7 @@ Deno.serve(async (req) => {
       // No body or invalid JSON — use defaults
     }
 
-    // ---- Product catalog (server-authoritative) ----
-    // Two products are offered:
-    //   - "premium"        → 39,00 € lifetime full access (default)
-    //   - "initiation_7d"  → 4,99 € one-time access to the 7-day initiation
-    type ProductKey = "premium" | "initiation_7d";
-    const PRODUCT_CATALOG: Record<ProductKey, { priceCents: number; description: string; allowPromo: boolean }> = {
-      premium: {
-        priceCents: 3900,
-        description: "ANCRAGE — Accès Premium",
-        allowPromo: true,
-      },
-      initiation_7d: {
-        priceCents: 499,
-        description: "ANCRAGE — Initiation 7 jours",
-        allowPromo: false,
-      },
-    };
-
+    // ---- Product selection (catalog imported from _shared/productCatalog) ----
     const productKey: ProductKey =
       rawProduct === "initiation_7d" ? "initiation_7d" : "premium";
     const product = PRODUCT_CATALOG[productKey];
@@ -99,14 +105,10 @@ Deno.serve(async (req) => {
     if (isGuest && !isValidEmail(guestEmail)) {
       return jsonResponse({ error: "guest_email_required" }, 400);
     }
-    if (isGuest) {
-      // Guests are only allowed to buy products that produce a fresh account.
-      // Premium and initiation both qualify; we keep the rule explicit so
-      // future products opt-in deliberately.
-      const GUEST_ALLOWED: ProductKey[] = ["premium", "initiation_7d"];
-      if (!GUEST_ALLOWED.includes(productKey)) {
-        return jsonResponse({ error: "guest_not_allowed_for_product", product: productKey }, 400);
-      }
+    if (isGuest && !product.allowGuestCheckout) {
+      // Guest eligibility is now declared on the product itself in the
+      // shared catalog — adding a non-guest product is a one-line opt-out.
+      return jsonResponse({ error: "guest_not_allowed_for_product", product: productKey }, 400);
     }
 
     // ---- Promo code validation (server-authoritative) ----
@@ -157,7 +159,7 @@ Deno.serve(async (req) => {
         user_id: authedUser?.id ?? null,
         email: effectiveEmail,
         is_guest: isGuest,
-        type: productKey === "premium" ? "lifetime" : "initiation_7d",
+        type: product.metadataType,
         product: productKey,
         base_price_cents: basePriceCents,
         discount_cents: discountCents,

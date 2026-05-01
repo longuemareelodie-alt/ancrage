@@ -1,4 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import { PRODUCT_CATALOG } from "../_shared/productCatalog.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -7,14 +8,16 @@ const corsHeaders = {
 };
 
 // Human-friendly labels keyed by either subscription.plan (legacy) or
-// product code stored in premium_activation_log.raw.product.
+// product code stored in premium_activation_log.raw.product. Catalog labels
+// are sourced from the shared, fingerprinted product catalog so any
+// label change must go through the locking test.
 const planLabels: Record<string, string> = {
   monthly: "Abonnement mensuel",
   yearly: "Abonnement annuel",
   one_time: "Accès unique",
-  initiation_7d: "ANCRAGE — Initiation 7 jours",
-  premium: "ANCRAGE — Accès complet",
-  lifetime: "ANCRAGE — Accès complet",
+  initiation_7d: PRODUCT_CATALOG.initiation_7d.description,
+  premium: PRODUCT_CATALOG.premium.description,
+  lifetime: PRODUCT_CATALOG.premium.description,
 };
 
 // Simple PDF builder - generates a valid PDF without external libs
