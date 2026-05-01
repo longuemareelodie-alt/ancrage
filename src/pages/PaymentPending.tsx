@@ -278,12 +278,30 @@ const PaymentPending = () => {
               <CheckCircle2 className="h-9 w-9 text-primary" />
             </motion.div>
             <div className="space-y-2">
-              <h1 className="text-xl font-bold">{t("payment_pending.confirmed.title")}</h1>
-              <p className="text-sm text-muted-foreground">{t("payment_pending.confirmed.text")}</p>
+              <h1 className="text-xl font-bold">
+                {isInitiationFlow
+                  ? t("payment_pending.confirmed.title_initiation", "Tes 7 jours sont débloqués 💛")
+                  : t("payment_pending.confirmed.title")}
+              </h1>
+              <p className="text-sm text-muted-foreground">
+                {isInitiationFlow
+                  ? t(
+                      "payment_pending.confirmed.text_initiation",
+                      "L'initiation 7 jours est ouverte dans ton compte. On t'y emmène.",
+                    )
+                  : t("payment_pending.confirmed.text")}
+              </p>
             </div>
             <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
               <Loader2 className="h-3.5 w-3.5 animate-spin" />
-              <span>{t("payment_pending.confirmed.redirect")}</span>
+              <span>
+                {isInitiationFlow
+                  ? t(
+                      "payment_pending.confirmed.redirect_initiation",
+                      "Redirection vers les 7 jours d'ancrage…",
+                    )
+                  : t("payment_pending.confirmed.redirect")}
+              </span>
             </div>
           </>
         )}
