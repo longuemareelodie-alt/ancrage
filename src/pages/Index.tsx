@@ -96,8 +96,26 @@ const Index = () => {
     return user ? target : `/auth?redirect=${encodeURIComponent(target)}`;
   };
   const recognizeExtras = [
-    { emoji: t("home.recognize.s1_emoji"), text: t(parentType === "papa" ? "home.recognize.s1_papa" : "home.recognize.s1") },
-    { emoji: t("home.recognize.s2_emoji"), text: t(parentType === "papa" ? "home.recognize.s2_papa" : "home.recognize.s2") },
+    {
+      emoji: t("home.recognize.s1_emoji"),
+      text: t(
+        schoolContext === "holiday"
+          ? "home.recognize.s1_holiday"
+          : parentType === "papa"
+            ? "home.recognize.s1_papa"
+            : "home.recognize.s1",
+      ),
+    },
+    {
+      emoji: t("home.recognize.s2_emoji"),
+      text: t(
+        schoolContext === "holiday"
+          ? "home.recognize.s2_holiday"
+          : parentType === "papa"
+            ? "home.recognize.s2_papa"
+            : "home.recognize.s2",
+      ),
+    },
   ];
   type QuickState = {
     state: NonNullable<RecognizeScene["state"]>;
