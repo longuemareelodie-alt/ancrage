@@ -353,6 +353,57 @@ export type Database = {
         }
         Relationships: []
       }
+      pending_account_emails: {
+        Row: {
+          attempts: number
+          created_at: string
+          email: string
+          id: string
+          last_attempt_at: string | null
+          last_error: string | null
+          max_attempts: number
+          next_attempt_at: string
+          payment_id: string
+          sent_at: string | null
+          status: string
+          template_name: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          attempts?: number
+          created_at?: string
+          email: string
+          id?: string
+          last_attempt_at?: string | null
+          last_error?: string | null
+          max_attempts?: number
+          next_attempt_at?: string
+          payment_id: string
+          sent_at?: string | null
+          status?: string
+          template_name?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          attempts?: number
+          created_at?: string
+          email?: string
+          id?: string
+          last_attempt_at?: string | null
+          last_error?: string | null
+          max_attempts?: number
+          next_attempt_at?: string
+          payment_id?: string
+          sent_at?: string | null
+          status?: string
+          template_name?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       premium_activation_log: {
         Row: {
           amount: number | null
