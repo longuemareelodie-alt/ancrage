@@ -91,6 +91,16 @@ Deno.serve(async (req) => {
     };
 
     const normalizedPromo = (rawPromoCode ?? "").trim().toUpperCase();
+
+    // If a promo was sent for a product that doesn't accept promos, fail loudly
+    // so the front-end can show a precise error instead of silently ignoring it.
+    if (normalizedPromo && !product.allowPromo) {
+      return jsonResponse(
+        { error: "promo_not_allowed_for_product", product: productKey },
+        400,
+      );
+    }
+
     const promo = normalizedPromo && product.allowPromo ? PROMO_CATALOG[normalizedPromo] : null;
 
     // If client sent a code but it's invalid (and the product accepts promos)
