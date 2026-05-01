@@ -79,6 +79,10 @@
       "outro": "Tu n'es pas cassée. Tu n'es pas faible. Tu es juste restée trop longtemps en alerte — et personne ne t'a appris à redescendre.",
       "quick_states_title": "Là, maintenant, tu es plutôt…",
       "quick_states_hint": "Choisis ton état — j'ouvre l'outil qui correspond.",
+      "last_state_title": "Reprendre où tu en étais ?",
+      "last_state_hint": "La dernière fois, tu as choisi ce raccourci.",
+      "last_state_cta": "Reprendre",
+      "last_state_dismiss": "Oublier ce rappel",
       "quick_states": [
         {
           "state": "panique",
