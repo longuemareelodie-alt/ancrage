@@ -49,8 +49,32 @@ const Index = () => {
     { num: "3", text: t("home.how.step3") },
   ];
   const projection = [t("home.projection.i1"), t("home.projection.i2"), t("home.projection.i3")];
-  type RecognizeScene = { tag: string; emoji: string; body: string; punch: string };
+  type RecognizeScene = {
+    tag: string;
+    emoji: string;
+    body: string;
+    punch: string;
+    state?: "panique" | "hypervigilance" | "rumination" | "explosion";
+    stateLabel?: string;
+    cta?: string;
+  };
   const recognizeMainScenes = t("home.recognize.scenes", { returnObjects: true }) as RecognizeScene[];
+
+  // Each "state" maps to the page that delivers its concrete action,
+  // mirroring the destinations defined in src/data/emotionCTAs.ts.
+  const STATE_ROUTES: Record<NonNullable<RecognizeScene["state"]>, string> = {
+    panique: "/calme",
+    hypervigilance: "/calme",
+    rumination: "/post-flow",
+    explosion: "/calme",
+  };
+  const sceneCtaHref = (scene: RecognizeScene): string => {
+    if (!scene.state) return "/emotions";
+    const target = STATE_ROUTES[scene.state];
+    // /calme and /post-flow are gated; send anonymous visitors through auth
+    // with a redirect back to the right page so the transition stays direct.
+    return user ? target : `/auth?redirect=${encodeURIComponent(target)}`;
+  };
   const recognizeExtras = [
     { emoji: t("home.recognize.s1_emoji"), text: t("home.recognize.s1") },
     { emoji: t("home.recognize.s2_emoji"), text: t("home.recognize.s2") },
