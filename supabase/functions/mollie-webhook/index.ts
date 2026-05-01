@@ -932,8 +932,9 @@ Deno.serve(async (req) => {
       }
 
       // 3) Generate a recovery link so the buyer can set their password.
-      //    The link redirects to /set-password (dedicated activation page,
-      //    handles expired/invalid tokens with a "resend" CTA).
+      //    The link redirects to /activation-compte (étape pédagogique qui
+      //    présente les 3 étapes puis transmet au formulaire /set-password
+      //    en préservant le hash de récupération).
       //
       // Fallback policy:
       //   - If generateLink fails, OR if the transactional email invoke fails,
@@ -970,7 +971,7 @@ Deno.serve(async (req) => {
         const { data: linkData, error: linkErr } = await supabase.auth.admin.generateLink({
           type: "recovery",
           email,
-          options: { redirectTo: `${siteOrigin}/set-password?welcome=1` },
+          options: { redirectTo: `${siteOrigin}/activation-compte?welcome=1` },
         });
         if (linkErr) throw linkErr;
         const actionLink =

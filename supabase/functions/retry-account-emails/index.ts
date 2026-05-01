@@ -92,7 +92,7 @@ Deno.serve(async (req) => {
       const { data: linkData, error: linkErr } = await supabase.auth.admin.generateLink({
         type: "recovery",
         email: row.email,
-        options: { redirectTo: `${SITE_ORIGIN}/set-password?welcome=1` },
+        options: { redirectTo: `${SITE_ORIGIN}/activation-compte?welcome=1` },
       });
       if (linkErr) throw linkErr;
 
