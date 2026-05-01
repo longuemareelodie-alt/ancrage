@@ -18,7 +18,11 @@ interface WelcomeInitiationProps {
 }
 
 const WelcomeInitiationEmail = ({ firstName, actionUrl }: WelcomeInitiationProps) => {
-  const ctaUrl = actionUrl || `${SITE_URL}/initiation-7-jours`
+  // When the buyer already has an account, send them straight to the
+  // initiation page with `?launch=1` so the app can detect the arrival
+  // from the welcome email (mark day-1 launch, log analytics, prefill
+  // the start state, etc.).
+  const ctaUrl = actionUrl || `${SITE_URL}/initiation-7-jours?launch=1&utm_source=email&utm_campaign=welcome-initiation`
   const ctaLabel = actionUrl ? "Activer mon compte" : "Commencer mon jour 1"
   return (
     <Html lang="fr" dir="ltr">
