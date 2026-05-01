@@ -11,6 +11,16 @@ interface StartPaymentOptions {
   redirectUrl?: string;
 }
 
+/** Products that do NOT accept promo codes (kept in sync with the edge function catalog). */
+const PRODUCTS_WITHOUT_PROMO: ReadonlyArray<NonNullable<StartPaymentOptions["product"]>> = [
+  "initiation_7d",
+];
+
+const PRODUCT_LABELS: Record<NonNullable<StartPaymentOptions["product"]>, string> = {
+  premium: "l'accès Premium",
+  initiation_7d: "l'initiation 7 jours (4,99 €)",
+};
+
 export const useMolliePayment = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
