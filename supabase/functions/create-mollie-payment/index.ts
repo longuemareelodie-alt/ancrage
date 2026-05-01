@@ -12,18 +12,16 @@ const jsonResponse = (payload: unknown, status = 200) =>
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
 
+// Basic email validator (RFC 5322 lite — sufficient for guest checkout)
+const isValidEmail = (v: unknown): v is string =>
+  typeof v === "string" && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) && v.trim().length <= 254;
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
 
   try {
-    // Authenticate the user
-    const authHeader = req.headers.get("authorization");
-    if (!authHeader) {
-      return jsonResponse({ error: "Missing authorization header" }, 401);
-    }
-
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
     const mollieKey = Deno.env.get("MOLLIE_API_KEY");
@@ -33,24 +31,30 @@ Deno.serve(async (req) => {
       return jsonResponse({ error: "Server config error" }, 500);
     }
 
-    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-      global: { headers: { Authorization: authHeader } },
-    });
-
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return jsonResponse({ error: "Unauthorized" }, 401);
+    // Try to authenticate the caller — but auth is OPTIONAL (guest checkout allowed).
+    // If no Authorization header or invalid token, we treat the call as a guest.
+    let authedUser: { id: string; email: string | null } | null = null;
+    const authHeader = req.headers.get("authorization");
+    if (authHeader && authHeader.toLowerCase() !== "bearer ") {
+      try {
+        const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+          global: { headers: { Authorization: authHeader } },
+        });
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          authedUser = { id: user.id, email: user.email ?? null };
+        }
+      } catch (e) {
+        console.warn("Optional auth lookup failed (treating as guest):", (e as Error)?.message);
+      }
     }
 
-    // Parse optional redirect URL + promo code + product from request body
+    // Parse body: redirectUrl, promoCode, product, and (for guests) guestEmail
     let redirectUrl = "https://ancrage.lovable.app/dashboard?payment=success";
     let webhookUrl = `${supabaseUrl}/functions/v1/mollie-webhook`;
     let rawPromoCode: string | null = null;
     let rawProduct: string | null = null;
+    let guestEmail: string | null = null;
 
     try {
       const body = await req.json();
@@ -58,6 +62,7 @@ Deno.serve(async (req) => {
       if (body?.webhookUrl) webhookUrl = body.webhookUrl;
       if (typeof body?.promoCode === "string") rawPromoCode = body.promoCode;
       if (typeof body?.product === "string") rawProduct = body.product;
+      if (typeof body?.guestEmail === "string") guestEmail = body.guestEmail.trim().toLowerCase();
     } catch {
       // No body or invalid JSON — use defaults
     }
@@ -83,6 +88,26 @@ Deno.serve(async (req) => {
     const productKey: ProductKey =
       rawProduct === "initiation_7d" ? "initiation_7d" : "premium";
     const product = PRODUCT_CATALOG[productKey];
+
+    // ---- Resolve effective email + identity ----
+    // Guests (no auth) MUST provide a valid email so the webhook can
+    // create their account on payment success. Authed users always
+    // win over guestEmail (single source of truth = the session).
+    const effectiveEmail = authedUser?.email ?? guestEmail;
+    const isGuest = !authedUser;
+
+    if (isGuest && !isValidEmail(guestEmail)) {
+      return jsonResponse({ error: "guest_email_required" }, 400);
+    }
+    if (isGuest) {
+      // Guests are only allowed to buy products that produce a fresh account.
+      // Premium and initiation both qualify; we keep the rule explicit so
+      // future products opt-in deliberately.
+      const GUEST_ALLOWED: ProductKey[] = ["premium", "initiation_7d"];
+      if (!GUEST_ALLOWED.includes(productKey)) {
+        return jsonResponse({ error: "guest_not_allowed_for_product", product: productKey }, 400);
+      }
+    }
 
     // ---- Promo code validation (server-authoritative) ----
     // Promos only apply to the premium product.
@@ -129,8 +154,9 @@ Deno.serve(async (req) => {
       redirectUrl,
       webhookUrl,
       metadata: {
-        user_id: user.id,
-        email: user.email,
+        user_id: authedUser?.id ?? null,
+        email: effectiveEmail,
+        is_guest: isGuest,
         type: productKey === "premium" ? "lifetime" : "initiation_7d",
         product: productKey,
         base_price_cents: basePriceCents,
@@ -141,8 +167,9 @@ Deno.serve(async (req) => {
     };
 
     console.log("Creating Mollie payment:", JSON.stringify({
-      user_id: user.id,
-      email: user.email,
+      user_id: authedUser?.id ?? null,
+      email: effectiveEmail,
+      is_guest: isGuest,
       redirectUrl,
       webhookUrl,
       promo_code: promo ? normalizedPromo : null,

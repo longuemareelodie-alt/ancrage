@@ -816,27 +816,132 @@ Deno.serve(async (req) => {
     }
 
     if (!profile) {
-      logError("User not found for payment", new Error("user_not_found"), {
-        paymentId,
-        paymentRecordId: payment?.id ?? null,
-        userId,
-        email,
-        paymentMetadata,
-        payment,
-      });
-      await logActivation(supabaseUrl, serviceRoleKey, {
-        user_id: userId,
-        payment_id: paymentId,
-        status: "user_not_found",
-        amount: amountCents,
-        message: `Lookup failed (user_id=${userId ?? "n/a"}, email=${email ?? "n/a"})`,
-      });
-      return webhookAck({
-        status: "ignored",
-        action: "none",
-        reason: "user_not_found",
-        payment_id: payment?.id ?? paymentId,
-      });
+      // ---- New flow: payment-first, account-on-success ----
+      // No existing profile = guest checkout. Create the auth user via the
+      // service role, then send a recovery link so they can set their password.
+      // The handle_new_user trigger creates the profiles row automatically.
+      if (!email) {
+        logError("Cannot create account without email", new Error("guest_no_email"), {
+          paymentId,
+          userId,
+          paymentMetadata,
+        });
+        await logActivation(supabaseUrl, serviceRoleKey, {
+          payment_id: paymentId,
+          status: "error",
+          amount: amountCents,
+          message: "guest_no_email_for_account_creation",
+        });
+        return webhookAck({
+          status: "error",
+          error: "guest_no_email",
+          payment_id: payment?.id ?? paymentId,
+        });
+      }
+
+      logDebug("Creating account for guest payment", { email, paymentId });
+
+      // 1) Try to create a fresh auth user. If that user already exists in
+      //    auth.users without a profiles row (rare race), fall back to lookup.
+      let createdUserId: string | null = null;
+      try {
+        const { data: created, error: createErr } = await supabase.auth.admin.createUser({
+          email,
+          email_confirm: true, // payment proves email ownership
+          user_metadata: { source: "mollie_payment", payment_id: paymentId },
+        });
+        if (createErr) {
+          // 422 / "already registered" → look up the existing user.
+          const msg = createErr.message?.toLowerCase() ?? "";
+          if (msg.includes("registered") || msg.includes("exists") || (createErr as any)?.status === 422) {
+            logDebug("auth.admin.createUser: user already exists, will look up", { email, paymentId });
+          } else {
+            throw createErr;
+          }
+        } else {
+          createdUserId = created.user?.id ?? null;
+        }
+      } catch (e) {
+        logError("auth.admin.createUser failed", e, { email, paymentId });
+        await logActivation(supabaseUrl, serviceRoleKey, {
+          payment_id: paymentId,
+          status: "error",
+          amount: amountCents,
+          message: `account_create_failed: ${(e as Error)?.message ?? "unknown"}`,
+        });
+        return webhookAck({
+          status: "error",
+          error: "account_create_failed",
+          payment_id: payment?.id ?? paymentId,
+        });
+      }
+
+      // 2) Re-fetch the profile (created by handle_new_user trigger). Retry briefly
+      //    because the trigger runs asynchronously after createUser returns.
+      for (let attempt = 0; attempt < 5 && !profile; attempt++) {
+        if (attempt > 0) await new Promise((r) => setTimeout(r, 250));
+        const { data } = await supabase
+          .from("profiles")
+          .select("user_id, email, is_premium, plan_type, has_initiation_access")
+          .eq("email", email)
+          .maybeSingle();
+        if (data) profile = data as any;
+      }
+
+      if (!profile) {
+        logError("Profile still missing after account creation", new Error("profile_missing_post_create"), {
+          email,
+          createdUserId,
+          paymentId,
+        });
+        await logActivation(supabaseUrl, serviceRoleKey, {
+          user_id: createdUserId,
+          payment_id: paymentId,
+          status: "error",
+          amount: amountCents,
+          message: "profile_missing_post_create",
+        });
+        return webhookAck({
+          status: "error",
+          error: "profile_missing_post_create",
+          payment_id: payment?.id ?? paymentId,
+        });
+      }
+
+      // 3) Generate a recovery link so the buyer can set their password.
+      //    The link redirects to /reset-password (already wired in the app).
+      const siteOrigin = "https://www.digitalmamanlibre.com";
+      try {
+        const { data: linkData, error: linkErr } = await supabase.auth.admin.generateLink({
+          type: "recovery",
+          email,
+          options: { redirectTo: `${siteOrigin}/reset-password?welcome=1` },
+        });
+        if (linkErr) throw linkErr;
+        const actionLink =
+          linkData?.properties?.action_link
+          ?? (linkData as any)?.action_link
+          ?? null;
+
+        if (actionLink) {
+          // Fire-and-forget welcome email with the activation link.
+          supabase.functions.invoke("send-transactional-email", {
+            body: {
+              templateName: "welcome-initiation",
+              recipientEmail: email,
+              idempotencyKey: `account-activation-${paymentId}`,
+              templateData: { firstName: "", actionUrl: actionLink },
+            },
+          }).catch((e) => logError("activation email send failed (non-fatal)", e, { paymentId }));
+        } else {
+          logError("generateLink returned no action_link", new Error("no_action_link"), { paymentId });
+        }
+      } catch (linkErr) {
+        // Account exists, payment will still be activated below — but the
+        // user won't get the activation email. They can use "forgot password"
+        // from /auth as a recovery path. We log loudly so support can intervene.
+        logError("Failed to generate activation link (non-fatal)", linkErr, { email, paymentId });
+      }
     }
 
     // --- Determine product type from payment metadata ---

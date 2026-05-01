@@ -15,3 +15,5 @@ project_id = "mpadkxqomykztvqrnmfv"
     verify_jwt = false
   [functions.send-health-reminders]
     verify_jwt = false
+  [functions.create-mollie-payment]
+    verify_jwt = false
