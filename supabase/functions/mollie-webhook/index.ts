@@ -910,7 +910,32 @@ Deno.serve(async (req) => {
         },
       });
 
-      // Admin notification (no welcome-premium email for the initiation product)
+      // Welcome email for the initiation 7 jours buyer
+      try {
+        const { data: initProfileData } = await supabase
+          .from("profiles")
+          .select("first_name")
+          .eq("user_id", updatedProfile.user_id)
+          .maybeSingle();
+
+        const initRecipient = updatedProfile.email || email;
+        if (initRecipient) {
+          await supabase.functions.invoke("send-transactional-email", {
+            body: {
+              templateName: "welcome-initiation",
+              recipientEmail: initRecipient,
+              idempotencyKey: `welcome-initiation-${paymentId}`,
+              templateData: { firstName: initProfileData?.first_name || "" },
+            },
+          });
+        } else {
+          logDebug("Skipped welcome-initiation email: no recipient", { paymentId });
+        }
+      } catch (emailErr) {
+        logError("Failed to send welcome-initiation email (non-fatal)", emailErr, { paymentId });
+      }
+
+      // Admin notification
       try {
         await supabase.functions.invoke("send-transactional-email", {
           body: {
