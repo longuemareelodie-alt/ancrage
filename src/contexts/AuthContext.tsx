@@ -2,6 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useRef, useState, Re
 import { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { pullStyleFromRemote } from "@/lib/actionStyle";
+import { pullParentTypeFromRemote } from "@/lib/parentType";
 import { withRetry } from "@/lib/supabaseRetry";
 import { classifyProfileCreatedAt, isGrandfatheredAccount } from "@/lib/paywallPolicy";
 
