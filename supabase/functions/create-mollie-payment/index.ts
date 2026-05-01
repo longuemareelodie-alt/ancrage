@@ -28,6 +28,23 @@ Deno.serve(async (req) => {
   }
 
   try {
+    // Server-authoritative product catalog must match its locked fingerprint
+    // before we touch Mollie. Any drift (label, amount, currency, flags)
+    // refuses payment creation until the catalog and its companion test
+    // (`tests/productCatalog.spec.ts`) are explicitly updated together.
+    try {
+      assertCatalogIntegrity();
+    } catch (e) {
+      if (e instanceof ProductCatalogIntegrityError) {
+        console.error("[create-mollie-payment] catalog integrity violation", e.message);
+        return jsonResponse(
+          { error: "product_catalog_integrity_violation" },
+          503,
+        );
+      }
+      throw e;
+    }
+
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
     const mollieKey = Deno.env.get("MOLLIE_API_KEY");
