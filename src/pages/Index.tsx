@@ -79,6 +79,17 @@ const Index = () => {
     { emoji: t("home.recognize.s1_emoji"), text: t("home.recognize.s1") },
     { emoji: t("home.recognize.s2_emoji"), text: t("home.recognize.s2") },
   ];
+  type QuickState = {
+    state: NonNullable<RecognizeScene["state"]>;
+    emoji: string;
+    label: string;
+    hint: string;
+  };
+  const quickStates = t("home.recognize.quick_states", { returnObjects: true }) as QuickState[];
+  const quickStateHref = (state: QuickState["state"]): string => {
+    const target = STATE_ROUTES[state];
+    return user ? target : `/auth?redirect=${encodeURIComponent(target)}`;
+  };
   const beforeItems = t("home.before_after.before", { returnObjects: true }) as string[];
   const afterItems = t("home.before_after.after", { returnObjects: true }) as string[];
   type IdentityPillar = {
