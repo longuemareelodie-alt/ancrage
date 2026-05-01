@@ -9,6 +9,7 @@ import { LogOut, Plus, Trash2, Save, User, BookOpen, StickyNote, Lock, Pencil, C
 import { ActionStyle, ACTION_STYLE_LABELS, getActionStyle } from "@/lib/actionStyle";
 import { useParentType } from "@/hooks/useParentType";
 import { PARENT_TYPE_LABELS, type ParentType } from "@/lib/parentType";
+import { parentize } from "@/lib/parentize";
 import { Progress } from "@/components/ui/progress";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { Switch } from "@/components/ui/switch";
