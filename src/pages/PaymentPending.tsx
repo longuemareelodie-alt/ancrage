@@ -51,6 +51,12 @@ const PaymentPending = () => {
   const [screenshotFilename, setScreenshotFilename] = useState<string | null>(null);
   const [capturing, setCapturing] = useState(false);
   const [supportOpen, setSupportOpen] = useState(false);
+  // Detect "initiation_7d" flow once at mount via the ?return= query param
+  // injected at checkout. Stored in state so render code can branch on it.
+  const [isInitiationFlow] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    return new URLSearchParams(window.location.search).get("return") === "/initiation-7-jours";
+  });
   const screenshotsAvailable = isScreenshotSupported();
   const cancelled = useRef(false);
   const loggedRef = useRef(false);
