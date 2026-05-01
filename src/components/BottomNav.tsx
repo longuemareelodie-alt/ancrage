@@ -16,6 +16,7 @@ const BottomNav = () => {
     "/",
     "/auth",
     "/reset-password",
+    "/set-password",
     "/cgv",
     "/confidentialite",
     "/mentions-legales",

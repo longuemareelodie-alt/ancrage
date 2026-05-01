@@ -27,6 +27,7 @@ import Auth from "./pages/Auth";
 import Profil from "./pages/Profil";
 import ProfilStyle from "./pages/ProfilStyle";
 import ResetPassword from "./pages/ResetPassword";
+import SetPassword from "./pages/SetPassword";
 import NotFound from "./pages/NotFound";
 import CGV from "./pages/CGV";
 import Confidentialite from "./pages/Confidentialite";
@@ -102,6 +103,7 @@ const AnimatedRoutes = () => {
         <Route path="/profil" element={<PaidRoute><PageTransition><Profil /></PageTransition></PaidRoute>} />
         <Route path="/profil/style" element={<PaidRoute><PageTransition><ProfilStyle /></PageTransition></PaidRoute>} />
         <Route path="/reset-password" element={<PageTransition><ResetPassword /></PageTransition>} />
+        <Route path="/set-password" element={<PageTransition><SetPassword /></PageTransition>} />
         <Route path="/cgv" element={<PageTransition><CGV /></PageTransition>} />
         <Route path="/confidentialite" element={<PageTransition><Confidentialite /></PageTransition>} />
         <Route path="/mentions-legales" element={<PageTransition><MentionsLegales /></PageTransition>} />
