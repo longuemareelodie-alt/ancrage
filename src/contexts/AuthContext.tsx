@@ -111,6 +111,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const uid = nextSession?.user?.id ?? null;
         // Reset paid state immediately on auth change so old value never leaks across users.
         setIsPaid(null);
+        setHasInitiation(null);
         setEligibilityPhase(uid ? "checking" : "idle");
         void checkEligibility(uid);
         if (nextSession?.user) {
@@ -153,6 +154,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         user: session?.user ?? null,
         loading,
         isPaid,
+        hasInitiation,
         eligibilityPhase,
         refreshEligibility,
         signOut,
