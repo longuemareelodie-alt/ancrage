@@ -10,6 +10,7 @@ import { useTranslation } from "react-i18next";
 import { useAuth } from "@/contexts/AuthContext";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
 import { useParentType } from "@/hooks/useParentType";
+import { useSchoolContext } from "@/lib/schoolContext";
 import logo from "@/assets/logo-ancrage.png";
 import avatarCamille from "@/assets/avatar-camille.jpg";
 import avatarInes from "@/assets/avatar-ines.jpg";
