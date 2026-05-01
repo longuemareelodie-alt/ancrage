@@ -1,17 +1,19 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
-import { useNavigate } from "react-router-dom";
+import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 /**
- * RouteTransition — overlay plein écran pour combler le "temps mort"
- * entre un clic (ex: micro-scène) et l'apparition de la page d'état.
+ * RouteTransition — overlay léger qui couvre le micro-creux entre un clic
+ * (ex: micro-scène "Tu te reconnais ?") et l'apparition de la page d'état
+ * (/calme, /post-flow…).
  *
- * Flow :
- * 1. clic → overlay fade-in (180ms)
- * 2. navigate() → React monte la nouvelle route
- * 3. au mount de la nouvelle route, overlay fade-out (220ms)
+ * Pourquoi : `AnimatePresence mode="wait"` + un éventuel loader de garde
+ * (PaidRoute / ProtectedRoute) crée une fraction de seconde de "temps mort"
+ * blanc. L'overlay (fade-in primary doux) maintient la continuité visuelle.
  *
- * Résultat : aucun flash blanc, transition continue.
+ * Usage :
+ *   const { navigateWithTransition } = useRouteTransition();
+ *   onClick={() => navigateWithTransition("/calme")}
  */
 
 type Ctx = {
@@ -23,10 +25,10 @@ const RouteTransitionContext = createContext<Ctx | null>(null);
 export const useRouteTransition = () => {
   const ctx = useContext(RouteTransitionContext);
   if (!ctx) {
-    // Fallback no-op si le provider n'enveloppe pas l'arbre
     return {
       navigateWithTransition: (to: string) => {
-        window.location.href = to;
+        if (to.startsWith("http")) window.location.href = to;
+        else window.location.href = to;
       },
     };
   }
@@ -35,34 +37,42 @@ export const useRouteTransition = () => {
 
 export const RouteTransitionProvider = ({ children }: { children: ReactNode }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [active, setActive] = useState(false);
+  const startedAtRef = useRef<number | null>(null);
 
   const navigateWithTransition = useCallback(
     (to: string) => {
-      // Liens externes ou auth → redirection brute (déclenche un reload)
-      if (to.startsWith("http") || to.startsWith("/auth")) {
-        setActive(true);
-        // petit délai pour laisser l'overlay apparaître avant la redirection
-        window.setTimeout(() => {
-          window.location.href = to;
-        }, 180);
+      // Liens externes
+      if (to.startsWith("http")) {
+        window.location.href = to;
         return;
       }
       setActive(true);
-      // navigue immédiatement ; l'overlay reste visible le temps du mount
-      window.setTimeout(() => {
-        navigate(to);
-        // laisse la nouvelle page se peindre puis on retire l'overlay
-        window.setTimeout(() => setActive(false), 220);
-      }, 160);
+      startedAtRef.current = performance.now();
+      // navigate immédiat — l'overlay couvre la transition
+      navigate(to);
     },
     [navigate],
   );
 
-  // garde-fou : si l'overlay reste bloqué (>1.2s), on le force à off
+  // À chaque changement de route, on retire l'overlay après un délai minimal
+  // garantissant que la nouvelle page a eu le temps de monter et de jouer
+  // sa propre animation d'entrée.
   useEffect(() => {
     if (!active) return;
-    const id = window.setTimeout(() => setActive(false), 1200);
+    const elapsed = startedAtRef.current ? performance.now() - startedAtRef.current : 0;
+    // overlay visible au minimum 220ms, max ~500ms pour rester fluide
+    const remaining = Math.max(220 - elapsed, 120);
+    const id = window.setTimeout(() => setActive(false), remaining);
+    return () => window.clearTimeout(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname]);
+
+  // Garde-fou : jamais bloqué plus de 800ms
+  useEffect(() => {
+    if (!active) return;
+    const id = window.setTimeout(() => setActive(false), 800);
     return () => window.clearTimeout(id);
   }, [active]);
 
@@ -76,16 +86,16 @@ export const RouteTransitionProvider = ({ children }: { children: ReactNode }) =
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.18, ease: "easeOut" }}
-            className="pointer-events-none fixed inset-0 z-[100] flex items-center justify-center bg-background"
+            transition={{ duration: 0.16, ease: "easeOut" }}
+            className="pointer-events-none fixed inset-0 z-[100] flex items-center justify-center bg-background/85 backdrop-blur-sm"
             aria-hidden
           >
             <motion.div
-              initial={{ scale: 0.6, opacity: 0 }}
+              initial={{ scale: 0.7, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 1.1, opacity: 0 }}
+              exit={{ scale: 1.05, opacity: 0 }}
               transition={{ duration: 0.22, ease: "easeOut" }}
-              className="h-12 w-12 rounded-full border-2 border-primary/30 border-t-primary animate-spin"
+              className="h-10 w-10 rounded-full border-2 border-primary/30 border-t-primary animate-spin"
             />
           </motion.div>
         )}
