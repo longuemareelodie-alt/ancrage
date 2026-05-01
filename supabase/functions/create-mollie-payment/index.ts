@@ -90,24 +90,7 @@ Deno.serve(async (req) => {
       // No body or invalid JSON — use defaults
     }
 
-    // ---- Product catalog (server-authoritative) ----
-    // Two products are offered:
-    //   - "premium"        → 39,00 € lifetime full access (default)
-    //   - "initiation_7d"  → 4,99 € one-time access to the 7-day initiation
-    type ProductKey = "premium" | "initiation_7d";
-    const PRODUCT_CATALOG: Record<ProductKey, { priceCents: number; description: string; allowPromo: boolean }> = {
-      premium: {
-        priceCents: 3900,
-        description: "ANCRAGE — Accès Premium",
-        allowPromo: true,
-      },
-      initiation_7d: {
-        priceCents: 499,
-        description: "ANCRAGE — Initiation 7 jours",
-        allowPromo: false,
-      },
-    };
-
+    // ---- Product selection (catalog imported from _shared/productCatalog) ----
     const productKey: ProductKey =
       rawProduct === "initiation_7d" ? "initiation_7d" : "premium";
     const product = PRODUCT_CATALOG[productKey];
