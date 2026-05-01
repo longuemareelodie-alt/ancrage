@@ -154,8 +154,9 @@ Deno.serve(async (req) => {
       redirectUrl,
       webhookUrl,
       metadata: {
-        user_id: user.id,
-        email: user.email,
+        user_id: authedUser?.id ?? null,
+        email: effectiveEmail,
+        is_guest: isGuest,
         type: productKey === "premium" ? "lifetime" : "initiation_7d",
         product: productKey,
         base_price_cents: basePriceCents,
@@ -166,8 +167,9 @@ Deno.serve(async (req) => {
     };
 
     console.log("Creating Mollie payment:", JSON.stringify({
-      user_id: user.id,
-      email: user.email,
+      user_id: authedUser?.id ?? null,
+      email: effectiveEmail,
+      is_guest: isGuest,
       redirectUrl,
       webhookUrl,
       promo_code: promo ? normalizedPromo : null,
