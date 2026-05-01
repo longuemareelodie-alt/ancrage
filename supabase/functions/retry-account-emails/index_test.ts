@@ -23,18 +23,26 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 const SUPABASE_URL = Deno.env.get("VITE_SUPABASE_URL") ?? Deno.env.get("SUPABASE_URL");
 const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
-const skip = !SUPABASE_URL || !SERVICE_ROLE_KEY;
-if (skip) {
+const skipAll = !SUPABASE_URL;
+const skipServiceRole = !SUPABASE_URL || !SERVICE_ROLE_KEY;
+
+if (skipAll) {
   console.warn(
-    "[retry-account-emails test] Skipping: VITE_SUPABASE_URL or " +
-      "SUPABASE_SERVICE_ROLE_KEY missing in .env",
+    "[retry-account-emails test] Skipping all: VITE_SUPABASE_URL missing in .env",
+  );
+} else if (skipServiceRole) {
+  console.warn(
+    "[retry-account-emails test] Only the unauthenticated-rejection test will run.\n" +
+      "  To run the full e2e suite, add SUPABASE_SERVICE_ROLE_KEY to your local .env\n" +
+      "  (find it in Lovable Cloud → Backend → Settings → API).\n" +
+      "  WARNING: this key bypasses RLS — never commit it.",
   );
 }
 
 const FN_URL = `${SUPABASE_URL}/functions/v1/retry-account-emails`;
 const E2E_RECIPIENT = "e2e@digitalmamanlibre.com";
 
-const admin = skip
+const admin = skipServiceRole
   ? null
   : createClient(SUPABASE_URL!, SERVICE_ROLE_KEY!, {
       auth: { persistSession: false, autoRefreshToken: false },
