@@ -91,8 +91,21 @@ Deno.serve(async (req) => {
     }
 
     // ---- Product selection (catalog imported from _shared/productCatalog) ----
-    const productKey: ProductKey =
-      rawProduct === "initiation_7d" ? "initiation_7d" : "premium";
+    // NOTE: l'offre "initiation_7d" (4,99 €) a été fusionnée dans l'offre Premium.
+    // Toute demande d'achat est désormais routée vers "premium" — le contenu
+    // de l'initiation 7 jours est inclus dans l'activation Premium côté webhook.
+    if (rawProduct === "initiation_7d") {
+      return jsonResponse(
+        {
+          error: "product_discontinued",
+          message:
+            "L'offre Initiation 7 jours n'est plus vendue séparément. Elle est désormais incluse dans l'offre Premium.",
+          replacement: "premium",
+        },
+        410,
+      );
+    }
+    const productKey: ProductKey = "premium";
     const product = PRODUCT_CATALOG[productKey];
 
     // ---- Resolve effective email + identity ----

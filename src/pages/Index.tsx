@@ -44,16 +44,9 @@ const Index = () => {
     startPayment();
   };
 
-  const handleInitiationPayment = () => {
-    if (!user) {
-      window.location.href = "/auth?redirect=/initiation-7-jours&action=initiation";
-      return;
-    }
-    startPayment({
-      product: "initiation_7d",
-      redirectUrl: `${window.location.origin}/payment-pending?return=/initiation-7-jours`,
-    });
-  };
+  // Note : l'offre "Initiation 7 jours" à 4,99 € a été fusionnée dans
+  // l'offre Premium. Plus de CTA dédié — le contenu reste accessible aux
+  // utilisateurs Premium via /initiation-7-jours.
 
   const steps = [
     { num: "1", text: t("home.how.step1") },
@@ -742,19 +735,6 @@ const Index = () => {
             <p className="text-xs text-muted-foreground leading-relaxed max-w-sm mx-auto">
             {t("home.testimonials.cta_justify")}
             </p>
-            <div className="pt-3 border-t border-primary/10">
-              <p className="text-xs text-muted-foreground mb-2">
-                Tu veux d'abord tester avec les 7 jours d'ancrage ?
-              </p>
-              <button
-                type="button"
-                onClick={handleInitiationPayment}
-                disabled={paymentLoading}
-                className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline disabled:opacity-60 disabled:cursor-not-allowed"
-              >
-                Démarrer les 7 jours · 4,99 € →
-              </button>
-            </div>
           </div>
         </div>
       </SectionBlock>
