@@ -20,20 +20,11 @@ const INITIATION_PRICE_LABEL = "4,99 €";
 // dans supabase/functions/create-mollie-payment (PRODUCT_CATALOG.initiation_7d).
 const INITIATION_TRANSACTION_LABEL = "ANCRAGE — Initiation 7 jours";
 
+// L'offre "Initiation 7 jours" autonome (4,99 €) a été retirée : le contenu
+// est désormais inclus dans l'offre Premium. Les visiteurs sans accès sont
+// redirigés vers la page d'accueil qui présente le CTA Premium.
 const InitiationPaywall = () => {
-  const { user, hasInitiation, loading } = useAuth();
-  const { startPayment, loading: paymentLoading } = useMolliePayment();
-
-  const handleBuy = () => {
-    if (!user) {
-      window.location.href = "/auth?redirect=/initiation-7-jours&action=initiation";
-      return;
-    }
-    void startPayment({
-      product: "initiation_7d",
-      redirectUrl: `${window.location.origin}/payment-pending?return=/initiation-7-jours`,
-    });
-  };
+  const { user } = useAuth();
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-secondary/30 via-background to-background pb-32">
@@ -46,94 +37,54 @@ const InitiationPaywall = () => {
             7 jours pour passer du mode survie au calme
           </h1>
           <p className="text-sm text-foreground/80">
-            Un ancrage par jour. Quelques minutes. Aucun matériel.
+            Désormais inclus dans l'offre Premium ANCRAGE.
           </p>
         </header>
       </SectionBlock>
 
       <SectionBlock>
         <div className="rounded-2xl bg-card border border-border p-6 shadow-sm space-y-5">
-          {/* Récapitulatif : ce que je débloque */}
-          <div>
-            <div className="flex items-center gap-2 text-primary mb-3">
-              <Sparkles className="h-5 w-5" />
-              <p className="text-xs font-bold uppercase tracking-wider">
-                Ce que tu débloques
-              </p>
-            </div>
-
-            <ul className="space-y-2.5 text-sm">
-              {[
-                "7 jours guidés, un ancrage par jour",
-                "Tes notes et ta progression conservées",
-                "Si ça résonne, le programme complet ANCRAGE reste accessible ensuite",
-              ].map((item) => (
-                <li key={item} className="flex items-start gap-2">
-                  <Check className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
+          <div className="flex items-center gap-2 text-primary">
+            <Sparkles className="h-5 w-5" />
+            <p className="text-xs font-bold uppercase tracking-wider">
+              Inclus dans Premium
+            </p>
           </div>
 
-          {/* Récapitulatif : accès à vie */}
+          <ul className="space-y-2.5 text-sm">
+            {[
+              "Les 7 jours guidés (un ancrage par jour)",
+              "Le programme complet ANCRAGE (accès à vie)",
+              "Tes notes, ta progression, tes ancres conservées",
+            ].map((item) => (
+              <li key={item} className="flex items-start gap-2">
+                <Check className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+
           <div className="rounded-xl bg-primary/5 border border-primary/10 p-4 space-y-2">
             <div className="flex items-center gap-2 text-primary">
               <ShieldCheck className="h-4 w-4 shrink-0" />
               <p className="text-xs font-bold uppercase tracking-wider">
-                Accès à vie
+                Un seul paiement, accès à vie
               </p>
             </div>
             <p className="text-sm text-foreground/80 leading-relaxed">
-              Pas d'abonnement, pas de date d'expiration. Tu paies une seule
-              fois et tu gardes l'accès aux 7 jours pour toujours — tu peux
-              recommencer ou y revenir quand tu en as besoin.
+              Pas d'abonnement. Tu paies une fois et tu gardes l'accès à
+              l'ensemble du programme — initiation 7 jours comprise.
             </p>
           </div>
 
-          {/* Récapitulatif transaction — libellé identique au checkout Mollie */}
-          <div className="rounded-xl border border-border bg-muted/30 p-4 space-y-2">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-              Récapitulatif de la transaction
-            </p>
-            <div className="flex items-baseline justify-between gap-3">
-              <span className="text-sm font-medium text-foreground">
-                {INITIATION_TRANSACTION_LABEL}
-              </span>
-              <span className="text-base font-bold tabular-nums">
-                {INITIATION_PRICE_LABEL}
-              </span>
-            </div>
-            <p className="text-[11px] text-muted-foreground">
-              Paiement unique · TTC · accès à vie aux 7 jours
-            </p>
-          </div>
-
-          <CTAButton
-            to="#"
-            onClick={handleBuy}
-            loading={paymentLoading || loading}
-          >
+          <CTAButton to={user ? "/" : "/auth?redirect=/&action=pay"}>
             <Lock className="mr-1.5 h-4 w-4 inline" />
-            {user
-              ? `Payer ${INITIATION_PRICE_LABEL} · démarrer les 7 jours`
-              : `Créer mon compte · ${INITIATION_PRICE_LABEL}`}
+            {user ? "Découvrir l'offre Premium" : "Créer mon compte Premium"}
           </CTAButton>
 
-          <div className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground pt-1">
-            <ShieldCheck className="h-3.5 w-3.5" />
-            <span>Paiement sécurisé Mollie · CB, Bancontact, etc.</span>
-          </div>
-
           <p className="text-center text-[11px] text-muted-foreground">
-            Sur ton relevé bancaire : « {INITIATION_TRANSACTION_LABEL} » via Mollie.
+            Paiement sécurisé Mollie · CB, Bancontact, etc.
           </p>
-
-          {hasInitiation === false && user && (
-            <p className="text-center text-[11px] text-muted-foreground italic pt-1">
-              Tu viens de payer ? Patiente quelques secondes puis recharge la page.
-            </p>
-          )}
         </div>
       </SectionBlock>
     </main>
