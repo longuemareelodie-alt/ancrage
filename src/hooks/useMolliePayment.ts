@@ -31,6 +31,18 @@ export const useMolliePayment = () => {
       return;
     }
 
+    const product = options.product ?? "premium";
+    const promoCode = options.promoCode?.trim() || null;
+
+    // Front-side guard: refuse promo codes on products that don't support them
+    // (mirrors the server-side rule in create-mollie-payment).
+    if (promoCode && PRODUCTS_WITHOUT_PROMO.includes(product)) {
+      toast.error(
+        `Les codes promo ne sont pas applicables sur ${PRODUCT_LABELS[product]}.`,
+      );
+      return;
+    }
+
     setLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke(
@@ -39,26 +51,32 @@ export const useMolliePayment = () => {
           body: {
             redirectUrl:
               options.redirectUrl ?? `${window.location.origin}/payment-pending`,
-            promoCode: options.promoCode ?? null,
-            product: options.product ?? "premium",
+            promoCode,
+            product,
           },
         }
       );
 
-      if (error) {
-        // Try to parse a structured error from the edge function
-        const ctx = (error as { context?: { error?: string } }).context;
-        if (ctx?.error === "invalid_promo_code") {
-          toast.error("Code promo invalide.");
-          return;
-        }
-        console.error("Payment function error:", error);
-        toast.error("Erreur lors de la création du paiement. Réessaie.");
+      const structuredError =
+        (error as { context?: { error?: string } } | null)?.context?.error ??
+        (data as { error?: string } | null)?.error ??
+        null;
+
+      if (structuredError === "promo_not_allowed_for_product") {
+        toast.error(
+          `Les codes promo ne sont pas applicables sur ${PRODUCT_LABELS[product]}.`,
+        );
         return;
       }
 
-      if (data?.error === "invalid_promo_code") {
+      if (structuredError === "invalid_promo_code") {
         toast.error("Code promo invalide.");
+        return;
+      }
+
+      if (error) {
+        console.error("Payment function error:", error);
+        toast.error("Erreur lors de la création du paiement. Réessaie.");
         return;
       }
 
