@@ -7,6 +7,8 @@ import CTAButton from "@/components/CTAButton";
 import { motion, AnimatePresence } from "framer-motion";
 import { LogOut, Plus, Trash2, Save, User, BookOpen, StickyNote, Lock, Pencil, Check, Bell, BellOff, Flame, Trophy, Download, Share, CreditCard, Wind, Hand, Sparkles, ChevronRight, AlertCircle, MessageCircle, Crown } from "lucide-react";
 import { ActionStyle, ACTION_STYLE_LABELS, getActionStyle } from "@/lib/actionStyle";
+import { useParentType } from "@/hooks/useParentType";
+import { PARENT_TYPE_LABELS, type ParentType } from "@/lib/parentType";
 import { Progress } from "@/components/ui/progress";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { Switch } from "@/components/ui/switch";
