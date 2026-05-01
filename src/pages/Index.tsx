@@ -34,6 +34,7 @@ const Index = () => {
   const { navigateWithTransition } = useRouteTransition();
   const [parentType, setParentType] = useParentType();
   const [schoolContext, setSchoolContext] = useSchoolContext();
+  const lastQuickState = useLastQuickState();
 
   const handlePayment = () => {
     if (!user) {
