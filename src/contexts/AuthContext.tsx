@@ -14,6 +14,8 @@ interface AuthContextType {
   loading: boolean;
   /** True if the user is allowed into paid pages (premium or grandfathered). null while unknown. */
   isPaid: boolean | null;
+  /** True if the user has access to the 7-day initiation (premium, grandfathered, or paid 4,99€). null while unknown. */
+  hasInitiation: boolean | null;
   /** Status of the eligibility check itself. */
   eligibilityPhase: EligibilityPhase;
   /** Force a re-check (e.g. after returning from payment). */
@@ -26,6 +28,7 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
   isPaid: null,
+  hasInitiation: null,
   eligibilityPhase: "idle",
   refreshEligibility: async () => {},
   signOut: async () => {},
@@ -37,6 +40,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [isPaid, setIsPaid] = useState<boolean | null>(null);
+  const [hasInitiation, setHasInitiation] = useState<boolean | null>(null);
   const [eligibilityPhase, setEligibilityPhase] = useState<EligibilityPhase>("idle");
   const checkSeqRef = useRef(0);
   // Remember which user ids we've already warned about so we don't spam logs.
@@ -46,6 +50,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const seq = ++checkSeqRef.current;
     if (!userId) {
       setIsPaid(null);
+      setHasInitiation(null);
       setEligibilityPhase("idle");
       return;
     }
@@ -54,7 +59,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       () =>
         supabase
           .from("profiles")
-          .select("is_premium, created_at")
+          .select("is_premium, created_at, has_initiation_access")
           .eq("user_id", userId)
           .maybeSingle(),
       { maxAttempts: 4, baseDelayMs: 500 },
@@ -64,10 +69,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     if (result.transientFailure) {
       setIsPaid(null);
+      setHasInitiation(null);
       setEligibilityPhase("error");
       return;
     }
-    const profile = result.data as { is_premium?: boolean; created_at?: string } | null;
+    const profile = result.data as {
+      is_premium?: boolean;
+      created_at?: string;
+      has_initiation_access?: boolean;
+    } | null;
     const premium = !!profile?.is_premium;
 
     // Diagnose anomalies on profile.created_at — they break the grandfather
@@ -87,7 +97,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
 
     const grandfathered = isGrandfatheredAccount(profile?.created_at);
-    setIsPaid(premium || grandfathered);
+    const paid = premium || grandfathered;
+    setIsPaid(paid);
+    setHasInitiation(paid || !!profile?.has_initiation_access);
     setEligibilityPhase("ready");
   }, []);
 
