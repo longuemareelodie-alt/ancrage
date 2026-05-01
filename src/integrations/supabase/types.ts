@@ -452,6 +452,8 @@ export type Database = {
           last_checkin_date: string | null
           last_emotion: string | null
           longest_streak: number
+          parent_type: string | null
+          parent_type_synced_at: string | null
           plan_type: string
           preferred_style: string | null
           preferred_style_synced_at: string | null
@@ -469,6 +471,8 @@ export type Database = {
           last_checkin_date?: string | null
           last_emotion?: string | null
           longest_streak?: number
+          parent_type?: string | null
+          parent_type_synced_at?: string | null
           plan_type?: string
           preferred_style?: string | null
           preferred_style_synced_at?: string | null
@@ -486,6 +490,8 @@ export type Database = {
           last_checkin_date?: string | null
           last_emotion?: string | null
           longest_streak?: number
+          parent_type?: string | null
+          parent_type_synced_at?: string | null
           plan_type?: string
           preferred_style?: string | null
           preferred_style_synced_at?: string | null
