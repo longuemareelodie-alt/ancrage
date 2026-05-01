@@ -28,6 +28,7 @@ const Index = () => {
   const { startPayment, loading: paymentLoading } = useMolliePayment();
   const { navigateWithTransition } = useRouteTransition();
   const [parentType, setParentType] = useParentType();
+  const [schoolContext, setSchoolContext] = useSchoolContext();
 
   const handlePayment = () => {
     if (!user) {
