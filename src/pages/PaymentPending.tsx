@@ -153,10 +153,7 @@ const PaymentPending = () => {
       return;
     }
 
-    // Detect "initiation_7d" flow via the ?return= query param injected at checkout.
-    const params = new URLSearchParams(window.location.search);
-    const returnTo = params.get("return");
-    const isInitiationFlow = returnTo === "/initiation-7-jours";
+    // isInitiationFlow is captured at mount via component state above.
 
     cancelled.current = false;
     let attempt = 0;
