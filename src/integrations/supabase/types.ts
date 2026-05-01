@@ -845,6 +845,7 @@ export type Database = {
     }
     Functions: {
       award_badges: { Args: { _badge_keys: string[] }; Returns: undefined }
+      cleanup_pending_account_emails: { Args: never; Returns: Json }
       delete_email: {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
