@@ -79,6 +79,17 @@ const Index = () => {
     { emoji: t("home.recognize.s1_emoji"), text: t("home.recognize.s1") },
     { emoji: t("home.recognize.s2_emoji"), text: t("home.recognize.s2") },
   ];
+  type QuickState = {
+    state: NonNullable<RecognizeScene["state"]>;
+    emoji: string;
+    label: string;
+    hint: string;
+  };
+  const quickStates = t("home.recognize.quick_states", { returnObjects: true }) as QuickState[];
+  const quickStateHref = (state: QuickState["state"]): string => {
+    const target = STATE_ROUTES[state];
+    return user ? target : `/auth?redirect=${encodeURIComponent(target)}`;
+  };
   const beforeItems = t("home.before_after.before", { returnObjects: true }) as string[];
   const afterItems = t("home.before_after.after", { returnObjects: true }) as string[];
   type IdentityPillar = {
@@ -227,6 +238,39 @@ const Index = () => {
                 <p className="text-sm leading-relaxed">{s.text}</p>
               </div>
             ))}
+          </div>
+
+          {/* Options rapides — accès direct par état */}
+          <div className="space-y-3 pt-2">
+            <div className="text-center space-y-1">
+              <p className="text-sm font-semibold text-foreground">
+                {t("home.recognize.quick_states_title")}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {t("home.recognize.quick_states_hint")}
+              </p>
+            </div>
+            <div className="grid grid-cols-2 gap-2.5">
+              {quickStates.map((q) => (
+                <Link
+                  key={q.state}
+                  to={quickStateHref(q.state)}
+                  aria-label={`${q.label} — ${q.hint}`}
+                  className="group flex flex-col items-start gap-1 rounded-xl border border-primary/20 bg-primary/5 hover:bg-primary/10 px-3 py-3 text-left transition-colors"
+                >
+                  <span className="flex items-center gap-2">
+                    <span className="text-lg leading-none" aria-hidden>{q.emoji}</span>
+                    <span className="text-sm font-semibold text-foreground leading-tight">
+                      {q.label}
+                    </span>
+                  </span>
+                  <span className="flex w-full items-center justify-between text-[11px] font-medium text-primary">
+                    <span>{q.hint}</span>
+                    <span aria-hidden className="transition-transform group-hover:translate-x-0.5">→</span>
+                  </span>
+                </Link>
+              ))}
+            </div>
           </div>
 
           {/* Outro — pont vers la solution */}

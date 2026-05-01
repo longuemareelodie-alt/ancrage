@@ -74,7 +74,15 @@
       "s1": "17h. Tu cries pour un verre renversé. Et tu te détestes dans la seconde qui suit.",
       "s2_emoji": "🫥",
       "s2": "Tu souris à l'école. Tu réponds « ça va ». Mais à l'intérieur, c'est le vide ou le chaos.",
-      "outro": "Tu n'es pas cassée. Tu n'es pas faible. Tu es juste restée trop longtemps en alerte — et personne ne t'a appris à redescendre."
+      "outro": "Tu n'es pas cassée. Tu n'es pas faible. Tu es juste restée trop longtemps en alerte — et personne ne t'a appris à redescendre.",
+      "quick_states_title": "Là, maintenant, tu es plutôt…",
+      "quick_states_hint": "Choisis ton état — j'ouvre l'outil qui correspond.",
+      "quick_states": [
+        { "state": "panique", "emoji": "🌊", "label": "Panique sourde", "hint": "Respirer · 60 s" },
+        { "state": "hypervigilance", "emoji": "👁️", "label": "Hypervigilance", "hint": "Ancrer mes 5 sens · 90 s" },
+        { "state": "rumination", "emoji": "🌀", "label": "Rumination", "hint": "Poser ma pensée · 2 min" },
+        { "state": "explosion", "emoji": "💥", "label": "Explosion", "hint": "Évacuer · 90 s" }
+      ]
     },
     "enemy": {
       "title": "Ce n'est pas toi le problème.",
