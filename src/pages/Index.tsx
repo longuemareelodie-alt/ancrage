@@ -461,13 +461,13 @@ const Index = () => {
             </p>
             <div className="pt-3 border-t border-primary/10">
               <p className="text-xs text-muted-foreground mb-2">
-                Pas encore prête à t'engager ?
+                Tu veux découvrir le parcours avant ?
               </p>
               <a
                 href="/initiation-7-jours"
                 className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline"
               >
-                Commencer mes 7 jours d'ancrage — gratuit →
+                Voir les 7 jours d'ancrage →
               </a>
             </div>
           </div>
