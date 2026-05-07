@@ -28,9 +28,11 @@ import {
 } from "@/lib/autoStyle";
 import { getEmotionCTA } from "@/data/emotionCTAs";
 import { useParentType } from "@/hooks/useParentType";
+import { useSchoolContext } from "@/lib/schoolContext";
 import { parentize } from "@/lib/parentize";
 
 const PAPA_VARIANT_KEYS = new Set(["panique", "hypervigilance", "rumination", "explosion"]);
+const SCHOOL_VARIANT_KEYS = PAPA_VARIANT_KEYS;
 
 const STYLE_OPTIONS: {
   value: ActionStyle;
@@ -53,18 +55,23 @@ const EmotionDetail = () => {
   const { t, i18n } = useTranslation();
   const key = emotion || "";
   const [parentType, , hasChosenProfile] = useParentType();
-  // Personalization rule:
-  //  1. If the user hasn't picked a profile yet → use neutral base copy.
-  //  2. If the current emotion has a parent-tailored variant → use it.
-  //  3. Otherwise fall back to the base copy (parentize() will still adapt
-  //     gender/agreement at render time when a profile IS chosen).
-  const variantCandidate = `${key}_${parentType}`;
+  const [schoolContext] = useSchoolContext();
+  // Personalization rule (priority order):
+  //  1. {key}_{parent}_school  — most specific (parent + context)
+  //  2. {key}_school           — context only
+  //  3. {key}_{parent}         — parent only
+  //  4. {key}                  — neutral base
+  // parentize() still adapts gender/agreement at render time when a profile is set.
+  const candidates: string[] = [];
+  if (SCHOOL_VARIANT_KEYS.has(key) && schoolContext === "school") {
+    if (hasChosenProfile) candidates.push(`${key}_${parentType}_school`);
+    candidates.push(`${key}_school`);
+  }
+  if (hasChosenProfile && PAPA_VARIANT_KEYS.has(key)) {
+    candidates.push(`${key}_${parentType}`);
+  }
   const useCopyKey =
-    hasChosenProfile &&
-    PAPA_VARIANT_KEYS.has(key) &&
-    i18n.exists(`emotion_detail.data.${variantCandidate}.title`)
-      ? variantCandidate
-      : key;
+    candidates.find((c) => i18n.exists(`emotion_detail.data.${c}.title`)) || key;
   const titleRef = useRef<string>("");
 
   const [style, setStyle] = useState<ActionStyle>(() => getActionStyle());

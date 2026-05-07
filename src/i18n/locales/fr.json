@@ -945,6 +945,58 @@
           "Respire",
           "Savoure l'instant"
         ]
+      },
+      "panique_school": {
+        "title": "Ça monte avant l'école",
+        "validation": "Le compte à rebours du matin écrase ton système nerveux. Ce n'est pas toi qui exagères — c'est l'horloge.",
+        "free": [
+          "Arrête-toi 10 secondes, là, dans le couloir",
+          "Pose les yeux sur un objet fixe — la porte, le manteau, un mur"
+        ],
+        "locked": [
+          "Pose une main sur ton ventre, l'autre sur le plan de travail",
+          "Inspire 4 secondes par le nez, sans bouger",
+          "Expire 6 secondes par la bouche — l'école attendra 30 secondes"
+        ]
+      },
+      "hypervigilance_school": {
+        "title": "Tu surveilles tout, en même temps",
+        "validation": "Cartable, chaussures, lunch, dispute, montre — ton cerveau tient 12 fils. C'est normal qu'il soit en alerte.",
+        "free": [
+          "Repère 3 choses qui sont déjà prêtes",
+          "Écoute 2 sons concrets — la bouilloire, une voix"
+        ],
+        "locked": [
+          "Touche un objet stable — la table, ta tasse",
+          "Relâche les épaules d'un cran (juste un cran)",
+          "Une longue expiration — la liste tient toute seule pendant ce temps"
+        ]
+      },
+      "rumination_school": {
+        "title": "La phrase du matin tourne en boucle",
+        "validation": "Tu refais le film du « dépêche-toi ! » dans la voiture. Ton cerveau ressasse parce qu'il croit te protéger.",
+        "free": [
+          "Note la phrase sur le téléphone, ou dis-la tout bas",
+          "Donne-lui un titre court : « la phrase de 8h12 »"
+        ],
+        "locked": [
+          "Range-la dans une case mentale : « j'y reviens ce soir, pas maintenant »",
+          "Reviens à un geste concret du présent — clé, volant, café",
+          "Inspire courte, expire longue, deux fois"
+        ]
+      },
+      "explosion_school": {
+        "title": "Tu viens de hausser le ton",
+        "validation": "Ce n'est pas le chausson manquant qui t'a fait craquer — c'est tout le matin empilé dessus. Tu n'es pas un mauvais parent.",
+        "free": [
+          "Recule d'un pas, physiquement",
+          "Dis tout bas : « pause, 30 secondes »"
+        ],
+        "locked": [
+          "Plante tes pieds dans le sol, sens le poids",
+          "Une longue expiration par la bouche, mâchoire relâchée",
+          "Reviens vers l'enfant et nomme : « j'ai crié, je redescends » — pas besoin d'autre chose"
+        ]
       }
     }
   },
