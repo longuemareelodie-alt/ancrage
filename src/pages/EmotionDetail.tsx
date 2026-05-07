@@ -52,15 +52,14 @@ const EmotionDetail = () => {
   const { t, i18n } = useTranslation();
   const key = emotion || "";
   const [parentType] = useParentType();
-  // For the 4 micro-scènes that have a papa-tailored copy, switch the i18n
-  // base path. The variant key always exists (we authored both); we keep a
-  // safe fallback to the base key if i18n.exists ever returns false.
-  const papaCandidate = `${key}_papa`;
+  // For the 4 micro-scènes that have a parent-tailored copy, switch the i18n
+  // base path. Variant keys exist for both maman and papa; we keep a safe
+  // fallback to the base key if i18n.exists ever returns false.
+  const variantCandidate = `${key}_${parentType}`;
   const useCopyKey =
-    parentType === "papa" &&
     PAPA_VARIANT_KEYS.has(key) &&
-    i18n.exists(`emotion_detail.data.${papaCandidate}.title`)
-      ? papaCandidate
+    i18n.exists(`emotion_detail.data.${variantCandidate}.title`)
+      ? variantCandidate
       : key;
   const titleRef = useRef<string>("");
 
