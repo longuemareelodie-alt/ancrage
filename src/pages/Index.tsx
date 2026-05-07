@@ -101,14 +101,27 @@ const Index = () => {
       ? (v as Record<string, Partial<RecognizeScene>>)
       : null;
   };
+  // Build the candidate keys in order of preference. The first one that
+  // exists wins. work + "with kids" is more specific than plain work.
+  const overrideCandidates: string[] = [];
+  if (schoolContext !== "school") {
+    const ctxKeys: string[] = [];
+    if (schoolContext === "work" && workKidsMode === "with") {
+      ctxKeys.push("work_with_kids");
+    }
+    ctxKeys.push(schoolContext);
+    for (const ctx of ctxKeys) {
+      if (parentType === "papa") {
+        overrideCandidates.push(`home.recognize.scenes_papa_${ctx}_overrides`);
+      }
+      overrideCandidates.push(`home.recognize.scenes_${ctx}_overrides`);
+    }
+  }
   const contextOverrides: Record<string, Partial<RecognizeScene>> =
-    schoolContext === "school"
-      ? {}
-      : (parentType === "papa"
-          ? readOverrides(`home.recognize.scenes_papa_${schoolContext}_overrides`)
-          : null) ??
-        readOverrides(`home.recognize.scenes_${schoolContext}_overrides`) ??
-        {};
+    overrideCandidates
+      .map((k) => readOverrides(k))
+      .find((v) => v !== null) ?? {};
+
 
   const mergeOverride = (
     scene: RecognizeScene,
