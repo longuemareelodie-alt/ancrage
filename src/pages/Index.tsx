@@ -140,9 +140,65 @@ const Index = () => {
     return { ...scene, ...cleaned };
   };
 
-  const recognizeMainScenes: RecognizeScene[] = baseScenes.map((scene, i) =>
-    mergeOverride(scene, contextOverrides[String(i)]),
-  );
+  // Resolve a translation with an explicit fallback chain — i18next would
+  // otherwise return the key itself when missing, which surfaces as raw
+  // text in the UI.
+  const tWithFallback = (...keys: string[]): string => {
+    for (const k of keys) {
+      if (i18n.exists(k)) {
+        const v = t(k);
+        if (typeof v === "string" && v.trim() !== "" && v !== k) return v;
+      }
+    }
+    return "";
+  };
+
+  // Hardcoded last-resort labels so the CTA is never empty even if every
+  // i18n key is missing (e.g. partial translation files).
+  const HARDCODED_CTA: Record<"morning" | "evening", string> = {
+    morning: "Évacuer en 90 s →",
+    evening: "Redescendre avant la nuit · 60 s →",
+  };
+  const HARDCODED_STATE_LABEL: Record<"morning" | "evening", string> = {
+    morning: "Mode explosion",
+    evening: "Mode panique sourde",
+  };
+
+  const slotForIndex = (i: number): "morning" | "evening" | null =>
+    i === 0 ? "morning" : i === 3 ? "evening" : null;
+
+  const ctaFallback = (slot: "morning" | "evening"): string => {
+    const ctxKey =
+      schoolContext === "holiday"
+        ? `home.recognize.cta_fallback_holiday_${slot}`
+        : schoolContext === "work"
+          ? `home.recognize.cta_fallback_work_${slot}`
+          : "";
+    return (
+      tWithFallback(
+        ctxKey,
+        `home.recognize.cta_fallback_${slot}`,
+      ) || HARDCODED_CTA[slot]
+    );
+  };
+  const stateLabelFallback = (slot: "morning" | "evening"): string =>
+    tWithFallback(`home.recognize.state_label_fallback_${slot}`) ||
+    HARDCODED_STATE_LABEL[slot];
+
+  const recognizeMainScenes: RecognizeScene[] = baseScenes.map((scene, i) => {
+    const merged = mergeOverride(scene, contextOverrides[String(i)]);
+    const slot = slotForIndex(i);
+    if (!slot) return merged;
+    // Guarantee CTA + stateLabel for matin/soir — never expose raw i18n keys.
+    return {
+      ...merged,
+      cta: merged.cta && merged.cta.trim() !== "" ? merged.cta : ctaFallback(slot),
+      stateLabel:
+        merged.stateLabel && merged.stateLabel.trim() !== ""
+          ? merged.stateLabel
+          : stateLabelFallback(slot),
+    };
+  });
 
   // Each "state" maps to the page that delivers its concrete action,
   // mirroring the destinations defined in src/data/emotionCTAs.ts.
@@ -158,18 +214,6 @@ const Index = () => {
     // /calme and /post-flow are gated; send anonymous visitors through auth
     // with a redirect back to the right page so the transition stays direct.
     return user ? target : `/auth?redirect=${encodeURIComponent(target)}`;
-  };
-  // Resolve a translation with an explicit fallback chain — i18next would
-  // otherwise return the key itself when missing, which surfaces as raw
-  // text in the UI.
-  const tWithFallback = (...keys: string[]): string => {
-    for (const k of keys) {
-      if (i18n.exists(k)) {
-        const v = t(k);
-        if (typeof v === "string" && v.trim() !== "") return v;
-      }
-    }
-    return "";
   };
   const extraText = (slot: "s1" | "s2"): string => {
     const parentSuffix = parentType === "papa" ? "_papa" : "";
