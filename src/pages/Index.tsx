@@ -364,6 +364,43 @@ const Index = () => {
             </div>
           </div>
 
+          {/* Sous-toggle "avec / sans enfants" — seulement en contexte boulot */}
+          {schoolContext === "work" && (
+            <div
+              role="group"
+              aria-label={t("home.recognize.work_kids_label")}
+              className="mx-auto flex w-full max-w-md flex-col items-center gap-2"
+            >
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                {t("home.recognize.work_kids_label")}
+              </p>
+              <div className="grid w-full grid-cols-2 gap-1 rounded-2xl border border-border bg-card p-1 shadow-sm">
+                {(["without", "with"] as WorkKidsMode[]).map((m) => {
+                  const active = workKidsMode === m;
+                  const label =
+                    m === "without"
+                      ? t("home.recognize.work_kids_without")
+                      : t("home.recognize.work_kids_with");
+                  return (
+                    <button
+                      key={m}
+                      type="button"
+                      onClick={() => setWorkKidsMode(m)}
+                      aria-pressed={active}
+                      className={`rounded-xl px-2 py-1.5 text-xs font-semibold leading-tight transition-all ${
+                        active
+                          ? "bg-primary text-primary-foreground shadow"
+                          : "text-foreground/70 hover:text-foreground"
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           {/* Progression du jour : matin / soir + suggestion contextuelle */}
           <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4 shadow-sm space-y-3">
             <div className="flex items-center justify-between gap-3">
