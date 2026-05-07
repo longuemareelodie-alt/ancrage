@@ -10,12 +10,19 @@ import { useTranslation } from "react-i18next";
 import { useAuth } from "@/contexts/AuthContext";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
 import { useParentType } from "@/hooks/useParentType";
-import { useSchoolContext } from "@/lib/schoolContext";
+import { useSchoolContext, SCHOOL_CONTEXT_LABELS } from "@/lib/schoolContext";
 import {
   forgetLastQuickState,
   rememberLastQuickState,
   useLastQuickState,
 } from "@/lib/lastQuickState";
+import {
+  markSlotDone,
+  pickNextSlot,
+  useDailyProgress,
+  type DailySlot,
+} from "@/lib/morningEveningProgress";
+import { Check } from "lucide-react";
 import logo from "@/assets/logo-ancrage.png";
 import avatarCamille from "@/assets/avatar-camille.jpg";
 import avatarInes from "@/assets/avatar-ines.jpg";
