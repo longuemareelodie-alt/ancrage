@@ -194,6 +194,18 @@ const CrisePage = () => {
                 saved.phase === "steps" ? `Étape ${saved.stepIdx + 1}/${saved.stepsLen}` :
                 "Récap";
               const isCurrent = key === currentKey;
+              const d = new Date(saved.lastTickAt);
+              const sameDay = d.toDateString() === new Date().toDateString();
+              const timeStr = d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+              const dateStr = sameDay
+                ? `Aujourd'hui ${timeStr}`
+                : d.toLocaleDateString("fr-FR", { day: "2-digit", month: "short" }) + ` ${timeStr}`;
+              const elapsedMin = Math.floor((Date.now() - saved.lastTickAt) / 60000);
+              const elapsedStr =
+                elapsedMin < 1 ? "à l'instant" :
+                elapsedMin < 60 ? `il y a ${elapsedMin} min` :
+                elapsedMin < 1440 ? `il y a ${Math.floor(elapsedMin / 60)} h` :
+                `il y a ${Math.floor(elapsedMin / 1440)} j`;
               return (
                 <li
                   key={key}
@@ -206,7 +218,11 @@ const CrisePage = () => {
                       {ctxLabel} · {parentLabel}
                     </div>
                     <div className="text-xs text-muted-foreground">{situationLabel}</div>
-                    <div className="mt-1 text-xs text-[hsl(var(--lies))]">{phaseLabel}</div>
+                    <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs">
+                      <span className="text-[hsl(var(--lies))]">{phaseLabel}</span>
+                      <span className="text-muted-foreground">· {dateStr}</span>
+                      <span className="text-muted-foreground">· {elapsedStr}</span>
+                    </div>
                   </button>
                   <button
                     onClick={() => deleteSession(key)}
