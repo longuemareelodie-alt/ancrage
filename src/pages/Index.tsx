@@ -1072,6 +1072,9 @@ const Index = () => {
             >
               {paymentLoading ? "Chargement…" : "Découvrir « Liés autrement » →"}
             </button>
+            <p className="mt-2 text-[11px] text-muted-foreground flex items-center justify-center gap-1.5">
+              <Lock className="h-3 w-3" /> Paiement sécurisé · Paiement unique · Accès à vie
+            </p>
           </div>
         </div>
       </section>
