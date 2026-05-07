@@ -134,6 +134,19 @@ function downloadHelpCard(opts: {
   doc.save(`carte-aide-crise-${safe(opts.ctxLabel)}-${safe(opts.parentLabel)}.pdf`);
 }
 
+const FAVORITES_KEY = "lies.crise.favorites.v1";
+function loadFavorites(): string[] {
+  try {
+    const raw = localStorage.getItem(FAVORITES_KEY);
+    if (!raw) return [];
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr.filter((x) => typeof x === "string") : [];
+  } catch { return []; }
+}
+function saveFavorites(list: string[]) {
+  try { localStorage.setItem(FAVORITES_KEY, JSON.stringify(list)); } catch { /* noop */ }
+}
+
 const CrisePage = () => {
   const [ctx, setCtx] = useState<CrisisContext>("maison");
   const [parent, setParent] = useState<CrisisParent>("maman");
@@ -141,14 +154,29 @@ const CrisePage = () => {
   const [guidedOpen, setGuidedOpen] = useState(false);
   const [sessionsTick, setSessionsTick] = useState(0);
   const [pendingDelete, setPendingDelete] = useState<string | null>(null);
+  const [favorites, setFavorites] = useState<string[]>(() => loadFavorites());
 
   const scenario = useMemo(() => getScenario(ctx, parent, situation), [ctx, parent, situation]);
 
+  const favSet = useMemo(() => new Set(favorites), [favorites]);
   const savedSessions = useMemo(
-    () => listSavedSessions().sort((a, b) => b.saved.lastTickAt - a.saved.lastTickAt),
-    [sessionsTick, guidedOpen]
+    () => listSavedSessions().sort((a, b) => {
+      const fa = favSet.has(a.key) ? 1 : 0;
+      const fb = favSet.has(b.key) ? 1 : 0;
+      if (fa !== fb) return fb - fa;
+      return b.saved.lastTickAt - a.saved.lastTickAt;
+    }),
+    [sessionsTick, guidedOpen, favSet]
   );
   const currentKey = sessionKey(ctx, parent, situation);
+
+  function toggleFavorite(k: string) {
+    setFavorites((prev) => {
+      const next = prev.includes(k) ? prev.filter((x) => x !== k) : [...prev, k];
+      saveFavorites(next);
+      return next;
+    });
+  }
 
   useEffect(() => {
     const onFocus = () => setSessionsTick((n) => n + 1);
