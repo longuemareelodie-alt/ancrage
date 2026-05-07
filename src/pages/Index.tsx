@@ -29,7 +29,7 @@ const TESTIMONIAL_AVATARS: Record<string, string> = {
 
 const Index = () => {
   const { user } = useAuth();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { startPayment, loading: paymentLoading } = useMolliePayment();
   const { navigateWithTransition } = useRouteTransition();
   const [parentType, setParentType] = useParentType();
