@@ -87,6 +87,32 @@ const ActivationCompte = () => {
     navigate(target, { replace: true });
   };
 
+  const handleResend = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setResendError("");
+    setResendInfo("");
+    const email = resendEmail.trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setResendError("Adresse email invalide.");
+      return;
+    }
+    setResending(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/activation-compte?welcome=1`,
+      });
+      if (error) throw error;
+      setResendInfo(
+        "Si cette adresse correspond à un compte, un nouveau lien d'activation vient d'être envoyé. Vérifie ta boîte (et tes spams).",
+      );
+      setResendEmail("");
+    } catch (err: any) {
+      setResendError(err?.message || "Impossible d'envoyer le lien. Réessaie dans un instant.");
+    } finally {
+      setResending(false);
+    }
+  };
+
   const headline = useMemo(() => {
     if (linkState === "expired") return "Ton lien a expiré";
     if (linkState === "missing") return "Activation de ton compte";
