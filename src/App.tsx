@@ -142,6 +142,7 @@ const AnimatedRoutes = () => {
         <Route path="/lies-autrement/lsf" element={<PaidRoute><PageTransition><LsfHome /></PageTransition></PaidRoute>} />
         <Route path="/lies-autrement/lsf/:themeSlug" element={<PaidRoute><PageTransition><LsfTheme /></PageTransition></PaidRoute>} />
         <Route path="/lies-autrement/signes-nouveaux" element={<PaidRoute><PageTransition><SignesNouveaux /></PageTransition></PaidRoute>} />
+        <Route path="/lies-autrement/lsf-flashcards" element={<PaidRoute><PageTransition><LsfFlashcards /></PageTransition></PaidRoute>} />
         <Route path="/signes" element={<PaidRoute><PageTransition><SignesNouveaux /></PageTransition></PaidRoute>} />
         <Route path="/lies-autrement/ressources" element={<PaidRoute><PageTransition><RessourcesPage /></PageTransition></PaidRoute>} />
         <Route path="/lies-autrement/crise" element={<PaidRoute><PageTransition><CrisePage /></PageTransition></PaidRoute>} />
