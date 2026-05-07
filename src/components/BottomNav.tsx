@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from "react-router-dom";
-import { Home, Heart, HeartPulse, User } from "lucide-react";
+import { Home, Heart, HeartPulse, User, Handshake } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
 /**
@@ -37,6 +37,7 @@ const BottomNav = () => {
   const items = [
     { to: "/dashboard", label: "Accueil", icon: Home },
     { to: "/checkin", label: "Rituel", icon: Heart },
+    { to: "/lies-autrement", label: "Liés", icon: Handshake, accent: "lies" as const },
     { to: "/sante", label: "Santé", icon: HeartPulse },
     { to: "/profil", label: "Espace", icon: User },
   ];
