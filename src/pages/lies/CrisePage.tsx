@@ -209,6 +209,27 @@ const CrisePage = () => {
                 elapsedMin < 60 ? `il y a ${elapsedMin} min` :
                 elapsedMin < 1440 ? `il y a ${Math.floor(elapsedMin / 60)} h` :
                 `il y a ${Math.floor(elapsedMin / 1440)} j`;
+
+              // Estimation de la durée restante.
+              let remainingStr: string | null = null;
+              if (saved.phase === "safety") {
+                remainingStr = "à démarrer";
+              } else if (saved.phase === "recap") {
+                remainingStr = "terminée";
+              } else {
+                const stepsDone = saved.stepIdx + 1;
+                const stepsLeft = Math.max(0, saved.stepsLen - stepsDone);
+                if (stepsLeft === 0) {
+                  remainingStr = "dernière étape";
+                } else {
+                  const avgPerStep = saved.seconds > 0 ? saved.seconds / stepsDone : 60; // 60s par défaut
+                  const remainingSec = Math.round(avgPerStep * stepsLeft);
+                  remainingStr =
+                    remainingSec < 60
+                      ? `~${remainingSec}s restantes`
+                      : `~${Math.round(remainingSec / 60)} min restantes`;
+                }
+              }
               return (
                 <li
                   key={key}
@@ -223,6 +244,11 @@ const CrisePage = () => {
                     <div className="text-xs text-muted-foreground">{situationLabel}</div>
                     <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs">
                       <span className="text-[hsl(var(--lies))]">{phaseLabel}</span>
+                      {remainingStr && (
+                        <span className="rounded-full bg-[hsl(var(--lies-soft))] px-2 py-0.5 text-[hsl(var(--lies))]">
+                          {remainingStr}
+                        </span>
+                      )}
                       <span className="text-muted-foreground">· {dateStr}</span>
                       <span className="text-muted-foreground">· {elapsedStr}</span>
                     </div>
