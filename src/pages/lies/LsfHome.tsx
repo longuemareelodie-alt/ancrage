@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { BookOpen } from "lucide-react";
+import { BookOpen, Sparkles } from "lucide-react";
 import LiesShell from "@/components/lies/LiesShell";
 import { LSF_THEMES } from "@/data/lsfCatalog";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import LsfOnboarding, { isLsfOnboardingDone } from "@/components/lies/LsfOnboarding";
 import imgBebe from "@/assets/lsf/theme-bebe.jpg";
 import imgEmotions from "@/assets/lsf/theme-emotions.jpg";
 import imgRoutine from "@/assets/lsf/theme-routine.jpg";
@@ -20,6 +21,11 @@ const THEME_IMAGES: Record<string, string> = {
 const LsfHome = () => {
   const { user } = useAuth();
   const [learnedKeys, setLearnedKeys] = useState<Set<string>>(new Set());
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
+  useEffect(() => {
+    setShowOnboarding(!isLsfOnboardingDone());
+  }, []);
 
   useEffect(() => {
     if (!user) return;
@@ -38,7 +44,20 @@ const LsfHome = () => {
       subtitle="Quelques signes simples pour ouvrir un nouveau canal avec votre enfant."
       icon={<BookOpen className="h-6 w-6" />}
     >
-      <div className="space-y-3">
+      <div className="space-y-4">
+        {showOnboarding && (
+          <LsfOnboarding onDismiss={() => setShowOnboarding(false)} />
+        )}
+        {!showOnboarding && (
+          <button
+            type="button"
+            onClick={() => setShowOnboarding(true)}
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-[hsl(var(--lies))] hover:underline"
+          >
+            <Sparkles className="h-3 w-3" /> Refaire l'orientation (2 min)
+          </button>
+        )}
+        <div className="space-y-3">
         {LSF_THEMES.map((theme) => {
           const total = theme.signs.length;
           const learned = theme.signs.filter((s) => learnedKeys.has(s.key)).length;
@@ -79,6 +98,7 @@ const LsfHome = () => {
             </Link>
           );
         })}
+        </div>
       </div>
     </LiesShell>
   );
