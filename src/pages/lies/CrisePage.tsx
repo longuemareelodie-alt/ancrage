@@ -148,6 +148,20 @@ function saveFavorites(list: string[]) {
   try { localStorage.setItem(FAVORITES_KEY, JSON.stringify(list)); } catch { /* noop */ }
 }
 
+const STALE_HOURS_KEY = "lies.crise.staleHours.v1";
+const STALE_HOURS_OPTIONS = [1, 3, 6, 12, 24, 48] as const;
+const DEFAULT_STALE_HOURS = 6;
+function loadStaleHours(): number {
+  try {
+    const raw = localStorage.getItem(STALE_HOURS_KEY);
+    const n = raw ? Number(raw) : NaN;
+    return Number.isFinite(n) && n > 0 ? n : DEFAULT_STALE_HOURS;
+  } catch { return DEFAULT_STALE_HOURS; }
+}
+function saveStaleHours(h: number) {
+  try { localStorage.setItem(STALE_HOURS_KEY, String(h)); } catch { /* noop */ }
+}
+
 const CrisePage = () => {
   const [ctx, setCtx] = useState<CrisisContext>("maison");
   const [parent, setParent] = useState<CrisisParent>("maman");
