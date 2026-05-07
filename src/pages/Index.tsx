@@ -215,18 +215,6 @@ const Index = () => {
     // with a redirect back to the right page so the transition stays direct.
     return user ? target : `/auth?redirect=${encodeURIComponent(target)}`;
   };
-  // Resolve a translation with an explicit fallback chain — i18next would
-  // otherwise return the key itself when missing, which surfaces as raw
-  // text in the UI.
-  const tWithFallback = (...keys: string[]): string => {
-    for (const k of keys) {
-      if (i18n.exists(k)) {
-        const v = t(k);
-        if (typeof v === "string" && v.trim() !== "") return v;
-      }
-    }
-    return "";
-  };
   const extraText = (slot: "s1" | "s2"): string => {
     const parentSuffix = parentType === "papa" ? "_papa" : "";
     if (schoolContext !== "school") {
