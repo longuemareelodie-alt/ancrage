@@ -67,8 +67,6 @@ export const CTA_LIBRARY = {
   /** Reprise / continuité */
   secondary_resume: "Reprendre mon ancrage",
 
-  /** Découverte non-engageante (initiation 7j) */
-  tertiary_discover: "Commencer mes 7 jours d'ancrage",
 } as const;
 
 // ============================================================
@@ -127,9 +125,6 @@ export const CONFIRMATION_LIBRARY = {
 
   /** Validation d'un exercice / d'une étape du parcours */
   step_done: "Ancré ✓",
-
-  /** Fin d'un jour d'initiation */
-  day_done: "Tu as ancré ce jour.",
 
   /** Fin d'un parcours complet */
   journey_done: "Tu es la maman ancrée.",

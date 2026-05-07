@@ -23,7 +23,7 @@ import Comprendre from "./pages/Comprendre";
 import Avancer from "./pages/Avancer";
 import AllerPlusLoin from "./pages/AllerPlusLoin";
 import Parcours from "./pages/Parcours";
-import Initiation7j from "./pages/Initiation7j";
+
 import Auth from "./pages/Auth";
 import Profil from "./pages/Profil";
 import ProfilStyle from "./pages/ProfilStyle";
@@ -105,7 +105,7 @@ const AnimatedRoutes = () => {
         <Route path="/avancer" element={<PaidRoute><PageTransition><Avancer /></PageTransition></PaidRoute>} />
         <Route path="/aller-plus-loin" element={<PageTransition><AllerPlusLoin /></PageTransition>} />
         <Route path="/parcours" element={<PaidRoute><PageTransition><Parcours /></PageTransition></PaidRoute>} />
-        <Route path="/initiation-7-jours" element={<PageTransition><Initiation7j /></PageTransition>} />
+        
         <Route path="/post-flow" element={<ProtectedRoute><PageTransition><PostFlow /></PageTransition></ProtectedRoute>} />
         <Route path="/paywall" element={<PageTransition><Paywall /></PageTransition>} />
         <Route path="/comparaison" element={<PageTransition><Comparison /></PageTransition>} />

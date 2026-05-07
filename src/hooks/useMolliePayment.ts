@@ -5,8 +5,6 @@ import { toast } from "sonner";
 
 interface StartPaymentOptions {
   promoCode?: string | null;
-  /** "premium" (default, 39€ lifetime) or "initiation_7d" (4,99€). */
-  product?: "premium" | "initiation_7d";
   /** Override the redirect URL after Mollie checkout. */
   redirectUrl?: string;
   /**
@@ -17,16 +15,6 @@ interface StartPaymentOptions {
   guestEmail?: string;
 }
 
-/** Products that do NOT accept promo codes (kept in sync with the edge function catalog). */
-const PRODUCTS_WITHOUT_PROMO: ReadonlyArray<NonNullable<StartPaymentOptions["product"]>> = [
-  "initiation_7d",
-];
-
-const PRODUCT_LABELS: Record<NonNullable<StartPaymentOptions["product"]>, string> = {
-  premium: "l'accès Premium",
-  initiation_7d: "l'initiation 7 jours (4,99 €)",
-};
-
 const isValidEmail = (v: string) =>
   /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) && v.trim().length <= 254;
 
@@ -35,7 +23,7 @@ export const useMolliePayment = () => {
   const [loading, setLoading] = useState(false);
 
   const startPayment = async (options: StartPaymentOptions = {}) => {
-    const product = options.product ?? "premium";
+    const product = "premium" as const;
     const promoCode = options.promoCode?.trim() || null;
     const guestEmail = options.guestEmail?.trim().toLowerCase() || null;
 
@@ -46,14 +34,7 @@ export const useMolliePayment = () => {
       return;
     }
 
-    // Front-side guard: refuse promo codes on products that don't support them
-    // (mirrors the server-side rule in create-mollie-payment).
-    if (promoCode && PRODUCTS_WITHOUT_PROMO.includes(product)) {
-      toast.error(
-        `Les codes promo ne sont pas applicables sur ${PRODUCT_LABELS[product]}.`,
-      );
-      return;
-    }
+    // Premium accepts promo codes — no per-product guard needed anymore.
 
     setLoading(true);
     try {
@@ -77,9 +58,7 @@ export const useMolliePayment = () => {
         null;
 
       if (structuredError === "promo_not_allowed_for_product") {
-        toast.error(
-          `Les codes promo ne sont pas applicables sur ${PRODUCT_LABELS[product]}.`,
-        );
+        toast.error("Les codes promo ne sont pas applicables sur cette offre.");
         return;
       }
 
