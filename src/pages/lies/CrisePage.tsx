@@ -431,11 +431,14 @@ const CrisePage = () => {
                       : `~${Math.round(remainingSec / 60)} min restantes`;
                 }
               }
+              const isStale = saved.phase !== "recap" && (Date.now() - saved.lastTickAt) > staleHours * 3600 * 1000;
               return (
                 <li
                   key={key}
                   className={`flex items-start gap-2 rounded-xl border p-3 ${
-                    isCurrent ? "border-[hsl(var(--lies))] bg-[hsl(var(--lies-soft))]" : "border-border"
+                    isStale
+                      ? "border-amber-500/60 bg-amber-500/5"
+                      : isCurrent ? "border-[hsl(var(--lies))] bg-[hsl(var(--lies-soft))]" : "border-border"
                   }`}
                 >
                   <button onClick={() => resumeSession(key)} className="flex-1 text-left">
