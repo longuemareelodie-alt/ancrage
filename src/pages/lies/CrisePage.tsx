@@ -398,13 +398,25 @@ const CrisePage = () => {
                       <Play className="h-3.5 w-3.5" />
                       Reprendre
                     </button>
-                    <button
-                      onClick={() => setPendingDelete(key)}
-                      className="self-end rounded-full p-1.5 text-muted-foreground hover:text-destructive"
-                      aria-label="Supprimer la session"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
+                    <div className="flex items-center justify-end gap-0.5">
+                      <button
+                        onClick={() => toggleFavorite(key)}
+                        className="rounded-full p-1.5 text-muted-foreground hover:text-[hsl(var(--lies))]"
+                        aria-label={favSet.has(key) ? "Retirer des favoris" : "Ajouter aux favoris"}
+                        aria-pressed={favSet.has(key)}
+                      >
+                        <Star
+                          className={`h-4 w-4 ${favSet.has(key) ? "fill-[hsl(var(--lies))] text-[hsl(var(--lies))]" : ""}`}
+                        />
+                      </button>
+                      <button
+                        onClick={() => setPendingDelete(key)}
+                        className="rounded-full p-1.5 text-muted-foreground hover:text-destructive"
+                        aria-label="Supprimer la session"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
                   </div>
                 </li>
               );
