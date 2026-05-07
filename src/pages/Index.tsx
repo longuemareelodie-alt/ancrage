@@ -42,6 +42,13 @@ const Index = () => {
   const [parentType, setParentType] = useParentType();
   const [schoolContext, setSchoolContext] = useSchoolContext();
   const lastQuickState = useLastQuickState();
+  const dailyProgress = useDailyProgress();
+  const SCENE_INDEX_TO_SLOT: Record<number, DailySlot> = { 0: "morning", 3: "evening" };
+  const SLOT_LABELS: Record<DailySlot, string> = { morning: "Matin", evening: "Soir" };
+  const SLOT_EMOJI: Record<DailySlot, string> = { morning: "☀️", evening: "🌙" };
+  const nextSlot = pickNextSlot(dailyProgress);
+  const completedCount =
+    (dailyProgress.morning ? 1 : 0) + (dailyProgress.evening ? 1 : 0);
 
   const handlePayment = () => {
     if (!user) {
