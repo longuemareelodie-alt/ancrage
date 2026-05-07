@@ -1,6 +1,6 @@
 // Helpers to build external LSF dictionary video URLs for any sign label.
-// Elix is the primary source (vraies vidéos de signeurs sourds, gratuit).
-// Sématos est proposé comme fallback alternatif.
+// Sématos est la source par défaut (stable, vraies vidéos de signeurs sourds).
+// Elix (dico.elix-lsf.fr) est proposé en alternative.
 
 const normalize = (label: string) =>
   label
@@ -14,17 +14,21 @@ const normalize = (label: string) =>
     .replace(/\s+/g, " ")
     .trim();
 
-/** Elix dictionary search — opens a page listing video results for the term. */
-export function elixSearchUrl(label: string): string {
-  const q = encodeURIComponent(normalize(label));
-  return `https://dico.elix.com/search?q=${q}`;
-}
+/** Garde le premier mot significatif pour l'URL Elix (ex: "Mal / douleur" → "mal"). */
+const firstWord = (label: string) => normalize(label).split(" ")[0] ?? "";
 
-/** Sématos dictionary search — alternative source. */
+/** Sématos dictionary search — page de résultats vidéos. */
 export function sematosSearchUrl(label: string): string {
   const q = encodeURIComponent(normalize(label));
   return `https://www.sematos.eu/lsf.html?q=${q}`;
 }
 
-/** Default external video link used by the UI. */
-export const lsfVideoUrl = elixSearchUrl;
+/** Elix — Le Dico Elix LSF (dico.elix-lsf.fr/dictionnaire/<mot>). */
+export function elixSearchUrl(label: string): string {
+  const word = firstWord(label);
+  if (!word) return "https://dico.elix-lsf.fr/";
+  return `https://dico.elix-lsf.fr/dictionnaire/${encodeURIComponent(word)}`;
+}
+
+/** Lien vidéo principal utilisé dans l'UI (Sématos, le plus fiable). */
+export const lsfVideoUrl = sematosSearchUrl;
