@@ -34,16 +34,62 @@ const PARENT_LABEL: Record<CrisisParent, string> = {
   deux: "Les deux présents",
 };
 
-export default function CriseGuided({ scenario, context, parent, situation, onClose }: Props) {
-  type Phase = "safety" | "steps" | "recap";
-  const [phase, setPhase] = useState<Phase>("safety");
-  const [checks, setChecks] = useState<Record<string, boolean>>({});
-  const [stepIdx, setStepIdx] = useState(0);
-  const [doneSteps, setDoneSteps] = useState<boolean[]>(() => scenario.steps.map(() => false));
+type Phase = "safety" | "steps" | "recap";
 
-  const [seconds, setSeconds] = useState(0);
-  const [running, setRunning] = useState(true);
-  const startedAt = useRef<number>(Date.now());
+const STORAGE_KEY = "lies.crise.guided.v1";
+
+type Saved = {
+  context: CrisisContext;
+  parent: CrisisParent;
+  situation: CrisisSituation;
+  phase: Phase;
+  checks: Record<string, boolean>;
+  stepIdx: number;
+  doneSteps: boolean[];
+  seconds: number;
+  running: boolean;
+  lastTickAt: number;
+  stepsLen: number;
+};
+
+function loadSaved(): Saved | null {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw) as Saved;
+  } catch {
+    return null;
+  }
+}
+
+function clearSaved() {
+  try { localStorage.removeItem(STORAGE_KEY); } catch {}
+}
+
+export default function CriseGuided({ scenario, context, parent, situation, onClose }: Props) {
+  const initial = (() => {
+    const s = loadSaved();
+    if (!s) return null;
+    if (s.context !== context || s.parent !== parent || s.situation !== situation) return null;
+    if (s.stepsLen !== scenario.steps.length) return null;
+    return s;
+  })();
+
+  const [phase, setPhase] = useState<Phase>(initial?.phase ?? "safety");
+  const [checks, setChecks] = useState<Record<string, boolean>>(initial?.checks ?? {});
+  const [stepIdx, setStepIdx] = useState(initial?.stepIdx ?? 0);
+  const [doneSteps, setDoneSteps] = useState<boolean[]>(
+    initial?.doneSteps ?? scenario.steps.map(() => false)
+  );
+
+  const restoredSeconds = (() => {
+    if (!initial) return 0;
+    if (!initial.running || initial.phase !== "steps") return initial.seconds;
+    const elapsed = Math.max(0, Math.floor((Date.now() - initial.lastTickAt) / 1000));
+    return initial.seconds + elapsed;
+  })();
+  const [seconds, setSeconds] = useState(restoredSeconds);
+  const [running, setRunning] = useState(initial?.running ?? true);
   const intervalRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -54,12 +100,27 @@ export default function CriseGuided({ scenario, context, parent, situation, onCl
     };
   }, [running]);
 
+  // Persist on every meaningful change.
+  useEffect(() => {
+    const data: Saved = {
+      context, parent, situation,
+      phase, checks, stepIdx, doneSteps,
+      seconds, running,
+      lastTickAt: Date.now(),
+      stepsLen: scenario.steps.length,
+    };
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch {}
+  }, [context, parent, situation, phase, checks, stepIdx, doneSteps, seconds, running, scenario.steps.length]);
+
   const allChecked = SAFETY_CHECKLIST.every((c) => checks[c.key]);
   const canNext = stepIdx < scenario.steps.length - 1;
   const canPrev = stepIdx > 0;
 
   const completedCount = doneSteps.filter(Boolean).length;
-  const totalDuration = useMemo(() => seconds, [phase === "recap"]); // capture at recap
+  const [recapDuration, setRecapDuration] = useState<number | null>(
+    initial?.phase === "recap" ? initial.seconds : null
+  );
+  const totalDuration = recapDuration ?? seconds;
 
   function toggleStep(i: number) {
     setDoneSteps((arr) => arr.map((v, k) => (k === i ? !v : v)));
@@ -67,14 +128,25 @@ export default function CriseGuided({ scenario, context, parent, situation, onCl
 
   function startSteps() {
     setPhase("steps");
-    startedAt.current = Date.now();
     setSeconds(0);
     setRunning(true);
   }
 
   function finish() {
     setRunning(false);
+    setRecapDuration(seconds);
     setPhase("recap");
+  }
+
+  function resetAll() {
+    setPhase("safety");
+    setChecks({});
+    setStepIdx(0);
+    setDoneSteps(scenario.steps.map(() => false));
+    setSeconds(0);
+    setRecapDuration(null);
+    setRunning(true);
+    clearSaved();
   }
 
   return (
