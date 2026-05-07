@@ -172,6 +172,8 @@ const CrisePage = () => {
   const [favorites, setFavorites] = useState<string[]>(() => loadFavorites());
   const [staleHours, setStaleHours] = useState<number>(() => loadStaleHours());
   const notifiedRef = useRef<Set<string>>(new Set());
+  const [filterCtx, setFilterCtx] = useState<CrisisContext | "all">("all");
+  const [filterParent, setFilterParent] = useState<CrisisParent | "all">("all");
 
   const scenario = useMemo(() => getScenario(ctx, parent, situation), [ctx, parent, situation]);
 
