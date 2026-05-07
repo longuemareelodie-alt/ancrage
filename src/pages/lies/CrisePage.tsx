@@ -13,6 +13,16 @@ import {
   getScenario,
 } from "@/data/criseScenarios";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const CTX_OPTIONS: { value: CrisisContext; label: string }[] = [
   { value: "maison", label: "À la maison" },
@@ -130,6 +140,7 @@ const CrisePage = () => {
   const [situation, setSituation] = useState<CrisisSituation>("un-enfant-avec-fratrie");
   const [guidedOpen, setGuidedOpen] = useState(false);
   const [sessionsTick, setSessionsTick] = useState(0);
+  const [pendingDelete, setPendingDelete] = useState<string | null>(null);
 
   const scenario = useMemo(() => getScenario(ctx, parent, situation), [ctx, parent, situation]);
 
@@ -342,7 +353,7 @@ const CrisePage = () => {
                     </div>
                   </button>
                   <button
-                    onClick={() => deleteSession(key)}
+                    onClick={() => setPendingDelete(key)}
                     className="rounded-full p-1.5 text-muted-foreground hover:text-destructive"
                     aria-label="Supprimer la session"
                   >
@@ -422,6 +433,36 @@ const CrisePage = () => {
           onClose={() => setGuidedOpen(false)}
         />
       )}
+
+      <AlertDialog open={!!pendingDelete} onOpenChange={(o) => !o && setPendingDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Supprimer cette session ?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {(() => {
+                if (!pendingDelete) return null;
+                const parsed = parseKey(pendingDelete);
+                if (!parsed) return "Cette sauvegarde sera définitivement supprimée.";
+                const ctxLabel = CTX_OPTIONS.find((o) => o.value === parsed.context)?.label ?? parsed.context;
+                const parentLabel = PARENT_OPTIONS.find((o) => o.value === parsed.parent)?.label ?? parsed.parent;
+                return `La progression sauvegardée pour « ${ctxLabel} · ${parentLabel} — ${SITUATION_LABELS[parsed.situation]} » sera définitivement perdue.`;
+              })()}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (pendingDelete) deleteSession(pendingDelete);
+                setPendingDelete(null);
+              }}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Supprimer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </LiesShell>
   );
 };
