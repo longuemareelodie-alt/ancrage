@@ -58,9 +58,7 @@ export const useMolliePayment = () => {
         null;
 
       if (structuredError === "promo_not_allowed_for_product") {
-        toast.error(
-          `Les codes promo ne sont pas applicables sur ${PRODUCT_LABELS[product]}.`,
-        );
+        toast.error("Les codes promo ne sont pas applicables sur cette offre.");
         return;
       }
 
