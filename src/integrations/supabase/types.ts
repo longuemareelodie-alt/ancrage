@@ -53,6 +53,137 @@ export type Database = {
         }
         Relationships: []
       }
+      community_members: {
+        Row: {
+          display_name: string
+          joined_at: string
+          user_id: string
+        }
+        Insert: {
+          display_name: string
+          joined_at?: string
+          user_id: string
+        }
+        Update: {
+          display_name?: string
+          joined_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      community_posts: {
+        Row: {
+          author_id: string
+          body: string
+          created_at: string
+          id: string
+          kind: string
+          parent_id: string | null
+          status: string
+          thread_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          author_id: string
+          body: string
+          created_at?: string
+          id?: string
+          kind?: string
+          parent_id?: string | null
+          status?: string
+          thread_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string
+          body?: string
+          created_at?: string
+          id?: string
+          kind?: string
+          parent_id?: string | null
+          status?: string
+          thread_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_posts_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "community_posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "community_posts_thread_id_fkey"
+            columns: ["thread_id"]
+            isOneToOne: false
+            referencedRelation: "community_threads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      community_reports: {
+        Row: {
+          created_at: string
+          id: string
+          post_id: string
+          reason: string
+          reporter_id: string
+          resolved: boolean
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          post_id: string
+          reason?: string
+          reporter_id: string
+          resolved?: boolean
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          post_id?: string
+          reason?: string
+          reporter_id?: string
+          resolved?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_reports_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "community_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      community_threads: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          is_active: boolean
+          slug: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          id?: string
+          is_active?: boolean
+          slug: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          is_active?: boolean
+          slug?: string
+          title?: string
+        }
+        Relationships: []
+      }
       email_send_log: {
         Row: {
           created_at: string
@@ -181,6 +312,27 @@ export type Database = {
           emotion?: string
           emotion_type?: string
           id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      lsf_progress: {
+        Row: {
+          id: string
+          learned_at: string
+          sign_key: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          learned_at?: string
+          sign_key: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          learned_at?: string
+          sign_key?: string
           user_id?: string
         }
         Relationships: []
@@ -437,6 +589,36 @@ export type Database = {
           source?: string
           status?: string
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      private_journal_entries: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          mode: string
+          prompt_key: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content?: string
+          created_at?: string
+          id?: string
+          mode?: string
+          prompt_key?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          mode?: string
+          prompt_key?: string | null
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -886,6 +1068,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_community_member: { Args: { _user_id: string }; Returns: boolean }
       log_audit_anomaly: {
         Args: {
           _kind: string

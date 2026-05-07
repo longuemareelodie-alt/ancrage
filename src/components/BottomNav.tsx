@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from "react-router-dom";
-import { Home, Heart, HeartPulse, User } from "lucide-react";
+import { Home, Heart, HeartPulse, User, Handshake } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
 /**
@@ -37,6 +37,7 @@ const BottomNav = () => {
   const items = [
     { to: "/dashboard", label: "Accueil", icon: Home },
     { to: "/checkin", label: "Rituel", icon: Heart },
+    { to: "/lies-autrement", label: "Liés", icon: Handshake, accent: "lies" as const },
     { to: "/sante", label: "Santé", icon: HeartPulse },
     { to: "/profil", label: "Espace", icon: User },
   ];
@@ -54,14 +55,13 @@ const BottomNav = () => {
             <li key={item.to} className="flex-1">
               <NavLink
                 to={item.to}
-                end
-                className={({ isActive }) =>
-                  `flex flex-col items-center justify-center gap-0.5 rounded-xl py-1.5 text-[10px] font-medium transition-colors ${
-                    isActive
-                      ? "text-primary"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`
-                }
+                end={item.to !== "/lies-autrement"}
+                className={({ isActive }) => {
+                  const accentColor = item.accent === "lies" ? "text-[hsl(var(--lies))]" : "text-primary";
+                  return `flex flex-col items-center justify-center gap-0.5 rounded-xl py-1.5 text-[10px] font-medium transition-colors ${
+                    isActive ? accentColor : "text-muted-foreground hover:text-foreground"
+                  }`;
+                }}
               >
                 {({ isActive }) => (
                   <>

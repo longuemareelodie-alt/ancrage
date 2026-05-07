@@ -30,6 +30,11 @@
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
+    /* "Liés autrement" accent — vert doux #7DB89F */
+    --lies: 150 28% 60%;
+    --lies-foreground: 0 0% 100%;
+    --lies-soft: 150 35% 95%;
+
     --border: 280 20% 88%;
     --input: 280 20% 88%;
     --ring: 258 70% 52%;
