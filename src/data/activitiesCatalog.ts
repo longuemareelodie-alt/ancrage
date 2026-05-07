@@ -1,0 +1,623 @@
+// Catalogue des activités "Activités & lien" (Module 6).
+// Filtré par tranche d'âge et par trouble/handicap.
+
+export type AgeRange =
+  | "0-12m"
+  | "1-3a"
+  | "3-6a"
+  | "6-9a"
+  | "9-12a"
+  | "12a+";
+
+export type TroubleTag =
+  | "tsa"
+  | "tdah"
+  | "dys"
+  | "surdite"
+  | "moteur"
+  | "hypersensibilite"
+  | "tous";
+
+export type Difficulty = "facile" | "moyen" | "evolutif";
+
+export type Activity = {
+  id: string;
+  age: AgeRange;
+  troubles: TroubleTag[];
+  title: string;
+  goal: string;
+  material: string;
+  steps: string[];
+  duration: string;
+  difficulty: Difficulty;
+};
+
+export const AGE_LABELS: Record<AgeRange, string> = {
+  "0-12m": "👶 0–12 mois",
+  "1-3a": "🐣 1–3 ans",
+  "3-6a": "🧒 3–6 ans",
+  "6-9a": "👦 6–9 ans",
+  "9-12a": "🧑 9–12 ans",
+  "12a+": "🧑‍🦱 12 ans et +",
+};
+
+export const TROUBLE_LABELS: Record<TroubleTag, string> = {
+  tsa: "TSA",
+  tdah: "TDAH",
+  dys: "DYS",
+  surdite: "Surdité",
+  moteur: "Handicap moteur",
+  hypersensibilite: "Hypersensibilité",
+  tous: "Tous troubles",
+};
+
+export const ACTIVITIES: Activity[] = [
+  // 0-12 mois
+  {
+    id: "massage-bebe-tamise",
+    age: "0-12m",
+    troubles: ["tsa", "hypersensibilite"],
+    title: "Massage bébé à la lumière tamisée",
+    goal: "Connexion corporelle, apaisement sensoriel",
+    material: "Huile bébé, lumière douce, musique calme",
+    steps: [
+      "Tamiser la lumière",
+      "Mettre une musique douce",
+      "Masser lentement des pieds vers le ventre",
+      "Nommer chaque partie du corps doucement",
+    ],
+    duration: "10–15 min",
+    difficulty: "facile",
+  },
+  {
+    id: "bac-sensoriel-doux",
+    age: "0-12m",
+    troubles: ["tsa", "hypersensibilite"],
+    title: "Bac sensoriel doux",
+    goal: "Éveil sensoriel en douceur",
+    material: "Bac, tissus de textures variées, plumes, balles douces",
+    steps: [
+      "Poser bébé devant le bac",
+      "Guider sa main doucement",
+      "Observer ses réactions",
+      "Ne jamais forcer",
+    ],
+    duration: "5–10 min",
+    difficulty: "facile",
+  },
+  {
+    id: "danse-vibrations",
+    age: "0-12m",
+    troubles: ["surdite"],
+    title: "Danse des vibrations",
+    goal: "Ressentir la musique autrement",
+    material: "Enceinte posée au sol, musique avec basses",
+    steps: [
+      "Poser bébé sur un tapis près de l'enceinte",
+      "Laisser ressentir les vibrations",
+      "Danser avec lui en le tenant",
+    ],
+    duration: "10 min",
+    difficulty: "facile",
+  },
+  {
+    id: "regards-mimiques",
+    age: "0-12m",
+    troubles: ["surdite", "tsa"],
+    title: "Jeu de regards & mimiques",
+    goal: "Communication non verbale, lien visuel",
+    material: "Aucun",
+    steps: [
+      "Se mettre face à bébé",
+      "Faire des grimaces lentes",
+      "Attendre sa réaction",
+      "Imiter ses expressions",
+    ],
+    duration: "5–10 min",
+    difficulty: "facile",
+  },
+  {
+    id: "balancement-rythmique",
+    age: "0-12m",
+    troubles: ["tdah"],
+    title: "Balancement rythmique",
+    goal: "Régulation du système nerveux",
+    material: "Transat, hamac bébé ou bras du parent",
+    steps: [
+      "Bercer bébé en rythme régulier",
+      "Fredonner doucement",
+      "Maintenir le même rythme sans accélérer",
+    ],
+    duration: "10–15 min",
+    difficulty: "facile",
+  },
+  {
+    id: "lsf-tetee",
+    age: "0-12m",
+    troubles: ["tous"],
+    title: "LSF & tétée/biberon",
+    goal: "Premiers signes, lien langagier",
+    material: "Aucun",
+    steps: [
+      "Avant chaque tétée/biberon, faire le signe « manger »",
+      "Regarder bébé dans les yeux",
+      "Répéter à chaque fois",
+    ],
+    duration: "À chaque repas",
+    difficulty: "facile",
+  },
+
+  // 1-3 ans
+  {
+    id: "bac-eau-tiede",
+    age: "1-3a",
+    troubles: ["tsa", "hypersensibilite"],
+    title: "Bac à eau tiède",
+    goal: "Exploration sensorielle sécurisée",
+    material: "Bac, eau tiède, petits jouets, éponges",
+    steps: [
+      "Régler l'eau à température neutre",
+      "Introduire un objet à la fois",
+      "Laisser explorer sans forcer",
+      "Nommer ce qu'il touche",
+    ],
+    duration: "15–20 min",
+    difficulty: "facile",
+  },
+  {
+    id: "bulles-savon",
+    age: "1-3a",
+    troubles: ["tsa", "hypersensibilite"],
+    title: "Bulles de savon",
+    goal: "Focus visuel, apaisement, plaisir partagé",
+    material: "Liquide à bulles",
+    steps: [
+      "Souffler des bulles lentement",
+      "Laisser l'enfant les regarder",
+      "L'inviter à les éclater",
+      "Signer « encore » quand il en veut plus",
+    ],
+    duration: "10–15 min",
+    difficulty: "facile",
+  },
+  {
+    id: "tambour-emotions",
+    age: "1-3a",
+    troubles: ["surdite"],
+    title: "Tambour des émotions",
+    goal: "Expression par le rythme et les vibrations",
+    material: "Tambourin ou casserole + cuillère en bois",
+    steps: [
+      "Frapper fort = colère",
+      "Frapper doucement = calme",
+      "Laisser l'enfant reproduire",
+      "Imiter ensemble",
+    ],
+    duration: "10–15 min",
+    difficulty: "facile",
+  },
+  {
+    id: "livre-images-lsf",
+    age: "1-3a",
+    troubles: ["surdite"],
+    title: "Livre d'images LSF",
+    goal: "Apprentissage des signes en s'amusant",
+    material: "Livre imagier",
+    steps: [
+      "Montrer l'image",
+      "Faire le signe LSF",
+      "Attendre l'imitation",
+      "Féliciter avec un grand sourire",
+    ],
+    duration: "10 min",
+    difficulty: "facile",
+  },
+  {
+    id: "parcours-moteur",
+    age: "1-3a",
+    troubles: ["tdah"],
+    title: "Parcours moteur maison",
+    goal: "Dépenser l'énergie, travailler la concentration",
+    material: "Coussins, chaises, tunnel en carton",
+    steps: [
+      "Créer un parcours simple",
+      "Montrer une fois",
+      "Laisser l'enfant explorer",
+      "Ajouter une étape à la fois",
+    ],
+    duration: "20–30 min",
+    difficulty: "moyen",
+  },
+  {
+    id: "pate-sensorielle",
+    age: "1-3a",
+    troubles: ["tdah"],
+    title: "Pâte à modeler sensorielle",
+    goal: "Canaliser l'énergie, stimuler les mains",
+    material: "Pâte à modeler ou pâte à sel maison",
+    steps: [
+      "Malaxer ensemble",
+      "Créer des formes simples",
+      "Nommer les couleurs",
+      "Signer les objets créés",
+    ],
+    duration: "15–20 min",
+    difficulty: "facile",
+  },
+  {
+    id: "peinture-doigts-allonge",
+    age: "1-3a",
+    troubles: ["moteur"],
+    title: "Peinture aux doigts allongé",
+    goal: "Créativité, motricité fine adaptée",
+    material: "Peinture lavable, grande feuille au sol",
+    steps: [
+      "Installer l'enfant confortablement",
+      "Tremper ses doigts",
+      "Laisser tracer librement",
+      "Valoriser chaque geste",
+    ],
+    duration: "15–20 min",
+    difficulty: "facile",
+  },
+  {
+    id: "chanson-signes-lsf",
+    age: "1-3a",
+    troubles: ["tous"],
+    title: "Chanson + signes LSF",
+    goal: "Langage, lien, plaisir partagé",
+    material: "Aucun",
+    steps: [
+      "Choisir une comptine simple",
+      "Ajouter les signes LSF des mots clés",
+      "Répéter tous les jours",
+      "Laisser l'enfant anticiper les signes",
+    ],
+    duration: "5–10 min",
+    difficulty: "facile",
+  },
+
+  // 3-6 ans
+  {
+    id: "pareil-pas-pareil",
+    age: "3-6a",
+    troubles: ["tsa"],
+    title: "Jeu du « pareil / pas pareil »",
+    goal: "Tri, attention, communication",
+    material: "Objets du quotidien variés",
+    steps: [
+      "Poser 4 à 6 objets",
+      "Trouver ceux qui vont ensemble",
+      "Expliquer pourquoi",
+      "Pas de mauvaise réponse",
+    ],
+    duration: "15 min",
+    difficulty: "facile",
+  },
+  {
+    id: "coin-calme",
+    age: "3-6a",
+    troubles: ["tsa", "hypersensibilite"],
+    title: "Coin calme personnalisé",
+    goal: "Auto-régulation, sécurité émotionnelle",
+    material: "Tente ou coin avec coussins, objets sensoriels préférés",
+    steps: [
+      "Créer le coin ensemble",
+      "Lui donner un nom choisi par l'enfant",
+      "L'utiliser quand il est débordé",
+      "Ne jamais le forcer à sortir",
+    ],
+    duration: "À disposition en permanence",
+    difficulty: "evolutif",
+  },
+  {
+    id: "timer-visuel",
+    age: "3-6a",
+    troubles: ["tdah"],
+    title: "Timer visuel + récompense",
+    goal: "Gestion du temps, concentration",
+    material: "Timer visuel (Time Timer), tableau de récompenses",
+    steps: [
+      "Fixer une tâche courte (5 min)",
+      "Lancer le timer",
+      "Féliciter à la fin",
+      "Augmenter progressivement",
+    ],
+    duration: "5–15 min",
+    difficulty: "facile",
+  },
+  {
+    id: "yoga-animaux",
+    age: "3-6a",
+    troubles: ["tdah"],
+    title: "Yoga des animaux",
+    goal: "Régulation, motricité, plaisir",
+    material: "Tapis de sol",
+    steps: [
+      "Imiter des animaux (serpent, lion, grenouille)",
+      "Relier chaque animal à une émotion",
+      "Respirer ensemble",
+      "Finir allongé en « étoile de mer »",
+    ],
+    duration: "15–20 min",
+    difficulty: "facile",
+  },
+  {
+    id: "lettres-pate",
+    age: "3-6a",
+    troubles: ["dys"],
+    title: "Lettres en pâte à modeler",
+    goal: "Mémorisation kinesthésique des lettres",
+    material: "Pâte à modeler",
+    steps: [
+      "Modeler une lettre ensemble",
+      "La tracer avec le doigt",
+      "Trouver des mots qui commencent par cette lettre",
+      "Signer la lettre en LSF",
+    ],
+    duration: "15–20 min",
+    difficulty: "moyen",
+  },
+  {
+    id: "theatre-emotions",
+    age: "3-6a",
+    troubles: ["surdite"],
+    title: "Théâtre des émotions",
+    goal: "Expression faciale, communication non verbale",
+    material: "Miroir",
+    steps: [
+      "Faire une émotion devant le miroir",
+      "L'enfant devine",
+      "Inverser les rôles",
+      "Signer l'émotion en LSF",
+    ],
+    duration: "15–20 min",
+    difficulty: "facile",
+  },
+  {
+    id: "jeu-souffle",
+    age: "3-6a",
+    troubles: ["moteur"],
+    title: "Jeu de souffle",
+    goal: "Motricité buccale, jeu partagé",
+    material: "Balles de ping-pong, pailles, bougies",
+    steps: [
+      "Souffler pour déplacer une balle",
+      "Faire des courses",
+      "Souffler une bougie",
+      "Adapter selon les capacités",
+    ],
+    duration: "10–15 min",
+    difficulty: "facile",
+  },
+
+  // 6-9 ans
+  {
+    id: "carnet-emotions-illustre",
+    age: "6-9a",
+    troubles: ["tsa"],
+    title: "Carnet des émotions illustré",
+    goal: "Identifier et nommer ses émotions",
+    material: "Carnet, feutres",
+    steps: [
+      "Dessiner une émotion vécue",
+      "Lui donner un nom",
+      "Noter ce qui l'a déclenchée",
+      "Trouver ce qui aide",
+    ],
+    duration: "15–20 min",
+    difficulty: "moyen",
+  },
+  {
+    id: "jeu-role-structure",
+    age: "6-9a",
+    troubles: ["tsa"],
+    title: "Jeu de rôle structuré",
+    goal: "Codes sociaux, communication",
+    material: "Aucun ou déguisements simples",
+    steps: [
+      "Choisir une situation du quotidien",
+      "Jouer la scène",
+      "Inverser les rôles",
+      "Débriefing doux après",
+    ],
+    duration: "20–30 min",
+    difficulty: "moyen",
+  },
+  {
+    id: "mission-chronometre",
+    age: "6-9a",
+    troubles: ["tdah"],
+    title: "Mission chronomètre",
+    goal: "Concentration, sentiment de compétence",
+    material: "Chronomètre, tâche simple",
+    steps: [
+      "Fixer un défi (ranger sa chambre en 10 min)",
+      "Se chronométrer",
+      "Battre son propre record",
+      "Récompense symbolique",
+    ],
+    duration: "10–20 min",
+    difficulty: "facile",
+  },
+  {
+    id: "livre-audio-suivi-doigt",
+    age: "6-9a",
+    troubles: ["dys"],
+    title: "Livre audio + suivi du doigt",
+    goal: "Compréhension, plaisir de lire autrement",
+    material: "Livre audio + livre physique",
+    steps: [
+      "Écouter le livre audio",
+      "Suivre le texte avec le doigt",
+      "S'arrêter sur les mots difficiles",
+      "Pas de pression sur la vitesse",
+    ],
+    duration: "20–30 min",
+    difficulty: "moyen",
+  },
+  {
+    id: "karaoke-visuel",
+    age: "6-9a",
+    troubles: ["surdite"],
+    title: "Karaoké visuel",
+    goal: "Rythme, expression, plaisir",
+    material: "Tablette ou TV avec paroles affichées",
+    steps: [
+      "Afficher les paroles",
+      "Chanter/signer ensemble",
+      "Exagérer les expressions",
+      "Filmer pour se voir après",
+    ],
+    duration: "15–20 min",
+    difficulty: "facile",
+  },
+
+  // 9-12 ans
+  {
+    id: "guide-social-illustre",
+    age: "9-12a",
+    troubles: ["tsa"],
+    title: "Mon guide social illustré",
+    goal: "Autonomie sociale, confiance",
+    material: "Carnet, feutres ou ordinateur",
+    steps: [
+      "Choisir une situation sociale complexe",
+      "Dessiner les étapes",
+      "Noter quoi dire/faire",
+      "Garder comme référence",
+    ],
+    duration: "30 min",
+    difficulty: "moyen",
+  },
+  {
+    id: "kanban-simplifie",
+    age: "9-12a",
+    troubles: ["tdah"],
+    title: "Tableau Kanban simplifié",
+    goal: "Organisation, gestion des tâches",
+    material: "Post-its, tableau ou mur",
+    steps: [
+      "3 colonnes : À faire / En cours / Fait",
+      "Une tâche par post-it",
+      "Déplacer ensemble",
+      "Célébrer les « Fait »",
+    ],
+    duration: "10 min par jour",
+    difficulty: "facile",
+  },
+  {
+    id: "carte-mentale-coloree",
+    age: "9-12a",
+    troubles: ["dys"],
+    title: "Carte mentale colorée",
+    goal: "Mémorisation visuelle, organisation des idées",
+    material: "Feuille blanche, feutres de couleur",
+    steps: [
+      "Mot central au milieu",
+      "Branches par thème",
+      "Images et couleurs",
+      "Pas de phrases complètes",
+    ],
+    duration: "20–30 min",
+    difficulty: "moyen",
+  },
+  {
+    id: "mini-dico-lsf",
+    age: "9-12a",
+    troubles: ["surdite"],
+    title: "Mini-dictionnaire LSF personnel",
+    goal: "Autonomie, fierté de sa langue",
+    material: "Carnet, smartphone pour photos/vidéos",
+    steps: [
+      "Choisir 5 signes par semaine",
+      "Les filmer ou les dessiner",
+      "Créer son carnet personnel",
+      "Partager avec la famille",
+    ],
+    duration: "20–30 min",
+    difficulty: "evolutif",
+  },
+
+  // 12 ans et +
+  {
+    id: "journal-interactions",
+    age: "12a+",
+    troubles: ["tsa"],
+    title: "Journal de bord des interactions",
+    goal: "Comprendre ses réactions, gagner en autonomie",
+    material: "Carnet ou appli notes",
+    steps: [
+      "Noter une interaction difficile",
+      "Ce que j'ai ressenti",
+      "Ce qui aurait aidé",
+      "Ce que je referais pareil",
+    ],
+    duration: "10 min par jour",
+    difficulty: "moyen",
+  },
+  {
+    id: "pomodoro-adapte",
+    age: "12a+",
+    troubles: ["tdah"],
+    title: "Technique Pomodoro adaptée",
+    goal: "Concentration, gestion du temps scolaire",
+    material: "Timer",
+    steps: [
+      "15 min de travail",
+      "5 min de pause",
+      "3 cycles puis grande pause de 15 min",
+      "Adapter les durées selon l'enfant",
+    ],
+    duration: "Selon les besoins",
+    difficulty: "moyen",
+  },
+  {
+    id: "podcast-au-lieu-texte",
+    age: "12a+",
+    troubles: ["dys"],
+    title: "Podcast ou vidéo à la place du texte",
+    goal: "Apprentissage autrement, confiance en soi",
+    material: "Smartphone, écouteurs",
+    steps: [
+      "Identifier le sujet à apprendre",
+      "Trouver un podcast/vidéo",
+      "Prendre des notes vocales",
+      "Résumer à voix haute",
+    ],
+    duration: "Selon le sujet",
+    difficulty: "moyen",
+  },
+  {
+    id: "projet-sous-titres",
+    age: "12a+",
+    troubles: ["surdite"],
+    title: "Projet sous-titres",
+    goal: "Autonomie, fierté, utilité",
+    material: "Smartphone, appli de sous-titrage",
+    steps: [
+      "Choisir une vidéo courte",
+      "Créer les sous-titres",
+      "Partager en famille",
+      "Devenir « expert sous-titres » de la maison",
+    ],
+    duration: "30–45 min",
+    difficulty: "moyen",
+  },
+  {
+    id: "boite-a-outils",
+    age: "12a+",
+    troubles: ["tous"],
+    title: "Boîte à outils personnelle",
+    goal: "Autonomie émotionnelle",
+    material: "Boîte physique ou carnet",
+    steps: [
+      "Lister ce qui aide quand ça va pas",
+      "Objets sensoriels, musiques, activités",
+      "Décorer la boîte",
+      "L'enrichir au fil du temps",
+    ],
+    duration: "30 min pour créer, évolutif",
+    difficulty: "evolutif",
+  },
+];
