@@ -1,7 +1,27 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Check, ChevronLeft, ChevronRight, Pause, Play, RotateCcw, ShieldCheck, X } from "lucide-react";
+import { Check, ChevronLeft, ChevronRight, Pause, Play, RotateCcw, ShieldCheck, X, Zap, ZapOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CrisisScenario, CrisisContext, CrisisParent, CrisisSituation, SITUATION_LABELS } from "@/data/criseScenarios";
+
+const AUTO_NEXT_KEY = "lies.crise.autonext.v1";
+const AUTO_DELAY_OPTIONS = [3, 5, 10, 15] as const;
+type AutoDelay = (typeof AUTO_DELAY_OPTIONS)[number];
+
+function loadAutoPrefs(): { enabled: boolean; delay: AutoDelay } {
+  try {
+    const raw = localStorage.getItem(AUTO_NEXT_KEY);
+    if (raw) {
+      const p = JSON.parse(raw);
+      const delay = (AUTO_DELAY_OPTIONS as readonly number[]).includes(p.delay) ? (p.delay as AutoDelay) : 5;
+      return { enabled: !!p.enabled, delay };
+    }
+  } catch { /* noop */ }
+  return { enabled: false, delay: 5 };
+}
+
+function saveAutoPrefs(p: { enabled: boolean; delay: AutoDelay }) {
+  try { localStorage.setItem(AUTO_NEXT_KEY, JSON.stringify(p)); } catch { /* noop */ }
+}
 
 type Props = {
   scenario: CrisisScenario;
@@ -121,6 +141,62 @@ export default function CriseGuided({ scenario, context, parent, situation, onCl
       if (intervalRef.current) window.clearInterval(intervalRef.current);
     };
   }, [running]);
+
+  
+  const [autoPrefs, setAutoPrefs] = useState(() => loadAutoPrefs());
+  const [autoCountdown, setAutoCountdown] = useState<number | null>(null);
+  const autoTimerRef = useRef<number | null>(null);
+
+  function clearAutoTimer() {
+    if (autoTimerRef.current) {
+      window.clearInterval(autoTimerRef.current);
+      autoTimerRef.current = null;
+    }
+    setAutoCountdown(null);
+  }
+
+  function updateAutoPrefs(next: { enabled: boolean; delay: AutoDelay }) {
+    setAutoPrefs(next);
+    saveAutoPrefs(next);
+    if (!next.enabled) clearAutoTimer();
+  }
+
+  // Auto-suivant : déclenche un compte à rebours quand l'étape courante est marquée faite.
+  useEffect(() => {
+    clearAutoTimer();
+    if (
+      !autoPrefs.enabled ||
+      phase !== "steps" ||
+      !running ||
+      !doneSteps[stepIdx]
+    ) return;
+
+    setAutoCountdown(autoPrefs.delay);
+    autoTimerRef.current = window.setInterval(() => {
+      setAutoCountdown((c) => {
+        if (c == null) return null;
+        if (c <= 1) {
+          clearAutoTimer();
+          // Avance / termine
+          if (stepIdx < scenario.steps.length - 1) {
+            setStepIdx((i) => i + 1);
+          } else {
+            setRunning(false);
+            setRecapDuration((d) => d ?? seconds);
+            setPhase("recap");
+          }
+          return null;
+        }
+        return c - 1;
+      });
+    }, 1000);
+    return () => clearAutoTimer();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoPrefs.enabled, autoPrefs.delay, phase, running, stepIdx, doneSteps[stepIdx]]);
+
+  function cancelAutoNext() {
+    clearAutoTimer();
+  }
 
   // Persist on every meaningful change, scoped by composite key.
   useEffect(() => {
@@ -266,6 +342,57 @@ export default function CriseGuided({ scenario, context, parent, situation, onCl
                   <Check className="h-4 w-4" />
                   {doneSteps[stepIdx] ? "Fait" : "Marquer comme fait"}
                 </button>
+              </div>
+
+              {/* Auto-suivant : préférence + indicateur de compte à rebours */}
+              <div className="mt-3 rounded-2xl border border-border bg-card p-3">
+                <div className="flex items-center justify-between gap-3">
+                  <button
+                    type="button"
+                    onClick={() => updateAutoPrefs({ ...autoPrefs, enabled: !autoPrefs.enabled })}
+                    className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
+                      autoPrefs.enabled
+                        ? "bg-[hsl(var(--lies))] text-[hsl(var(--lies-foreground))]"
+                        : "border border-border text-muted-foreground hover:text-foreground"
+                    }`}
+                    aria-pressed={autoPrefs.enabled}
+                  >
+                    {autoPrefs.enabled ? <Zap className="h-3.5 w-3.5" /> : <ZapOff className="h-3.5 w-3.5" />}
+                    Auto-suivant
+                  </button>
+                  <div className="flex items-center gap-1">
+                    {AUTO_DELAY_OPTIONS.map((d) => (
+                      <button
+                        key={d}
+                        type="button"
+                        onClick={() => updateAutoPrefs({ enabled: autoPrefs.enabled, delay: d })}
+                        disabled={!autoPrefs.enabled}
+                        className={`rounded-full px-2 py-1 text-xs transition-colors ${
+                          autoPrefs.delay === d && autoPrefs.enabled
+                            ? "bg-[hsl(var(--lies-soft))] text-[hsl(var(--lies))] font-semibold"
+                            : "text-muted-foreground hover:text-foreground"
+                        } disabled:opacity-40`}
+                        aria-label={`Délai ${d} secondes`}
+                      >
+                        {d}s
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                {autoCountdown != null && (
+                  <div className="mt-2 flex items-center justify-between gap-3 rounded-xl bg-[hsl(var(--lies-soft))] px-3 py-2">
+                    <span className="text-xs text-foreground">
+                      Étape suivante dans <span className="font-mono font-semibold tabular-nums">{autoCountdown}s</span>
+                    </span>
+                    <button
+                      type="button"
+                      onClick={cancelAutoNext}
+                      className="text-xs font-medium text-[hsl(var(--lies))] hover:underline"
+                    >
+                      Annuler
+                    </button>
+                  </div>
+                )}
               </div>
 
               <div className="mt-3 text-center text-xs text-muted-foreground">
