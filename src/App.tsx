@@ -23,7 +23,7 @@ import Comprendre from "./pages/Comprendre";
 import Avancer from "./pages/Avancer";
 import AllerPlusLoin from "./pages/AllerPlusLoin";
 import Parcours from "./pages/Parcours";
-import Initiation7j from "./pages/Initiation7j";
+
 import Auth from "./pages/Auth";
 import Profil from "./pages/Profil";
 import ProfilStyle from "./pages/ProfilStyle";
