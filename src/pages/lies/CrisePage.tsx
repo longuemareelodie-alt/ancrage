@@ -397,8 +397,80 @@ const CrisePage = () => {
           <p className="mb-3 text-xs text-muted-foreground">
             Chaque combinaison contexte / parent / situation est sauvegardée séparément.
           </p>
+          <div className="mb-3 flex flex-wrap items-center gap-2 text-xs">
+            <span className="text-muted-foreground">Filtrer :</span>
+            <button
+              type="button"
+              onClick={() => setFilterCtx("all")}
+              className={`rounded-full px-2.5 py-1 transition-colors ${
+                filterCtx === "all"
+                  ? "bg-[hsl(var(--lies))] text-[hsl(var(--lies-foreground))]"
+                  : "border border-border text-muted-foreground hover:border-[hsl(var(--lies))]"
+              }`}
+              aria-pressed={filterCtx === "all"}
+            >
+              Tous contextes
+            </button>
+            {CTX_OPTIONS.map((o) => (
+              <button
+                key={o.value}
+                type="button"
+                onClick={() => setFilterCtx(o.value)}
+                className={`rounded-full px-2.5 py-1 transition-colors ${
+                  filterCtx === o.value
+                    ? "bg-[hsl(var(--lies))] text-[hsl(var(--lies-foreground))]"
+                    : "border border-border text-muted-foreground hover:border-[hsl(var(--lies))]"
+                }`}
+                aria-pressed={filterCtx === o.value}
+              >
+                {o.label}
+              </button>
+            ))}
+            <span className="mx-1 h-4 w-px bg-border" aria-hidden="true" />
+            <button
+              type="button"
+              onClick={() => setFilterParent("all")}
+              className={`rounded-full px-2.5 py-1 transition-colors ${
+                filterParent === "all"
+                  ? "bg-[hsl(var(--lies))] text-[hsl(var(--lies-foreground))]"
+                  : "border border-border text-muted-foreground hover:border-[hsl(var(--lies))]"
+              }`}
+              aria-pressed={filterParent === "all"}
+            >
+              Tous parents
+            </button>
+            {PARENT_OPTIONS.map((o) => (
+              <button
+                key={o.value}
+                type="button"
+                onClick={() => setFilterParent(o.value)}
+                className={`rounded-full px-2.5 py-1 transition-colors ${
+                  filterParent === o.value
+                    ? "bg-[hsl(var(--lies))] text-[hsl(var(--lies-foreground))]"
+                    : "border border-border text-muted-foreground hover:border-[hsl(var(--lies))]"
+                }`}
+                aria-pressed={filterParent === o.value}
+              >
+                {o.label}
+              </button>
+            ))}
+            {(filterCtx !== "all" || filterParent !== "all") && (
+              <button
+                type="button"
+                onClick={() => { setFilterCtx("all"); setFilterParent("all"); }}
+                className="ml-auto rounded-full px-2.5 py-1 text-muted-foreground underline-offset-2 hover:underline"
+              >
+                Réinitialiser
+              </button>
+            )}
+          </div>
+          {filteredSessions.length === 0 ? (
+            <p className="rounded-xl border border-dashed border-border p-3 text-center text-xs text-muted-foreground">
+              Aucune session ne correspond à ces filtres.
+            </p>
+          ) : (
           <ul className="space-y-2">
-            {savedSessions.map(({ key, saved }) => {
+            {filteredSessions.map(({ key, saved }) => {
               const parsed = parseKey(key);
               if (!parsed) return null;
               const ctxLabel = CTX_OPTIONS.find((o) => o.value === parsed.context)?.label ?? parsed.context;
