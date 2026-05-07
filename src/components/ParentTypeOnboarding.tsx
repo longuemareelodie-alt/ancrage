@@ -1,28 +1,27 @@
 import { useEffect, useState } from "react";
-import { setParentType, type ParentType } from "@/lib/parentType";
-
-const CHOSEN_KEY = "ancrage_parent_type_chosen";
+import { setParentType, hasChosenParentType, markParentTypeChosen, type ParentType } from "@/lib/parentType";
 
 /**
  * First-run modal asking the user to pick a parent profile (maman / papa).
- * Once chosen, we set a flag in localStorage so the modal never reappears.
- * Users can always change their choice later from the home toggle or /profil.
+ * Once chosen (or skipped), we mark it via hasChosenParentType so the modal
+ * never reappears. "Plus tard" keeps the default but does NOT mark a choice,
+ * so subsequent micro-scenes use the neutral fallback copy.
  */
 export default function ParentTypeOnboarding() {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    try {
-      const chosen = localStorage.getItem(CHOSEN_KEY);
-      if (!chosen) setOpen(true);
-    } catch {
-      // ignore
-    }
+    if (!hasChosenParentType()) setOpen(true);
   }, []);
 
   function choose(value: ParentType) {
     setParentType(value);
-    try { localStorage.setItem(CHOSEN_KEY, "1"); } catch {}
+    setOpen(false);
+  }
+
+  function skip() {
+    // Mark as seen so we don't pop again, but don't claim a profile.
+    markParentTypeChosen();
     setOpen(false);
   }
 
@@ -62,7 +61,7 @@ export default function ParentTypeOnboarding() {
         </div>
 
         <button
-          onClick={() => choose("maman")}
+          onClick={skip}
           className="mt-4 w-full text-center text-xs text-muted-foreground underline-offset-2 hover:underline"
         >
           Plus tard

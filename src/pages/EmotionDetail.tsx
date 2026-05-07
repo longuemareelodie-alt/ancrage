@@ -52,12 +52,15 @@ const EmotionDetail = () => {
   const location = useLocation();
   const { t, i18n } = useTranslation();
   const key = emotion || "";
-  const [parentType] = useParentType();
-  // For the 4 micro-scènes that have a parent-tailored copy, switch the i18n
-  // base path. Variant keys exist for both maman and papa; we keep a safe
-  // fallback to the base key if i18n.exists ever returns false.
+  const [parentType, , hasChosenProfile] = useParentType();
+  // Personalization rule:
+  //  1. If the user hasn't picked a profile yet → use neutral base copy.
+  //  2. If the current emotion has a parent-tailored variant → use it.
+  //  3. Otherwise fall back to the base copy (parentize() will still adapt
+  //     gender/agreement at render time when a profile IS chosen).
   const variantCandidate = `${key}_${parentType}`;
   const useCopyKey =
+    hasChosenProfile &&
     PAPA_VARIANT_KEYS.has(key) &&
     i18n.exists(`emotion_detail.data.${variantCandidate}.title`)
       ? variantCandidate
@@ -157,9 +160,9 @@ const EmotionDetail = () => {
     );
   }
 
-  // Apply parentize() to every string surfaced in micro-scenes so emotions
-  // without a dedicated _papa/_maman variant still get gender/tone agreement.
-  const px = (s: string) => parentize(s, parentType);
+  // parentize() only when the user has explicitly chosen a profile, so
+  // unspecified users keep the neutral original copy.
+  const px = (s: string) => (hasChosenProfile ? parentize(s, parentType) : s);
 
   const title = px(t(titleKey));
   const validation = px(t(`emotion_detail.data.${useCopyKey}.validation`));

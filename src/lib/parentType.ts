@@ -22,10 +22,31 @@ export const PARENT_TYPE_LABELS: Record<ParentType, string> = {
 
 export const DEFAULT_PARENT_TYPE: ParentType = "maman";
 
+export const PARENT_TYPE_CHOSEN_KEY = "ancrage_parent_type_chosen";
+
 export function getParentType(): ParentType {
   if (typeof window === "undefined") return DEFAULT_PARENT_TYPE;
   const v = localStorage.getItem(STORAGE_KEY);
   return v === "papa" || v === "maman" ? v : DEFAULT_PARENT_TYPE;
+}
+
+/**
+ * True only if the user has explicitly picked a profile (via onboarding or
+ * the home toggle / settings). When false, callers should use the neutral /
+ * base copy and avoid applying gendered substitutions.
+ */
+export function hasChosenParentType(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    return localStorage.getItem(PARENT_TYPE_CHOSEN_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+export function markParentTypeChosen() {
+  if (typeof window === "undefined") return;
+  try { localStorage.setItem(PARENT_TYPE_CHOSEN_KEY, "1"); } catch {}
 }
 
 function writeLocal(value: ParentType) {
@@ -38,6 +59,7 @@ function writeLocal(value: ParentType) {
 
 export function setParentType(value: ParentType) {
   writeLocal(value);
+  markParentTypeChosen();
   void syncToRemote(value);
 }
 
