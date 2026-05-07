@@ -201,6 +201,12 @@ const CrisePage = () => {
 
   function deleteSession(k: string) {
     clearSavedFor(k);
+    setFavorites((prev) => {
+      if (!prev.includes(k)) return prev;
+      const next = prev.filter((x) => x !== k);
+      saveFavorites(next);
+      return next;
+    });
     setSessionsTick((n) => n + 1);
   }
 
