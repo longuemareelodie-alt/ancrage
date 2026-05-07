@@ -371,8 +371,11 @@ const CrisePage = () => {
                   }`}
                 >
                   <button onClick={() => resumeSession(key)} className="flex-1 text-left">
-                    <div className="text-sm font-medium text-foreground">
-                      {ctxLabel} · {parentLabel}
+                    <div className="flex items-center gap-1.5 text-sm font-medium text-foreground">
+                      {favSet.has(key) && (
+                        <Star className="h-3.5 w-3.5 fill-[hsl(var(--lies))] text-[hsl(var(--lies))]" aria-hidden="true" />
+                      )}
+                      <span>{ctxLabel} · {parentLabel}</span>
                     </div>
                     <div className="text-xs text-muted-foreground">{situationLabel}</div>
                     <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs">
