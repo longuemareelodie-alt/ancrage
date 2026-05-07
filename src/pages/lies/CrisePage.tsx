@@ -130,6 +130,7 @@ const CrisePage = () => {
   const [situation, setSituation] = useState<CrisisSituation>("un-enfant-avec-fratrie");
   const [guidedOpen, setGuidedOpen] = useState(false);
   const [sessionsTick, setSessionsTick] = useState(0);
+  const [pendingDelete, setPendingDelete] = useState<string | null>(null);
 
   const scenario = useMemo(() => getScenario(ctx, parent, situation), [ctx, parent, situation]);
 
