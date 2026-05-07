@@ -1,3 +1,5 @@
+// @refresh reset
+
 /**
  * Daily-context for the home micro-scenes.
  *
@@ -80,23 +82,33 @@ export function useSchoolContext(): [
   (v: SchoolContext) => void,
   boolean,
 ] {
-  const [value, setValue] = useState<SchoolContext>(() => getSchoolContext());
-  const [chosen, setChosen] = useState<boolean>(() => hasChosenSchoolContext());
+  const [state, setState] = useState(() => ({
+    value: getSchoolContext(),
+    chosen: hasChosenSchoolContext(),
+  }));
 
   useEffect(() => {
     const refresh = () => {
-      setValue(getSchoolContext());
-      setChosen(hasChosenSchoolContext());
+      setState({
+        value: getSchoolContext(),
+        chosen: hasChosenSchoolContext(),
+      });
     };
 
     const onChange = (e: Event) => {
       const detail = (e as CustomEvent<SchoolContext>).detail;
-      if (detail && isValid(detail)) setValue(detail);
-      setChosen(hasChosenSchoolContext());
+      setState({
+        value: detail && isValid(detail) ? detail : getSchoolContext(),
+        chosen: hasChosenSchoolContext(),
+      });
     };
     const onStorage = (e: StorageEvent) => {
-      if (e.key === STORAGE_KEY && isValid(e.newValue)) setValue(e.newValue);
-      if (e.key === SCHOOL_CONTEXT_CHOSEN_KEY) setChosen(hasChosenSchoolContext());
+      if (e.key === STORAGE_KEY || e.key === SCHOOL_CONTEXT_CHOSEN_KEY) {
+        setState({
+          value: isValid(e.newValue) ? e.newValue : getSchoolContext(),
+          chosen: hasChosenSchoolContext(),
+        });
+      }
     };
     const onPageShow = (e: PageTransitionEvent) => {
       if (e.persisted) refresh();
@@ -117,5 +129,5 @@ export function useSchoolContext(): [
     };
   }, []);
 
-  return [value, setSchoolContext, chosen];
+  return [state.value, setSchoolContext, state.chosen];
 }

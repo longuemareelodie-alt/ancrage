@@ -1,3 +1,5 @@
+// @refresh reset
+
 /**
  * Sub-mode for the "work" daily context: are there kids to manage in the
  * morning routine, or not? Defaults to "without" (current copy).
