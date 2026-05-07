@@ -576,12 +576,26 @@ export default function CriseGuided({ scenario, context, parent, situation, onCl
         </div>
 
         {/* Footer */}
-        <div className="border-t border-border bg-card px-4 py-3">
+        <div className="border-t-2 border-border bg-card px-4 py-3">
+          {phase === "steps" && (
+            <p className="mb-2 hidden text-center text-[11px] text-foreground/70 sm:block">
+              Raccourcis : <kbd className="rounded border border-border bg-muted px-1">←</kbd>{" "}
+              <kbd className="rounded border border-border bg-muted px-1">→</kbd> naviguer ·{" "}
+              <kbd className="rounded border border-border bg-muted px-1">Espace</kbd> marquer ·{" "}
+              <kbd className="rounded border border-border bg-muted px-1">P</kbd> pause ·{" "}
+              <kbd className="rounded border border-border bg-muted px-1">Échap</kbd> fermer
+            </p>
+          )}
           {phase === "safety" && (
             <Button
               onClick={startSteps}
               disabled={!allChecked}
-              className="w-full bg-[hsl(var(--lies))] text-[hsl(var(--lies-foreground))] hover:bg-[hsl(var(--lies)/0.9)] disabled:opacity-50"
+              aria-label={
+                allChecked
+                  ? "Démarrer le guidage"
+                  : "Démarrer le guidage (cochez d'abord tous les points de sécurité)"
+              }
+              className="w-full bg-[hsl(var(--lies))] text-[hsl(var(--lies-foreground))] font-semibold hover:bg-[hsl(var(--lies)/0.9)] focus-visible:ring-2 focus-visible:ring-[hsl(var(--lies))] focus-visible:ring-offset-2 focus-visible:ring-offset-card disabled:opacity-50"
             >
               Démarrer le guidage
             </Button>
@@ -592,37 +606,46 @@ export default function CriseGuided({ scenario, context, parent, situation, onCl
                 variant="outline"
                 onClick={() => setStepIdx((i) => Math.max(0, i - 1))}
                 disabled={!canPrev}
-                className="px-3"
+                aria-label="Étape précédente (flèche gauche)"
+                className="border-2 px-3 focus-visible:ring-2 focus-visible:ring-[hsl(var(--lies))] focus-visible:ring-offset-2 focus-visible:ring-offset-card"
               >
-                <ChevronLeft className="h-4 w-4" />
+                <ChevronLeft className="h-4 w-4" aria-hidden="true" />
               </Button>
               {canNext ? (
                 <Button
                   onClick={() => setStepIdx((i) => i + 1)}
-                  className="flex-1 bg-[hsl(var(--lies))] text-[hsl(var(--lies-foreground))] hover:bg-[hsl(var(--lies)/0.9)]"
+                  aria-label="Étape suivante (flèche droite)"
+                  className="flex-1 bg-[hsl(var(--lies))] text-[hsl(var(--lies-foreground))] font-semibold hover:bg-[hsl(var(--lies)/0.9)] focus-visible:ring-2 focus-visible:ring-[hsl(var(--lies))] focus-visible:ring-offset-2 focus-visible:ring-offset-card"
                 >
                   Étape suivante
-                  <ChevronRight className="ml-1 h-4 w-4" />
+                  <ChevronRight className="ml-1 h-4 w-4" aria-hidden="true" />
                 </Button>
               ) : (
                 <Button
                   onClick={finish}
-                  className="flex-1 bg-[hsl(var(--lies))] text-[hsl(var(--lies-foreground))] hover:bg-[hsl(var(--lies)/0.9)]"
+                  aria-label="Terminer la session de crise"
+                  className="flex-1 bg-[hsl(var(--lies))] text-[hsl(var(--lies-foreground))] font-semibold hover:bg-[hsl(var(--lies)/0.9)] focus-visible:ring-2 focus-visible:ring-[hsl(var(--lies))] focus-visible:ring-offset-2 focus-visible:ring-offset-card"
                 >
                   Terminer
-                  <Check className="ml-1 h-4 w-4" />
+                  <Check className="ml-1 h-4 w-4" aria-hidden="true" />
                 </Button>
               )}
             </div>
           )}
           {phase === "recap" && (
             <div className="flex items-center gap-2">
-              <Button variant="outline" onClick={resetAll} className="px-3">
-                <RotateCcw className="h-4 w-4" />
+              <Button
+                variant="outline"
+                onClick={resetAll}
+                aria-label="Recommencer depuis la sécurité"
+                className="border-2 px-3 focus-visible:ring-2 focus-visible:ring-[hsl(var(--lies))] focus-visible:ring-offset-2 focus-visible:ring-offset-card"
+              >
+                <RotateCcw className="h-4 w-4" aria-hidden="true" />
               </Button>
               <Button
                 onClick={() => { clearSavedFor(key); onClose(); }}
-                className="flex-1 bg-[hsl(var(--lies))] text-[hsl(var(--lies-foreground))] hover:bg-[hsl(var(--lies)/0.9)]"
+                aria-label="Fermer le mode crise et revenir à la page"
+                className="flex-1 bg-[hsl(var(--lies))] text-[hsl(var(--lies-foreground))] font-semibold hover:bg-[hsl(var(--lies)/0.9)] focus-visible:ring-2 focus-visible:ring-[hsl(var(--lies))] focus-visible:ring-offset-2 focus-visible:ring-offset-card"
               >
                 Fermer
               </Button>
