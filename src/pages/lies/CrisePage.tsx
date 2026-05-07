@@ -1,6 +1,6 @@
-import { useMemo, useState } from "react";
-import { Download, PlayCircle, ShieldAlert } from "lucide-react";
-import CriseGuided from "@/components/lies/CriseGuided";
+import { useEffect, useMemo, useState } from "react";
+import { Download, PlayCircle, ShieldAlert, Trash2 } from "lucide-react";
+import CriseGuided, { listSavedSessions, clearSavedFor, sessionKey } from "@/components/lies/CriseGuided";
 import { jsPDF } from "jspdf";
 import LiesShell from "@/components/lies/LiesShell";
 import {
