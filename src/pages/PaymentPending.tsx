@@ -164,7 +164,7 @@ const PaymentPending = () => {
         () =>
           supabase
             .from("profiles")
-            .select("is_premium, has_initiation_access")
+            .select("is_premium")
             .eq("user_id", user.id)
             .maybeSingle(),
         { maxAttempts: 2, baseDelayMs: 400, timeoutMs: 6000 },

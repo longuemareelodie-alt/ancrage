@@ -196,9 +196,7 @@ const PaymentSuccess = () => {
               ) : (
                 <Download className="h-4 w-4" />
               )}
-              {latestProduct === "initiation_7d"
-                ? "Télécharger ma facture · 4,99 €"
-                : "Télécharger ma facture"}
+              Télécharger ma facture
             </button>
             <p className="text-[11px] text-muted-foreground">PDF · ANCRAGE</p>
           </motion.div>
