@@ -34,14 +34,7 @@ export const useMolliePayment = () => {
       return;
     }
 
-    // Front-side guard: refuse promo codes on products that don't support them
-    // (mirrors the server-side rule in create-mollie-payment).
-    if (promoCode && PRODUCTS_WITHOUT_PROMO.includes(product)) {
-      toast.error(
-        `Les codes promo ne sont pas applicables sur ${PRODUCT_LABELS[product]}.`,
-      );
-      return;
-    }
+    // Premium accepts promo codes — no per-product guard needed anymore.
 
     setLoading(true);
     try {
