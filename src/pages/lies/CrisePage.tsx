@@ -458,6 +458,12 @@ const CrisePage = () => {
                       )}
                       <span className="text-muted-foreground">· {dateStr}</span>
                       <span className="text-muted-foreground">· {elapsedStr}</span>
+                      {isStale && (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 px-2 py-0.5 font-medium text-amber-700 dark:text-amber-400">
+                          <AlertCircle className="h-3 w-3" aria-hidden="true" />
+                          En attente &gt; {staleHours} h
+                        </span>
+                      )}
                     </div>
                   </button>
                   <div className="flex flex-col gap-1">
