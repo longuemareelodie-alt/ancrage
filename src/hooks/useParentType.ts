@@ -32,7 +32,7 @@ export function useParentType(): [ParentType, (v: ParentType) => void, boolean] 
     };
     const onStorage = (e: StorageEvent) => {
       if (
-        e.key === "ancrage_parent_type" &&
+        e.key === PARENT_TYPE_STORAGE_KEY &&
         (e.newValue === "papa" || e.newValue === "maman")
       ) {
         setValue(e.newValue);
