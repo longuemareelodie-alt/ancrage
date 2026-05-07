@@ -172,23 +172,15 @@ const PaymentPending = () => {
 
       if (cancelled.current) return;
 
-      // Confirmation conditions:
-      //  - Premium flow: is_premium === true
-      //  - Initiation flow: has_initiation_access === true (or is_premium covers everything)
-      const confirmed = isInitiationFlow
-        ? data?.has_initiation_access === true || data?.is_premium === true
-        : data?.is_premium === true;
+      // Confirmation : Premium activé.
+      const confirmed = data?.is_premium === true;
 
       if (!error && data && confirmed) {
         setStatus("confirmed");
         updateLastState("confirmed");
         setTimeout(() => {
           if (cancelled.current) return;
-          if (isInitiationFlow) {
-            navigate("/initiation-7-jours", { replace: true });
-          } else {
-            navigate("/payment-success", { replace: true });
-          }
+          navigate("/payment-success", { replace: true });
         }, 1200);
         return;
       }
