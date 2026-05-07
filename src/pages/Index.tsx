@@ -349,6 +349,103 @@ const Index = () => {
             </div>
           </div>
 
+          {/* Progression du jour : matin / soir + suggestion contextuelle */}
+          <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4 shadow-sm space-y-3">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <p className="text-[11px] font-bold uppercase tracking-wider text-primary">
+                  Ta micro-séquence du jour
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Contexte : <span className="font-semibold text-foreground">{SCHOOL_CONTEXT_LABELS[schoolContext]}</span>
+                </p>
+              </div>
+              <span
+                className="rounded-full bg-background px-2 py-0.5 text-[11px] font-bold text-primary"
+                aria-label={`${completedCount} sur 2 étapes faites`}
+              >
+                {completedCount}/2
+              </span>
+            </div>
+
+            {/* Steppers matin / soir */}
+            <div className="grid grid-cols-2 gap-2">
+              {(["morning", "evening"] as DailySlot[]).map((slot) => {
+                const done = !!dailyProgress[slot];
+                const isNext = nextSlot === slot;
+                return (
+                  <div
+                    key={slot}
+                    className={`flex items-center gap-2 rounded-xl border px-3 py-2 text-xs transition-colors ${
+                      done
+                        ? "border-primary/30 bg-primary/15 text-primary"
+                        : isNext
+                          ? "border-primary/40 bg-background text-foreground ring-1 ring-primary/30"
+                          : "border-border bg-background/60 text-muted-foreground"
+                    }`}
+                  >
+                    <span
+                      aria-hidden
+                      className={`flex h-6 w-6 items-center justify-center rounded-full text-xs ${
+                        done ? "bg-primary text-primary-foreground" : "bg-muted text-foreground/70"
+                      }`}
+                    >
+                      {done ? "✓" : SLOT_EMOJI[slot]}
+                    </span>
+                    <span className="flex flex-col leading-tight">
+                      <span className="font-semibold">{SLOT_LABELS[slot]}</span>
+                      <span className="text-[10px] text-muted-foreground">
+                        {done ? "Fait" : isNext ? "À faire maintenant" : "À venir"}
+                      </span>
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Suggestion : prochaine étape adaptée au contexte */}
+            {(() => {
+              if (!nextSlot) {
+                return (
+                  <p className="text-xs italic text-muted-foreground">
+                    Bravo — les deux moments du jour sont posés. Le reste, c'est du bonus.
+                  </p>
+                );
+              }
+              const sceneIdx = nextSlot === "morning" ? 0 : 3;
+              const scene = recognizeMainScenes[sceneIdx];
+              if (!scene || !scene.state || !scene.cta) return null;
+              return (
+                <button
+                  type="button"
+                  onClick={() => {
+                    rememberLastQuickState({
+                      state: scene.state!,
+                      label: scene.stateLabel ?? scene.state!,
+                      emoji: scene.emoji,
+                      hint: scene.cta!,
+                      href: sceneCtaHref(scene),
+                      source: "scene",
+                    });
+                    markSlotDone(nextSlot);
+                    navigateWithTransition(sceneCtaHref(scene));
+                  }}
+                  className="group flex w-full items-center justify-between gap-3 rounded-xl bg-primary px-4 py-3 text-primary-foreground transition-all active:scale-[0.98]"
+                >
+                  <span className="flex flex-col items-start text-left">
+                    <span className="text-[10px] font-bold uppercase tracking-wider opacity-80">
+                      Prochaine étape · {SLOT_LABELS[nextSlot]} · {SCHOOL_CONTEXT_LABELS[schoolContext]}
+                    </span>
+                    <span className="text-sm font-semibold leading-tight">
+                      {scene.cta}
+                    </span>
+                  </span>
+                  <span aria-hidden className="transition-transform group-hover:translate-x-0.5">→</span>
+                </button>
+              );
+            })()}
+          </div>
+
           {/* 3 scènes principales — corps / tête / soir */}
           <div className="space-y-4">
             {recognizeMainScenes.map((s, i) => (
@@ -361,6 +458,14 @@ const Index = () => {
                   <span className="text-[11px] font-bold uppercase tracking-wider text-primary">
                     {s.tag}
                   </span>
+                  {SCENE_INDEX_TO_SLOT[i] && dailyProgress[SCENE_INDEX_TO_SLOT[i]] && (
+                    <span
+                      className="ml-auto inline-flex items-center gap-1 rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-primary"
+                      aria-label="Étape déjà faite aujourd'hui"
+                    >
+                      ✓ Fait
+                    </span>
+                  )}
                 </div>
                 <p className="text-sm leading-relaxed text-foreground/90">
                   {s.body}
@@ -382,6 +487,8 @@ const Index = () => {
                           source: "scene",
                         });
                       }
+                      const slot = SCENE_INDEX_TO_SLOT[i];
+                      if (slot) markSlotDone(slot);
                       navigateWithTransition(sceneCtaHref(s));
                     }}
                     aria-label={`${s.stateLabel ?? s.state} — ${s.cta}`}
