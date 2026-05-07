@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { BookOpen, Sparkles } from "lucide-react";
+import { BookOpen, Sparkles, Brain } from "lucide-react";
 import LiesShell from "@/components/lies/LiesShell";
 import { LSF_THEMES } from "@/data/lsfCatalog";
 import { LSF_NEW_SIGNS } from "@/data/lsfNewSigns";
@@ -58,6 +58,22 @@ const LsfHome = () => {
             <Sparkles className="h-3 w-3" /> Refaire l'orientation (2 min)
           </button>
         )}
+        <Link
+          to="/lies-autrement/lsf-flashcards"
+          className="group flex items-center gap-4 rounded-2xl border border-[hsl(var(--lies))] bg-gradient-to-br from-[hsl(var(--lies-soft))] to-card p-4 transition-all hover:shadow-soft"
+        >
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[hsl(var(--lies))] text-[hsl(var(--lies-foreground))]">
+            <Brain className="h-7 w-7" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <h2 className="font-serif text-lg text-foreground">Mode entraînement</h2>
+            <p className="line-clamp-2 text-sm text-muted-foreground">
+              Flashcards interactives : devine le geste, valide les signes acquis,
+              suis ta progression.
+            </p>
+          </div>
+          <span aria-hidden className="text-xl text-[hsl(var(--lies))] transition-transform group-hover:translate-x-0.5">→</span>
+        </Link>
         <div className="rounded-2xl border border-border bg-[hsl(var(--lies-soft))] p-3 text-xs text-foreground/80">
           🎥 Chaque fiche propose un bouton <strong>Voir la vidéo</strong> qui
           ouvre le signe dans le dictionnaire LSF en ligne (Elix · Sématos) —

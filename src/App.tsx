@@ -60,6 +60,7 @@ import LiesAutrementHome from "./pages/lies/LiesAutrementHome";
 import LsfHome from "./pages/lies/LsfHome";
 import LsfTheme from "./pages/lies/LsfTheme";
 import SignesNouveaux from "./pages/lies/SignesNouveaux";
+import LsfFlashcards from "./pages/lies/LsfFlashcards";
 import RessourcesPage from "./pages/lies/RessourcesPage";
 import CrisePage from "./pages/lies/CrisePage";
 import JournalPage from "./pages/lies/JournalPage";
@@ -141,6 +142,7 @@ const AnimatedRoutes = () => {
         <Route path="/lies-autrement/lsf" element={<PaidRoute><PageTransition><LsfHome /></PageTransition></PaidRoute>} />
         <Route path="/lies-autrement/lsf/:themeSlug" element={<PaidRoute><PageTransition><LsfTheme /></PageTransition></PaidRoute>} />
         <Route path="/lies-autrement/signes-nouveaux" element={<PaidRoute><PageTransition><SignesNouveaux /></PageTransition></PaidRoute>} />
+        <Route path="/lies-autrement/lsf-flashcards" element={<PaidRoute><PageTransition><LsfFlashcards /></PageTransition></PaidRoute>} />
         <Route path="/signes" element={<PaidRoute><PageTransition><SignesNouveaux /></PageTransition></PaidRoute>} />
         <Route path="/lies-autrement/ressources" element={<PaidRoute><PageTransition><RessourcesPage /></PageTransition></PaidRoute>} />
         <Route path="/lies-autrement/crise" element={<PaidRoute><PageTransition><CrisePage /></PageTransition></PaidRoute>} />
