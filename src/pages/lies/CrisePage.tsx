@@ -361,7 +361,28 @@ const CrisePage = () => {
 
       {savedSessions.length > 0 && (
         <div className="mb-5 rounded-2xl border border-border bg-card p-4">
-          <h3 className="mb-1 font-serif text-base text-foreground">Sessions en cours</h3>
+          <div className="mb-1 flex flex-wrap items-center justify-between gap-2">
+            <h3 className="font-serif text-base text-foreground">Sessions en cours</h3>
+            <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <Clock className="h-3.5 w-3.5" aria-hidden="true" />
+              <span>Alerter après</span>
+              <select
+                value={staleHours}
+                onChange={(e) => {
+                  const v = Number(e.target.value);
+                  setStaleHours(v);
+                  saveStaleHours(v);
+                  notifiedRef.current.clear();
+                }}
+                className="rounded-md border border-border bg-background px-1.5 py-0.5 text-xs text-foreground"
+                aria-label="Seuil d'ancienneté pour les notifications"
+              >
+                {STALE_HOURS_OPTIONS.map((h) => (
+                  <option key={h} value={h}>{h} h</option>
+                ))}
+              </select>
+            </label>
+          </div>
           <p className="mb-3 text-xs text-muted-foreground">
             Chaque combinaison contexte / parent / situation est sauvegardée séparément.
           </p>
