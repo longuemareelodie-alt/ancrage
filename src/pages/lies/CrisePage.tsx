@@ -582,6 +582,7 @@ const CrisePage = () => {
               );
             })}
           </ul>
+          )}
         </div>
       )}
 
