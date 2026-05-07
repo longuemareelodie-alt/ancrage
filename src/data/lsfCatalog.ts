@@ -71,12 +71,12 @@ export const LSF_THEMES: LsfTheme[] = [
     description: "Mettre des mots sur ce que ressent l'enfant — et ce que vous ressentez aussi.",
     emoji: "💗",
     signs: [
-      { key: "emo-content", label: "Content", gesture: "Main qui remonte le long du torse en remontant le sourire.", emoji: "😊" },
-      { key: "emo-triste", label: "Triste", gesture: "Doigts qui descendent doucement le long des joues.", emoji: "😢" },
-      { key: "emo-colere", label: "Colère", gesture: "Main en griffe qui se referme devant la poitrine.", emoji: "😠" },
-      { key: "emo-peur", label: "Peur", gesture: "Mains ouvertes qui viennent se rapprocher de la poitrine.", emoji: "😨" },
-      { key: "emo-calme", label: "Calme", gesture: "Mains à plat qui descendent lentement devant le buste.", emoji: "🌿" },
-      { key: "emo-aime", label: "J'aime / amour", gesture: "Mains croisées sur le cœur.", emoji: "❤️" },
+      { key: "emo-content", label: "Content", gesture: "Main qui remonte le long du torse en remontant le sourire.", emoji: "😊", image: emoContent },
+      { key: "emo-triste", label: "Triste", gesture: "Doigts qui descendent doucement le long des joues.", emoji: "😢", image: emoTriste },
+      { key: "emo-colere", label: "Colère", gesture: "Main en griffe qui se referme devant la poitrine.", emoji: "😠", image: emoColere },
+      { key: "emo-peur", label: "Peur", gesture: "Mains ouvertes qui viennent se rapprocher de la poitrine.", emoji: "😨", image: emoPeur },
+      { key: "emo-calme", label: "Calme", gesture: "Mains à plat qui descendent lentement devant le buste.", emoji: "🌿", image: emoCalme },
+      { key: "emo-aime", label: "J'aime / amour", gesture: "Mains croisées sur le cœur.", emoji: "❤️", image: emoAime },
     ],
   },
   {
