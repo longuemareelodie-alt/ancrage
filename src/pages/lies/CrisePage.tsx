@@ -13,6 +13,16 @@ import {
   getScenario,
 } from "@/data/criseScenarios";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const CTX_OPTIONS: { value: CrisisContext; label: string }[] = [
   { value: "maison", label: "À la maison" },
