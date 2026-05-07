@@ -424,29 +424,48 @@ export default function CriseGuided({ scenario, context, parent, situation, onCl
           {phase === "steps" && (
             <div>
               <div className="mb-4 flex items-center justify-between">
-                <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                <span
+                  className="text-xs font-semibold uppercase tracking-wide text-foreground"
+                  aria-live="polite"
+                >
                   Étape {stepIdx + 1} / {scenario.steps.length}
                 </span>
-                <span className="text-xs text-muted-foreground">{completedCount} faites</span>
+                <span className="text-xs font-medium text-foreground/80">
+                  {completedCount} faite{completedCount > 1 ? "s" : ""}
+                </span>
               </div>
-              <div className="mb-4 h-1.5 w-full overflow-hidden rounded-full bg-muted">
+              <div
+                className="mb-4 h-2 w-full overflow-hidden rounded-full bg-muted"
+                role="progressbar"
+                aria-valuenow={stepIdx + 1}
+                aria-valuemin={1}
+                aria-valuemax={scenario.steps.length}
+                aria-label={`Progression : étape ${stepIdx + 1} sur ${scenario.steps.length}`}
+              >
                 <div
                   className="h-full rounded-full bg-[hsl(var(--lies))] transition-all"
                   style={{ width: `${((stepIdx + 1) / scenario.steps.length) * 100}%` }}
                 />
               </div>
 
-              <div className="rounded-2xl border border-[hsl(var(--lies))] bg-[hsl(var(--lies-soft))] p-5">
+              <div className="rounded-2xl border-2 border-[hsl(var(--lies))] bg-[hsl(var(--lies-soft))] p-5">
                 <p className="font-serif text-xl leading-snug text-foreground">{scenario.steps[stepIdx]}</p>
                 <button
+                  type="button"
                   onClick={() => toggleStep(stepIdx)}
-                  className={`mt-4 inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm transition-colors ${
+                  aria-pressed={doneSteps[stepIdx]}
+                  aria-label={
+                    doneSteps[stepIdx]
+                      ? `Étape ${stepIdx + 1} marquée comme faite. Appuyer pour annuler.`
+                      : `Marquer l'étape ${stepIdx + 1} comme faite (Espace)`
+                  }
+                  className={`mt-4 inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--lies))] focus-visible:ring-offset-2 focus-visible:ring-offset-[hsl(var(--lies-soft))] ${
                     doneSteps[stepIdx]
                       ? "bg-[hsl(var(--lies))] text-[hsl(var(--lies-foreground))]"
-                      : "border border-[hsl(var(--lies))] text-foreground hover:bg-[hsl(var(--lies-soft))]"
+                      : "border-2 border-[hsl(var(--lies))] text-[hsl(var(--lies))] hover:bg-[hsl(var(--lies))] hover:text-[hsl(var(--lies-foreground))]"
                   }`}
                 >
-                  <Check className="h-4 w-4" />
+                  <Check className="h-4 w-4" aria-hidden="true" />
                   {doneSteps[stepIdx] ? "Fait" : "Marquer comme fait"}
                 </button>
               </div>
