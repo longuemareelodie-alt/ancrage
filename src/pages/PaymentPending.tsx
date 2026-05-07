@@ -227,18 +227,9 @@ const PaymentPending = () => {
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
             <div className="space-y-2">
-              <h1 className="text-xl font-bold">
-                {isInitiationFlow
-                  ? t("payment_pending.pending.title_initiation", "Activation des 7 jours d'ancrage…")
-                  : t("payment_pending.pending.title")}
-              </h1>
+              <h1 className="text-xl font-bold">{t("payment_pending.pending.title")}</h1>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                {isInitiationFlow
-                  ? t(
-                      "payment_pending.pending.text_initiation",
-                      "Ton paiement (4,99 €) est bien reçu. On débloque ton accès aux 7 jours dans quelques secondes.",
-                    )
-                  : t("payment_pending.pending.text")}
+                {t("payment_pending.pending.text")}
               </p>
             </div>
             <div className="space-y-2">
