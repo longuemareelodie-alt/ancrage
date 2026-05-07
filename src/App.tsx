@@ -115,6 +115,7 @@ const AnimatedRoutes = () => {
         <Route path="/payment-pending" element={<ProtectedRoute><PageTransition><PaymentPending /></PageTransition></ProtectedRoute>} />
         <Route path="/profil" element={<PaidRoute><PageTransition><Profil /></PageTransition></PaidRoute>} />
         <Route path="/profil/style" element={<PaidRoute><PageTransition><ProfilStyle /></PageTransition></PaidRoute>} />
+        <Route path="/parametres" element={<PageTransition><Parametres /></PageTransition>} />
         <Route path="/reset-password" element={<PageTransition><ResetPassword /></PageTransition>} />
         <Route path="/set-password" element={<PageTransition><SetPassword /></PageTransition>} />
         <Route path="/activation-compte" element={<PageTransition><ActivationCompte /></PageTransition>} />
