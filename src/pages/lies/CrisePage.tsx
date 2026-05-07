@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
-import { Download, PlayCircle, ShieldAlert, Trash2, Play, Star } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Download, PlayCircle, ShieldAlert, Trash2, Play, Star, AlertCircle, Clock } from "lucide-react";
 import CriseGuided, { listSavedSessions, clearSavedFor, sessionKey, loadSavedFor } from "@/components/lies/CriseGuided";
 import { RotateCw } from "lucide-react";
+import { toast } from "sonner";
 import { jsPDF } from "jspdf";
 import LiesShell from "@/components/lies/LiesShell";
 import {
@@ -147,6 +148,20 @@ function saveFavorites(list: string[]) {
   try { localStorage.setItem(FAVORITES_KEY, JSON.stringify(list)); } catch { /* noop */ }
 }
 
+const STALE_HOURS_KEY = "lies.crise.staleHours.v1";
+const STALE_HOURS_OPTIONS = [1, 3, 6, 12, 24, 48] as const;
+const DEFAULT_STALE_HOURS = 6;
+function loadStaleHours(): number {
+  try {
+    const raw = localStorage.getItem(STALE_HOURS_KEY);
+    const n = raw ? Number(raw) : NaN;
+    return Number.isFinite(n) && n > 0 ? n : DEFAULT_STALE_HOURS;
+  } catch { return DEFAULT_STALE_HOURS; }
+}
+function saveStaleHours(h: number) {
+  try { localStorage.setItem(STALE_HOURS_KEY, String(h)); } catch { /* noop */ }
+}
+
 const CrisePage = () => {
   const [ctx, setCtx] = useState<CrisisContext>("maison");
   const [parent, setParent] = useState<CrisisParent>("maman");
@@ -155,6 +170,8 @@ const CrisePage = () => {
   const [sessionsTick, setSessionsTick] = useState(0);
   const [pendingDelete, setPendingDelete] = useState<string | null>(null);
   const [favorites, setFavorites] = useState<string[]>(() => loadFavorites());
+  const [staleHours, setStaleHours] = useState<number>(() => loadStaleHours());
+  const notifiedRef = useRef<Set<string>>(new Set());
 
   const scenario = useMemo(() => getScenario(ctx, parent, situation), [ctx, parent, situation]);
 
@@ -177,6 +194,36 @@ const CrisePage = () => {
       return next;
     });
   }
+
+  const staleSessions = useMemo(() => {
+    const cutoff = Date.now() - staleHours * 3600 * 1000;
+    return savedSessions.filter(({ saved }) => saved.lastTickAt < cutoff && saved.phase !== "recap");
+  }, [savedSessions, staleHours]);
+
+  useEffect(() => {
+    if (staleSessions.length === 0) return;
+    const sig = `${staleHours}|${staleSessions.map((s) => `${s.key}:${s.saved.lastTickAt}`).join(",")}`;
+    if (notifiedRef.current.has(sig)) return;
+    notifiedRef.current.add(sig);
+    const first = staleSessions[0];
+    const parsed = parseKey(first.key);
+    const ctxLabel = parsed ? CTX_OPTIONS.find((o) => o.value === parsed.context)?.label : null;
+    const parentLabel = parsed ? PARENT_OPTIONS.find((o) => o.value === parsed.parent)?.label : null;
+    const desc = parsed
+      ? `Commencer par : ${ctxLabel} · ${parentLabel} — ${SITUATION_LABELS[parsed.situation]}`
+      : "À reprendre en priorité.";
+    toast.warning(
+      staleSessions.length === 1
+        ? `Une session en attente depuis plus de ${staleHours} h`
+        : `${staleSessions.length} sessions en attente depuis plus de ${staleHours} h`,
+      {
+        description: desc,
+        action: parsed
+          ? { label: "Reprendre", onClick: () => resumeSession(first.key) }
+          : undefined,
+      }
+    );
+  }, [staleSessions, staleHours]);
 
   useEffect(() => {
     const onFocus = () => setSessionsTick((n) => n + 1);
@@ -314,7 +361,28 @@ const CrisePage = () => {
 
       {savedSessions.length > 0 && (
         <div className="mb-5 rounded-2xl border border-border bg-card p-4">
-          <h3 className="mb-1 font-serif text-base text-foreground">Sessions en cours</h3>
+          <div className="mb-1 flex flex-wrap items-center justify-between gap-2">
+            <h3 className="font-serif text-base text-foreground">Sessions en cours</h3>
+            <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <Clock className="h-3.5 w-3.5" aria-hidden="true" />
+              <span>Alerter après</span>
+              <select
+                value={staleHours}
+                onChange={(e) => {
+                  const v = Number(e.target.value);
+                  setStaleHours(v);
+                  saveStaleHours(v);
+                  notifiedRef.current.clear();
+                }}
+                className="rounded-md border border-border bg-background px-1.5 py-0.5 text-xs text-foreground"
+                aria-label="Seuil d'ancienneté pour les notifications"
+              >
+                {STALE_HOURS_OPTIONS.map((h) => (
+                  <option key={h} value={h}>{h} h</option>
+                ))}
+              </select>
+            </label>
+          </div>
           <p className="mb-3 text-xs text-muted-foreground">
             Chaque combinaison contexte / parent / situation est sauvegardée séparément.
           </p>
@@ -363,11 +431,14 @@ const CrisePage = () => {
                       : `~${Math.round(remainingSec / 60)} min restantes`;
                 }
               }
+              const isStale = saved.phase !== "recap" && (Date.now() - saved.lastTickAt) > staleHours * 3600 * 1000;
               return (
                 <li
                   key={key}
                   className={`flex items-start gap-2 rounded-xl border p-3 ${
-                    isCurrent ? "border-[hsl(var(--lies))] bg-[hsl(var(--lies-soft))]" : "border-border"
+                    isStale
+                      ? "border-amber-500/60 bg-amber-500/5"
+                      : isCurrent ? "border-[hsl(var(--lies))] bg-[hsl(var(--lies-soft))]" : "border-border"
                   }`}
                 >
                   <button onClick={() => resumeSession(key)} className="flex-1 text-left">
@@ -387,6 +458,12 @@ const CrisePage = () => {
                       )}
                       <span className="text-muted-foreground">· {dateStr}</span>
                       <span className="text-muted-foreground">· {elapsedStr}</span>
+                      {isStale && (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 px-2 py-0.5 font-medium text-amber-700 dark:text-amber-400">
+                          <AlertCircle className="h-3 w-3" aria-hidden="true" />
+                          En attente &gt; {staleHours} h
+                        </span>
+                      )}
                     </div>
                   </button>
                   <div className="flex flex-col gap-1">
