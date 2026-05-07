@@ -70,8 +70,10 @@ const CTAButton = ({
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
       onClick={handleClick}
       disabled={loading || disabled}
+      aria-busy={loading || confirming || undefined}
+      aria-disabled={loading || disabled || undefined}
       aria-live={confirming ? "polite" : undefined}
-      className={`calm-press calm-hover relative w-full overflow-hidden rounded-xl px-8 py-4 text-base font-semibold disabled:opacity-60 ${
+      className={`calm-press calm-hover relative w-full overflow-hidden rounded-xl px-8 py-4 text-base font-semibold disabled:opacity-60 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
         isPrimary
           ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25"
           : "border border-border bg-card text-foreground"

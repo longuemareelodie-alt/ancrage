@@ -1068,7 +1068,9 @@ const Index = () => {
               type="button"
               onClick={handlePayment}
               disabled={paymentLoading}
-              className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-md transition-all hover:shadow-lg hover:opacity-95 disabled:opacity-60"
+              aria-busy={paymentLoading || undefined}
+              aria-label="Découvrir Liés autrement et accéder au paiement"
+              className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-md transition-all hover:shadow-lg hover:opacity-95 disabled:opacity-60 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               {paymentLoading ? "Chargement…" : "Découvrir « Liés autrement » →"}
             </button>
@@ -1128,7 +1130,9 @@ const Index = () => {
             type="button"
             onClick={handlePayment}
             disabled={paymentLoading}
-            className="mt-4 block w-full rounded-xl border-2 p-4 text-start transition-all hover:shadow-md disabled:opacity-60"
+            aria-busy={paymentLoading || undefined}
+            aria-label="Liés autrement — en savoir plus et accéder au paiement"
+            className="mt-4 block w-full rounded-xl border-2 p-4 text-start transition-all hover:shadow-md disabled:opacity-60 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             style={{ borderColor: "#7DB89F", backgroundColor: "#F0F7F4" }}
           >
             <div className="flex items-start gap-3">
