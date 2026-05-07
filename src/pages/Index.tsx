@@ -11,6 +11,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
 import { useParentType } from "@/hooks/useParentType";
 import { useSchoolContext, SCHOOL_CONTEXT_LABELS } from "@/lib/schoolContext";
+import { useWorkKidsMode, WORK_KIDS_LABELS, type WorkKidsMode } from "@/lib/workKidsMode";
 import {
   forgetLastQuickState,
   rememberLastQuickState,
