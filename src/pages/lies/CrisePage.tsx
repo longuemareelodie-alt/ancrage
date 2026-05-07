@@ -353,7 +353,7 @@ const CrisePage = () => {
                     </div>
                   </button>
                   <button
-                    onClick={() => deleteSession(key)}
+                    onClick={() => setPendingDelete(key)}
                     className="rounded-full p-1.5 text-muted-foreground hover:text-destructive"
                     aria-label="Supprimer la session"
                   >
