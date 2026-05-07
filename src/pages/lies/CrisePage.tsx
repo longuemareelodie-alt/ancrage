@@ -244,6 +244,11 @@ const CrisePage = () => {
                     <div className="text-xs text-muted-foreground">{situationLabel}</div>
                     <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs">
                       <span className="text-[hsl(var(--lies))]">{phaseLabel}</span>
+                      {remainingStr && (
+                        <span className="rounded-full bg-[hsl(var(--lies-soft))] px-2 py-0.5 text-[hsl(var(--lies))]">
+                          {remainingStr}
+                        </span>
+                      )}
                       <span className="text-muted-foreground">· {dateStr}</span>
                       <span className="text-muted-foreground">· {elapsedStr}</span>
                     </div>
