@@ -342,22 +342,11 @@ export default function CriseGuided({ scenario, context, parent, situation, onCl
           )}
           {phase === "recap" && (
             <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setPhase("safety");
-                  setChecks({});
-                  setStepIdx(0);
-                  setDoneSteps(scenario.steps.map(() => false));
-                  setSeconds(0);
-                  setRunning(true);
-                }}
-                className="px-3"
-              >
+              <Button variant="outline" onClick={resetAll} className="px-3">
                 <RotateCcw className="h-4 w-4" />
               </Button>
               <Button
-                onClick={onClose}
+                onClick={() => { clearSaved(); onClose(); }}
                 className="flex-1 bg-[hsl(var(--lies))] text-[hsl(var(--lies-foreground))] hover:bg-[hsl(var(--lies)/0.9)]"
               >
                 Fermer
