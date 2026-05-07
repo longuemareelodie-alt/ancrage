@@ -142,15 +142,7 @@ export default function CriseGuided({ scenario, context, parent, situation, onCl
     };
   }, [running]);
 
-  // Persist on every meaningful change, scoped by composite key.
-  useEffect(() => {
-    const all = loadAll();
-    all[key] = {
-      phase, checks, stepIdx, doneSteps,
-      seconds, running,
-      lastTickAt: Date.now(),
-      stepsLen: scenario.steps.length,
-    };
+  
   const [autoPrefs, setAutoPrefs] = useState(() => loadAutoPrefs());
   const [autoCountdown, setAutoCountdown] = useState<number | null>(null);
   const autoTimerRef = useRef<number | null>(null);
