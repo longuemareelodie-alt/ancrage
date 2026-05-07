@@ -116,7 +116,7 @@ const LsfTheme = () => {
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:border-[hsl(var(--lies))] hover:text-[hsl(var(--lies))]"
                 >
-                  Sématos
+                  Elix
                 </a>
               </div>
             </article>

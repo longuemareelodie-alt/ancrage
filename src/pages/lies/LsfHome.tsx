@@ -76,7 +76,7 @@ const LsfHome = () => {
         </Link>
         <div className="rounded-2xl border border-border bg-[hsl(var(--lies-soft))] p-3 text-xs text-foreground/80">
           🎥 Chaque fiche propose un bouton <strong>Voir la vidéo</strong> qui
-          ouvre le signe dans le dictionnaire LSF en ligne (Elix · Sématos) —
+          ouvre le signe dans le dictionnaire LSF en ligne (Sématos · Elix) —
           vraies vidéos de signeurs sourds.
         </div>
         <div className="space-y-3">
