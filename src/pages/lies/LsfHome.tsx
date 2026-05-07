@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { BookOpen, Sparkles } from "lucide-react";
 import LiesShell from "@/components/lies/LiesShell";
 import { LSF_THEMES } from "@/data/lsfCatalog";
+import { LSF_NEW_SIGNS } from "@/data/lsfNewSigns";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import LsfOnboarding, { isLsfOnboardingDone } from "@/components/lies/LsfOnboarding";
@@ -59,8 +60,13 @@ const LsfHome = () => {
         )}
         <div className="space-y-3">
         {LSF_THEMES.map((theme) => {
-          const total = theme.signs.length;
-          const learned = theme.signs.filter((s) => learnedKeys.has(s.key)).length;
+          const newForTheme = LSF_NEW_SIGNS.filter((s) => s.themeSlug === theme.slug);
+          const allKeys = [
+            ...theme.signs.map((s) => s.key),
+            ...newForTheme.map((s) => s.key),
+          ];
+          const total = allKeys.length;
+          const learned = allKeys.filter((k) => learnedKeys.has(k)).length;
           const pct = total > 0 ? Math.round((learned / total) * 100) : 0;
           return (
             <Link

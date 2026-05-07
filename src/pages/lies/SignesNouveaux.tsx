@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
-import { Sparkles, Search, BookOpen } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Sparkles, Search, BookOpen, Check } from "lucide-react";
 import LiesShell from "@/components/lies/LiesShell";
 import {
   LSF_NEW_SIGNS,
@@ -7,14 +7,60 @@ import {
   filterNewSigns,
   type LsfNewSign,
 } from "@/data/lsfNewSigns";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "@/hooks/use-toast";
 
 type ThemeFilter = "all" | LsfNewSign["themeSlug"];
 
 const SignesNouveaux = () => {
+  const { user } = useAuth();
   const [theme, setTheme] = useState<ThemeFilter>("all");
   const [query, setQuery] = useState("");
+  const [learned, setLearned] = useState<Set<string>>(new Set());
+  const [busy, setBusy] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!user) return;
+    const keys = LSF_NEW_SIGNS.map((s) => s.key);
+    supabase
+      .from("lsf_progress")
+      .select("sign_key")
+      .eq("user_id", user.id)
+      .in("sign_key", keys)
+      .then(({ data }) => {
+        if (data) setLearned(new Set(data.map((r) => r.sign_key)));
+      });
+  }, [user]);
 
   const visible = useMemo(() => filterNewSigns(theme, query), [theme, query]);
+
+  const toggle = async (key: string) => {
+    if (!user || busy) return;
+    setBusy(key);
+    const isLearned = learned.has(key);
+    if (isLearned) {
+      const { error } = await supabase
+        .from("lsf_progress")
+        .delete()
+        .eq("user_id", user.id)
+        .eq("sign_key", key);
+      if (!error) {
+        const next = new Set(learned);
+        next.delete(key);
+        setLearned(next);
+      } else {
+        toast({ title: "Erreur", description: error.message, variant: "destructive" });
+      }
+    } else {
+      const { error } = await supabase
+        .from("lsf_progress")
+        .insert({ user_id: user.id, sign_key: key });
+      if (!error) setLearned(new Set([...learned, key]));
+      else toast({ title: "Erreur", description: error.message, variant: "destructive" });
+    }
+    setBusy(null);
+  };
 
   const tabs: { value: ThemeFilter; label: string; emoji: string }[] = [
     { value: "all", label: "Tous", emoji: "✨" },
@@ -25,6 +71,11 @@ const SignesNouveaux = () => {
     })),
   ];
 
+  // Compteur global de progression sur les nouveaux signes
+  const learnedCount = LSF_NEW_SIGNS.filter((s) => learned.has(s.key)).length;
+  const totalCount = LSF_NEW_SIGNS.length;
+  const pct = Math.round((learnedCount / totalCount) * 100);
+
   return (
     <LiesShell
       title="80 nouveaux signes"
@@ -33,6 +84,22 @@ const SignesNouveaux = () => {
       icon={<Sparkles className="h-6 w-6" />}
     >
       <div className="space-y-4">
+        {/* Progression globale */}
+        <div className="rounded-2xl border border-border bg-card p-4">
+          <div className="mb-2 flex items-center justify-between text-sm">
+            <span className="font-medium text-foreground">Ma progression</span>
+            <span className="text-muted-foreground">
+              {learnedCount}/{totalCount} ({pct}%)
+            </span>
+          </div>
+          <div className="h-2 overflow-hidden rounded-full bg-muted">
+            <div
+              className="h-full bg-[hsl(var(--lies))] transition-all"
+              style={{ width: `${pct}%` }}
+            />
+          </div>
+        </div>
+
         {/* Recherche */}
         <div className="relative">
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -69,10 +136,9 @@ const SignesNouveaux = () => {
           })}
         </div>
 
-        {/* Compteur */}
         <p className="text-xs text-muted-foreground">
           {visible.length} signe{visible.length > 1 ? "s" : ""} affiché
-          {visible.length > 1 ? "s" : ""} sur {LSF_NEW_SIGNS.length}
+          {visible.length > 1 ? "s" : ""} sur {totalCount}
         </p>
 
         {/* Grille de fiches */}
@@ -84,21 +150,42 @@ const SignesNouveaux = () => {
           <div className="grid gap-3 sm:grid-cols-2">
             {visible.map((sign) => {
               const themeMeta = LSF_NEW_THEMES.find((t) => t.slug === sign.themeSlug);
+              const isLearned = learned.has(sign.key);
               return (
                 <article
                   key={sign.key}
-                  className="rounded-2xl border border-border bg-card p-4 transition-all hover:border-[hsl(var(--lies))] hover:shadow-soft"
+                  className={`rounded-2xl border p-4 transition-all ${
+                    isLearned
+                      ? "border-[hsl(var(--lies))] bg-[hsl(var(--lies-soft))]"
+                      : "border-border bg-card hover:border-[hsl(var(--lies))] hover:shadow-soft"
+                  }`}
                 >
                   <div className="mb-2 flex items-start justify-between gap-2">
                     <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-[hsl(var(--lies-soft))] text-3xl">
                       <span aria-hidden>{sign.emoji}</span>
                     </div>
-                    {themeMeta && (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-                        <span aria-hidden>{themeMeta.emoji}</span>
-                        {themeMeta.title}
-                      </span>
-                    )}
+                    <div className="flex flex-col items-end gap-1">
+                      {themeMeta && (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                          <span aria-hidden>{themeMeta.emoji}</span>
+                          {themeMeta.title}
+                        </span>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => toggle(sign.key)}
+                        disabled={!user || busy === sign.key}
+                        className={`inline-flex h-7 items-center gap-1 rounded-full px-2.5 text-[11px] font-medium transition-colors ${
+                          isLearned
+                            ? "bg-[hsl(var(--lies))] text-[hsl(var(--lies-foreground))]"
+                            : "border border-border text-muted-foreground hover:border-[hsl(var(--lies))] hover:text-[hsl(var(--lies))]"
+                        }`}
+                        aria-pressed={isLearned}
+                      >
+                        <Check className="h-3 w-3" />
+                        {isLearned ? "Appris" : "À apprendre"}
+                      </button>
+                    </div>
                   </div>
                   <h3 className="font-serif text-lg text-foreground">{sign.label}</h3>
                   <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
