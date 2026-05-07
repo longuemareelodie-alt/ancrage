@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, Sparkles, RotateCcw, X } from "lucide-react";
+import { ArrowRight, Sparkles, RotateCcw, X, HelpCircle, ChevronLeft } from "lucide-react";
 import { LSF_THEMES } from "@/data/lsfCatalog";
 
 type ThemeSlug = "bebe-besoins" | "emotions" | "routine" | "famille";
