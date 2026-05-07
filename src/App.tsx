@@ -60,6 +60,7 @@ import LiesAutrementHome from "./pages/lies/LiesAutrementHome";
 import LsfHome from "./pages/lies/LsfHome";
 import LsfTheme from "./pages/lies/LsfTheme";
 import SignesNouveaux from "./pages/lies/SignesNouveaux";
+import LsfFlashcards from "./pages/lies/LsfFlashcards";
 import RessourcesPage from "./pages/lies/RessourcesPage";
 import CrisePage from "./pages/lies/CrisePage";
 import JournalPage from "./pages/lies/JournalPage";
