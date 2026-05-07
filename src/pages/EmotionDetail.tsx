@@ -211,13 +211,17 @@ const EmotionDetail = () => {
   let freeSteps: TaggedStep[];
   let lockedSteps: TaggedStep[];
 
+  // Apply parentize to step text/hints coming from typed variants too.
+  const pxSteps = (arr: Step[]): Step[] =>
+    arr.map((s) => ({ ...s, text: px(s.text), hint: s.hint ? px(s.hint) : s.hint }));
+
   if (variants && style === "any" && autoResolved) {
-    freeSteps = buildAlternating(variants.breathing.free, variants.sensory.free, autoResolved);
-    lockedSteps = buildAlternating(variants.breathing.locked, variants.sensory.locked, autoResolved);
+    freeSteps = buildAlternating(pxSteps(variants.breathing.free), pxSteps(variants.sensory.free), autoResolved);
+    lockedSteps = buildAlternating(pxSteps(variants.breathing.locked), pxSteps(variants.sensory.locked), autoResolved);
   } else {
     const variant = getStyleVariant(key, effectiveStyle);
-    freeSteps = variant ? tag(variant.free, effectiveStyle as "breathing" | "sensory") : toSteps(i18nFreeRaw);
-    lockedSteps = variant ? tag(variant.locked, effectiveStyle as "breathing" | "sensory") : toSteps(i18nLockedRaw);
+    freeSteps = variant ? tag(pxSteps(variant.free), effectiveStyle as "breathing" | "sensory") : toSteps(i18nFreeRaw);
+    lockedSteps = variant ? tag(pxSteps(variant.locked), effectiveStyle as "breathing" | "sensory") : toSteps(i18nLockedRaw);
   }
 
   // Record the resolved style as the last one used (only when it's a real
