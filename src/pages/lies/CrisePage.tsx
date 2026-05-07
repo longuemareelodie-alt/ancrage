@@ -367,7 +367,14 @@ const CrisePage = () => {
           Une carte format poche à montrer aux passants ou aux secours en cas de crise à l'extérieur.
         </p>
         <Button
-          onClick={downloadHelpCard}
+          onClick={() =>
+            downloadHelpCard({
+              ctxLabel: CTX_OPTIONS.find((o) => o.value === ctx)?.label ?? ctx,
+              parentLabel: PARENT_OPTIONS.find((o) => o.value === parent)?.label ?? parent,
+              situationLabel: SITUATION_LABELS[situation],
+              steps: scenario.steps,
+            })
+          }
           className="bg-[hsl(var(--lies))] hover:bg-[hsl(var(--lies)/0.9)] text-[hsl(var(--lies-foreground))]"
         >
           <Download className="mr-2 h-4 w-4" />
