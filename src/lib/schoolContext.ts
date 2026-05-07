@@ -1,3 +1,5 @@
+// @refresh reset
+
 /**
  * Daily-context for the home micro-scenes.
  *
