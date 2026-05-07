@@ -99,6 +99,24 @@ const LsfHome = () => {
           );
         })}
         </div>
+        <Link
+          to="/lies-autrement/signes-nouveaux"
+          className="group flex items-center gap-4 rounded-2xl border-2 border-dashed border-[hsl(var(--lies))] bg-[hsl(var(--lies-soft))] p-4 transition-all hover:shadow-soft"
+        >
+          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-card text-3xl">
+            ✨
+          </div>
+          <div className="min-w-0 flex-1">
+            <h2 className="font-serif text-lg text-foreground">
+              80 nouveaux signes
+            </h2>
+            <p className="line-clamp-2 text-sm text-muted-foreground">
+              20 signes supplémentaires par thème — repas, émotions fines,
+              transports, entourage élargi. Avec recherche et filtres.
+            </p>
+          </div>
+          <span aria-hidden className="text-xl text-[hsl(var(--lies))] transition-transform group-hover:translate-x-0.5">→</span>
+        </Link>
       </div>
     </LiesShell>
   );
