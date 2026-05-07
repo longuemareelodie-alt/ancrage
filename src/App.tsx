@@ -27,6 +27,7 @@ import Parcours from "./pages/Parcours";
 import Auth from "./pages/Auth";
 import Profil from "./pages/Profil";
 import ProfilStyle from "./pages/ProfilStyle";
+import Parametres from "./pages/Parametres";
 import ResetPassword from "./pages/ResetPassword";
 import SetPassword from "./pages/SetPassword";
 import ActivationCompte from "./pages/ActivationCompte";
