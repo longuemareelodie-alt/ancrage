@@ -150,6 +150,7 @@ const TopNav = () => {
 
         {/* Mobile: language + menu */}
         <div className="flex items-center gap-2 sm:hidden">
+          <ParentTypeBadge />
           <LanguageSwitcher />
           <button
             type="button"
