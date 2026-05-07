@@ -168,7 +168,7 @@ export default function CriseGuided({ scenario, context, parent, situation, onCl
     setSeconds(0);
     setRecapDuration(null);
     setRunning(true);
-    clearSaved();
+    clearSavedFor(key);
   }
 
   return (
@@ -368,7 +368,7 @@ export default function CriseGuided({ scenario, context, parent, situation, onCl
                 <RotateCcw className="h-4 w-4" />
               </Button>
               <Button
-                onClick={() => { clearSaved(); onClose(); }}
+                onClick={() => { clearSavedFor(key); onClose(); }}
                 className="flex-1 bg-[hsl(var(--lies))] text-[hsl(var(--lies-foreground))] hover:bg-[hsl(var(--lies)/0.9)]"
               >
                 Fermer
