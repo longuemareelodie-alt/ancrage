@@ -141,6 +141,9 @@ const TopNav = () => {
             );
           })}
           <li className="ms-1">
+            <ParentTypeBadge />
+          </li>
+          <li className="ms-1">
             <LanguageSwitcher />
           </li>
         </ul>
