@@ -85,25 +85,33 @@ const QUESTIONS: Question[] = [
   },
 ];
 
-function score(answers: Record<string, number>): ThemeSlug {
+type Answer = number | "skip";
+
+function score(answers: Record<string, Answer>): { theme: ThemeSlug; confident: boolean } {
   const totals: Record<ThemeSlug, number> = {
     "bebe-besoins": 0,
     emotions: 0,
     routine: 0,
     famille: 0,
   };
+  let answeredCount = 0;
   for (const q of QUESTIONS) {
-    const idx = answers[q.id];
-    if (idx == null) continue;
-    const opt = q.options[idx];
+    const ans = answers[q.id];
+    if (ans == null || ans === "skip") continue;
+    const opt = q.options[ans];
     if (!opt) continue;
+    answeredCount++;
     (Object.keys(opt.weights) as ThemeSlug[]).forEach((k) => {
       totals[k] += opt.weights[k] ?? 0;
     });
   }
-  return (Object.keys(totals) as ThemeSlug[]).reduce((a, b) =>
+  const theme = (Object.keys(totals) as ThemeSlug[]).reduce((a, b) =>
     totals[b] > totals[a] ? b : a,
   );
+  // Confiant si au moins 2 questions répondues ET un thème ressort vraiment
+  const max = Math.max(...Object.values(totals));
+  const confident = answeredCount >= 2 && max > 0;
+  return { theme, confident };
 }
 
 const STORAGE_KEY = "lsf-onboarding-v1";
@@ -114,36 +122,51 @@ interface LsfOnboardingProps {
 
 const LsfOnboarding = ({ onDismiss }: LsfOnboardingProps) => {
   const [step, setStep] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, number>>({});
+  const [answers, setAnswers] = useState<Record<string, Answer>>({});
   const [done, setDone] = useState(false);
 
   const total = QUESTIONS.length;
   const progress = Math.round((step / total) * 100);
 
-  const recommended = useMemo<ThemeSlug | null>(
+  const result = useMemo(
     () => (done ? score(answers) : null),
     [done, answers],
   );
+  const recommended = result?.theme ?? null;
+  const confident = result?.confident ?? false;
   const theme = recommended
     ? LSF_THEMES.find((t) => t.slug === recommended) ?? null
     : null;
 
-  const choose = (qid: string, idx: number) => {
-    const next = { ...answers, [qid]: idx };
+  const advance = (next: Record<string, Answer>) => {
     setAnswers(next);
     if (step + 1 < total) {
       setStep(step + 1);
     } else {
       setDone(true);
       try {
+        const r = score(next);
         localStorage.setItem(
           STORAGE_KEY,
-          JSON.stringify({ completed: true, recommended: score(next), at: Date.now() }),
+          JSON.stringify({
+            completed: true,
+            recommended: r.theme,
+            confident: r.confident,
+            answers: next,
+            at: Date.now(),
+          }),
         );
       } catch {
         /* noop */
       }
     }
+  };
+
+  const choose = (qid: string, idx: number) => advance({ ...answers, [qid]: idx });
+  const skip = (qid: string) => advance({ ...answers, [qid]: "skip" });
+  const back = () => {
+    if (step === 0) return;
+    setStep(step - 1);
   };
 
   const restart = () => {
