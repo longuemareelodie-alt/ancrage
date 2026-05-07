@@ -54,6 +54,14 @@ import PremiumActivationLogPage from "./pages/admin/PremiumActivationLog";
 import PremiumAuditListPage from "./pages/admin/PremiumAuditList";
 import WebhookAnomaliesPage from "./pages/admin/WebhookAnomalies";
 import PendingEmailsAdminPage from "./pages/admin/PendingEmails";
+import LiesAutrementHome from "./pages/lies/LiesAutrementHome";
+import LsfHome from "./pages/lies/LsfHome";
+import LsfTheme from "./pages/lies/LsfTheme";
+import RessourcesPage from "./pages/lies/RessourcesPage";
+import CrisePage from "./pages/lies/CrisePage";
+import JournalPage from "./pages/lies/JournalPage";
+import CommunautePage from "./pages/lies/CommunautePage";
+import CommunauteModeration from "./pages/admin/CommunauteModeration";
 
 const queryClient = new QueryClient();
 
@@ -123,6 +131,14 @@ const AnimatedRoutes = () => {
         <Route path="/admin/premium-audit" element={<AdminRoute><PageTransition><PremiumAuditListPage /></PageTransition></AdminRoute>} />
         <Route path="/admin/webhook-anomalies" element={<AdminRoute><PageTransition><WebhookAnomaliesPage /></PageTransition></AdminRoute>} />
         <Route path="/admin/pending-emails" element={<AdminRoute><PageTransition><PendingEmailsAdminPage /></PageTransition></AdminRoute>} />
+        <Route path="/admin/communaute-moderation" element={<AdminRoute><PageTransition><CommunauteModeration /></PageTransition></AdminRoute>} />
+        <Route path="/lies-autrement" element={<PaidRoute><PageTransition><LiesAutrementHome /></PageTransition></PaidRoute>} />
+        <Route path="/lies-autrement/lsf" element={<PaidRoute><PageTransition><LsfHome /></PageTransition></PaidRoute>} />
+        <Route path="/lies-autrement/lsf/:themeSlug" element={<PaidRoute><PageTransition><LsfTheme /></PageTransition></PaidRoute>} />
+        <Route path="/lies-autrement/ressources" element={<PaidRoute><PageTransition><RessourcesPage /></PageTransition></PaidRoute>} />
+        <Route path="/lies-autrement/crise" element={<PaidRoute><PageTransition><CrisePage /></PageTransition></PaidRoute>} />
+        <Route path="/lies-autrement/journal" element={<PaidRoute><PageTransition><JournalPage /></PageTransition></PaidRoute>} />
+        <Route path="/lies-autrement/communaute" element={<PaidRoute><PageTransition><CommunautePage /></PageTransition></PaidRoute>} />
         <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
           </Routes>
         </RoutesWrapper>
