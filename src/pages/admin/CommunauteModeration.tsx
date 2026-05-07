@@ -89,12 +89,15 @@ const CommunauteModeration = () => {
                     {p.kind} · {new Date(p.created_at).toLocaleString("fr-FR")}
                   </div>
                   <p className="mb-3 whitespace-pre-wrap text-sm">{p.body}</p>
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-2">
                     <Button size="sm" onClick={() => setStatus(p.id, "approved")} className="bg-[hsl(var(--lies))]">
                       <Check className="mr-1 h-3.5 w-3.5" /> Approuver
                     </Button>
                     <Button size="sm" variant="outline" onClick={() => setStatus(p.id, "rejected")}>
                       <X className="mr-1 h-3.5 w-3.5" /> Rejeter
+                    </Button>
+                    <Button size="sm" variant="ghost" onClick={() => setStatus(p.id, "hidden")}>
+                      <EyeOff className="mr-1 h-3.5 w-3.5" /> Masquer
                     </Button>
                   </div>
                 </li>
