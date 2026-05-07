@@ -170,6 +170,8 @@ const CrisePage = () => {
   const [sessionsTick, setSessionsTick] = useState(0);
   const [pendingDelete, setPendingDelete] = useState<string | null>(null);
   const [favorites, setFavorites] = useState<string[]>(() => loadFavorites());
+  const [staleHours, setStaleHours] = useState<number>(() => loadStaleHours());
+  const notifiedRef = useRef<Set<string>>(new Set());
 
   const scenario = useMemo(() => getScenario(ctx, parent, situation), [ctx, parent, situation]);
 
