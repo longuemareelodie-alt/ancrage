@@ -570,6 +570,19 @@
           "Expire plus longtemps"
         ]
       },
+      "panique_maman": {
+        "title": "La vague monte",
+        "validation": "Ton corps a passé sa journée à anticiper. Là, il déborde — ce n'est pas toi qui es défaillante.",
+        "free": [
+          "Pose une main sur ton ventre, l'autre sur ton cœur",
+          "Nomme tout bas 5 choses que tu vois — sans les juger"
+        ],
+        "locked": [
+          "Inspire 4 secondes par le nez, doucement",
+          "Expire 6 secondes par la bouche, comme si tu soufflais sur une bougie",
+          "Recommence 3 fois — tu n'as rien d'autre à gérer pendant ces 30 secondes"
+        ]
+      },
       "panique_papa": {
         "title": "Ça monte d'un coup",
         "validation": "Ton corps prépare un combat qui n'a pas lieu.",
@@ -596,6 +609,19 @@
           "Respire lentement"
         ]
       },
+      "hypervigilance_maman": {
+        "title": "Tu écoutes tout, tout le temps",
+        "validation": "Ton oreille reste branchée sur les enfants même quand ils dorment. Ton corps n'a jamais reçu l'autorisation de se poser.",
+        "free": [
+          "Regarde 3 choses autour de toi — leur couleur, leur forme",
+          "Écoute 2 sons en arrière-plan, sans chercher à savoir si c'est un enfant"
+        ],
+        "locked": [
+          "Touche une matière douce (un pull, un coussin, ta peau)",
+          "Décolle tes épaules de tes oreilles, juste un peu",
+          "Pose une main sur ton ventre et laisse-le se détendre"
+        ]
+      },
       "hypervigilance_papa": {
         "title": "Tu es resté en alerte",
         "validation": "Ton système n'a pas reçu le signal que la garde est levée.",
@@ -620,6 +646,17 @@
           "Dis « stop » intérieurement"
         ]
       },
+      "rumination_maman": {
+        "title": "La phrase repasse en boucle",
+        "validation": "Tu refais le film de ce que tu as dit, fait, raté. Ce n'est pas de la lucidité — c'est ton cerveau qui essaie de te protéger d'une faute déjà passée.",
+        "free": [
+          "Pose les yeux sur un point fixe — un mur, le ciel, tes mains",
+          "Respire lentement, sans rien corriger"
+        ],
+        "locked": [
+          "Dis-toi tout bas : « ça suffit, je ne suis pas une mauvaise mère pour ça »"
+        ]
+      },
       "rumination_papa": {
         "title": "La tête tourne en boucle",
         "validation": "Ton cerveau rejoue la scène pour essayer de la régler. Elle est déjà passée.",
@@ -641,6 +678,18 @@
         "locked": [
           "Appuie tes pieds",
           "Respire profondément"
+        ]
+      },
+      "explosion_maman": {
+        "title": "Tu viens de craquer",
+        "validation": "Ce qui est sorti était trop fort, et tu le sais déjà. Tu n'es pas une mauvaise mère — ton corps n'avait juste plus de marge.",
+        "free": [
+          "Serre tes poings 5 secondes, fort",
+          "Relâche d'un coup, expire en silence"
+        ],
+        "locked": [
+          "Pose tes deux pieds bien à plat, sens le sol qui te porte",
+          "Respire profondément, sans te juger pendant l'inspiration"
         ]
       },
       "explosion_papa": {
