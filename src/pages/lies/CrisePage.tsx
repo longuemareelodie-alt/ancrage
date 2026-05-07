@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Download, PlayCircle, ShieldAlert, Trash2, Play } from "lucide-react";
+import { Download, PlayCircle, ShieldAlert, Trash2, Play, Star } from "lucide-react";
 import CriseGuided, { listSavedSessions, clearSavedFor, sessionKey, loadSavedFor } from "@/components/lies/CriseGuided";
 import { RotateCw } from "lucide-react";
 import { jsPDF } from "jspdf";
@@ -134,6 +134,19 @@ function downloadHelpCard(opts: {
   doc.save(`carte-aide-crise-${safe(opts.ctxLabel)}-${safe(opts.parentLabel)}.pdf`);
 }
 
+const FAVORITES_KEY = "lies.crise.favorites.v1";
+function loadFavorites(): string[] {
+  try {
+    const raw = localStorage.getItem(FAVORITES_KEY);
+    if (!raw) return [];
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr.filter((x) => typeof x === "string") : [];
+  } catch { return []; }
+}
+function saveFavorites(list: string[]) {
+  try { localStorage.setItem(FAVORITES_KEY, JSON.stringify(list)); } catch { /* noop */ }
+}
+
 const CrisePage = () => {
   const [ctx, setCtx] = useState<CrisisContext>("maison");
   const [parent, setParent] = useState<CrisisParent>("maman");
@@ -141,14 +154,29 @@ const CrisePage = () => {
   const [guidedOpen, setGuidedOpen] = useState(false);
   const [sessionsTick, setSessionsTick] = useState(0);
   const [pendingDelete, setPendingDelete] = useState<string | null>(null);
+  const [favorites, setFavorites] = useState<string[]>(() => loadFavorites());
 
   const scenario = useMemo(() => getScenario(ctx, parent, situation), [ctx, parent, situation]);
 
+  const favSet = useMemo(() => new Set(favorites), [favorites]);
   const savedSessions = useMemo(
-    () => listSavedSessions().sort((a, b) => b.saved.lastTickAt - a.saved.lastTickAt),
-    [sessionsTick, guidedOpen]
+    () => listSavedSessions().sort((a, b) => {
+      const fa = favSet.has(a.key) ? 1 : 0;
+      const fb = favSet.has(b.key) ? 1 : 0;
+      if (fa !== fb) return fb - fa;
+      return b.saved.lastTickAt - a.saved.lastTickAt;
+    }),
+    [sessionsTick, guidedOpen, favSet]
   );
   const currentKey = sessionKey(ctx, parent, situation);
+
+  function toggleFavorite(k: string) {
+    setFavorites((prev) => {
+      const next = prev.includes(k) ? prev.filter((x) => x !== k) : [...prev, k];
+      saveFavorites(next);
+      return next;
+    });
+  }
 
   useEffect(() => {
     const onFocus = () => setSessionsTick((n) => n + 1);
@@ -173,6 +201,12 @@ const CrisePage = () => {
 
   function deleteSession(k: string) {
     clearSavedFor(k);
+    setFavorites((prev) => {
+      if (!prev.includes(k)) return prev;
+      const next = prev.filter((x) => x !== k);
+      saveFavorites(next);
+      return next;
+    });
     setSessionsTick((n) => n + 1);
   }
 
@@ -337,8 +371,11 @@ const CrisePage = () => {
                   }`}
                 >
                   <button onClick={() => resumeSession(key)} className="flex-1 text-left">
-                    <div className="text-sm font-medium text-foreground">
-                      {ctxLabel} · {parentLabel}
+                    <div className="flex items-center gap-1.5 text-sm font-medium text-foreground">
+                      {favSet.has(key) && (
+                        <Star className="h-3.5 w-3.5 fill-[hsl(var(--lies))] text-[hsl(var(--lies))]" aria-hidden="true" />
+                      )}
+                      <span>{ctxLabel} · {parentLabel}</span>
                     </div>
                     <div className="text-xs text-muted-foreground">{situationLabel}</div>
                     <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs">
@@ -361,13 +398,25 @@ const CrisePage = () => {
                       <Play className="h-3.5 w-3.5" />
                       Reprendre
                     </button>
-                    <button
-                      onClick={() => setPendingDelete(key)}
-                      className="self-end rounded-full p-1.5 text-muted-foreground hover:text-destructive"
-                      aria-label="Supprimer la session"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
+                    <div className="flex items-center justify-end gap-0.5">
+                      <button
+                        onClick={() => toggleFavorite(key)}
+                        className="rounded-full p-1.5 text-muted-foreground hover:text-[hsl(var(--lies))]"
+                        aria-label={favSet.has(key) ? "Retirer des favoris" : "Ajouter aux favoris"}
+                        aria-pressed={favSet.has(key)}
+                      >
+                        <Star
+                          className={`h-4 w-4 ${favSet.has(key) ? "fill-[hsl(var(--lies))] text-[hsl(var(--lies))]" : ""}`}
+                        />
+                      </button>
+                      <button
+                        onClick={() => setPendingDelete(key)}
+                        className="rounded-full p-1.5 text-muted-foreground hover:text-destructive"
+                        aria-label="Supprimer la session"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
                   </div>
                 </li>
               );
