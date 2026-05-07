@@ -23,7 +23,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import { CheckCircle2, KeyRound, LogIn, ArrowRight, ShieldCheck } from "lucide-react";
+import { CheckCircle2, KeyRound, LogIn, ArrowRight, ShieldCheck, Mail } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 type LinkState =
   | "checking" // Lecture du hash en cours
@@ -38,6 +39,14 @@ const ActivationCompte = () => {
   const [linkState, setLinkState] = useState<LinkState>("checking");
   const [errorDetail, setErrorDetail] = useState("");
   const [hashToForward, setHashToForward] = useState("");
+
+  // « Renvoyer l'email d'activation » : on demande l'adresse à l'utilisateur
+  // puis on déclenche un nouveau lien magique via Supabase. La réponse reste
+  // volontairement générique pour ne pas révéler l'existence d'un compte.
+  const [resendEmail, setResendEmail] = useState("");
+  const [resending, setResending] = useState(false);
+  const [resendInfo, setResendInfo] = useState("");
+  const [resendError, setResendError] = useState("");
 
   // L'email envoyé par le webhook ajoute `?welcome=1`. On le retransmet à
   // /set-password pour qu'il garde le wording « Active ton compte ».
@@ -76,6 +85,32 @@ const ActivationCompte = () => {
     // On préserve `?welcome=1` côté query, et on ré-attache le hash original.
     const target = `/set-password${isWelcome ? "?welcome=1" : ""}${hashToForward}`;
     navigate(target, { replace: true });
+  };
+
+  const handleResend = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setResendError("");
+    setResendInfo("");
+    const email = resendEmail.trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setResendError("Adresse email invalide.");
+      return;
+    }
+    setResending(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/activation-compte?welcome=1`,
+      });
+      if (error) throw error;
+      setResendInfo(
+        "Si cette adresse correspond à un compte, un nouveau lien d'activation vient d'être envoyé. Vérifie ta boîte (et tes spams).",
+      );
+      setResendEmail("");
+    } catch (err: any) {
+      setResendError(err?.message || "Impossible d'envoyer le lien. Réessaie dans un instant.");
+    } finally {
+      setResending(false);
+    }
   };
 
   const headline = useMemo(() => {
@@ -191,46 +226,68 @@ const ActivationCompte = () => {
           </>
         )}
 
-        {linkState === "expired" && (
+        {(linkState === "expired" || linkState === "missing") && (
           <div className="space-y-4">
-            <div className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
-              {errorDetail || "Ce lien n'est plus valide."}
-            </div>
-            <Link
-              to="/set-password"
-              className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary py-3 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
-            >
-              Recevoir un nouveau lien <ArrowRight className="h-4 w-4" />
-            </Link>
-            <p className="text-center text-xs text-muted-foreground">
-              <Link to="/auth" className="underline hover:text-foreground">
-                Revenir à la connexion
-              </Link>
-            </p>
-          </div>
-        )}
+            {linkState === "expired" && (
+              <div className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
+                {errorDetail || "Ce lien n'est plus valide."}
+              </div>
+            )}
 
-        {linkState === "missing" && (
-          <div className="space-y-4">
-            <div className="rounded-xl border border-border bg-card p-4 text-sm text-foreground/85 leading-relaxed space-y-3">
-              <p>
-                <strong>Tu n'as pas reçu l'email ?</strong>
-              </p>
-              <ul className="list-disc pl-5 space-y-1 text-xs text-muted-foreground">
-                <li>Vérifie ton dossier spam / courrier indésirable.</li>
-                <li>L'envoi peut prendre 1 à 2 minutes après le paiement.</li>
-                <li>
-                  Si rien après 5 min, demande un nouveau lien depuis la page
-                  ci-dessous.
-                </li>
-              </ul>
-            </div>
-            <Link
-              to="/set-password"
-              className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary py-3 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+            {linkState === "missing" && (
+              <div className="rounded-xl border border-border bg-card p-4 text-sm text-foreground/85 leading-relaxed space-y-3">
+                <p>
+                  <strong>Tu n'as pas reçu l'email ?</strong>
+                </p>
+                <ul className="list-disc pl-5 space-y-1 text-xs text-muted-foreground">
+                  <li>Vérifie ton dossier spam / courrier indésirable.</li>
+                  <li>L'envoi peut prendre 1 à 2 minutes après le paiement.</li>
+                  <li>Sinon, renvoie-toi un nouveau lien ci-dessous.</li>
+                </ul>
+              </div>
+            )}
+
+            <form
+              onSubmit={handleResend}
+              className="space-y-3 rounded-xl border border-border bg-card p-4"
             >
-              Recevoir un lien d'activation <ArrowRight className="h-4 w-4" />
-            </Link>
+              <label htmlFor="resend-email" className="block text-sm font-semibold">
+                Renvoyer l'email d'activation
+              </label>
+              <input
+                id="resend-email"
+                type="email"
+                inputMode="email"
+                autoComplete="email"
+                placeholder="ton.email@exemple.com"
+                value={resendEmail}
+                onChange={(e) => setResendEmail(e.target.value)}
+                required
+                className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary/30"
+              />
+              {resendError && (
+                <div className="rounded-lg bg-destructive/10 p-2 text-xs text-destructive">
+                  {resendError}
+                </div>
+              )}
+              {resendInfo && (
+                <div className="rounded-lg bg-primary/10 p-2 text-xs text-primary">
+                  {resendInfo}
+                </div>
+              )}
+              <button
+                type="submit"
+                disabled={resending}
+                className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary py-3 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-60"
+              >
+                <Mail className="h-4 w-4" />
+                {resending ? "Envoi en cours…" : "Renvoyer l'email d'activation"}
+              </button>
+              <p className="text-center text-[11px] text-muted-foreground">
+                Le lien est valide 1 heure.
+              </p>
+            </form>
+
             <p className="text-center text-xs text-muted-foreground">
               Déjà activé ?{" "}
               <Link to="/auth" className="underline hover:text-foreground">
