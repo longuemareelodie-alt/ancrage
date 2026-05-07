@@ -1068,7 +1068,9 @@ const Index = () => {
               type="button"
               onClick={handlePayment}
               disabled={paymentLoading}
-              className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-md transition-all hover:shadow-lg hover:opacity-95 disabled:opacity-60"
+              aria-busy={paymentLoading || undefined}
+              aria-label="Découvrir Liés autrement et accéder au paiement"
+              className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-md transition-all hover:shadow-lg hover:opacity-95 disabled:opacity-60 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               {paymentLoading ? "Chargement…" : "Découvrir « Liés autrement » →"}
             </button>
