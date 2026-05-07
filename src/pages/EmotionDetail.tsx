@@ -57,15 +57,15 @@ const EmotionDetail = () => {
   const [parentType, , hasChosenProfile] = useParentType();
   const [schoolContext] = useSchoolContext();
   // Personalization rule (priority order):
-  //  1. {key}_{parent}_school  — most specific (parent + context)
-  //  2. {key}_school           — context only
-  //  3. {key}_{parent}         — parent only
-  //  4. {key}                  — neutral base
+  //  1. {key}_{parent}_{context}  — parent + daily context (school/work/holiday)
+  //  2. {key}_{context}           — context only
+  //  3. {key}_{parent}            — parent only
+  //  4. {key}                     — neutral base
   // parentize() still adapts gender/agreement at render time when a profile is set.
   const candidates: string[] = [];
-  if (SCHOOL_VARIANT_KEYS.has(key) && schoolContext === "school") {
-    if (hasChosenProfile) candidates.push(`${key}_${parentType}_school`);
-    candidates.push(`${key}_school`);
+  if (CONTEXT_VARIANT_KEYS.has(key)) {
+    if (hasChosenProfile) candidates.push(`${key}_${parentType}_${schoolContext}`);
+    candidates.push(`${key}_${schoolContext}`);
   }
   if (hasChosenProfile && PAPA_VARIANT_KEYS.has(key)) {
     candidates.push(`${key}_${parentType}`);
