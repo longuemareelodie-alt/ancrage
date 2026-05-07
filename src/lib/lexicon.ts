@@ -67,8 +67,6 @@ export const CTA_LIBRARY = {
   /** Reprise / continuité */
   secondary_resume: "Reprendre mon ancrage",
 
-  /** Découverte non-engageante (initiation 7j) */
-  tertiary_discover: "Commencer mes 7 jours d'ancrage",
 } as const;
 
 // ============================================================
