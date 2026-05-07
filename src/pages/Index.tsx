@@ -1115,9 +1115,11 @@ const Index = () => {
           </div>
 
           {/* Carte "Liés autrement" — accent vert doux pour différencier */}
-          <Link
-            to="/lies-autrement"
-            className="mt-4 block rounded-xl border-2 p-4 text-start transition-all hover:shadow-md"
+          <button
+            type="button"
+            onClick={handlePayment}
+            disabled={paymentLoading}
+            className="mt-4 block w-full rounded-xl border-2 p-4 text-start transition-all hover:shadow-md disabled:opacity-60"
             style={{ borderColor: "#7DB89F", backgroundColor: "#F0F7F4" }}
           >
             <div className="flex items-start gap-3">
@@ -1132,11 +1134,11 @@ const Index = () => {
                   LSF · Ressources troubles · Gérer les crises · Activités adaptées · Communauté parents
                 </p>
                 <p className="mt-2 text-xs font-semibold" style={{ color: "#3F7A60" }}>
-                  → En savoir plus
+                  → {paymentLoading ? "Chargement…" : "En savoir plus"}
                 </p>
               </div>
             </div>
-          </Link>
+          </button>
 
           <p className="mt-4 mb-2 text-xs text-muted-foreground italic px-2">
             🤍 {t("home.price.reassurance")}
