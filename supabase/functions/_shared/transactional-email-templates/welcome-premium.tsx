@@ -32,7 +32,7 @@ const WelcomePremiumEmail = ({ firstName }: WelcomePremiumProps) => (
         <Section style={featureBox}>
           <Text style={featureTitle}>Ce qui t'attend :</Text>
           <Text style={featureItem}>✅ Tous les ancrages débloqués</Text>
-          <Text style={featureItem}>✅ Le suivi de ton parcours sur la durée</Text>
+          <Text style={featureItem}>✅ Le parcours « 7 jours pour devenir la maman ancrée » inclus</Text>
           <Text style={featureItem}>✅ Le suivi de ton retour au calme</Text>
           <Text style={featureItem}>✅ Un espace de sécurité, à ton rythme</Text>
         </Section>
