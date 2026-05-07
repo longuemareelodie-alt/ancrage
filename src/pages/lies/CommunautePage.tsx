@@ -101,14 +101,14 @@ const CommunautePage = () => {
   const handlePost = async () => {
     if (!user || !body.trim()) return;
     const kind = tab === "threads" ? "thread_post" : tab === "free" ? "free_post" : "question";
-    const payload: Record<string, unknown> = {
+    const insertPayload = {
       author_id: user.id,
       kind,
       body: body.trim(),
-      status: "pending",
+      status: "pending" as const,
+      thread_id: kind === "thread_post" ? activeThread : null,
     };
-    if (kind === "thread_post") payload.thread_id = activeThread;
-    const { error } = await supabase.from("community_posts").insert(payload);
+    const { error } = await supabase.from("community_posts").insert(insertPayload);
     if (error) {
       toast({ title: "Erreur", description: error.message, variant: "destructive" });
       return;
