@@ -459,12 +459,10 @@ const PaymentPending = () => {
                     {t("payment_pending.error.contact_support_email", "Ou contacter par email")}
                   </a>
                   <Link
-                    to={isInitiationFlow ? "/initiation-7-jours" : "/dashboard"}
+                    to="/dashboard"
                     className="inline-flex w-full items-center justify-center gap-2 rounded-xl px-6 py-3 text-xs text-muted-foreground"
                   >
-                    {isInitiationFlow
-                      ? t("payment_pending.error.back_initiation", "Retour aux 7 jours d'ancrage")
-                      : t("payment_pending.error.dashboard")}
+                    {t("payment_pending.error.dashboard")}
                     <ArrowRight className="h-3.5 w-3.5" />
                   </Link>
                   <p className="text-[11px] text-muted-foreground">
