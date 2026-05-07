@@ -27,6 +27,9 @@ import {
   type ResolvedStyle,
 } from "@/lib/autoStyle";
 import { getEmotionCTA } from "@/data/emotionCTAs";
+import { useParentType } from "@/hooks/useParentType";
+
+const PAPA_VARIANT_KEYS = new Set(["panique", "hypervigilance", "rumination", "explosion"]);
 
 const STYLE_OPTIONS: {
   value: ActionStyle;
@@ -48,6 +51,17 @@ const EmotionDetail = () => {
   const location = useLocation();
   const { t, i18n } = useTranslation();
   const key = emotion || "";
+  const [parentType] = useParentType();
+  // For the 4 micro-scènes that have a papa-tailored copy, switch the i18n
+  // base path. The variant key always exists (we authored both); we keep a
+  // safe fallback to the base key if i18n.exists ever returns false.
+  const papaCandidate = `${key}_papa`;
+  const useCopyKey =
+    parentType === "papa" &&
+    PAPA_VARIANT_KEYS.has(key) &&
+    i18n.exists(`emotion_detail.data.${papaCandidate}.title`)
+      ? papaCandidate
+      : key;
   const titleRef = useRef<string>("");
 
   const [style, setStyle] = useState<ActionStyle>(() => getActionStyle());
@@ -84,7 +98,7 @@ const EmotionDetail = () => {
   }, [style]);
 
   // Validate the emotion key against known translations.
-  const titleKey = `emotion_detail.data.${key}.title`;
+  const titleKey = `emotion_detail.data.${useCopyKey}.title`;
   const exists = i18n.exists(titleKey);
   if (exists) titleRef.current = t(titleKey) as string;
 
@@ -144,12 +158,12 @@ const EmotionDetail = () => {
   }
 
   const title = t(titleKey);
-  const validation = t(`emotion_detail.data.${key}.validation`);
+  const validation = t(`emotion_detail.data.${useCopyKey}.validation`);
 
-  const i18nFreeRaw = t(`emotion_detail.data.${key}.free`, {
+  const i18nFreeRaw = t(`emotion_detail.data.${useCopyKey}.free`, {
     returnObjects: true,
   }) as string[];
-  const i18nLockedRaw = t(`emotion_detail.data.${key}.locked`, {
+  const i18nLockedRaw = t(`emotion_detail.data.${useCopyKey}.locked`, {
     returnObjects: true,
   }) as string[];
 

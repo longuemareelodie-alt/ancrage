@@ -570,6 +570,19 @@
           "Expire plus longtemps"
         ]
       },
+      "panique_papa": {
+        "title": "Ça monte d'un coup",
+        "validation": "Ton corps prépare un combat qui n'a pas lieu.",
+        "free": [
+          "Pose les yeux sur un point fixe devant toi",
+          "Nomme 5 trucs concrets autour de toi"
+        ],
+        "locked": [
+          "Pose une main à plat sur le sternum",
+          "Inspire 4 secondes par le nez",
+          "Expire 6 secondes par la bouche, mâchoire relâchée"
+        ]
+      },
       "hypervigilance": {
         "title": "Ton corps est en hypervigilance",
         "validation": "Ton système est resté en alerte.",
@@ -583,6 +596,19 @@
           "Respire lentement"
         ]
       },
+      "hypervigilance_papa": {
+        "title": "Tu es resté en alerte",
+        "validation": "Ton système n'a pas reçu le signal que la garde est levée.",
+        "free": [
+          "Repère 3 objets devant toi",
+          "Repère 2 sons en fond — la rue, le frigo, ton souffle"
+        ],
+        "locked": [
+          "Empoigne un objet ferme (mug, clé, volant)",
+          "Décolle les épaules des oreilles, lentement",
+          "Respire bas dans le ventre, sans forcer"
+        ]
+      },
       "rumination": {
         "title": "Ton mental tourne en boucle",
         "validation": "Ton cerveau cherche une sortie.",
@@ -592,6 +618,17 @@
         ],
         "locked": [
           "Dis « stop » intérieurement"
+        ]
+      },
+      "rumination_papa": {
+        "title": "La tête tourne en boucle",
+        "validation": "Ton cerveau rejoue la scène pour essayer de la régler. Elle est déjà passée.",
+        "free": [
+          "Fixe un point devant toi, 10 secondes",
+          "Inspire / expire lentement, sans corriger ta posture"
+        ],
+        "locked": [
+          "Dis-toi intérieurement : « pas maintenant, je m'en occupe plus tard »"
         ]
       },
       "explosion": {
@@ -604,6 +641,18 @@
         "locked": [
           "Appuie tes pieds",
           "Respire profondément"
+        ]
+      },
+      "explosion_papa": {
+        "title": "Ça déborde",
+        "validation": "La charge a dépassé ce que ton corps peut contenir. Ce n'est pas un défaut de caractère.",
+        "free": [
+          "Serre les poings 5 secondes",
+          "Relâche d'un coup, expire fort"
+        ],
+        "locked": [
+          "Plante les pieds dans le sol, pousse comme si tu voulais le décoller",
+          "Inspire court, expire long et bruyant"
         ]
       },
       "vide": {
