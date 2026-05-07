@@ -64,25 +64,58 @@ const Index = () => {
     cta?: string;
   };
   const scenesKey = parentType === "papa" ? "home.recognize.scenes_papa" : "home.recognize.scenes";
-  const baseScenes = t(scenesKey, { returnObjects: true }) as RecognizeScene[];
+  const baseScenes = (() => {
+    const v = t(scenesKey, { returnObjects: true });
+    if (Array.isArray(v)) return v as RecognizeScene[];
+    // Parent-tailored array missing → fall back to neutral scenes.
+    const fallback = t("home.recognize.scenes", { returnObjects: true });
+    return Array.isArray(fallback) ? (fallback as RecognizeScene[]) : [];
+  })();
+
   // Context overrides (holiday / work): merged on top of the base scenes by
   // index — only the matin / soir scenes are rewritten, the body / mind
-  // scenes stay identical.
-  const overridesKey =
+  // scenes stay identical. Robust fallback chain:
+  //   parent+context override → neutral context override → no override
+  // and any individual partial override only patches fields it actually
+  // provides (empty strings are ignored so we never blank out a scene).
+  const readOverrides = (
+    key: string,
+  ): Record<string, Partial<RecognizeScene>> | null => {
+    if (!i18n.exists(key)) return null;
+    const v = t(key, { returnObjects: true });
+    return v && typeof v === "object" && !Array.isArray(v)
+      ? (v as Record<string, Partial<RecognizeScene>>)
+      : null;
+  };
+  const contextOverrides: Record<string, Partial<RecognizeScene>> =
     schoolContext === "school"
-      ? null
-      : parentType === "papa"
-        ? `home.recognize.scenes_papa_${schoolContext}_overrides`
-        : `home.recognize.scenes_${schoolContext}_overrides`;
-  const contextOverrides = overridesKey
-    ? ((t(overridesKey, { returnObjects: true }) as
-        | Record<string, Partial<RecognizeScene>>
-        | string) || {})
-    : {};
-  const recognizeMainScenes: RecognizeScene[] =
-    overridesKey && typeof contextOverrides === "object"
-      ? baseScenes.map((scene, i) => ({ ...scene, ...(contextOverrides[String(i)] ?? {}) }))
-      : baseScenes;
+      ? {}
+      : (parentType === "papa"
+          ? readOverrides(`home.recognize.scenes_papa_${schoolContext}_overrides`)
+          : null) ??
+        readOverrides(`home.recognize.scenes_${schoolContext}_overrides`) ??
+        {};
+
+  const mergeOverride = (
+    scene: RecognizeScene,
+    patch: Partial<RecognizeScene> | undefined,
+  ): RecognizeScene => {
+    if (!patch || typeof patch !== "object") return scene;
+    const cleaned: Partial<RecognizeScene> = {};
+    (Object.keys(patch) as (keyof RecognizeScene)[]).forEach((k) => {
+      const val = patch[k];
+      // Skip empty strings / null / undefined so partial overrides never
+      // wipe out a working base value.
+      if (val === undefined || val === null) return;
+      if (typeof val === "string" && val.trim() === "") return;
+      (cleaned as Record<string, unknown>)[k as string] = val;
+    });
+    return { ...scene, ...cleaned };
+  };
+
+  const recognizeMainScenes: RecognizeScene[] = baseScenes.map((scene, i) =>
+    mergeOverride(scene, contextOverrides[String(i)]),
+  );
 
   // Each "state" maps to the page that delivers its concrete action,
   // mirroring the destinations defined in src/data/emotionCTAs.ts.
@@ -99,16 +132,38 @@ const Index = () => {
     // with a redirect back to the right page so the transition stays direct.
     return user ? target : `/auth?redirect=${encodeURIComponent(target)}`;
   };
-  const extraText = (slot: "s1" | "s2"): string => {
-    if (schoolContext !== "school") {
-      return t(`home.recognize.${slot}_${schoolContext}`);
+  // Resolve a translation with an explicit fallback chain — i18next would
+  // otherwise return the key itself when missing, which surfaces as raw
+  // text in the UI.
+  const tWithFallback = (...keys: string[]): string => {
+    for (const k of keys) {
+      if (i18n.exists(k)) {
+        const v = t(k);
+        if (typeof v === "string" && v.trim() !== "") return v;
+      }
     }
-    return t(parentType === "papa" ? `home.recognize.${slot}_papa` : `home.recognize.${slot}`);
+    return "";
+  };
+  const extraText = (slot: "s1" | "s2"): string => {
+    const parentSuffix = parentType === "papa" ? "_papa" : "";
+    if (schoolContext !== "school") {
+      return tWithFallback(
+        `home.recognize.${slot}_${schoolContext}${parentSuffix}`,
+        `home.recognize.${slot}_${schoolContext}`,
+        `home.recognize.${slot}${parentSuffix}`,
+        `home.recognize.${slot}`,
+      );
+    }
+    return tWithFallback(
+      `home.recognize.${slot}${parentSuffix}`,
+      `home.recognize.${slot}`,
+    );
   };
   const recognizeExtras = [
     { emoji: t("home.recognize.s1_emoji"), text: extraText("s1") },
     { emoji: t("home.recognize.s2_emoji"), text: extraText("s2") },
-  ];
+  ].filter((e) => e.text);
+
   type QuickState = {
     state: NonNullable<RecognizeScene["state"]>;
     emoji: string;
