@@ -5,6 +5,17 @@ import LiesShell from "@/components/lies/LiesShell";
 import { LSF_THEMES } from "@/data/lsfCatalog";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import imgBebe from "@/assets/lsf/theme-bebe.jpg";
+import imgEmotions from "@/assets/lsf/theme-emotions.jpg";
+import imgRoutine from "@/assets/lsf/theme-routine.jpg";
+import imgFamille from "@/assets/lsf/theme-famille.jpg";
+
+const THEME_IMAGES: Record<string, string> = {
+  "bebe-besoins": imgBebe,
+  emotions: imgEmotions,
+  routine: imgRoutine,
+  famille: imgFamille,
+};
 
 const LsfHome = () => {
   const { user } = useAuth();
@@ -38,8 +49,17 @@ const LsfHome = () => {
               to={`/lies-autrement/lsf/${theme.slug}`}
               className="group flex items-center gap-4 rounded-2xl border border-border bg-card p-4 transition-all hover:border-[hsl(var(--lies))] hover:shadow-soft"
             >
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[hsl(var(--lies-soft))] text-2xl">
-                {theme.emoji}
+              <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-[hsl(var(--lies-soft))]">
+                {THEME_IMAGES[theme.slug] ? (
+                  <img
+                    src={THEME_IMAGES[theme.slug]}
+                    alt=""
+                    loading="lazy"
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <span className="text-2xl">{theme.emoji}</span>
+                )}
               </div>
               <div className="min-w-0 flex-1">
                 <h2 className="font-serif text-lg text-foreground">{theme.title}</h2>
