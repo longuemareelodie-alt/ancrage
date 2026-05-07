@@ -461,7 +461,7 @@ const extractPaymentEmail = (payment: any) =>
     payment?._embedded?.customer?.email,
   );
 
-Deno.serve(async (req) => {
+export const handleMollieWebhook = async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
@@ -1476,4 +1476,6 @@ Deno.serve(async (req) => {
       error: "internal_error",
     });
   }
-});
+};
+
+Deno.serve(handleMollieWebhook);
