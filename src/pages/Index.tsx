@@ -1002,8 +1002,11 @@ const Index = () => {
             <p className="text-sm text-foreground/85 leading-relaxed max-w-md mx-auto">
               {t("home.testimonials.cta_sub")}
             </p>
-            <div className="pt-1">
+            <div className="pt-1 space-y-2">
               <CTAButton to="#" onClick={handlePayment} loading={paymentLoading}>{t("home.testimonials.cta")}</CTAButton>
+              <p className="text-[11px] text-muted-foreground flex items-center justify-center gap-1.5">
+                <Lock className="h-3 w-3" /> Paiement sécurisé · Paiement unique · Accès à vie
+              </p>
             </div>
             <p className="text-xs text-muted-foreground leading-relaxed max-w-sm mx-auto">
             {t("home.testimonials.cta_justify")}
