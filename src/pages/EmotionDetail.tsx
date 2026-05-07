@@ -28,6 +28,7 @@ import {
 } from "@/lib/autoStyle";
 import { getEmotionCTA } from "@/data/emotionCTAs";
 import { useParentType } from "@/hooks/useParentType";
+import { parentize } from "@/lib/parentize";
 
 const PAPA_VARIANT_KEYS = new Set(["panique", "hypervigilance", "rumination", "explosion"]);
 
@@ -156,15 +157,19 @@ const EmotionDetail = () => {
     );
   }
 
-  const title = t(titleKey);
-  const validation = t(`emotion_detail.data.${useCopyKey}.validation`);
+  // Apply parentize() to every string surfaced in micro-scenes so emotions
+  // without a dedicated _papa/_maman variant still get gender/tone agreement.
+  const px = (s: string) => parentize(s, parentType);
 
-  const i18nFreeRaw = t(`emotion_detail.data.${useCopyKey}.free`, {
+  const title = px(t(titleKey));
+  const validation = px(t(`emotion_detail.data.${useCopyKey}.validation`));
+
+  const i18nFreeRaw = (t(`emotion_detail.data.${useCopyKey}.free`, {
     returnObjects: true,
-  }) as string[];
-  const i18nLockedRaw = t(`emotion_detail.data.${useCopyKey}.locked`, {
+  }) as string[]).map(px);
+  const i18nLockedRaw = (t(`emotion_detail.data.${useCopyKey}.locked`, {
     returnObjects: true,
-  }) as string[];
+  }) as string[]).map(px);
 
   const toSteps = (arr: string[]): Step[] => arr.map((text) => ({ text }));
 
