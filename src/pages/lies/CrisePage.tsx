@@ -71,7 +71,10 @@ const CrisePage = () => {
 
   const scenario = useMemo(() => getScenario(ctx, parent, situation), [ctx, parent, situation]);
 
-  const savedSessions = useMemo(() => listSavedSessions(), [sessionsTick, guidedOpen]);
+  const savedSessions = useMemo(
+    () => listSavedSessions().sort((a, b) => b.saved.lastTickAt - a.saved.lastTickAt),
+    [sessionsTick, guidedOpen]
+  );
   const currentKey = sessionKey(ctx, parent, situation);
 
   useEffect(() => {
