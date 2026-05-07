@@ -23,7 +23,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import { CheckCircle2, KeyRound, LogIn, ArrowRight, ShieldCheck } from "lucide-react";
+import { CheckCircle2, KeyRound, LogIn, ArrowRight, ShieldCheck, Mail } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 type LinkState =
   | "checking" // Lecture du hash en cours
