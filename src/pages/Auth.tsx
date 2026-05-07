@@ -4,6 +4,7 @@ import { useTranslation, Trans } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { motion } from "framer-motion";
+import { PREMIUM_SCOPE_LABEL } from "@/lib/premiumOffer";
 
 const Auth = () => {
   const navigate = useNavigate();

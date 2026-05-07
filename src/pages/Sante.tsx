@@ -4,6 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import SectionBlock from "@/components/SectionBlock";
 import { Calendar, Pill, HeartPulse, Sparkles, ChevronRight, Lock } from "lucide-react";
+import { PREMIUM_CTA } from "@/lib/premiumOffer";
 
 const Sante = () => {
   const navigate = useNavigate();

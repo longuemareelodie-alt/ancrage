@@ -22,6 +22,7 @@ import StyleSyncStatus from "@/components/StyleSyncStatus";
 import SpeechPrefs from "@/components/SpeechPrefs";
 import PronunciationLexicon from "@/components/PronunciationLexicon";
 import SupportContactDialog from "@/components/SupportContactDialog";
+import { PREMIUM_CTA, PREMIUM_FULL_ACCESS_LABEL, PREMIUM_LIFETIME_LABEL } from "@/lib/premiumOffer";
 interface Note {
   id: string;
   title: string;
