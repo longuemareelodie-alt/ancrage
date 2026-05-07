@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Download, PlayCircle, ShieldAlert, Trash2 } from "lucide-react";
-import CriseGuided, { listSavedSessions, clearSavedFor, sessionKey } from "@/components/lies/CriseGuided";
+import CriseGuided, { listSavedSessions, clearSavedFor, sessionKey, loadSavedFor } from "@/components/lies/CriseGuided";
+import { RotateCw } from "lucide-react";
 import { jsPDF } from "jspdf";
 import LiesShell from "@/components/lies/LiesShell";
 import {
@@ -227,18 +228,44 @@ const CrisePage = () => {
         </div>
       </div>
 
-      <div className="mb-5">
-        <Button
-          onClick={() => setGuidedOpen(true)}
-          className="w-full bg-[hsl(var(--lies))] hover:bg-[hsl(var(--lies)/0.9)] text-[hsl(var(--lies-foreground))] py-6 text-base"
-        >
-          <PlayCircle className="mr-2 h-5 w-5" />
-          Lancer le mode crise guidé
-        </Button>
-        <p className="mt-2 text-center text-xs text-muted-foreground">
-          Étapes plein écran, minuteur, checklist sécurité.
-        </p>
-      </div>
+      {(() => {
+        const currentSaved = loadSavedFor(currentKey);
+        const canResume = !!currentSaved && currentSaved.phase !== "recap";
+        const resumeLabel =
+          currentSaved?.phase === "safety"
+            ? "Sécurité"
+            : currentSaved?.phase === "steps"
+            ? `Étape ${currentSaved.stepIdx + 1}/${currentSaved.stepsLen}`
+            : "";
+        return (
+          <div className="mb-5 space-y-2">
+            {canResume && (
+              <Button
+                onClick={() => setGuidedOpen(true)}
+                variant="outline"
+                className="w-full border-2 border-[hsl(var(--lies))] text-[hsl(var(--lies))] hover:bg-[hsl(var(--lies-soft))] py-5 text-base"
+              >
+                <RotateCw className="mr-2 h-5 w-5" />
+                Reprendre ma session{resumeLabel ? ` · ${resumeLabel}` : ""}
+              </Button>
+            )}
+            <Button
+              onClick={() => {
+                if (canResume) clearSavedFor(currentKey);
+                setSessionsTick((n) => n + 1);
+                setGuidedOpen(true);
+              }}
+              className="w-full bg-[hsl(var(--lies))] hover:bg-[hsl(var(--lies)/0.9)] text-[hsl(var(--lies-foreground))] py-6 text-base"
+            >
+              <PlayCircle className="mr-2 h-5 w-5" />
+              {canResume ? "Recommencer une nouvelle session" : "Lancer le mode crise guidé"}
+            </Button>
+            <p className="mt-2 text-center text-xs text-muted-foreground">
+              Étapes plein écran, minuteur, checklist sécurité.
+            </p>
+          </div>
+        );
+      })()}
 
       {savedSessions.length > 0 && (
         <div className="mb-5 rounded-2xl border border-border bg-card p-4">
