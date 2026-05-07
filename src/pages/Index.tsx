@@ -1009,6 +1009,65 @@ const Index = () => {
         </div>
       </SectionBlock>
 
+      {/* Bloc dédié "Liés autrement" — fond vert doux */}
+      <section
+        className="px-4 py-10"
+        style={{ backgroundColor: "#F0F7F4" }}
+        aria-labelledby="lies-autrement-title"
+      >
+        <div className="mx-auto max-w-md space-y-5">
+          <div className="space-y-2 text-center">
+            <p className="text-3xl" aria-hidden>🤝</p>
+            <h2
+              id="lies-autrement-title"
+              className="text-xl font-bold md:text-2xl"
+              style={{ color: "#3F7A60" }}
+            >
+              Et si ton enfant avance autrement ?
+            </h2>
+          </div>
+          <div className="space-y-3 text-sm leading-relaxed text-foreground/85">
+            <p>
+              Tu gères chaque jour avec un enfant TSA, TDAH, DYS, sourd, ou pas encore diagnostiqué.
+            </p>
+            <p>
+              Tu portes double — ton propre système nerveux, et celui de ton enfant qui déborde.
+            </p>
+            <p className="font-semibold">Ancrage a pensé à toi aussi.</p>
+            <p>
+              <strong>« Liés autrement »</strong> c'est ton espace dans Ancrage :
+            </p>
+            <ul className="space-y-2 pl-1">
+              {[
+                "Apprendre la LSF pour communiquer autrement",
+                "Comprendre le trouble de ton enfant",
+                "Savoir quoi faire pendant une crise — à la maison, dehors",
+                "Des activités adaptées par âge et par trouble",
+                "Une communauté de parents qui vivent la même chose",
+              ].map((item) => (
+                <li key={item} className="flex items-start gap-2">
+                  <Check className="h-4 w-4 shrink-0 mt-0.5" style={{ color: "#3F7A60" }} aria-hidden />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+            <p className="italic pt-1">
+              Tu n'as pas à tout porter seule.
+              <br />
+              Et tu n'as pas à tout expliquer pour être comprise.
+            </p>
+          </div>
+          <div className="pt-2 text-center">
+            <Link
+              to="/lies-autrement"
+              className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-md transition-all hover:shadow-lg hover:opacity-95"
+            >
+              Découvrir « Liés autrement » →
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* Timeline globale — ce qui change semaine après semaine */}
       <SectionBlock>
         <div className="space-y-5">
@@ -1052,6 +1111,30 @@ const Index = () => {
               ))}
             </div>
           </div>
+
+          {/* Carte "Liés autrement" — accent vert doux pour différencier */}
+          <Link
+            to="/lies-autrement"
+            className="mt-4 block rounded-xl border-2 p-4 text-start transition-all hover:shadow-md"
+            style={{ borderColor: "#7DB89F", backgroundColor: "#F0F7F4" }}
+          >
+            <div className="flex items-start gap-3">
+              <span className="text-2xl" aria-hidden>🤝</span>
+              <div className="flex-1 min-w-0">
+                <p className="font-bold text-sm" style={{ color: "#3F7A60" }}>
+                  Liés autrement
+                </p>
+                <p className="mt-1 text-xs text-foreground/80 leading-relaxed">
+                  Pour les familles qui avancent à leur rythme.
+                  <br />
+                  LSF · Ressources troubles · Gérer les crises · Activités adaptées · Communauté parents
+                </p>
+                <p className="mt-2 text-xs font-semibold" style={{ color: "#3F7A60" }}>
+                  → En savoir plus
+                </p>
+              </div>
+            </div>
+          </Link>
 
           <p className="mt-4 mb-2 text-xs text-muted-foreground italic px-2">
             🤍 {t("home.price.reassurance")}
