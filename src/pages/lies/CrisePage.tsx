@@ -187,6 +187,15 @@ const CrisePage = () => {
     }),
     [sessionsTick, guidedOpen, favSet]
   );
+  const filteredSessions = useMemo(() => {
+    if (filterCtx === "all" && filterParent === "all") return savedSessions;
+    return savedSessions.filter(({ key }) => {
+      const [c, p] = key.split("|");
+      if (filterCtx !== "all" && c !== filterCtx) return false;
+      if (filterParent !== "all" && p !== filterParent) return false;
+      return true;
+    });
+  }, [savedSessions, filterCtx, filterParent]);
   const currentKey = sessionKey(ctx, parent, situation);
 
   function toggleFavorite(k: string) {
