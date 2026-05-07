@@ -15,7 +15,8 @@ import { useEffect, useState } from "react";
 
 export type SchoolContext = "school" | "work" | "holiday";
 
-const STORAGE_KEY = "ancrage_school_context";
+export const SCHOOL_CONTEXT_STORAGE_KEY = "ancrage_school_context";
+const STORAGE_KEY = SCHOOL_CONTEXT_STORAGE_KEY;
 export const SCHOOL_CONTEXT_CHOSEN_KEY = "ancrage_school_context_chosen";
 export const DEFAULT_SCHOOL_CONTEXT: SchoolContext = "school";
 

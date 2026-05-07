@@ -12,7 +12,8 @@ import { supabase } from "@/integrations/supabase/client";
 
 export type ParentType = "maman" | "papa";
 
-const STORAGE_KEY = "ancrage_parent_type";
+export const PARENT_TYPE_STORAGE_KEY = "ancrage_parent_type";
+const STORAGE_KEY = PARENT_TYPE_STORAGE_KEY;
 const SYNC_KEY = "ancrage_parent_type_sync";
 
 export const PARENT_TYPE_LABELS: Record<ParentType, string> = {
