@@ -61,7 +61,7 @@ export default function ParentTypeOnboarding() {
         </div>
 
         <button
-          onClick={() => choose("maman")}
+          onClick={skip}
           className="mt-4 w-full text-center text-xs text-muted-foreground underline-offset-2 hover:underline"
         >
           Plus tard
