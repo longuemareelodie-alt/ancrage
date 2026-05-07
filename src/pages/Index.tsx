@@ -1180,6 +1180,9 @@ const Index = () => {
               🤍 {t("home.final.reassurance")}
             </p>
             <CTAButton to="#" onClick={handlePayment} loading={paymentLoading}>{t("home.final.cta")}</CTAButton>
+            <p className="text-[11px] text-muted-foreground flex items-center justify-center gap-1.5">
+              <Lock className="h-3 w-3" /> Paiement sécurisé · Paiement unique · Accès à vie
+            </p>
           </div>
         </div>
       </SectionBlock>
