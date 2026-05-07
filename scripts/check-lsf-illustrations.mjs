@@ -69,16 +69,18 @@ async function inspectFile(filePath) {
     if (buf.length < MIN_FILE_BYTES) {
       return { ok: false, reason: `too_small(${buf.length}b)`, size: buf.length };
     }
-    // JPEG magic bytes : FF D8 FF
-    if (!(buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff)) {
-      return { ok: false, reason: "not_jpeg_header", size: buf.length };
+    const isJpeg =
+      buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff &&
+      buf[buf.length - 2] === 0xff && buf[buf.length - 1] === 0xd9;
+    const isPng =
+      buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4e && buf[3] === 0x47;
+    const isWebp =
+      buf[0] === 0x52 && buf[1] === 0x49 && buf[2] === 0x46 && buf[3] === 0x46 &&
+      buf[8] === 0x57 && buf[9] === 0x45 && buf[10] === 0x42 && buf[11] === 0x50;
+    if (!(isJpeg || isPng || isWebp)) {
+      return { ok: false, reason: "unknown_format", size: buf.length };
     }
-    // Marqueur de fin EOI : FF D9
-    const last = buf.length - 1;
-    if (!(buf[last - 1] === 0xff && buf[last] === 0xd9)) {
-      return { ok: false, reason: "truncated_no_eoi", size: buf.length };
-    }
-    return { ok: true, size: buf.length };
+    return { ok: true, size: buf.length, format: isJpeg ? "jpeg" : isPng ? "png" : "webp" };
   } catch (err) {
     if (err.code === "ENOENT") return { ok: false, reason: "missing" };
     return { ok: false, reason: `io_error(${err.code || err.message})` };
