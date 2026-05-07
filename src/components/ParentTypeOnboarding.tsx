@@ -1,17 +1,12 @@
 import { useEffect, useState } from "react";
 import { setParentType, hasChosenParentType, markParentTypeChosen, type ParentType } from "@/lib/parentType";
-import { setSchoolContext, type SchoolContext } from "@/lib/schoolContext";
+import {
+  setSchoolContext,
+  hasChosenSchoolContext,
+  markSchoolContextChosen,
+  type SchoolContext,
+} from "@/lib/schoolContext";
 
-const SCHOOL_CHOSEN_KEY = "ancrage_school_context_chosen";
-
-function hasChosenSchoolContext(): boolean {
-  if (typeof window === "undefined") return true;
-  return localStorage.getItem(SCHOOL_CHOSEN_KEY) === "1";
-}
-function markSchoolContextChosen() {
-  if (typeof window === "undefined") return;
-  localStorage.setItem(SCHOOL_CHOSEN_KEY, "1");
-}
 
 /**
  * First-run modal: 2 steps.
