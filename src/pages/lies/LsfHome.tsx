@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { BookOpen } from "lucide-react";
+import { BookOpen, Sparkles } from "lucide-react";
 import LiesShell from "@/components/lies/LiesShell";
 import { LSF_THEMES } from "@/data/lsfCatalog";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import LsfOnboarding, { isLsfOnboardingDone } from "@/components/lies/LsfOnboarding";
 import imgBebe from "@/assets/lsf/theme-bebe.jpg";
 import imgEmotions from "@/assets/lsf/theme-emotions.jpg";
 import imgRoutine from "@/assets/lsf/theme-routine.jpg";
