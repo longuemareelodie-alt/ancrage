@@ -1,7 +1,27 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Check, ChevronLeft, ChevronRight, Pause, Play, RotateCcw, ShieldCheck, X } from "lucide-react";
+import { Check, ChevronLeft, ChevronRight, Pause, Play, RotateCcw, ShieldCheck, X, Zap, ZapOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CrisisScenario, CrisisContext, CrisisParent, CrisisSituation, SITUATION_LABELS } from "@/data/criseScenarios";
+
+const AUTO_NEXT_KEY = "lies.crise.autonext.v1";
+const AUTO_DELAY_OPTIONS = [3, 5, 10, 15] as const;
+type AutoDelay = (typeof AUTO_DELAY_OPTIONS)[number];
+
+function loadAutoPrefs(): { enabled: boolean; delay: AutoDelay } {
+  try {
+    const raw = localStorage.getItem(AUTO_NEXT_KEY);
+    if (raw) {
+      const p = JSON.parse(raw);
+      const delay = (AUTO_DELAY_OPTIONS as readonly number[]).includes(p.delay) ? (p.delay as AutoDelay) : 5;
+      return { enabled: !!p.enabled, delay };
+    }
+  } catch { /* noop */ }
+  return { enabled: false, delay: 5 };
+}
+
+function saveAutoPrefs(p: { enabled: boolean; delay: AutoDelay }) {
+  try { localStorage.setItem(AUTO_NEXT_KEY, JSON.stringify(p)); } catch { /* noop */ }
+}
 
 type Props = {
   scenario: CrisisScenario;
