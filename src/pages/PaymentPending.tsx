@@ -149,7 +149,7 @@ const PaymentPending = () => {
       return;
     }
 
-    // isInitiationFlow is captured at mount via component state above.
+    
 
     cancelled.current = false;
     let attempt = 0;
