@@ -55,14 +55,13 @@ const BottomNav = () => {
             <li key={item.to} className="flex-1">
               <NavLink
                 to={item.to}
-                end
-                className={({ isActive }) =>
-                  `flex flex-col items-center justify-center gap-0.5 rounded-xl py-1.5 text-[10px] font-medium transition-colors ${
-                    isActive
-                      ? "text-primary"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`
-                }
+                end={item.to !== "/lies-autrement"}
+                className={({ isActive }) => {
+                  const accentColor = item.accent === "lies" ? "text-[hsl(var(--lies))]" : "text-primary";
+                  return `flex flex-col items-center justify-center gap-0.5 rounded-xl py-1.5 text-[10px] font-medium transition-colors ${
+                    isActive ? accentColor : "text-muted-foreground hover:text-foreground"
+                  }`;
+                }}
               >
                 {({ isActive }) => (
                   <>
