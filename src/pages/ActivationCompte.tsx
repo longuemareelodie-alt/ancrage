@@ -40,6 +40,14 @@ const ActivationCompte = () => {
   const [errorDetail, setErrorDetail] = useState("");
   const [hashToForward, setHashToForward] = useState("");
 
+  // « Renvoyer l'email d'activation » : on demande l'adresse à l'utilisateur
+  // puis on déclenche un nouveau lien magique via Supabase. La réponse reste
+  // volontairement générique pour ne pas révéler l'existence d'un compte.
+  const [resendEmail, setResendEmail] = useState("");
+  const [resending, setResending] = useState(false);
+  const [resendInfo, setResendInfo] = useState("");
+  const [resendError, setResendError] = useState("");
+
   // L'email envoyé par le webhook ajoute `?welcome=1`. On le retransmet à
   // /set-password pour qu'il garde le wording « Active ton compte ».
   const isWelcome = searchParams.get("welcome") === "1";
