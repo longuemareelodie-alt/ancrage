@@ -74,8 +74,12 @@ const LsfTheme = () => {
               }`}
             >
               <div className="mb-2 flex items-start justify-between gap-2">
-                <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-background text-3xl">
-                  {sign.emoji}
+                <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl bg-background">
+                  {sign.image ? (
+                    <img src={sign.image} alt="" loading="lazy" className="h-full w-full object-cover" />
+                  ) : (
+                    <span className="text-3xl">{sign.emoji}</span>
+                  )}
                 </div>
                 <button
                   type="button"
