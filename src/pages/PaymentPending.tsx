@@ -51,9 +51,8 @@ const PaymentPending = () => {
   const [screenshotFilename, setScreenshotFilename] = useState<string | null>(null);
   const [capturing, setCapturing] = useState(false);
   const [supportOpen, setSupportOpen] = useState(false);
-  // L'offre Initiation 7 jours autonome a été retirée. On garde la flag à
-  // false pour conserver les chemins de redirection génériques.
-  const isInitiationFlow = false;
+  // L'offre 7 jours autonome a été retirée — la confirmation et la
+  // redirection se font toujours via le flux Premium.
   const screenshotsAvailable = isScreenshotSupported();
   const cancelled = useRef(false);
   const loggedRef = useRef(false);
