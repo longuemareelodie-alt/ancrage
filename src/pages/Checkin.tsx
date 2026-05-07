@@ -13,6 +13,7 @@ import { useMolliePayment } from "@/hooks/useMolliePayment";
 import BadgeCelebration from "@/components/BadgeCelebration";
 import MicroRewardPopup from "@/components/MicroRewardPopup";
 import QuickBackLinks from "@/components/QuickBackLinks";
+import { PREMIUM_CTA } from "@/lib/premiumOffer";
 
 type Step = "select" | "response" | "teaser" | "action" | "after" | "evolution" | "validation" | "summary";
 
@@ -778,7 +779,7 @@ const Checkin = () => {
                   to="/aller-plus-loin"
                   className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25"
                 >
-                  Débloquer le programme complet
+                  {PREMIUM_CTA.unlock_full_program}
                 </Link>
               </div>
             )}

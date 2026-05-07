@@ -4,6 +4,7 @@ import { useTranslation, Trans } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { motion } from "framer-motion";
+import { PREMIUM_SCOPE_LABEL } from "@/lib/premiumOffer";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -118,7 +119,7 @@ const Auth = () => {
               </p>
               <p className="text-xs text-muted-foreground leading-relaxed">
                 Les comptes ne sont créés qu'après un paiement. Découvre l'offre
-                Premium et son programme complet.
+                Premium et son {PREMIUM_SCOPE_LABEL}.
               </p>
               <Link
                 to="/"
