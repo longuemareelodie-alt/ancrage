@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
-import { Download, ShieldAlert } from "lucide-react";
+import { Download, PlayCircle, ShieldAlert } from "lucide-react";
+import CriseGuided from "@/components/lies/CriseGuided";
 import { jsPDF } from "jspdf";
 import LiesShell from "@/components/lies/LiesShell";
 import {
@@ -65,6 +66,7 @@ const CrisePage = () => {
   const [ctx, setCtx] = useState<CrisisContext>("maison");
   const [parent, setParent] = useState<CrisisParent>("maman");
   const [situation, setSituation] = useState<CrisisSituation>("un-enfant-avec-fratrie");
+  const [guidedOpen, setGuidedOpen] = useState(false);
 
   const scenario = useMemo(() => getScenario(ctx, parent, situation), [ctx, parent, situation]);
 
@@ -131,6 +133,19 @@ const CrisePage = () => {
         </div>
       </div>
 
+      <div className="mb-5">
+        <Button
+          onClick={() => setGuidedOpen(true)}
+          className="w-full bg-[hsl(var(--lies))] hover:bg-[hsl(var(--lies)/0.9)] text-[hsl(var(--lies-foreground))] py-6 text-base"
+        >
+          <PlayCircle className="mr-2 h-5 w-5" />
+          Lancer le mode crise guidé
+        </Button>
+        <p className="mt-2 text-center text-xs text-muted-foreground">
+          Étapes plein écran, minuteur, checklist sécurité.
+        </p>
+      </div>
+
       <section className="mb-5 rounded-2xl border border-[hsl(var(--lies))] bg-[hsl(var(--lies-soft))] p-4">
         <h2 className="mb-3 font-serif text-xl text-foreground">Pendant la crise</h2>
         <ol className="space-y-2">
@@ -181,6 +196,16 @@ const CrisePage = () => {
       <div className="rounded-xl border border-border bg-muted/30 p-3 text-xs text-muted-foreground">
         Ces conseils s'appliquent notamment aux contextes : {CRISIS_TROUBLES_COVERED.join(" · ")}.
       </div>
+
+      {guidedOpen && (
+        <CriseGuided
+          scenario={scenario}
+          context={ctx}
+          parent={parent}
+          situation={situation}
+          onClose={() => setGuidedOpen(false)}
+        />
+      )}
     </LiesShell>
   );
 };
