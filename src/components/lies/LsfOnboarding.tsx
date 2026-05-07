@@ -252,23 +252,57 @@ const LsfOnboarding = ({ onDismiss }: LsfOnboardingProps) => {
                 <p className="mb-3 text-xs text-muted-foreground">{QUESTIONS[step].hint}</p>
               )}
               <div className="space-y-2">
-                {QUESTIONS[step].options.map((opt, idx) => (
-                  <button
-                    key={opt.label}
-                    type="button"
-                    onClick={() => choose(QUESTIONS[step].id, idx)}
-                    className="w-full rounded-xl border border-border bg-background px-4 py-3 text-left text-sm transition-colors hover:border-[hsl(var(--lies))] hover:bg-[hsl(var(--lies))]/5 focus:outline-none focus:ring-2 focus:ring-[hsl(var(--lies))]/30"
-                  >
-                    {opt.label}
-                  </button>
-                ))}
+                {QUESTIONS[step].options.map((opt, idx) => {
+                  const selected = answers[QUESTIONS[step].id] === idx;
+                  return (
+                    <button
+                      key={opt.label}
+                      type="button"
+                      onClick={() => choose(QUESTIONS[step].id, idx)}
+                      className={`w-full rounded-xl border px-4 py-3 text-left text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-[hsl(var(--lies))]/30 ${
+                        selected
+                          ? "border-[hsl(var(--lies))] bg-[hsl(var(--lies))]/10"
+                          : "border-border bg-background hover:border-[hsl(var(--lies))] hover:bg-[hsl(var(--lies))]/5"
+                      }`}
+                    >
+                      {opt.label}
+                    </button>
+                  );
+                })}
+                <button
+                  type="button"
+                  onClick={() => skip(QUESTIONS[step].id)}
+                  className="inline-flex w-full items-center justify-center gap-1.5 rounded-xl border border-dashed border-border bg-transparent px-4 py-2.5 text-xs font-medium text-muted-foreground transition-colors hover:border-[hsl(var(--lies))] hover:text-[hsl(var(--lies))]"
+                >
+                  <HelpCircle className="h-3.5 w-3.5" />
+                  Je ne sais pas / je préfère passer
+                </button>
+              </div>
+
+              <div className="mt-3 flex items-center justify-between text-xs">
+                <button
+                  type="button"
+                  onClick={back}
+                  disabled={step === 0}
+                  className="inline-flex items-center gap-1 font-medium text-muted-foreground transition-colors hover:text-foreground disabled:opacity-40 disabled:hover:text-muted-foreground"
+                >
+                  <ChevronLeft className="h-3 w-3" />
+                  Précédent
+                </button>
+                <button
+                  type="button"
+                  onClick={dismiss}
+                  className="font-medium text-muted-foreground hover:text-foreground"
+                >
+                  Aller directement aux thèmes →
+                </button>
               </div>
             </motion.div>
           </AnimatePresence>
         </>
       )}
 
-      {done && theme && (
+      {done && (
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
@@ -276,24 +310,36 @@ const LsfOnboarding = ({ onDismiss }: LsfOnboardingProps) => {
           className="space-y-4"
         >
           <p className="rounded-xl bg-background/70 p-3 text-sm text-foreground/85">
-            On te suggère de commencer par&nbsp;:
+            {confident
+              ? "On te suggère de commencer par :"
+              : "Tu as préféré passer plusieurs questions — voici un point de départ doux, mais explore librement :"}
           </p>
 
-          <Link
-            to={`/lies-autrement/lsf/${theme.slug}`}
-            className="flex items-start gap-3 rounded-xl border border-border bg-background p-4 shadow-sm transition-all hover:border-[hsl(var(--lies))] hover:shadow-soft"
-          >
-            <span className="text-3xl" aria-hidden="true">
-              {theme.emoji}
-            </span>
-            <div className="min-w-0 flex-1">
-              <p className="font-serif text-lg font-semibold">{theme.title}</p>
-              <p className="mt-1 text-sm text-muted-foreground">{theme.description}</p>
-              <span className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-[hsl(var(--lies))]">
-                Commencer ce module <ArrowRight className="h-3 w-3" />
+          {theme && (
+            <Link
+              to={`/lies-autrement/lsf/${theme.slug}`}
+              className="flex items-start gap-3 rounded-xl border border-border bg-background p-4 shadow-sm transition-all hover:border-[hsl(var(--lies))] hover:shadow-soft"
+            >
+              <span className="text-3xl" aria-hidden="true">
+                {theme.emoji}
               </span>
+              <div className="min-w-0 flex-1">
+                <p className="font-serif text-lg font-semibold">{theme.title}</p>
+                <p className="mt-1 text-sm text-muted-foreground">{theme.description}</p>
+                <span className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-[hsl(var(--lies))]">
+                  Commencer ce module <ArrowRight className="h-3 w-3" />
+                </span>
+              </div>
+            </Link>
+          )}
+
+          {!confident && (
+            <div className="rounded-xl border border-dashed border-border bg-background/40 p-3 text-xs text-muted-foreground">
+              Tu peux aussi parcourir les 4 thèmes en bas de page, ou aller
+              directement au mode <strong>Flashcards</strong> pour piocher des
+              signes au hasard.
             </div>
-          </Link>
+          )}
 
           <div className="flex items-center justify-between gap-3">
             <button
