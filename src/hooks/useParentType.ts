@@ -5,6 +5,7 @@ import {
   hasChosenParentType,
   setParentType as setParentTypeLib,
   PARENT_TYPE_CHOSEN_KEY,
+  PARENT_TYPE_STORAGE_KEY,
 } from "@/lib/parentType";
 
 /**
