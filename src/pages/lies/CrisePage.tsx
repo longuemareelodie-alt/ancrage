@@ -352,13 +352,23 @@ const CrisePage = () => {
                       <span className="text-muted-foreground">· {elapsedStr}</span>
                     </div>
                   </button>
-                  <button
-                    onClick={() => setPendingDelete(key)}
-                    className="rounded-full p-1.5 text-muted-foreground hover:text-destructive"
-                    aria-label="Supprimer la session"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
+                  <div className="flex flex-col gap-1">
+                    <button
+                      onClick={() => resumeSession(key)}
+                      className="flex items-center gap-1 rounded-full bg-[hsl(var(--lies))] px-3 py-1.5 text-xs font-medium text-[hsl(var(--lies-foreground))] hover:bg-[hsl(var(--lies)/0.9)]"
+                      aria-label={`Reprendre maintenant à ${phaseLabel}`}
+                    >
+                      <Play className="h-3.5 w-3.5" />
+                      Reprendre
+                    </button>
+                    <button
+                      onClick={() => setPendingDelete(key)}
+                      className="self-end rounded-full p-1.5 text-muted-foreground hover:text-destructive"
+                      aria-label="Supprimer la session"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
                 </li>
               );
             })}
