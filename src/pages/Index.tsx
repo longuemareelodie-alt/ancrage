@@ -1058,12 +1058,14 @@ const Index = () => {
             </p>
           </div>
           <div className="pt-2 text-center">
-            <Link
-              to="/lies-autrement"
-              className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-md transition-all hover:shadow-lg hover:opacity-95"
+            <button
+              type="button"
+              onClick={handlePayment}
+              disabled={paymentLoading}
+              className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-md transition-all hover:shadow-lg hover:opacity-95 disabled:opacity-60"
             >
-              Découvrir « Liés autrement » →
-            </Link>
+              {paymentLoading ? "Chargement…" : "Découvrir « Liés autrement » →"}
+            </button>
           </div>
         </div>
       </section>
@@ -1113,9 +1115,11 @@ const Index = () => {
           </div>
 
           {/* Carte "Liés autrement" — accent vert doux pour différencier */}
-          <Link
-            to="/lies-autrement"
-            className="mt-4 block rounded-xl border-2 p-4 text-start transition-all hover:shadow-md"
+          <button
+            type="button"
+            onClick={handlePayment}
+            disabled={paymentLoading}
+            className="mt-4 block w-full rounded-xl border-2 p-4 text-start transition-all hover:shadow-md disabled:opacity-60"
             style={{ borderColor: "#7DB89F", backgroundColor: "#F0F7F4" }}
           >
             <div className="flex items-start gap-3">
@@ -1130,11 +1134,11 @@ const Index = () => {
                   LSF · Ressources troubles · Gérer les crises · Activités adaptées · Communauté parents
                 </p>
                 <p className="mt-2 text-xs font-semibold" style={{ color: "#3F7A60" }}>
-                  → En savoir plus
+                  → {paymentLoading ? "Chargement…" : "En savoir plus"}
                 </p>
               </div>
             </div>
-          </Link>
+          </button>
 
           <p className="mt-4 mb-2 text-xs text-muted-foreground italic px-2">
             🤍 {t("home.price.reassurance")}
