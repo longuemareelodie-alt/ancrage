@@ -344,6 +344,57 @@ export default function CriseGuided({ scenario, context, parent, situation, onCl
                 </button>
               </div>
 
+              {/* Auto-suivant : préférence + indicateur de compte à rebours */}
+              <div className="mt-3 rounded-2xl border border-border bg-card p-3">
+                <div className="flex items-center justify-between gap-3">
+                  <button
+                    type="button"
+                    onClick={() => updateAutoPrefs({ ...autoPrefs, enabled: !autoPrefs.enabled })}
+                    className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
+                      autoPrefs.enabled
+                        ? "bg-[hsl(var(--lies))] text-[hsl(var(--lies-foreground))]"
+                        : "border border-border text-muted-foreground hover:text-foreground"
+                    }`}
+                    aria-pressed={autoPrefs.enabled}
+                  >
+                    {autoPrefs.enabled ? <Zap className="h-3.5 w-3.5" /> : <ZapOff className="h-3.5 w-3.5" />}
+                    Auto-suivant
+                  </button>
+                  <div className="flex items-center gap-1">
+                    {AUTO_DELAY_OPTIONS.map((d) => (
+                      <button
+                        key={d}
+                        type="button"
+                        onClick={() => updateAutoPrefs({ enabled: autoPrefs.enabled, delay: d })}
+                        disabled={!autoPrefs.enabled}
+                        className={`rounded-full px-2 py-1 text-xs transition-colors ${
+                          autoPrefs.delay === d && autoPrefs.enabled
+                            ? "bg-[hsl(var(--lies-soft))] text-[hsl(var(--lies))] font-semibold"
+                            : "text-muted-foreground hover:text-foreground"
+                        } disabled:opacity-40`}
+                        aria-label={`Délai ${d} secondes`}
+                      >
+                        {d}s
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                {autoCountdown != null && (
+                  <div className="mt-2 flex items-center justify-between gap-3 rounded-xl bg-[hsl(var(--lies-soft))] px-3 py-2">
+                    <span className="text-xs text-foreground">
+                      Étape suivante dans <span className="font-mono font-semibold tabular-nums">{autoCountdown}s</span>
+                    </span>
+                    <button
+                      type="button"
+                      onClick={cancelAutoNext}
+                      className="text-xs font-medium text-[hsl(var(--lies))] hover:underline"
+                    >
+                      Annuler
+                    </button>
+                  </div>
+                )}
+              </div>
+
               <div className="mt-3 text-center text-xs text-muted-foreground">
                 Respirez. Vous n'avez pas à tout faire vite.
               </div>
