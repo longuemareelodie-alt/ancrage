@@ -386,29 +386,33 @@ export default function CriseGuided({ scenario, context, parent, situation, onCl
               <p className="mb-5 text-sm text-muted-foreground">
                 Cochez ce qui est fait. On ne passe à l'étape suivante qu'une fois ces points couverts.
               </p>
-              <ul className="space-y-2">
+              <ul className="space-y-2" role="list">
                 {SAFETY_CHECKLIST.map((c) => {
                   const on = !!checks[c.key];
                   return (
                     <li key={c.key}>
                       <button
+                        type="button"
+                        role="checkbox"
+                        aria-checked={on}
                         onClick={() => setChecks((p) => ({ ...p, [c.key]: !on }))}
-                        className={`flex w-full items-start gap-3 rounded-2xl border p-3 text-left transition-colors ${
+                        className={`flex w-full items-start gap-3 rounded-2xl border-2 p-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--lies))] focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
                           on
                             ? "border-[hsl(var(--lies))] bg-[hsl(var(--lies-soft))]"
                             : "border-border bg-card hover:border-[hsl(var(--lies))]"
                         }`}
                       >
                         <span
-                          className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border ${
+                          aria-hidden="true"
+                          className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border-2 ${
                             on
                               ? "border-[hsl(var(--lies))] bg-[hsl(var(--lies))] text-[hsl(var(--lies-foreground))]"
-                              : "border-border bg-background"
+                              : "border-foreground/40 bg-background"
                           }`}
                         >
                           {on && <Check className="h-3.5 w-3.5" />}
                         </span>
-                        <span className="text-sm text-foreground">{c.label}</span>
+                        <span className="text-sm font-medium text-foreground">{c.label}</span>
                       </button>
                     </li>
                   );
