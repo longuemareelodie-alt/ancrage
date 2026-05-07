@@ -1053,6 +1053,30 @@ const Index = () => {
             </div>
           </div>
 
+          {/* Carte "Liés autrement" — accent vert doux pour différencier */}
+          <Link
+            to="/lies-autrement"
+            className="mt-4 block rounded-xl border-2 p-4 text-start transition-all hover:shadow-md"
+            style={{ borderColor: "#7DB89F", backgroundColor: "#F0F7F4" }}
+          >
+            <div className="flex items-start gap-3">
+              <span className="text-2xl" aria-hidden>🤝</span>
+              <div className="flex-1 min-w-0">
+                <p className="font-bold text-sm" style={{ color: "#3F7A60" }}>
+                  Liés autrement
+                </p>
+                <p className="mt-1 text-xs text-foreground/80 leading-relaxed">
+                  Pour les familles qui avancent à leur rythme.
+                  <br />
+                  LSF · Ressources troubles · Gérer les crises · Activités adaptées · Communauté parents
+                </p>
+                <p className="mt-2 text-xs font-semibold" style={{ color: "#3F7A60" }}>
+                  → En savoir plus
+                </p>
+              </div>
+            </div>
+          </Link>
+
           <p className="mt-4 mb-2 text-xs text-muted-foreground italic px-2">
             🤍 {t("home.price.reassurance")}
           </p>
