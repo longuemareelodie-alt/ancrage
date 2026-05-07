@@ -67,8 +67,38 @@ const CrisePage = () => {
   const [parent, setParent] = useState<CrisisParent>("maman");
   const [situation, setSituation] = useState<CrisisSituation>("un-enfant-avec-fratrie");
   const [guidedOpen, setGuidedOpen] = useState(false);
+  const [sessionsTick, setSessionsTick] = useState(0);
 
   const scenario = useMemo(() => getScenario(ctx, parent, situation), [ctx, parent, situation]);
+
+  const savedSessions = useMemo(() => listSavedSessions(), [sessionsTick, guidedOpen]);
+  const currentKey = sessionKey(ctx, parent, situation);
+
+  useEffect(() => {
+    const onFocus = () => setSessionsTick((n) => n + 1);
+    window.addEventListener("focus", onFocus);
+    return () => window.removeEventListener("focus", onFocus);
+  }, []);
+
+  function parseKey(k: string): { context: CrisisContext; parent: CrisisParent; situation: CrisisSituation } | null {
+    const [c, p, s] = k.split("|");
+    if (!c || !p || !s) return null;
+    return { context: c as CrisisContext, parent: p as CrisisParent, situation: s as CrisisSituation };
+  }
+
+  function resumeSession(k: string) {
+    const parsed = parseKey(k);
+    if (!parsed) return;
+    setCtx(parsed.context);
+    setParent(parsed.parent);
+    setSituation(parsed.situation);
+    setGuidedOpen(true);
+  }
+
+  function deleteSession(k: string) {
+    clearSavedFor(k);
+    setSessionsTick((n) => n + 1);
+  }
 
   return (
     <LiesShell
