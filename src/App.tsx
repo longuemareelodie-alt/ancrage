@@ -27,6 +27,7 @@ import Parcours from "./pages/Parcours";
 import Auth from "./pages/Auth";
 import Profil from "./pages/Profil";
 import ProfilStyle from "./pages/ProfilStyle";
+import Parametres from "./pages/Parametres";
 import ResetPassword from "./pages/ResetPassword";
 import SetPassword from "./pages/SetPassword";
 import ActivationCompte from "./pages/ActivationCompte";
@@ -114,6 +115,7 @@ const AnimatedRoutes = () => {
         <Route path="/payment-pending" element={<ProtectedRoute><PageTransition><PaymentPending /></PageTransition></ProtectedRoute>} />
         <Route path="/profil" element={<PaidRoute><PageTransition><Profil /></PageTransition></PaidRoute>} />
         <Route path="/profil/style" element={<PaidRoute><PageTransition><ProfilStyle /></PageTransition></PaidRoute>} />
+        <Route path="/parametres" element={<PageTransition><Parametres /></PageTransition>} />
         <Route path="/reset-password" element={<PageTransition><ResetPassword /></PageTransition>} />
         <Route path="/set-password" element={<PageTransition><SetPassword /></PageTransition>} />
         <Route path="/activation-compte" element={<PageTransition><ActivationCompte /></PageTransition>} />
