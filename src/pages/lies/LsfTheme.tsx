@@ -119,6 +119,7 @@ const LsfTheme = () => {
                   Sématos
                 </a>
               </div>
+            </article>
           );
         })}
       </div>
