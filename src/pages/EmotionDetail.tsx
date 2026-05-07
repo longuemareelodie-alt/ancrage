@@ -27,6 +27,9 @@ import {
   type ResolvedStyle,
 } from "@/lib/autoStyle";
 import { getEmotionCTA } from "@/data/emotionCTAs";
+import { useParentType } from "@/hooks/useParentType";
+
+const PAPA_VARIANT_KEYS = new Set(["panique", "hypervigilance", "rumination", "explosion"]);
 
 const STYLE_OPTIONS: {
   value: ActionStyle;
