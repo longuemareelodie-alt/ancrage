@@ -21,6 +21,11 @@ const THEME_IMAGES: Record<string, string> = {
 const LsfHome = () => {
   const { user } = useAuth();
   const [learnedKeys, setLearnedKeys] = useState<Set<string>>(new Set());
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
+  useEffect(() => {
+    setShowOnboarding(!isLsfOnboardingDone());
+  }, []);
 
   useEffect(() => {
     if (!user) return;
