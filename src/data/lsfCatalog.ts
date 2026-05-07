@@ -100,12 +100,12 @@ export const LSF_THEMES: LsfTheme[] = [
     description: "Nommer les personnes qui comptent dans la vie de l'enfant.",
     emoji: "👨‍👩‍👧",
     signs: [
-      { key: "fam-maman", label: "Maman", gesture: "Bout des doigts qui touchent la joue, légère caresse.", emoji: "👩" },
-      { key: "fam-papa", label: "Papa", gesture: "Pouce qui touche le front (variante : la tempe).", emoji: "👨" },
-      { key: "fam-frere", label: "Frère", gesture: "Index pointé vers le menton puis qui se joint à l'autre index.", emoji: "🧒" },
-      { key: "fam-soeur", label: "Sœur", gesture: "Index qui suit la mâchoire puis se joint à l'autre index.", emoji: "👧" },
-      { key: "fam-grand-parent", label: "Grand-parent", gesture: "Main qui descend du menton en mimant une barbe ou des cheveux.", emoji: "👴" },
-      { key: "fam-ami", label: "Ami", gesture: "Index crochetés l'un dans l'autre, à hauteur de poitrine.", emoji: "🤝" },
+      { key: "fam-maman", label: "Maman", gesture: "Bout des doigts qui touchent la joue, légère caresse.", emoji: "👩", image: famMaman },
+      { key: "fam-papa", label: "Papa", gesture: "Pouce qui touche le front (variante : la tempe).", emoji: "👨", image: famPapa },
+      { key: "fam-frere", label: "Frère", gesture: "Index pointé vers le menton puis qui se joint à l'autre index.", emoji: "🧒", image: famFrere },
+      { key: "fam-soeur", label: "Sœur", gesture: "Index qui suit la mâchoire puis se joint à l'autre index.", emoji: "👧", image: famSoeur },
+      { key: "fam-grand-parent", label: "Grand-parent", gesture: "Main qui descend du menton en mimant une barbe ou des cheveux.", emoji: "👴", image: famGrandParent },
+      { key: "fam-ami", label: "Ami", gesture: "Index crochetés l'un dans l'autre, à hauteur de poitrine.", emoji: "🤝", image: famAmi },
     ],
   },
 ];
