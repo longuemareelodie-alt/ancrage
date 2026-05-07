@@ -13,7 +13,7 @@ const PaymentSuccess = () => {
   const [firstName, setFirstName] = useState("");
   const [hasPendingCheckin, setHasPendingCheckin] = useState(false);
   const [latestPaymentId, setLatestPaymentId] = useState<string | null>(null);
-  const [latestProduct, setLatestProduct] = useState<string | null>(null);
+  
   const [downloadingInvoice, setDownloadingInvoice] = useState(false);
 
   useEffect(() => {
@@ -63,9 +63,6 @@ const PaymentSuccess = () => {
       .then(({ data }) => {
         if (data?.payment_id) {
           setLatestPaymentId(data.payment_id);
-          const product =
-            (data.raw && typeof data.raw === "object" && (data.raw as any).product) || null;
-          setLatestProduct(product);
         }
       });
   }, [user]);
