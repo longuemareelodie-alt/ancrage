@@ -32,7 +32,7 @@ import { useSchoolContext } from "@/lib/schoolContext";
 import { parentize } from "@/lib/parentize";
 
 const PAPA_VARIANT_KEYS = new Set(["panique", "hypervigilance", "rumination", "explosion"]);
-const SCHOOL_VARIANT_KEYS = PAPA_VARIANT_KEYS;
+const CONTEXT_VARIANT_KEYS = PAPA_VARIANT_KEYS;
 
 const STYLE_OPTIONS: {
   value: ActionStyle;
