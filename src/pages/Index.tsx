@@ -42,6 +42,7 @@ const Index = () => {
   const { navigateWithTransition } = useRouteTransition();
   const [parentType, setParentType] = useParentType();
   const [schoolContext, setSchoolContext] = useSchoolContext();
+  const [workKidsMode, setWorkKidsMode] = useWorkKidsMode();
   const lastQuickState = useLastQuickState();
   const dailyProgress = useDailyProgress();
   const SCENE_INDEX_TO_SLOT: Record<number, DailySlot> = { 0: "morning", 3: "evening" };
