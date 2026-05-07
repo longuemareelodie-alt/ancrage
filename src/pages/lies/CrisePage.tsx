@@ -28,38 +28,99 @@ const SITUATION_OPTIONS: CrisisSituation[] = [
   "exterieur-seul-plusieurs",
 ];
 
-function downloadHelpCard() {
+function downloadHelpCard(opts: {
+  ctxLabel: string;
+  parentLabel: string;
+  situationLabel: string;
+  steps: string[];
+}) {
   const doc = new jsPDF({ unit: "mm", format: "a6", orientation: "portrait" });
-  doc.setFillColor(125, 184, 159);
-  doc.rect(0, 0, 105, 18, "F");
-  doc.setTextColor(255, 255, 255);
-  doc.setFontSize(13);
-  doc.text("MON ENFANT A BESOIN D'AIDE", 8, 11);
+  const W = 105;
+  const H = 148;
+  const M = 8;
 
+  // Header
+  doc.setFillColor(125, 184, 159);
+  doc.rect(0, 0, W, 18, "F");
+  doc.setTextColor(255, 255, 255);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(12);
+  doc.text("MON ENFANT A BESOIN D'AIDE", M, 11);
+
+  // Context badge
+  doc.setTextColor(60, 60, 60);
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(7.5);
+  let y = 23;
+  const ctxLine = `${opts.ctxLabel} · ${opts.parentLabel}`;
+  doc.text(ctxLine, M, y);
+  y += 3.5;
+  const sitLines = doc.splitTextToSize(opts.situationLabel, W - M * 2);
+  doc.text(sitLines, M, y);
+  y += sitLines.length * 3.2 + 2;
+
+  // Intro
   doc.setTextColor(20, 20, 20);
   doc.setFontSize(9);
-  let y = 26;
-  const lines = [
+  const intro = [
     "Mon enfant vit une crise neurologique / sensorielle.",
     "Ce n'est PAS un caprice.",
-    "",
-    "Merci de :",
-    "• Garder son calme et baisser la voix",
-    "• Ne pas lui parler ni le toucher sans demander",
-    "• Réduire les bruits / lumières si possible",
-    "• Donner de l'espace autour de nous",
-    "",
-    "La crise dure quelques minutes.",
-    "Je gère la situation. Merci pour votre patience.",
   ];
-  for (const l of lines) {
-    doc.text(l, 8, y);
-    y += 5;
+  for (const l of intro) {
+    const w = doc.splitTextToSize(l, W - M * 2);
+    doc.text(w, M, y);
+    y += w.length * 4.2;
   }
-  doc.setFontSize(7);
+  y += 2;
+
+  // Merci de :
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(9);
+  doc.text("Merci de :", M, y);
+  y += 4.5;
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(8.5);
+  const asks = [
+    "Garder son calme et baisser la voix",
+    "Ne pas lui parler ni le toucher sans demander",
+    "Réduire les bruits / lumières si possible",
+    "Donner de l'espace autour de nous",
+  ];
+  for (const a of asks) {
+    const w = doc.splitTextToSize("• " + a, W - M * 2);
+    doc.text(w, M, y);
+    y += w.length * 4;
+  }
+  y += 2;
+
+  // Étapes du scénario sélectionné
+  if (opts.steps.length > 0 && y < H - 30) {
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(9);
+    doc.text("Ce que je fais maintenant :", M, y);
+    y += 4.5;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(8);
+    for (let i = 0; i < opts.steps.length; i++) {
+      const w = doc.splitTextToSize(`${i + 1}. ${opts.steps[i]}`, W - M * 2);
+      if (y + w.length * 3.6 > H - 12) break;
+      doc.text(w, M, y);
+      y += w.length * 3.6 + 0.5;
+    }
+  }
+
+  // Footer
+  doc.setFontSize(6.5);
   doc.setTextColor(120, 120, 120);
-  doc.text("Carte fournie par Ancrage — digitalmamanlibre.com", 8, 142);
-  doc.save("carte-aide-crise.pdf");
+  doc.text(
+    "La crise dure quelques minutes — merci pour votre patience.",
+    M,
+    H - 6
+  );
+  doc.text("Ancrage — digitalmamanlibre.com", M, H - 3);
+
+  const safe = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+  doc.save(`carte-aide-crise-${safe(opts.ctxLabel)}-${safe(opts.parentLabel)}.pdf`);
 }
 
 const CrisePage = () => {
@@ -306,7 +367,14 @@ const CrisePage = () => {
           Une carte format poche à montrer aux passants ou aux secours en cas de crise à l'extérieur.
         </p>
         <Button
-          onClick={downloadHelpCard}
+          onClick={() =>
+            downloadHelpCard({
+              ctxLabel: CTX_OPTIONS.find((o) => o.value === ctx)?.label ?? ctx,
+              parentLabel: PARENT_OPTIONS.find((o) => o.value === parent)?.label ?? parent,
+              situationLabel: SITUATION_LABELS[situation],
+              steps: scenario.steps,
+            })
+          }
           className="bg-[hsl(var(--lies))] hover:bg-[hsl(var(--lies)/0.9)] text-[hsl(var(--lies-foreground))]"
         >
           <Download className="mr-2 h-4 w-4" />
