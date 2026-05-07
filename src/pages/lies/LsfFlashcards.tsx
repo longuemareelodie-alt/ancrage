@@ -3,7 +3,7 @@ import { Brain, Check, RotateCcw, Shuffle, ChevronLeft, ChevronRight, PlayCircle
 import LiesShell from "@/components/lies/LiesShell";
 import { LSF_THEMES } from "@/data/lsfCatalog";
 import { LSF_NEW_SIGNS, LSF_NEW_THEMES } from "@/data/lsfNewSigns";
-import { lsfVideoUrl, sematosSearchUrl } from "@/lib/lsfVideoUrl";
+import { lsfVideoUrl, elixSearchUrl } from "@/lib/lsfVideoUrl";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
@@ -299,7 +299,7 @@ const LsfFlashcards = () => {
                     Voir la vidéo
                   </a>
                   <a
-                    href={sematosSearchUrl(current.label)}
+                    href={elixSearchUrl(current.label)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:border-[hsl(var(--lies))] hover:text-[hsl(var(--lies))]"
