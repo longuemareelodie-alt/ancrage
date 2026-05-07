@@ -65,6 +65,7 @@ import RessourcesPage from "./pages/lies/RessourcesPage";
 import CrisePage from "./pages/lies/CrisePage";
 import JournalPage from "./pages/lies/JournalPage";
 import CommunautePage from "./pages/lies/CommunautePage";
+import ActivitesPage from "./pages/lies/ActivitesPage";
 import CommunauteModeration from "./pages/admin/CommunauteModeration";
 
 const queryClient = new QueryClient();
@@ -148,6 +149,7 @@ const AnimatedRoutes = () => {
         <Route path="/lies-autrement/crise" element={<PaidRoute><PageTransition><CrisePage /></PageTransition></PaidRoute>} />
         <Route path="/lies-autrement/journal" element={<PaidRoute><PageTransition><JournalPage /></PageTransition></PaidRoute>} />
         <Route path="/lies-autrement/communaute" element={<PaidRoute><PageTransition><CommunautePage /></PageTransition></PaidRoute>} />
+        <Route path="/lies-autrement/activites" element={<PaidRoute><PageTransition><ActivitesPage /></PageTransition></PaidRoute>} />
         <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
           </Routes>
         </RoutesWrapper>
