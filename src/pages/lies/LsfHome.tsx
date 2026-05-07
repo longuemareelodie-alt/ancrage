@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { BookOpen, Sparkles } from "lucide-react";
+import { BookOpen, Sparkles, Brain } from "lucide-react";
 import LiesShell from "@/components/lies/LiesShell";
 import { LSF_THEMES } from "@/data/lsfCatalog";
 import { LSF_NEW_SIGNS } from "@/data/lsfNewSigns";
