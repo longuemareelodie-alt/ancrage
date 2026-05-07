@@ -247,33 +247,136 @@ export default function CriseGuided({ scenario, context, parent, situation, onCl
     clearSavedFor(key);
   }
 
+  // Refs pour la gestion du focus (modale accessible)
+  const dialogRef = useRef<HTMLDivElement | null>(null);
+  const closeBtnRef = useRef<HTMLButtonElement | null>(null);
+  const previouslyFocusedRef = useRef<HTMLElement | null>(null);
+  const titleId = "crise-guided-title";
+
+  // Focus initial + restauration à la fermeture + focus trap
+  useEffect(() => {
+    previouslyFocusedRef.current = document.activeElement as HTMLElement | null;
+    closeBtnRef.current?.focus();
+    return () => {
+      previouslyFocusedRef.current?.focus?.();
+    };
+  }, []);
+
+  // Raccourcis clavier globaux pour la modale.
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      // Échap → fermer
+      if (e.key === "Escape") {
+        e.preventDefault();
+        onClose();
+        return;
+      }
+      // Trap focus (Tab / Shift+Tab cyclique)
+      if (e.key === "Tab" && dialogRef.current) {
+        const focusables = dialogRef.current.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        );
+        if (focusables.length === 0) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+        return;
+      }
+      // Pendant les étapes : raccourcis utiles
+      if (phase === "steps") {
+        const target = e.target as HTMLElement | null;
+        const tag = target?.tagName;
+        // Ignore quand on est dans un champ texte
+        if (tag === "INPUT" || tag === "TEXTAREA" || target?.isContentEditable) return;
+        if (e.key === "ArrowRight") {
+          if (stepIdx < scenario.steps.length - 1) {
+            e.preventDefault();
+            setStepIdx((i) => i + 1);
+          }
+        } else if (e.key === "ArrowLeft") {
+          if (stepIdx > 0) {
+            e.preventDefault();
+            setStepIdx((i) => i - 1);
+          }
+        } else if (e.key === " " || e.key === "Enter") {
+          // Espace / Entrée hors d'un bouton focalisé : marquer / dé-marquer
+          if (!target || !["BUTTON", "A"].includes(tag ?? "")) {
+            e.preventDefault();
+            toggleStep(stepIdx);
+          }
+        } else if (e.key.toLowerCase() === "p") {
+          e.preventDefault();
+          setRunning((r) => !r);
+        }
+      }
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase, stepIdx, scenario.steps.length, onClose]);
+
   return (
-    <div className="fixed inset-0 z-50 flex items-stretch justify-center bg-background/95 backdrop-blur">
+    <div
+      ref={dialogRef}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby={titleId}
+      className="fixed inset-0 z-50 flex items-stretch justify-center bg-background backdrop-blur"
+    >
+      {/* Annonces lecteur d'écran (changements d'étape, compte à rebours) */}
+      <div className="sr-only" aria-live="polite" aria-atomic="true">
+        {phase === "safety" && "Phase sécurité. Cochez les points avant de démarrer."}
+        {phase === "steps" &&
+          `Étape ${stepIdx + 1} sur ${scenario.steps.length}. ${scenario.steps[stepIdx]}`}
+        {phase === "recap" && "Session terminée. Récapitulatif affiché."}
+        {autoCountdown != null && `Étape suivante dans ${autoCountdown} secondes.`}
+      </div>
+
       <div className="flex h-full w-full max-w-xl flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-border bg-card px-4 py-3">
+        <div className="flex items-center justify-between border-b-2 border-border bg-card px-4 py-3">
           <div className="flex items-center gap-2">
-            <ShieldCheck className="h-5 w-5 text-[hsl(var(--lies))]" />
-            <span className="font-serif text-base text-foreground">Mode crise</span>
+            <ShieldCheck className="h-5 w-5 text-[hsl(var(--lies))]" aria-hidden="true" />
+            <h1 id={titleId} className="font-serif text-base text-foreground">
+              Mode crise guidé
+            </h1>
           </div>
           <div className="flex items-center gap-3">
             {phase === "steps" && (
               <>
-                <span className="font-mono text-sm tabular-nums text-foreground">{fmt(seconds)}</span>
+                <span
+                  className="font-mono text-sm font-semibold tabular-nums text-foreground"
+                  aria-label={`Durée écoulée : ${Math.floor(seconds / 60)} minutes ${seconds % 60} secondes`}
+                >
+                  {fmt(seconds)}
+                </span>
                 <button
                   onClick={() => setRunning((r) => !r)}
-                  className="rounded-full border border-border p-1.5 text-muted-foreground hover:text-foreground"
-                  aria-label={running ? "Pause" : "Reprendre"}
+                  className="rounded-full border-2 border-border p-1.5 text-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--lies))] focus-visible:ring-offset-2 focus-visible:ring-offset-card"
+                  aria-label={running ? "Mettre le minuteur en pause (P)" : "Reprendre le minuteur (P)"}
+                  aria-pressed={!running}
                 >
-                  {running ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                  {running ? <Pause className="h-4 w-4" aria-hidden="true" /> : <Play className="h-4 w-4" aria-hidden="true" />}
                 </button>
               </>
             )}
-            <button onClick={onClose} className="rounded-full p-1.5 text-muted-foreground hover:text-foreground" aria-label="Fermer">
-              <X className="h-5 w-5" />
+            <button
+              ref={closeBtnRef}
+              onClick={onClose}
+              className="rounded-full border-2 border-transparent p-1.5 text-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--lies))] focus-visible:ring-offset-2 focus-visible:ring-offset-card"
+              aria-label="Fermer le mode crise guidé (Échap)"
+            >
+              <X className="h-5 w-5" aria-hidden="true" />
             </button>
           </div>
         </div>
+
 
         {/* Body */}
         <div className="flex-1 overflow-y-auto px-4 py-5">
