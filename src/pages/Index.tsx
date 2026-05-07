@@ -22,7 +22,7 @@ import {
   useDailyProgress,
   type DailySlot,
 } from "@/lib/morningEveningProgress";
-import { Check } from "lucide-react";
+
 import logo from "@/assets/logo-ancrage.png";
 import avatarCamille from "@/assets/avatar-camille.jpg";
 import avatarInes from "@/assets/avatar-ines.jpg";
