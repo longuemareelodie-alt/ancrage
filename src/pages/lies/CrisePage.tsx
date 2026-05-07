@@ -195,6 +195,36 @@ const CrisePage = () => {
     });
   }
 
+  const staleSessions = useMemo(() => {
+    const cutoff = Date.now() - staleHours * 3600 * 1000;
+    return savedSessions.filter(({ saved }) => saved.lastTickAt < cutoff && saved.phase !== "recap");
+  }, [savedSessions, staleHours]);
+
+  useEffect(() => {
+    if (staleSessions.length === 0) return;
+    const sig = `${staleHours}|${staleSessions.map((s) => `${s.key}:${s.saved.lastTickAt}`).join(",")}`;
+    if (notifiedRef.current.has(sig)) return;
+    notifiedRef.current.add(sig);
+    const first = staleSessions[0];
+    const parsed = parseKey(first.key);
+    const ctxLabel = parsed ? CTX_OPTIONS.find((o) => o.value === parsed.context)?.label : null;
+    const parentLabel = parsed ? PARENT_OPTIONS.find((o) => o.value === parsed.parent)?.label : null;
+    const desc = parsed
+      ? `Commencer par : ${ctxLabel} · ${parentLabel} — ${SITUATION_LABELS[parsed.situation]}`
+      : "À reprendre en priorité.";
+    toast.warning(
+      staleSessions.length === 1
+        ? `Une session en attente depuis plus de ${staleHours} h`
+        : `${staleSessions.length} sessions en attente depuis plus de ${staleHours} h`,
+      {
+        description: desc,
+        action: parsed
+          ? { label: "Reprendre", onClick: () => resumeSession(first.key) }
+          : undefined,
+      }
+    );
+  }, [staleSessions, staleHours]);
+
   useEffect(() => {
     const onFocus = () => setSessionsTick((n) => n + 1);
     window.addEventListener("focus", onFocus);
