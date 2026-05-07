@@ -233,7 +233,46 @@
         }
       },
       "s1_work": "18h. Tu raccroches sec. Tu claques la porte du bureau. Et tu te détestes dans la seconde qui suit.",
-      "s2_work": "Tu souris en réunion. Tu réponds « ça va, ça avance ». Mais à l'intérieur, c'est le vide ou le chaos."
+      "s2_work": "Tu souris en réunion. Tu réponds « ça va, ça avance ». Mais à l'intérieur, c'est le vide ou le chaos.",
+      "work_kids_label": "Au boulot, le matin",
+      "work_kids_without": "Sans enfants",
+      "work_kids_with": "Avec enfants à gérer",
+      "scenes_work_with_kids_overrides": {
+        "0": {
+          "tag": "7h12, double routine",
+          "emoji": "☕",
+          "body": "Le réveil a sonné trois fois. Tu n'as pas dormi. Tu enfiles la chemise d'hier, tu lances le café, tu prépares les petits-dej, tu cherches ton badge, tes clés, le doudou. L'aîné refuse son pantalon, le mail du chef est déjà là à 6h47 — « tu peux gérer ça avant la réunion ? ». Tu sens la chaleur monter dans ta nuque. Et là, tu craques — pas sur le mail, sur la chaussette qui manque. Le silence d'après est pire. Dans la voiture, école puis boulot, tu te dis « c'est encore raté avant 9h ».",
+          "punch": "Tu fais deux journées avant 9h : la tienne et la leur. C'est normal d'être déjà en dette de calme.",
+          "stateLabel": "Mode explosion",
+          "cta": "Évacuer en 90 s →"
+        },
+        "3": {
+          "tag": "21h07, le canapé",
+          "emoji": "🌙",
+          "body": "Les enfants dorment enfin. Tu as posé le sac, fermé l'ordinateur, regardé le dernier mail « pour info ». Tu t'assois sur le canapé — et ton corps reste dur, comme à 7h12 ce matin. Tes épaules sont au même endroit. Tu sais qu'il faudrait monter, mais te lever c'est admettre que demain recommence — réveil, cartables, transports, réunions, bain — et que ton corps n'aura pas redescendu entre les deux.",
+          "punch": "Deux journées empilées sans pause entre les deux. La nuit n'efface pas ce que la journée a chargé.",
+          "stateLabel": "Mode panique sourde",
+          "cta": "Redescendre avant la nuit · 60 s →"
+        }
+      },
+      "scenes_papa_work_with_kids_overrides": {
+        "0": {
+          "tag": "7h12, double routine",
+          "emoji": "☕",
+          "body": "Le réveil a sonné trois fois. Tu n'as pas dormi. Tu enfiles la chemise d'hier, tu lances le café, tu prépares les bols, tu cherches badge, clés, doudou. L'aîné refuse son pantalon, le mail du chef est tombé à 6h47 — « tu peux gérer ça avant la réunion ? ». Mâchoire serrée. Et là, tu craques — pas sur le mail, sur la chaussette manquante. Le silence d'après est pire. Dans la voiture, école puis bureau, tu te dis « c'est encore raté avant 9h ».",
+          "punch": "Tu enchaînes deux journées avant 9h. Pas étonnant que ton corps soit déjà en alerte.",
+          "stateLabel": "Mode explosion",
+          "cta": "Évacuer en 90 s →"
+        },
+        "3": {
+          "tag": "21h07, le canapé",
+          "emoji": "🌙",
+          "body": "Les enfants dorment. Sac posé, ordi fermé, dernier mail « pour info » lu. Tu t'assois sur le canapé — et ton corps reste dur, comme à 7h12. Tu ouvres ton téléphone deux minutes — Slack défile encore. Te lever, c'est admettre que demain recommence — bain, cartable, métro, réunion — sans pause au milieu.",
+          "punch": "Deux journées empilées. Le canapé ne suffit pas à désarmer le système.",
+          "stateLabel": "Mode panique sourde",
+          "cta": "Redescendre avant la nuit · 60 s →"
+        }
+      }
     },
     "enemy": {
       "title": "Ce n'est pas toi le problème.",
