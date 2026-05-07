@@ -1058,12 +1058,14 @@ const Index = () => {
             </p>
           </div>
           <div className="pt-2 text-center">
-            <Link
-              to="/lies-autrement"
-              className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-md transition-all hover:shadow-lg hover:opacity-95"
+            <button
+              type="button"
+              onClick={handlePayment}
+              disabled={paymentLoading}
+              className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-md transition-all hover:shadow-lg hover:opacity-95 disabled:opacity-60"
             >
-              Découvrir « Liés autrement » →
-            </Link>
+              {paymentLoading ? "Chargement…" : "Découvrir « Liés autrement » →"}
+            </button>
           </div>
         </div>
       </section>
