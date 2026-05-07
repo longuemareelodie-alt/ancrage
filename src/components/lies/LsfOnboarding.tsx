@@ -15,69 +15,71 @@ type Question = {
 
 const QUESTIONS: Question[] = [
   {
-    id: "level",
-    question: "Où en es-tu avec la LSF ?",
-    hint: "Sois honnête : aucune mauvaise réponse.",
+    id: "age",
+    question: "Quel âge a ton enfant (le plus jeune si plusieurs) ?",
+    hint: "L'âge change complètement les signes utiles en premier.",
     options: [
       {
-        label: "Je débute totalement, je ne connais aucun signe",
-        weights: { "bebe-besoins": 3, emotions: 1 },
+        label: "0–12 mois — on prépare le langage",
+        weights: { "bebe-besoins": 4, routine: 1 },
       },
       {
-        label: "Je connais 2–3 signes du quotidien (manger, dormir…)",
-        weights: { emotions: 2, routine: 2, "bebe-besoins": 1 },
+        label: "12–24 mois — il commence à pointer / dire des mots",
+        weights: { "bebe-besoins": 3, emotions: 2, routine: 1 },
       },
       {
-        label: "J'ai déjà appris une dizaine de signes",
-        weights: { routine: 3, famille: 2, emotions: 1 },
+        label: "2–4 ans — explosion émotionnelle, transitions difficiles",
+        weights: { emotions: 3, routine: 2, famille: 1 },
       },
       {
-        label: "Je signe régulièrement avec mon enfant",
-        weights: { famille: 3, routine: 2 },
+        label: "4 ans et + (ou plusieurs enfants à la maison)",
+        weights: { famille: 3, emotions: 1, routine: 1 },
       },
     ],
   },
   {
-    id: "need",
-    question: "Qu'est-ce qui t'aiderait le plus en premier ?",
+    id: "level",
+    question: "Concrètement, combien de signes tu maîtrises aujourd'hui ?",
+    hint: "Maîtriser = capable de le faire spontanément, sans réfléchir.",
     options: [
       {
-        label: "Comprendre ses besoins de base (faim, soif, douleur, dodo)",
+        label: "Aucun — je n'ai jamais signé",
         weights: { "bebe-besoins": 3 },
       },
       {
-        label: "Mettre des mots sur ses émotions quand il est dépassé",
-        weights: { emotions: 3 },
+        label: "1 à 5 (manger, dormir, encore, fini…)",
+        weights: { "bebe-besoins": 2, emotions: 2 },
       },
       {
-        label: "Anticiper les transitions (bain, école, dehors…)",
-        weights: { routine: 3 },
+        label: "Une dizaine, mais toujours les mêmes",
+        weights: { emotions: 2, routine: 3 },
       },
       {
-        label: "Nommer les personnes qui comptent (famille, copains)",
-        weights: { famille: 3 },
+        label: "20+ et j'enchaîne dans des phrases courtes",
+        weights: { famille: 3, routine: 2, emotions: 1 },
       },
     ],
   },
   {
-    id: "moment",
-    question: "À quel moment vous comprenez-vous le moins ?",
+    id: "trigger",
+    question: "Quel moment de ta journée t'épuise le plus, faute de comprendre ?",
+    hint: "On va y mettre des signes en priorité.",
     options: [
       {
-        label: "Quand il pleure et que je ne sais pas pourquoi",
-        weights: { "bebe-besoins": 2, emotions: 2 },
+        label: "Les pleurs « sans raison » — j'aimerais qu'il me montre",
+        weights: { "bebe-besoins": 4 },
       },
       {
-        label: "Quand il explose émotionnellement",
-        weights: { emotions: 3 },
+        label: "Les colères / le débordement émotionnel",
+        weights: { emotions: 4 },
       },
       {
-        label: "Au moment de changer d'activité",
-        weights: { routine: 3 },
+        label: "Les transitions : repas, bain, coucher, départ",
+        weights: { routine: 4 },
       },
       {
-        label: "Quand il parle de quelqu'un et que je ne suis pas",
-        weights: { famille: 3 },
+        label: "Quand il me parle de quelqu'un (papa, nounou, copain)",
+        weights: { famille: 4 },
       },
     ],
   },
