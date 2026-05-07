@@ -1,6 +1,32 @@
 // Catalogue LSF v1 — 4 thèmes, 5–8 fiches chacun.
-// Les illustrations sont des placeholders emoji ; les vraies illustrations
-// seront ajoutées progressivement dans src/assets/lsf/<key>.png.
+// Illustrations IA stockées dans src/assets/lsf/<key>.jpg, importées en ES6.
+
+import bebeManger from "@/assets/lsf/bebe-manger.jpg";
+import bebeBoire from "@/assets/lsf/bebe-boire.jpg";
+import bebeDormir from "@/assets/lsf/bebe-dormir.jpg";
+import bebeEncore from "@/assets/lsf/bebe-encore.jpg";
+import bebeFini from "@/assets/lsf/bebe-fini.jpg";
+import bebeDoudou from "@/assets/lsf/bebe-doudou.jpg";
+import bebeCouche from "@/assets/lsf/bebe-couche.jpg";
+import emoContent from "@/assets/lsf/emo-content.jpg";
+import emoTriste from "@/assets/lsf/emo-triste.jpg";
+import emoColere from "@/assets/lsf/emo-colere.jpg";
+import emoPeur from "@/assets/lsf/emo-peur.jpg";
+import emoCalme from "@/assets/lsf/emo-calme.jpg";
+import emoAime from "@/assets/lsf/emo-aime.jpg";
+import rouBonjour from "@/assets/lsf/rou-bonjour.jpg";
+import rouMerci from "@/assets/lsf/rou-merci.jpg";
+import rouBain from "@/assets/lsf/rou-bain.jpg";
+import rouJouer from "@/assets/lsf/rou-jouer.jpg";
+import rouLivre from "@/assets/lsf/rou-livre.jpg";
+import rouDehors from "@/assets/lsf/rou-dehors.jpg";
+import rouEcole from "@/assets/lsf/rou-ecole.jpg";
+import famMaman from "@/assets/lsf/fam-maman.jpg";
+import famPapa from "@/assets/lsf/fam-papa.jpg";
+import famFrere from "@/assets/lsf/fam-frere.jpg";
+import famSoeur from "@/assets/lsf/fam-soeur.jpg";
+import famGrandParent from "@/assets/lsf/fam-grand-parent.jpg";
+import famAmi from "@/assets/lsf/fam-ami.jpg";
 
 export type LsfSign = {
   /** Clé stable utilisée comme identifiant en base (lsf_progress.sign_key) */
@@ -9,8 +35,10 @@ export type LsfSign = {
   label: string;
   /** Description du geste, en 1 phrase */
   gesture: string;
-  /** Emoji placeholder en attendant l'illustration */
+  /** Emoji de secours / décoration */
   emoji: string;
+  /** Illustration IA importée depuis src/assets/lsf/<key>.jpg */
+  image: string;
 };
 
 export type LsfTheme = {
