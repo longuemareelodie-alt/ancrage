@@ -98,7 +98,7 @@ const EmotionDetail = () => {
   }, [style]);
 
   // Validate the emotion key against known translations.
-  const titleKey = `emotion_detail.data.${key}.title`;
+  const titleKey = `emotion_detail.data.${useCopyKey}.title`;
   const exists = i18n.exists(titleKey);
   if (exists) titleRef.current = t(titleKey) as string;
 
@@ -158,12 +158,12 @@ const EmotionDetail = () => {
   }
 
   const title = t(titleKey);
-  const validation = t(`emotion_detail.data.${key}.validation`);
+  const validation = t(`emotion_detail.data.${useCopyKey}.validation`);
 
-  const i18nFreeRaw = t(`emotion_detail.data.${key}.free`, {
+  const i18nFreeRaw = t(`emotion_detail.data.${useCopyKey}.free`, {
     returnObjects: true,
   }) as string[];
-  const i18nLockedRaw = t(`emotion_detail.data.${key}.locked`, {
+  const i18nLockedRaw = t(`emotion_detail.data.${useCopyKey}.locked`, {
     returnObjects: true,
   }) as string[];
 
