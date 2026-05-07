@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { Sparkles, Search, BookOpen, Check } from "lucide-react";
+import { Sparkles, Search, BookOpen, Check, PlayCircle } from "lucide-react";
+import { lsfVideoUrl, sematosSearchUrl } from "@/lib/lsfVideoUrl";
 import LiesShell from "@/components/lies/LiesShell";
 import {
   LSF_NEW_SIGNS,
