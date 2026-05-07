@@ -98,6 +98,7 @@ const LsfHome = () => {
             </Link>
           );
         })}
+        </div>
       </div>
     </LiesShell>
   );
