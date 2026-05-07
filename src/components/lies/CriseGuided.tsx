@@ -151,6 +151,70 @@ export default function CriseGuided({ scenario, context, parent, situation, onCl
       lastTickAt: Date.now(),
       stepsLen: scenario.steps.length,
     };
+  const [autoPrefs, setAutoPrefs] = useState(() => loadAutoPrefs());
+  const [autoCountdown, setAutoCountdown] = useState<number | null>(null);
+  const autoTimerRef = useRef<number | null>(null);
+
+  function clearAutoTimer() {
+    if (autoTimerRef.current) {
+      window.clearInterval(autoTimerRef.current);
+      autoTimerRef.current = null;
+    }
+    setAutoCountdown(null);
+  }
+
+  function updateAutoPrefs(next: { enabled: boolean; delay: AutoDelay }) {
+    setAutoPrefs(next);
+    saveAutoPrefs(next);
+    if (!next.enabled) clearAutoTimer();
+  }
+
+  // Auto-suivant : déclenche un compte à rebours quand l'étape courante est marquée faite.
+  useEffect(() => {
+    clearAutoTimer();
+    if (
+      !autoPrefs.enabled ||
+      phase !== "steps" ||
+      !running ||
+      !doneSteps[stepIdx]
+    ) return;
+
+    setAutoCountdown(autoPrefs.delay);
+    autoTimerRef.current = window.setInterval(() => {
+      setAutoCountdown((c) => {
+        if (c == null) return null;
+        if (c <= 1) {
+          clearAutoTimer();
+          // Avance / termine
+          if (stepIdx < scenario.steps.length - 1) {
+            setStepIdx((i) => i + 1);
+          } else {
+            setRunning(false);
+            setRecapDuration((d) => d ?? seconds);
+            setPhase("recap");
+          }
+          return null;
+        }
+        return c - 1;
+      });
+    }, 1000);
+    return () => clearAutoTimer();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoPrefs.enabled, autoPrefs.delay, phase, running, stepIdx, doneSteps[stepIdx]]);
+
+  function cancelAutoNext() {
+    clearAutoTimer();
+  }
+
+  // Persist on every meaningful change, scoped by composite key.
+  useEffect(() => {
+    const all = loadAll();
+    all[key] = {
+      phase, checks, stepIdx, doneSteps,
+      seconds, running,
+      lastTickAt: Date.now(),
+      stepsLen: scenario.steps.length,
+    };
     writeAll(all);
   }, [key, phase, checks, stepIdx, doneSteps, seconds, running, scenario.steps.length]);
 
