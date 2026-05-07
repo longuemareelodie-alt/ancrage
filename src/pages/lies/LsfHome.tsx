@@ -44,7 +44,20 @@ const LsfHome = () => {
       subtitle="Quelques signes simples pour ouvrir un nouveau canal avec votre enfant."
       icon={<BookOpen className="h-6 w-6" />}
     >
-      <div className="space-y-3">
+      <div className="space-y-4">
+        {showOnboarding && (
+          <LsfOnboarding onDismiss={() => setShowOnboarding(false)} />
+        )}
+        {!showOnboarding && (
+          <button
+            type="button"
+            onClick={() => setShowOnboarding(true)}
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-[hsl(var(--lies))] hover:underline"
+          >
+            <Sparkles className="h-3 w-3" /> Refaire l'orientation (2 min)
+          </button>
+        )}
+        <div className="space-y-3">
         {LSF_THEMES.map((theme) => {
           const total = theme.signs.length;
           const learned = theme.signs.filter((s) => learnedKeys.has(s.key)).length;
