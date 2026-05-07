@@ -157,6 +157,14 @@
       "school_toggle_label": "Quel matin ?",
       "school_toggle_school": "Avant l'école",
       "school_toggle_holiday": "Vacances / week-end",
+      "cta_fallback_morning": "Évacuer en 90 s →",
+      "cta_fallback_evening": "Redescendre avant la nuit · 60 s →",
+      "cta_fallback_holiday_morning": "Décompresser sans culpabiliser · 90 s →",
+      "cta_fallback_holiday_evening": "Lâcher la journée vacances · 60 s →",
+      "cta_fallback_work_morning": "Évacuer en 90 s →",
+      "cta_fallback_work_evening": "Redescendre avant la nuit · 60 s →",
+      "state_label_fallback_morning": "Mode explosion",
+      "state_label_fallback_evening": "Mode panique sourde",
       "scenes_holiday_overrides": {
         "0": {
           "tag": "9h12, en pyjama",
