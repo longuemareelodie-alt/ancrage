@@ -58,6 +58,11 @@ const LsfHome = () => {
             <Sparkles className="h-3 w-3" /> Refaire l'orientation (2 min)
           </button>
         )}
+        <div className="rounded-2xl border border-border bg-[hsl(var(--lies-soft))] p-3 text-xs text-foreground/80">
+          🎥 Chaque fiche propose un bouton <strong>Voir la vidéo</strong> qui
+          ouvre le signe dans le dictionnaire LSF en ligne (Elix · Sématos) —
+          vraies vidéos de signeurs sourds.
+        </div>
         <div className="space-y-3">
         {LSF_THEMES.map((theme) => {
           const newForTheme = LSF_NEW_SIGNS.filter((s) => s.themeSlug === theme.slug);

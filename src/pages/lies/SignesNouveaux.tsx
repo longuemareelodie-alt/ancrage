@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { Sparkles, Search, BookOpen, Check } from "lucide-react";
+import { Sparkles, Search, BookOpen, Check, PlayCircle } from "lucide-react";
+import { lsfVideoUrl, sematosSearchUrl } from "@/lib/lsfVideoUrl";
 import LiesShell from "@/components/lies/LiesShell";
 import {
   LSF_NEW_SIGNS,
@@ -191,6 +192,26 @@ const SignesNouveaux = () => {
                   <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
                     {sign.gesture}
                   </p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <a
+                      href={lsfVideoUrl(sign.label)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 rounded-full bg-[hsl(var(--lies))] px-3 py-1.5 text-xs font-medium text-[hsl(var(--lies-foreground))] hover:opacity-90"
+                      aria-label={`Voir la vidéo du signe ${sign.label} sur Elix`}
+                    >
+                      <PlayCircle className="h-3.5 w-3.5" />
+                      Voir la vidéo
+                    </a>
+                    <a
+                      href={sematosSearchUrl(sign.label)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:border-[hsl(var(--lies))] hover:text-[hsl(var(--lies))]"
+                    >
+                      Sématos
+                    </a>
+                  </div>
                 </article>
               );
             })}
