@@ -176,6 +176,52 @@ const CrisePage = () => {
         </p>
       </div>
 
+      {savedSessions.length > 0 && (
+        <div className="mb-5 rounded-2xl border border-border bg-card p-4">
+          <h3 className="mb-1 font-serif text-base text-foreground">Sessions en cours</h3>
+          <p className="mb-3 text-xs text-muted-foreground">
+            Chaque combinaison contexte / parent / situation est sauvegardée séparément.
+          </p>
+          <ul className="space-y-2">
+            {savedSessions.map(({ key, saved }) => {
+              const parsed = parseKey(key);
+              if (!parsed) return null;
+              const ctxLabel = CTX_OPTIONS.find((o) => o.value === parsed.context)?.label ?? parsed.context;
+              const parentLabel = PARENT_OPTIONS.find((o) => o.value === parsed.parent)?.label ?? parsed.parent;
+              const situationLabel = SITUATION_LABELS[parsed.situation];
+              const phaseLabel =
+                saved.phase === "safety" ? "Sécurité" :
+                saved.phase === "steps" ? `Étape ${saved.stepIdx + 1}/${saved.stepsLen}` :
+                "Récap";
+              const isCurrent = key === currentKey;
+              return (
+                <li
+                  key={key}
+                  className={`flex items-start gap-2 rounded-xl border p-3 ${
+                    isCurrent ? "border-[hsl(var(--lies))] bg-[hsl(var(--lies-soft))]" : "border-border"
+                  }`}
+                >
+                  <button onClick={() => resumeSession(key)} className="flex-1 text-left">
+                    <div className="text-sm font-medium text-foreground">
+                      {ctxLabel} · {parentLabel}
+                    </div>
+                    <div className="text-xs text-muted-foreground">{situationLabel}</div>
+                    <div className="mt-1 text-xs text-[hsl(var(--lies))]">{phaseLabel}</div>
+                  </button>
+                  <button
+                    onClick={() => deleteSession(key)}
+                    className="rounded-full p-1.5 text-muted-foreground hover:text-destructive"
+                    aria-label="Supprimer la session"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
+
       <section className="mb-5 rounded-2xl border border-[hsl(var(--lies))] bg-[hsl(var(--lies-soft))] p-4">
         <h2 className="mb-3 font-serif text-xl text-foreground">Pendant la crise</h2>
         <ol className="space-y-2">
