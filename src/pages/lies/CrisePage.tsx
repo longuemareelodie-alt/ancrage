@@ -433,6 +433,36 @@ const CrisePage = () => {
           onClose={() => setGuidedOpen(false)}
         />
       )}
+
+      <AlertDialog open={!!pendingDelete} onOpenChange={(o) => !o && setPendingDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Supprimer cette session ?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {(() => {
+                if (!pendingDelete) return null;
+                const parsed = parseKey(pendingDelete);
+                if (!parsed) return "Cette sauvegarde sera définitivement supprimée.";
+                const ctxLabel = CTX_OPTIONS.find((o) => o.value === parsed.context)?.label ?? parsed.context;
+                const parentLabel = PARENT_OPTIONS.find((o) => o.value === parsed.parent)?.label ?? parsed.parent;
+                return `La progression sauvegardée pour « ${ctxLabel} · ${parentLabel} — ${SITUATION_LABELS[parsed.situation]} » sera définitivement perdue.`;
+              })()}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (pendingDelete) deleteSession(pendingDelete);
+                setPendingDelete(null);
+              }}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Supprimer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </LiesShell>
   );
 };
