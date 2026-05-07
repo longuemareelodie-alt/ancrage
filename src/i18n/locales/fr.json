@@ -1036,6 +1036,58 @@
           "Une longue expiration par la bouche, mâchoire relâchée",
           "Reviens vers l'enfant et nomme : « j'ai crié, je redescends » — pas besoin d'autre chose"
         ]
+      },
+      "panique_work": {
+        "title": "Ça monte avant le boulot",
+        "validation": "Ton corps anticipe la journée comme un sprint. Le mail de 6h47 ne mérite pas ta nuque en feu — mais il l'a déjà eue.",
+        "free": [
+          "Arrête tout 10 secondes — tu n'es pas en retard sur ces 10 secondes",
+          "Pose les yeux sur un point fixe : la tasse, l'écran noir, la porte"
+        ],
+        "locked": [
+          "Pose une main à plat sur le sternum, sens le contact",
+          "Inspire 4 secondes par le nez, sans bouger les épaules",
+          "Expire 6 secondes par la bouche — la réunion attendra 30 secondes"
+        ]
+      },
+      "hypervigilance_work": {
+        "title": "Tu surveilles tout le matin",
+        "validation": "Mails, agenda, transports, Slack, dossier en cours — ton cerveau tient 10 fils en parallèle. Pas étonnant qu'il soit en alerte.",
+        "free": [
+          "Repère 3 choses qui sont déjà prêtes ou OK",
+          "Écoute 2 sons concrets : le café qui coule, un clavier"
+        ],
+        "locked": [
+          "Touche un objet stable — la table, ton mug",
+          "Relâche les épaules d'un cran, juste un cran",
+          "Une longue expiration — l'agenda tient tout seul pendant ce temps"
+        ]
+      },
+      "rumination_work": {
+        "title": "La phrase du chef tourne en boucle",
+        "validation": "Tu refais le mail, la réunion, la formulation. Ton cerveau ressasse parce qu'il croit te préparer.",
+        "free": [
+          "Note la phrase sur le téléphone, ou dis-la tout bas",
+          "Donne-lui un titre court : « le mail de 6h47 »"
+        ],
+        "locked": [
+          "Range-la dans une case mentale : « j'y reviens à la réunion, pas avant »",
+          "Reviens à un geste concret : clé, volant, café",
+          "Inspire courte, expire longue, deux fois"
+        ]
+      },
+      "explosion_work": {
+        "title": "Tu viens de claquer une porte",
+        "validation": "Ce n'est pas le trousseau qui t'a fait craquer — c'est tout le matin empilé dessus. Tu n'es pas un mauvais collègue, ni un mauvais parent.",
+        "free": [
+          "Recule d'un pas, physiquement",
+          "Dis tout bas : « pause, 30 secondes »"
+        ],
+        "locked": [
+          "Plante tes pieds dans le sol, sens le poids",
+          "Une longue expiration par la bouche, mâchoire relâchée",
+          "Reprends ton mug et bois une gorgée — pas besoin d'autre chose maintenant"
+        ]
       }
     }
   },
