@@ -36,12 +36,9 @@ const PARENT_LABEL: Record<CrisisParent, string> = {
 
 type Phase = "safety" | "steps" | "recap";
 
-const STORAGE_KEY = "lies.crise.guided.v1";
+const STORAGE_KEY = "lies.crise.guided.v2";
 
 type Saved = {
-  context: CrisisContext;
-  parent: CrisisParent;
-  situation: CrisisSituation;
   phase: Phase;
   checks: Record<string, boolean>;
   stepIdx: number;
@@ -52,25 +49,50 @@ type Saved = {
   stepsLen: number;
 };
 
-function loadSaved(): Saved | null {
+type SavedMap = Record<string, Saved>;
+
+export function sessionKey(context: CrisisContext, parent: CrisisParent, situation: CrisisSituation) {
+  return `${context}|${parent}|${situation}`;
+}
+
+function loadAll(): SavedMap {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return null;
-    return JSON.parse(raw) as Saved;
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === "object" ? (parsed as SavedMap) : {};
   } catch {
-    return null;
+    return {};
   }
 }
 
-function clearSaved() {
-  try { localStorage.removeItem(STORAGE_KEY); } catch {}
+function writeAll(map: SavedMap) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(map)); } catch {}
+}
+
+export function loadSavedFor(key: string): Saved | null {
+  const all = loadAll();
+  return all[key] ?? null;
+}
+
+export function clearSavedFor(key: string) {
+  const all = loadAll();
+  if (key in all) {
+    delete all[key];
+    writeAll(all);
+  }
+}
+
+export function listSavedSessions(): { key: string; saved: Saved }[] {
+  const all = loadAll();
+  return Object.entries(all).map(([key, saved]) => ({ key, saved }));
 }
 
 export default function CriseGuided({ scenario, context, parent, situation, onClose }: Props) {
+  const key = sessionKey(context, parent, situation);
   const initial = (() => {
-    const s = loadSaved();
+    const s = loadSavedFor(key);
     if (!s) return null;
-    if (s.context !== context || s.parent !== parent || s.situation !== situation) return null;
     if (s.stepsLen !== scenario.steps.length) return null;
     return s;
   })();
@@ -100,17 +122,17 @@ export default function CriseGuided({ scenario, context, parent, situation, onCl
     };
   }, [running]);
 
-  // Persist on every meaningful change.
+  // Persist on every meaningful change, scoped by composite key.
   useEffect(() => {
-    const data: Saved = {
-      context, parent, situation,
+    const all = loadAll();
+    all[key] = {
       phase, checks, stepIdx, doneSteps,
       seconds, running,
       lastTickAt: Date.now(),
       stepsLen: scenario.steps.length,
     };
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch {}
-  }, [context, parent, situation, phase, checks, stepIdx, doneSteps, seconds, running, scenario.steps.length]);
+    writeAll(all);
+  }, [key, phase, checks, stepIdx, doneSteps, seconds, running, scenario.steps.length]);
 
   const allChecked = SAFETY_CHECKLIST.every((c) => checks[c.key]);
   const canNext = stepIdx < scenario.steps.length - 1;
