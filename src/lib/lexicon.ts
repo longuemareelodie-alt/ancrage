@@ -126,9 +126,6 @@ export const CONFIRMATION_LIBRARY = {
   /** Validation d'un exercice / d'une étape du parcours */
   step_done: "Ancré ✓",
 
-  /** Fin d'un jour d'initiation */
-  day_done: "Tu as ancré ce jour.",
-
   /** Fin d'un parcours complet */
   journey_done: "Tu es la maman ancrée.",
 } as const;
