@@ -3,6 +3,7 @@ import { Home, HelpCircle, Sparkles } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import ParentTypeBadge from "@/components/ParentTypeBadge";
 
 // Dev-only: detect if multiple <TopNav /> instances are mounted simultaneously.
 let __topNavMountCount = 0;
@@ -140,12 +141,16 @@ const TopNav = () => {
             );
           })}
           <li className="ms-1">
+            <ParentTypeBadge />
+          </li>
+          <li className="ms-1">
             <LanguageSwitcher />
           </li>
         </ul>
 
         {/* Mobile: language + menu */}
         <div className="flex items-center gap-2 sm:hidden">
+          <ParentTypeBadge />
           <LanguageSwitcher />
           <button
             type="button"
