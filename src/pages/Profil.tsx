@@ -499,8 +499,8 @@ const Profil = () => {
                           Aucun accès premium activé
                         </p>
                         <p className="text-xs text-muted-foreground leading-relaxed">
-                          Ton compte est créé, mais l'accès complet à Ancrage n'est pas encore débloqué.
-                          Active ton accès à vie en un paiement unique pour profiter de tout le parcours,
+                          Ton compte est créé, mais l'{PREMIUM_FULL_ACCESS_LABEL} à Ancrage n'est pas encore débloqué.
+                          Active ton {PREMIUM_LIFETIME_LABEL} en un paiement unique pour profiter de tout le parcours,
                           des notes et du contenu premium.
                         </p>
                       </div>
@@ -510,7 +510,7 @@ const Profil = () => {
                       className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground"
                     >
                       <Crown className="h-4 w-4" />
-                      Activer mon accès à vie
+                      {PREMIUM_CTA.activate_lifetime}
                     </Link>
                   </div>
                 ) : profile?.is_premium ? (

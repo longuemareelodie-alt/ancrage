@@ -103,7 +103,7 @@ const Sante = () => {
               onClick={() => navigate("/paywall")}
               className="mt-3 rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground"
             >
-              Débloquer l'accès complet
+              {PREMIUM_CTA.unlock_full_access}
             </button>
           </div>
         )}
