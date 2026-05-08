@@ -16,6 +16,7 @@ import ScrollToHash from "@/components/ScrollToHash";
 import { RouteTransitionProvider } from "@/components/RouteTransition";
 import ParentTypeOnboarding from "@/components/ParentTypeOnboarding";
 import GuidedTour from "@/components/GuidedTour";
+import RestartTourButton from "@/components/RestartTourButton";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import Emotions from "./pages/Emotions";
@@ -162,6 +163,7 @@ const AnimatedRoutes = () => {
           </Routes>
         </RoutesWrapper>
       </AnimatePresence>
+      <RestartTourButton />
       <BottomNav />
     </RouteTransitionProvider>
   );
