@@ -24,6 +24,7 @@ const todayKey = () => new Date().toISOString().slice(0, 10);
 
 const Dashboard = () => {
   const { user } = useAuth();
+  const { startPayment, loading: paymentLoading } = useMolliePayment();
   const [isPremium, setIsPremium] = useState<boolean | null>(null);
   // (planType state removed — is_premium is the single source of truth)
   const [streak, setStreak] = useState(0);
