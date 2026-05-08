@@ -73,7 +73,7 @@ export const template = {
   previewData: {
     customerEmail: 'cliente@example.com',
     customerName: 'Marie',
-    amount: '49,00 €',
+    amount: '59,00 €',
     paymentId: 'tr_example123',
   },
 } satisfies TemplateEntry
