@@ -16,7 +16,7 @@ import {
   BODY_LOCATIONS,
   OBSERVED_SIGNS_0_3,
   isCrisisEntry,
-  getEmotion,
+  
 } from "@/data/childEmotionsCatalog";
 import { useChildEmotionEntry } from "@/hooks/useChildEmotionEntry";
 
