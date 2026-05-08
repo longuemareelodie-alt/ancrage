@@ -345,15 +345,13 @@ const Checkin = () => {
         <QuickBackLinks variant="inline" />
       </div>
 
-      <div className="mx-auto w-full max-w-md">
+      <div className="mx-auto mt-3 w-full max-w-md">
         <DiscoveryHint id="checkin-intro" title="Le rituel en 90 secondes">
           Pose-toi : choisis ton émotion, son intensité, puis laisse-toi guider.
           Tu peux quitter à tout moment, rien n'est perdu.
         </DiscoveryHint>
       </div>
 
-      <div data-checkin-header-end />
-      </div>
 
       {/* Soft progress dots */}
       <div className="flex items-center justify-center gap-1.5 mt-3">
