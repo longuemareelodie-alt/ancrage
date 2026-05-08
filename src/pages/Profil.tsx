@@ -362,12 +362,6 @@ const Profil = () => {
                   <p className="text-xs font-medium text-muted-foreground">Email</p>
                   <p className="text-sm font-semibold">{profile?.email || "–"}</p>
                 </div>
-                <div>
-                  <p className="text-xs font-medium text-muted-foreground">Progression</p>
-                  <p className="mt-1 text-sm font-semibold">{completedPhases.length} / 4 phases terminées</p>
-                  <Progress value={(completedPhases.length / 4) * 100} className="mt-2 h-2.5" />
-                </div>
-
                 {/* Streak */}
                 <div className="flex items-center gap-4 rounded-xl bg-secondary/50 p-4">
                   <div className="flex items-center gap-2">
