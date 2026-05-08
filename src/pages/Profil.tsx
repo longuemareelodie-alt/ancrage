@@ -77,6 +77,7 @@ const Profil = () => {
   const { user, loading, signOut } = useAuth();
   const navigate = useNavigate();
   const { isSupported, isSubscribed, subscribe, unsubscribe, loading: pushLoading } = usePushNotifications();
+  const { startPayment, loading: paymentLoading } = useMolliePayment();
   const [profile, setProfile] = useState<{ first_name: string; email: string | null; is_premium: boolean; current_streak: number; longest_streak: number } | null>(null);
   const [profileLoadError, setProfileLoadError] = useState<string | null>(null);
   const [profileLoaded, setProfileLoaded] = useState(false);
