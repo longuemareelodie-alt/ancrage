@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { CheckCircle, Sparkles, ArrowRight, Download, Loader2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -10,9 +10,11 @@ import confetti from "canvas-confetti";
 
 const PaymentSuccess = () => {
   const { user } = useAuth();
+  const [searchParams] = useSearchParams();
+  const paymentIdFromUrl = searchParams.get("payment_id");
   const [firstName, setFirstName] = useState("");
   const [hasPendingCheckin, setHasPendingCheckin] = useState(false);
-  const [latestPaymentId, setLatestPaymentId] = useState<string | null>(null);
+  const [latestPaymentId, setLatestPaymentId] = useState<string | null>(paymentIdFromUrl);
   
   const [downloadingInvoice, setDownloadingInvoice] = useState(false);
 
