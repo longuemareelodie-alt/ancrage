@@ -25,6 +25,7 @@ import SupportContactDialog from "@/components/SupportContactDialog";
 import { PREMIUM_CTA, PREMIUM_FULL_ACCESS_LABEL, PREMIUM_LIFETIME_LABEL } from "@/lib/premiumOffer";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
 import DiscoveryToggle from "@/components/DiscoveryToggle";
+import GuidedTourSettings from "@/components/GuidedTourSettings";
 interface Note {
   id: string;
   title: string;
@@ -321,7 +322,8 @@ const Profil = () => {
       <SectionBlock>
         <AnimatePresence mode="wait">
           {activeTab === "profil" && (
-            <motion.div key="profil" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <motion.div key="profil" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-4">
+              <GuidedTourSettings />
               <div className="space-y-4 rounded-xl bg-card p-5 shadow-sm">
                 <div>
                   <p className="text-xs font-medium text-muted-foreground">Prénom</p>
