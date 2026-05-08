@@ -1,11 +1,14 @@
 import { Link } from "react-router-dom";
-import { AlertTriangle, MessageCircle, HandHeart, Sparkles, RotateCcw, Home } from "lucide-react";
+import { AlertTriangle, MessageCircle, HandHeart, Sparkles, RotateCcw, Home, Palette } from "lucide-react";
 import type { Emotion } from "@/data/childEmotionsCatalog";
+import { getChildOutlet } from "@/data/childEmotionsCatalog";
 
 type Props = {
   emotion: Emotion;
   isCrisis: boolean;
   onReset: () => void;
+  /** Show a child-facing expression outlet (used for 9–12). */
+  showChildOutlet?: boolean;
 };
 
 const ParentGuidance = ({ emotion, isCrisis, onReset }: Props) => {
