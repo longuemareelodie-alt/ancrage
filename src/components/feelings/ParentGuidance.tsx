@@ -11,7 +11,8 @@ type Props = {
   showChildOutlet?: boolean;
 };
 
-const ParentGuidance = ({ emotion, isCrisis, onReset }: Props) => {
+const ParentGuidance = ({ emotion, isCrisis, onReset, showChildOutlet }: Props) => {
+  const childOutlet = showChildOutlet ? getChildOutlet(emotion.key) : undefined;
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-3 rounded-2xl border border-border bg-card p-4">
