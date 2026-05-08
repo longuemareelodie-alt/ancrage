@@ -70,6 +70,10 @@ const Sante = () => {
       </SectionBlock>
 
       <SectionBlock>
+        <DiscoveryHint id="sante-home" title="Ton espace santé">
+          Centralise rendez-vous, médicaments et fiche médicale. La fiche
+          d'urgence est partageable en un lien sécurisé.
+        </DiscoveryHint>
         <div className="space-y-3">
           {items.map((item) => (
             <button

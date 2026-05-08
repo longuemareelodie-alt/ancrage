@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { BookOpen, BookHeart, ShieldAlert, NotebookPen, Users, Handshake, Sparkles, Rainbow } from "lucide-react";
 import LiesShell from "@/components/lies/LiesShell";
+import DiscoveryHint from "@/components/DiscoveryHint";
 
 const MODULES = [
   {
