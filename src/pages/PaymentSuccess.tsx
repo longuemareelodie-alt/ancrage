@@ -50,9 +50,10 @@ const PaymentSuccess = () => {
         if (data?.first_name) setFirstName(data.first_name);
       });
 
-    // Find this user's most recent successful payment so we can offer
-    // a downloadable invoice. Scoped by user_id (RLS-safe) and limited to
-    // payment outcomes (paid / already_active).
+    // If Mollie returned a payment_id in the URL, prefer it directly so
+    // the receipt button shows up immediately. Otherwise fall back to
+    // the user's most recent successful payment.
+    if (paymentIdFromUrl) return;
     supabase
       .from("premium_activation_log")
       .select("payment_id, raw")
@@ -67,7 +68,7 @@ const PaymentSuccess = () => {
           setLatestPaymentId(data.payment_id);
         }
       });
-  }, [user]);
+  }, [user, paymentIdFromUrl]);
 
   const handleDownloadInvoice = async () => {
     if (!latestPaymentId || downloadingInvoice) return;
