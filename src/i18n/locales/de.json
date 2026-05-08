@@ -60,9 +60,9 @@
     },
     "price": {
       "access": "Zugang",
-      "amount": "39 €",
+      "amount": "59 €",
       "subtitle": "Einmalige Zahlung · Lebenslanger Zugang",
-      "cta": "Ich will mich besser fühlen — 39 €",
+      "cta": "Ich will mich besser fühlen — 59 €",
       "note": "Einmalige Zahlung. Lebenslanger Zugang. 100 % sicher über Mollie.",
       "secure": "Zahlung 100 % sicher über Mollie"
     },
@@ -84,11 +84,11 @@
       },
       "price": {
         "q": "Wie viel kostet es?",
-        "a": "Vollzugang für 39 € – einmalige Zahlung, kein Abo, keine Testphase. Du kannst die Emotions-Screens und das Basis-Ritual ohne Konto ansehen."
+        "a": "Vollzugang für 59 € – einmalige Zahlung, kein Abo, keine Testphase. Du kannst die Emotions-Screens und das Basis-Ritual ohne Konto ansehen."
       },
       "subscription": {
         "q": "Ist es ein Abonnement?",
-        "a": "Nein. Einmalige Zahlung von 39 €, lebenslanger Zugang zu den beim Kauf verfügbaren Premium-Funktionen."
+        "a": "Nein. Einmalige Zahlung von 59 €, lebenslanger Zugang zu den beim Kauf verfügbaren Premium-Funktionen."
       },
       "medical": {
         "q": "Ersetzt es medizinische Betreuung oder eine:n Therapeut:in?",
@@ -510,9 +510,9 @@
     "header_p2": "Stell dir vor, du könntest dich öfter so fühlen.",
     "badge": "LEBENSLANGER ZUGANG",
     "brand": "ANCRAGE",
-    "amount": "39 €",
+    "amount": "59 €",
     "amount_note": "Einmalige Zahlung · Lebenslanger Zugang",
-    "cta": "Ich will mich besser fühlen — 39 €",
+    "cta": "Ich will mich besser fühlen — 59 €",
     "cta_with_amount": "Ich will mich besser fühlen — {{amount}}",
     "promo": {
       "label": "Hast du einen Gutscheincode?",
@@ -526,7 +526,7 @@
     "loading": "Lädt…",
     "secure_short": "Einmalige Zahlung. Lebenslanger Zugang. 100 % sicher über Mollie.",
     "secure_long": "Zahlung 100 % sicher über Mollie",
-    "legal": "Mit Klick auf „Ich will mich besser fühlen — 39 €“ akzeptiere ich die <cgv>AGB</cgv> und bestätige, dass der Zugang zum digitalen Inhalt sofort nach Zahlung beginnt, was den ausdrücklichen Verzicht auf mein Widerrufsrecht bedeutet. Siehe auch die <privacy>Datenschutz­erklärung</privacy> und das <legal>Impressum</legal>.",
+    "legal": "Mit Klick auf „Ich will mich besser fühlen — 59 €“ akzeptiere ich die <cgv>AGB</cgv> und bestätige, dass der Zugang zum digitalen Inhalt sofort nach Zahlung beginnt, was den ausdrücklichen Verzicht auf mein Widerrufsrecht bedeutet. Siehe auch die <privacy>Datenschutz­erklärung</privacy> und das <legal>Impressum</legal>.",
     "continue_alone": "Allein weitermachen",
     "features": {
       "ritual": "Vollständiges Tagesritual",
@@ -540,8 +540,8 @@
     },
     "lifetime_box": {
       "title": "Lebenslanger Zugang nach deiner einmaligen Zahlung",
-      "text": "Du zahlst einmal 39 €. Sobald die Zahlung bestätigt ist, wird ganz Ancrage in deinem Konto freigeschaltet — für immer.",
-      "bullet_one_payment": "Eine einzige Zahlung von 39 €",
+      "text": "Du zahlst einmal 59 €. Sobald die Zahlung bestätigt ist, wird ganz Ancrage in deinem Konto freigeschaltet — für immer.",
+      "bullet_one_payment": "Eine einzige Zahlung von 59 €",
       "bullet_no_renewal": "Kein Abo, nichts zu verlängern",
       "bullet_all_devices": "Auf allen deinen Geräten, lebenslang",
       "active_title": "Dein lebenslanger Zugang ist aktiv 💛",
@@ -550,8 +550,8 @@
     },
     "blocked": {
       "title": "Dein voller Zugang ist noch nicht aktiv 💛",
-      "text": "Dein Konto wurde nach dem Start des kostenpflichtigen Zugangs zu Ancrage erstellt. Um alles freizuschalten (Ritual, Notfall, Gesundheitsbereich, Weg…), brauchst du die einmalige Zahlung von 39€.",
-      "cta": "Ancrage freischalten — 39€"
+      "text": "Dein Konto wurde nach dem Start des kostenpflichtigen Zugangs zu Ancrage erstellt. Um alles freizuschalten (Ritual, Notfall, Gesundheitsbereich, Weg…), brauchst du die einmalige Zahlung von 59€.",
+      "cta": "Ancrage freischalten — 59€"
     },
     "redirected": {
       "title": "Diese Seite erfordert deinen vollen Zugang 💛",

@@ -31,7 +31,7 @@ const Paywall = () => {
   const PROMO_CATALOG: Record<string, { discountCents: number; label: string }> = {
     ANCRAGE15: { discountCents: 1500, label: "Ancrage15" },
   };
-  const BASE_PRICE_CENTS = 3900;
+  const BASE_PRICE_CENTS = 5900;
   const [promoInput, setPromoInput] = useState("");
   const [appliedPromo, setAppliedPromo] = useState<string | null>(null);
   const [promoError, setPromoError] = useState<string | null>(null);
