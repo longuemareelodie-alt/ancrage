@@ -15,9 +15,6 @@ interface StartPaymentOptions {
   guestEmail?: string;
 }
 
-const isValidEmail = (v: string) =>
-  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) && v.trim().length <= 254;
-
 export const useMolliePayment = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
@@ -26,15 +23,6 @@ export const useMolliePayment = () => {
     const product = "premium" as const;
     const promoCode = options.promoCode?.trim() || null;
     const guestEmail = options.guestEmail?.trim().toLowerCase() || null;
-
-    // Guest checkout requires a valid email passed explicitly via options
-    // (e.g. from a dedicated email field). Otherwise route to /auth so the
-    // user can sign in / sign up first. Authed users always use their session.
-    if (!user && (!guestEmail || !isValidEmail(guestEmail))) {
-      const here = `${window.location.pathname}${window.location.search}`;
-      window.location.href = `/auth?redirect=${encodeURIComponent(here)}&action=pay`;
-      return;
-    }
 
     // Premium accepts promo codes — no per-product guard needed anymore.
 
@@ -48,7 +36,9 @@ export const useMolliePayment = () => {
               options.redirectUrl ?? `${window.location.origin}/payment-pending`,
             promoCode,
             product,
-            // Server ignores guestEmail when a session is present.
+            // Server ignores guestEmail when a session is present. For guests,
+            // the email is optional before payment: Mollie/customer details are
+            // used by the webhook to send the account activation link after payment.
             guestEmail: user ? undefined : guestEmail,
           },
         }

@@ -146,12 +146,6 @@ const PaymentPending = () => {
 
   useEffect(() => {
     if (authLoading) return;
-    if (!user) {
-      navigate("/auth?redirect=/payment-pending", { replace: true });
-      return;
-    }
-
-    
 
     cancelled.current = false;
     let attempt = 0;
@@ -174,6 +168,43 @@ const PaymentPending = () => {
         return "still_open";
       }
     };
+
+    const pollGuestPayment = async () => {
+      if (cancelled.current) return;
+      attempt += 1;
+      setAttempts(attempt);
+      updateLastState("checking");
+
+      const mollieStatus = await checkMollieStatus();
+      if (cancelled.current) return;
+      if (mollieStatus === "terminal_failure") {
+        navigate("/payment-canceled", { replace: true });
+        return;
+      }
+      if (mollieStatus === "paid") {
+        setStatus("confirmed");
+        updateLastState("confirmed");
+        return;
+      }
+      if (attempt >= MAX_ATTEMPTS) {
+        setStatus("error");
+        updateLastState("error", "max_attempts_reached");
+        return;
+      }
+      updateLastState("retrying");
+      setTimeout(pollGuestPayment, POLL_INTERVAL_MS);
+    };
+
+    if (!user) {
+      if (!paymentId) {
+        navigate("/auth?redirect=/payment-pending", { replace: true });
+        return;
+      }
+      pollGuestPayment();
+      return () => {
+        cancelled.current = true;
+      };
+    }
 
     const poll = async () => {
       if (cancelled.current) return;
@@ -290,15 +321,29 @@ const PaymentPending = () => {
               <CheckCircle2 className="h-9 w-9 text-primary" />
             </motion.div>
             <div className="space-y-2">
-              <h1 className="text-xl font-bold">{t("payment_pending.confirmed.title")}</h1>
+              <h1 className="text-xl font-bold">
+                {user ? t("payment_pending.confirmed.title") : "Paiement confirmé 🎉"}
+              </h1>
               <p className="text-sm text-muted-foreground">
-                {t("payment_pending.confirmed.text")}
+                {user
+                  ? t("payment_pending.confirmed.text")
+                  : "Ton accès est activé. Tu vas recevoir un email pour créer ton mot de passe et te connecter."}
               </p>
             </div>
-            <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
-              <Loader2 className="h-3.5 w-3.5 animate-spin" />
-              <span>{t("payment_pending.confirmed.redirect")}</span>
-            </div>
+            {user ? (
+              <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                <span>{t("payment_pending.confirmed.redirect")}</span>
+              </div>
+            ) : (
+              <Link
+                to="/activation-compte"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground"
+              >
+                J'ai reçu mon email
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            )}
           </>
         )}
 

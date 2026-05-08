@@ -109,15 +109,13 @@ Deno.serve(async (req) => {
     const product = PRODUCT_CATALOG[productKey];
 
     // ---- Resolve effective email + identity ----
-    // Guests (no auth) MUST provide a valid email so the webhook can
-    // create their account on payment success. Authed users always
-    // win over guestEmail (single source of truth = the session).
-    const effectiveEmail = authedUser?.email ?? guestEmail;
+    // Authenticated users always use their session email. Guest checkout is
+    // allowed without a pre-payment email field; if Mollie returns buyer email
+    // details after payment, the webhook uses them to create the account and
+    // send the activation link.
+    const effectiveEmail = authedUser?.email ?? (isValidEmail(guestEmail) ? guestEmail : null);
     const isGuest = !authedUser;
 
-    if (isGuest && !isValidEmail(guestEmail)) {
-      return jsonResponse({ error: "guest_email_required" }, 400);
-    }
     if (isGuest && !product.allowGuestCheckout) {
       // Guest eligibility is now declared on the product itself in the
       // shared catalog — adding a non-guest product is a one-line opt-out.
