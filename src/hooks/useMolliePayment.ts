@@ -25,16 +25,14 @@ export const useMolliePayment = () => {
   const startPayment = async (options: StartPaymentOptions = {}) => {
     const product = "premium" as const;
     const promoCode = options.promoCode?.trim() || null;
-    const promptedEmail =
-      !user && !options.guestEmail
-        ? window.prompt("Entre ton email pour recevoir ton reçu et créer ton accès après paiement :")
-        : null;
-    const guestEmail = (options.guestEmail ?? promptedEmail)?.trim().toLowerCase() || null;
+    const guestEmail = options.guestEmail?.trim().toLowerCase() || null;
 
-    // Guest checkout requires a valid email — we can't create the account
-    // server-side without one. Authed users always use their session email.
+    // Guest checkout requires a valid email passed explicitly via options
+    // (e.g. from a dedicated email field). Otherwise route to /auth so the
+    // user can sign in / sign up first. Authed users always use their session.
     if (!user && (!guestEmail || !isValidEmail(guestEmail))) {
-      toast.error("Indique ton email pour démarrer le paiement.");
+      const here = `${window.location.pathname}${window.location.search}`;
+      window.location.href = `/auth?redirect=${encodeURIComponent(here)}&action=pay`;
       return;
     }
 
