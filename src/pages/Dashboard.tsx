@@ -12,6 +12,7 @@ import logo from "@/assets/logo-ancrage.png";
 import InstallPWAPrompt from "@/components/InstallPWAPrompt";
 import ResumeBanner from "@/components/ResumeBanner";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
+import DiscoveryHint from "@/components/DiscoveryHint";
 
 type MoodKey = "calm" | "ok" | "tense" | "overflow";
 const MOOD_OPTIONS: { key: MoodKey; emoji: string; label: string; adjust: number }[] = [
