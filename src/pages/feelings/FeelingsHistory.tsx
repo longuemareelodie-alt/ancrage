@@ -88,12 +88,18 @@ const FeelingsHistory = () => {
       icon={<Rainbow className="h-6 w-6" />}
     >
       {/* Range selector */}
-      <div className="mb-4 inline-flex rounded-full border border-border bg-card p-1">
+      <div
+        role="group"
+        aria-label="Période d'historique"
+        className="mb-4 inline-flex rounded-full border border-border bg-card p-1"
+      >
         {[7, 30].map((r) => (
           <button
             key={r}
+            type="button"
+            aria-pressed={range === r}
             onClick={() => setRange(r as 7 | 30)}
-            className={`rounded-full px-4 py-1.5 text-sm font-semibold transition-colors ${
+            className={`rounded-full px-4 py-1.5 text-sm font-semibold transition-colors focus:outline-none focus-visible:ring-4 focus-visible:ring-[hsl(var(--lies))] focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
               range === r
                 ? "bg-[hsl(var(--lies))] text-white"
                 : "text-foreground/70 hover:text-foreground"
@@ -105,23 +111,33 @@ const FeelingsHistory = () => {
       </div>
 
       {/* Age band filter */}
-      <div className="mb-6 -mx-1 flex flex-wrap gap-2">
+      <div
+        role="group"
+        aria-label="Filtrer par tranche d'âge"
+        className="mb-6 -mx-1 flex flex-wrap gap-2"
+      >
         {AGE_FILTERS.map((a) => {
           const active = ageFilter === a.key;
           const count = a.key === "all" ? entries.length : ageCounts.get(a.key) ?? 0;
           return (
             <button
               key={a.key}
+              type="button"
+              aria-pressed={active}
+              aria-label={`${a.label === "Tous" ? "Toutes les tranches" : `Tranche ${a.label} ans`} — ${count} entrée${count > 1 ? "s" : ""}`}
               onClick={() => setAgeFilter(a.key)}
-              className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
+              className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors focus:outline-none focus-visible:ring-4 focus-visible:ring-[hsl(var(--lies))] focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
                 active
                   ? "border-[hsl(var(--lies))] bg-[hsl(var(--lies-soft))] text-[hsl(var(--lies))]"
                   : "border-border bg-card text-foreground/70 hover:text-foreground"
               }`}
             >
-              <span>{a.emoji}</span>
+              <span aria-hidden="true">{a.emoji}</span>
               <span>{a.label}</span>
-              <span className="ml-0.5 rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-bold text-muted-foreground">
+              <span
+                aria-hidden="true"
+                className="ml-0.5 rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-bold text-muted-foreground"
+              >
                 {count}
               </span>
             </button>

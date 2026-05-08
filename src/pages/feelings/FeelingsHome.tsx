@@ -41,24 +41,34 @@ const FeelingsHome = () => {
       <div className="mb-4 flex justify-end">
         <Link
           to="/comment-tu-te-sens/historique"
-          className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-muted"
+          className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-muted focus:outline-none focus-visible:ring-4 focus-visible:ring-[hsl(var(--lies))] focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
-          <History className="h-3.5 w-3.5" />
+          <History className="h-3.5 w-3.5" aria-hidden="true" />
           Historique
         </Link>
       </div>
 
       {!age ? (
-        <section>
-          <h2 className="mb-4 text-lg font-bold text-foreground">Quel âge a ton enfant ?</h2>
-          <div className="grid gap-3 sm:grid-cols-2">
+        <section aria-labelledby="age-picker-title">
+          <h2 id="age-picker-title" className="mb-4 text-lg font-bold text-foreground">
+            Quel âge a ton enfant ?
+          </h2>
+          <div
+            role="radiogroup"
+            aria-labelledby="age-picker-title"
+            className="grid gap-3 sm:grid-cols-2"
+          >
             {AGE_BANDS.map((a) => (
               <button
                 key={a.key}
+                type="button"
+                role="radio"
+                aria-checked="false"
+                aria-label={`Tranche d'âge ${a.label}`}
                 onClick={() => setAge(a.key)}
-                className="flex items-center gap-4 rounded-2xl border border-border bg-card p-5 text-left transition-all hover:scale-[1.01] hover:border-[hsl(var(--lies))] hover:shadow-soft"
+                className="flex items-center gap-4 rounded-2xl border border-border bg-card p-5 text-left transition-all hover:scale-[1.01] hover:border-[hsl(var(--lies))] hover:shadow-soft focus:outline-none focus-visible:ring-4 focus-visible:ring-[hsl(var(--lies))] focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               >
-                <span className="text-4xl" aria-hidden>{a.emoji}</span>
+                <span className="text-4xl" aria-hidden="true">{a.emoji}</span>
                 <span className="text-lg font-bold text-foreground">{a.label}</span>
               </button>
             ))}
@@ -74,8 +84,10 @@ const FeelingsHome = () => {
 const Flow = ({ age, onChangeAge }: { age: AgeBand; onChangeAge: () => void }) => (
   <div>
     <button
+      type="button"
       onClick={onChangeAge}
-      className="mb-4 text-xs font-semibold text-muted-foreground underline hover:text-foreground"
+      aria-label="Changer la tranche d'âge sélectionnée"
+      className="mb-4 rounded-md text-xs font-semibold text-muted-foreground underline hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--lies))] focus-visible:ring-offset-2 focus-visible:ring-offset-background"
     >
       ← Changer la tranche d'âge
     </button>
