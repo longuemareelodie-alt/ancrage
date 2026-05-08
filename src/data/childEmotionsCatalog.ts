@@ -273,6 +273,11 @@ const CHILD_OUTLETS: Partial<Record<EmotionKey, string>> = {
 };
 
 const TEEN_TOOLS_BY_EMOTION: Partial<Record<EmotionKey, string[]>> = {
+  happy: [
+    "Note ce qui te fait du bien là, pour t'en souvenir plus tard.",
+    "Partage ce moment avec quelqu'un qui compte.",
+    "Prends 30 secondes pour vraiment savourer.",
+  ],
   sad: [
     "Écoute une chanson qui te comprend, en entier.",
     "Écris à toi-même comme à un·e ami·e qui souffre.",
