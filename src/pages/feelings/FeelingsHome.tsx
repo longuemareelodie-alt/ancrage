@@ -247,22 +247,7 @@ const Flow69 = () => {
     setDone(false);
   };
 
-  const handleFinish = async () => {
-    if (!emotion || !intensity || !body) return;
-    const crisis = isCrisisEntry({
-      emotion: emotion.key,
-      intensity,
-      intensityScale: 3,
-    });
-    const r = await save({
-      age_band: "6_9",
-      emotion: emotion.key,
-      intensity,
-      body_location: body,
-      is_crisis: crisis,
-    });
-    if (r) setDone(true);
-  };
+
 
   if (done && emotion) {
     return (
