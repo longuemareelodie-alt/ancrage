@@ -14,8 +14,11 @@ type Props = {
 const ParentGuidance = ({ emotion, isCrisis, onReset, showChildOutlet }: Props) => {
   const childOutlet = showChildOutlet ? getChildOutlet(emotion.key) : undefined;
   return (
-    <div className="space-y-4">
-      <div className="flex items-center gap-3 rounded-2xl border border-border bg-card p-4">
+    <div className="space-y-4" role="region" aria-label={`Guidance parentale pour l'émotion ${emotion.label}`}>
+      <div
+        className="flex items-center gap-3 rounded-2xl border border-border bg-card p-4"
+        aria-live="polite"
+      >
         <span
           className="flex h-12 w-12 items-center justify-center rounded-full text-3xl"
           style={{ background: `hsl(${emotion.hsl} / 0.35)` }}
