@@ -287,6 +287,7 @@ const Profil = () => {
               <Sparkles className="h-3.5 w-3.5" />
               Refaire la visite
             </button>
+            <DiscoveryToggle />
           </div>
         </div>
       </SectionBlock>
