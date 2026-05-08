@@ -54,6 +54,16 @@ const ParentGuidance = ({ emotion, isCrisis, onReset, showChildOutlet }: Props) 
         </section>
       )}
 
+      {childOutlet && (
+        <section className="rounded-2xl border-2 border-[hsl(var(--lies))] bg-[hsl(var(--lies-soft))] p-5">
+          <div className="mb-2 flex items-center gap-2 text-[hsl(var(--lies))]">
+            <Palette className="h-4 w-4" />
+            <h3 className="text-sm font-bold uppercase tracking-wider">Outil d'expression pour ton enfant</h3>
+          </div>
+          <p className="text-base leading-relaxed text-foreground">{childOutlet}</p>
+        </section>
+      )}
+
       {isCrisis && (
         <Link
           to="/lies-autrement/crise"
