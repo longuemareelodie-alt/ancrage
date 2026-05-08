@@ -24,6 +24,7 @@ import PronunciationLexicon from "@/components/PronunciationLexicon";
 import SupportContactDialog from "@/components/SupportContactDialog";
 import { PREMIUM_CTA, PREMIUM_FULL_ACCESS_LABEL, PREMIUM_LIFETIME_LABEL } from "@/lib/premiumOffer";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
+import DiscoveryToggle from "@/components/DiscoveryToggle";
 interface Note {
   id: string;
   title: string;
@@ -287,6 +288,7 @@ const Profil = () => {
               <Sparkles className="h-3.5 w-3.5" />
               Refaire la visite
             </button>
+            <DiscoveryToggle />
           </div>
         </div>
       </SectionBlock>

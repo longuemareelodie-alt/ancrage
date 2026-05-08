@@ -12,6 +12,7 @@ import logo from "@/assets/logo-ancrage.png";
 import InstallPWAPrompt from "@/components/InstallPWAPrompt";
 import ResumeBanner from "@/components/ResumeBanner";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
+import DiscoveryHint from "@/components/DiscoveryHint";
 
 type MoodKey = "calm" | "ok" | "tense" | "overflow";
 const MOOD_OPTIONS: { key: MoodKey; emoji: string; label: string; adjust: number }[] = [
@@ -123,6 +124,12 @@ const Dashboard = () => {
       </div>
 
       <div className="flex flex-1 flex-col items-center px-6 pb-12 pt-4">
+        <div className="w-full max-w-md">
+          <DiscoveryHint id="dashboard-home" title="Ton tableau de bord">
+            Tu es sur ton accueil. Le rituel matin/soir est en haut, tes outils
+            rapides en dessous. Tape sur l'icône en bas pour naviguer.
+          </DiscoveryHint>
+        </div>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

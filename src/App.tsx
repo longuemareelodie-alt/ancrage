@@ -17,6 +17,8 @@ import { RouteTransitionProvider } from "@/components/RouteTransition";
 import ParentTypeOnboarding from "@/components/ParentTypeOnboarding";
 import GuidedTour from "@/components/GuidedTour";
 import RestartTourButton from "@/components/RestartTourButton";
+import DiscoveryBadge from "@/components/DiscoveryBadge";
+import { DiscoveryProvider } from "@/contexts/DiscoveryContext";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import Emotions from "./pages/Emotions";
@@ -99,6 +101,7 @@ const AnimatedRoutes = () => {
     <RouteTransitionProvider>
       <ScrollToHash />
       <TopNav />
+      <DiscoveryBadge />
       <ParentTypeOnboarding />
       <GuidedTour />
       <AnimatePresence mode="wait">
@@ -172,13 +175,15 @@ const AnimatedRoutes = () => {
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <AnimatedRoutes />
-        </BrowserRouter>
-      </TooltipProvider>
+      <DiscoveryProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <AnimatedRoutes />
+          </BrowserRouter>
+        </TooltipProvider>
+      </DiscoveryProvider>
     </AuthProvider>
   </QueryClientProvider>
 );

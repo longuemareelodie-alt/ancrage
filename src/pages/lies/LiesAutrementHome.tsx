@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { BookOpen, BookHeart, ShieldAlert, NotebookPen, Users, Handshake, Sparkles, Rainbow } from "lucide-react";
 import LiesShell from "@/components/lies/LiesShell";
+import DiscoveryHint from "@/components/DiscoveryHint";
 
 const MODULES = [
   {
@@ -55,6 +56,10 @@ const LiesAutrementHome = () => {
       backTo="/dashboard"
       icon={<Handshake className="h-6 w-6" />}
     >
+      <DiscoveryHint id="lies-home" title="Ton espace lien" tone="lies">
+        Tu y trouves LSF, journal partagé, communauté et activités. Tape sur un
+        bloc pour ouvrir le module.
+      </DiscoveryHint>
       <div className="grid gap-3 sm:grid-cols-2">
         {MODULES.map(({ to, title, desc, icon: Icon }) => (
           <Link

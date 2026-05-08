@@ -1,6 +1,7 @@
 import { useLocation } from "react-router-dom";
 import { HelpCircle } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useDiscovery } from "@/contexts/DiscoveryContext";
 import { START_TOUR_EVENT } from "@/components/GuidedTour";
 
 /**
@@ -27,9 +28,12 @@ const HIDDEN_ROUTES = new Set<string>([
 
 export default function RestartTourButton() {
   const { user, isPaid, loading } = useAuth();
+  const { active: discoveryActive } = useDiscovery();
   const location = useLocation();
 
   if (loading || !user || !isPaid) return null;
+  // In discovery mode, contextual hints already guide the user — hide the FAB
+  if (discoveryActive) return null;
   if (HIDDEN_ROUTES.has(location.pathname)) return null;
   if (location.pathname.startsWith("/fiche-urgence/")) return null;
 

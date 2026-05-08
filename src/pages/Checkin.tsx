@@ -13,6 +13,7 @@ import { useMolliePayment } from "@/hooks/useMolliePayment";
 import BadgeCelebration from "@/components/BadgeCelebration";
 import MicroRewardPopup from "@/components/MicroRewardPopup";
 import QuickBackLinks from "@/components/QuickBackLinks";
+import DiscoveryHint from "@/components/DiscoveryHint";
 import { PREMIUM_CTA } from "@/lib/premiumOffer";
 
 type Step = "select" | "response" | "teaser" | "action" | "after" | "evolution" | "validation" | "summary";
@@ -344,6 +345,14 @@ const Checkin = () => {
         <p className="text-xs text-muted-foreground font-medium">{progressLabels[step]}</p>
         <QuickBackLinks variant="inline" />
       </div>
+
+      <div className="mx-auto mt-3 w-full max-w-md">
+        <DiscoveryHint id="checkin-intro" title="Le rituel en 90 secondes">
+          Pose-toi : choisis ton émotion, son intensité, puis laisse-toi guider.
+          Tu peux quitter à tout moment, rien n'est perdu.
+        </DiscoveryHint>
+      </div>
+
 
       {/* Soft progress dots */}
       <div className="flex items-center justify-center gap-1.5 mt-3">
