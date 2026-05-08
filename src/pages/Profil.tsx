@@ -508,13 +508,14 @@ const Profil = () => {
                         </p>
                       </div>
                     </div>
-                    <Link
-                      to="/paywall"
-                      className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground"
+                    <button
+                      onClick={() => startPayment()}
+                      disabled={paymentLoading}
+                      className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground disabled:opacity-60"
                     >
                       <Crown className="h-4 w-4" />
-                      {PREMIUM_CTA.activate_lifetime}
-                    </Link>
+                      {paymentLoading ? "Chargement…" : PREMIUM_CTA.activate_lifetime}
+                    </button>
                   </div>
                 ) : profile?.is_premium ? (
                   <div className="rounded-xl border border-border bg-card p-4">
