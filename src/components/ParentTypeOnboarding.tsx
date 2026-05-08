@@ -51,11 +51,31 @@ export default function ParentTypeOnboarding() {
     setOpen(false);
   }
 
+  function dismissAll() {
+    markParentTypeChosen();
+    markSchoolContextChosen();
+    setOpen(false);
+  }
+
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-end justify-center bg-background/80 backdrop-blur-sm sm:items-center">
-      <div className="w-full max-w-md rounded-t-3xl border border-border bg-card p-6 shadow-2xl sm:rounded-3xl">
+    <div
+      className="fixed inset-0 z-[60] flex items-end justify-center bg-background/80 backdrop-blur-sm sm:items-center"
+      onClick={dismissAll}
+      role="presentation"
+    >
+      <div
+        className="relative w-full max-w-md rounded-t-3xl border border-border bg-card p-6 shadow-2xl sm:rounded-3xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          onClick={dismissAll}
+          aria-label="Fermer"
+          className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
+        >
+          ✕
+        </button>
         <div className="mb-1 text-center text-xs font-medium uppercase tracking-wide text-muted-foreground">
           Avant de commencer · {step === "parent" ? "1/2" : "2/2"}
         </div>
