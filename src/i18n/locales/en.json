@@ -60,9 +60,9 @@
     },
     "price": {
       "access": "Access",
-      "amount": "€39",
+      "amount": "€59",
       "subtitle": "One-time payment · Lifetime access",
-      "cta": "I want to feel better — €39",
+      "cta": "I want to feel better — €59",
       "note": "One-time payment. Lifetime access. 100% secure via Mollie.",
       "secure": "Payment 100% secure via Mollie"
     },
@@ -84,11 +84,11 @@
       },
       "price": {
         "q": "How much does it cost?",
-        "a": "Full access is €39 — a one-time payment, no subscription, no trial period. You can preview the emotion screens and the basic ritual without an account."
+        "a": "Full access is €59 — a one-time payment, no subscription, no trial period. You can preview the emotion screens and the basic ritual without an account."
       },
       "subscription": {
         "q": "Is it a subscription?",
-        "a": "No. One-time €39 payment, lifetime access to the paid features available at the time of purchase."
+        "a": "No. One-time €59 payment, lifetime access to the paid features available at the time of purchase."
       },
       "medical": {
         "q": "Does it replace medical care or a therapist?",
@@ -510,9 +510,9 @@
     "header_p2": "Imagine if you could feel like this more often.",
     "badge": "LIFETIME ACCESS",
     "brand": "ANCRAGE",
-    "amount": "€39",
+    "amount": "€59",
     "amount_note": "One-time payment · Lifetime access",
-    "cta": "I want to feel better — €39",
+    "cta": "I want to feel better — €59",
     "cta_with_amount": "I want to feel better — {{amount}}",
     "promo": {
       "label": "Have a promo code?",
@@ -526,7 +526,7 @@
     "loading": "Loading…",
     "secure_short": "One-time payment. Lifetime access. 100% secure via Mollie.",
     "secure_long": "Payment 100% secure via Mollie",
-    "legal": "By clicking \"I want to feel better — €39\", I accept the <cgv>Terms of sale</cgv> and acknowledge that access to digital content begins immediately after payment, which means I expressly waive my withdrawal right. See also the <privacy>Privacy policy</privacy> and <legal>Legal notice</legal>.",
+    "legal": "By clicking \"I want to feel better — €59\", I accept the <cgv>Terms of sale</cgv> and acknowledge that access to digital content begins immediately after payment, which means I expressly waive my withdrawal right. See also the <privacy>Privacy policy</privacy> and <legal>Legal notice</legal>.",
     "continue_alone": "Continue on my own",
     "features": {
       "ritual": "Full daily ritual",
@@ -540,8 +540,8 @@
     },
     "lifetime_box": {
       "title": "Lifetime access after your one-time payment",
-      "text": "You pay €39 once. As soon as the payment is confirmed, all of Ancrage is unlocked in your account — forever.",
-      "bullet_one_payment": "One single €39 payment",
+      "text": "You pay €59 once. As soon as the payment is confirmed, all of Ancrage is unlocked in your account — forever.",
+      "bullet_one_payment": "One single €59 payment",
       "bullet_no_renewal": "No subscription, nothing to renew",
       "bullet_all_devices": "On all your devices, for life",
       "active_title": "Your lifetime access is active 💛",
@@ -550,8 +550,8 @@
     },
     "blocked": {
       "title": "Your full access isn't active yet 💛",
-      "text": "Your account was created after Ancrage's paid access launched. To unlock everything (ritual, emergency, health space, journey…), you need the one-time €39 payment.",
-      "cta": "Unlock Ancrage — €39"
+      "text": "Your account was created after Ancrage's paid access launched. To unlock everything (ritual, emergency, health space, journey…), you need the one-time €59 payment.",
+      "cta": "Unlock Ancrage — €59"
     },
     "redirected": {
       "title": "This page requires your full access 💛",

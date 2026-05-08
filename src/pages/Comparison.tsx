@@ -52,7 +52,7 @@ const Comparison = () => {
           </div>
           <div className="text-center pt-2">
             <p className="text-sm font-medium text-muted-foreground">ANCRAGE</p>
-            <p className="mt-2 text-4xl font-bold">39€</p>
+            <p className="mt-2 text-4xl font-bold">59€</p>
             <p className="text-xs text-muted-foreground mt-1">Paiement unique · Accès à vie</p>
           </div>
           <ul className="space-y-2">
@@ -71,7 +71,7 @@ const Comparison = () => {
             disabled={paymentLoading}
             className="w-full rounded-xl bg-primary py-3.5 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 transition-transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60"
           >
-            {paymentLoading ? "Chargement…" : "Je veux me sentir mieux — 39€"}
+            {paymentLoading ? "Chargement…" : "Je veux me sentir mieux — 59€"}
           </button>
           <p className="text-center text-xs text-muted-foreground">
             Paiement unique. Accès à vie. 100% sécurisé via Mollie.

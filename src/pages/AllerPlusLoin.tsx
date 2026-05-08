@@ -80,7 +80,7 @@ const AllerPlusLoin = () => {
             </div>
           </div>
           <div className="mt-4 space-y-2">
-            <CTAButton to="#" onClick={handlePayment} loading={paymentLoading}>Je veux me sentir mieux — 39€</CTAButton>
+            <CTAButton to="#" onClick={handlePayment} loading={paymentLoading}>Je veux me sentir mieux — 59€</CTAButton>
             <p className="text-xs text-muted-foreground">Paiement unique. Accès à vie. 100% sécurisé via Mollie.</p>
           </div>
         </div>

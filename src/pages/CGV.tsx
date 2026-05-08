@@ -177,7 +177,7 @@ const CGV = () => (
                 paiement <code>/paywall</code>, le client prend connaissance de
                 la mention d'acceptation affichée sous le bouton de paiement
                 (reproduite à l'article 8) puis clique sur le bouton{" "}
-                <strong>« Je veux me sentir mieux — 39€ »</strong>. Ce clic
+                <strong>« Je veux me sentir mieux — 59€ »</strong>. Ce clic
                 vaut <strong>acceptation expresse des présentes CGV</strong> et{" "}
                 <strong>renonciation expresse au droit de rétractation</strong>.
                 Le client est ensuite redirigé vers la page sécurisée du
@@ -251,13 +251,13 @@ const CGV = () => (
               mot pour mot dans l'application) :
             </p>
             <blockquote className="border-l-2 border-primary/40 pl-4 italic text-foreground/80">
-              « En cliquant sur "Je veux me sentir mieux — 39€", j'accepte les
+              « En cliquant sur "Je veux me sentir mieux — 59€", j'accepte les
               Conditions générales de vente et reconnais que l'accès au contenu
               numérique débute immédiatement après le paiement, ce qui entraîne
               la renonciation expresse à mon droit de rétractation. »
             </blockquote>
             <p>
-              Le clic sur le bouton <strong>« Je veux me sentir mieux — 39€ »</strong>{" "}
+              Le clic sur le bouton <strong>« Je veux me sentir mieux — 59€ »</strong>{" "}
               vaut donc, de manière indissociable et simultanée, (i) acceptation
               expresse des présentes CGV, (ii) demande expresse d'exécution
               immédiate du Service après paiement, et (iii) renonciation

@@ -2,7 +2,7 @@
  * E2E-style guardrail: no "essai gratuit 7 jours" CTA may appear in the
  * public-facing UI (pages, components, i18n bundles, transactional emails).
  *
- * The offer was unified into a single Premium price (39 €). Any reappearance
+ * The offer was unified into a single Premium price (59 €). Any reappearance
  * of free-trial / 7-day-trial CTAs would be a regression — this test fails
  * the build before it ships.
  */
