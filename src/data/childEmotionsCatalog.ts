@@ -35,7 +35,18 @@ export type Emotion = {
     /** Petit exercice (6–9, 9–12). */
     exercise?: string;
   };
+  /** Outil d'expression proposé à l'enfant (9–12). */
+  childOutlet?: string;
+  /** Exercices autonomes pour l'ado (12+). */
+  teenTools?: string[];
 };
+
+const DEFAULT_TEEN_TOOLS = [
+  "Mets de la musique calme dans ton casque, 5 minutes.",
+  "Respiration carrée 4-4-4-4, 5 cycles.",
+  "Bois un grand verre d'eau, lentement.",
+  "Écris ce qui te passe par la tête, sans te corriger.",
+];
 
 export const BASE_EMOTIONS: Emotion[] = [
   {
