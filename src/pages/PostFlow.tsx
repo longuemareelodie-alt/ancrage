@@ -6,11 +6,17 @@ import QuickBackLinks from "@/components/QuickBackLinks";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useMolliePayment } from "@/hooks/useMolliePayment";
 
 const PostFlow = () => {
   const { user } = useAuth();
   const { t } = useTranslation();
+  const { startPayment, loading: paymentLoading } = useMolliePayment();
   const [isPremium, setIsPremium] = useState(false);
+  const handlePayment = () => {
+    if (!user) { window.location.href = "/auth?redirect=/post-flow&action=pay"; return; }
+    startPayment();
+  };
 
   useEffect(() => {
     if (!user) return;
