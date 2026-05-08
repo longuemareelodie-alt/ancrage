@@ -5,11 +5,19 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import QuickBackLinks from "@/components/QuickBackLinks";
+import { useMolliePayment } from "@/hooks/useMolliePayment";
+import { useAuth } from "@/contexts/AuthContext";
 
 type EmergencyStep = "loading" | "blocked" | "breathe" | "message" | "done";
 
 const Emergency = () => {
   const { t } = useTranslation();
+  const { user } = useAuth();
+  const { startPayment, loading: paymentLoading } = useMolliePayment();
+  const handlePayment = () => {
+    if (!user) { window.location.href = "/auth?redirect=/urgence&action=pay"; return; }
+    startPayment();
+  };
   const [step, setStep] = useState<EmergencyStep>("loading");
   const [breathCount, setBreathCount] = useState(0);
   const [usage, setUsage] = useState<{
