@@ -3,8 +3,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ArrowRight, Check } from "lucide-react";
+import { shouldAutoLaunch, markTourShown } from "@/lib/tourSettings";
 
-const STORAGE_KEY = "guided_tour_done_v1";
 export const START_TOUR_EVENT = "lovable:start-guided-tour";
 
 type Step = {
@@ -73,13 +73,11 @@ export default function GuidedTour() {
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(0);
 
-  // Auto-launch on first visit for paid users
+  // Auto-launch based on user settings (frequency / disabled)
   useEffect(() => {
     if (loading || !user || !isPaid) return;
-    if (typeof window === "undefined") return;
-    if (localStorage.getItem(STORAGE_KEY)) return;
-    // Only auto-start when landing on dashboard
     if (location.pathname !== "/dashboard") return;
+    if (!shouldAutoLaunch()) return;
     setOpen(true);
     setStep(0);
   }, [loading, user, isPaid, location.pathname]);
@@ -96,7 +94,7 @@ export default function GuidedTour() {
   }, [navigate]);
 
   const finish = useCallback(() => {
-    localStorage.setItem(STORAGE_KEY, "1");
+    markTourShown();
     setOpen(false);
   }, []);
 
