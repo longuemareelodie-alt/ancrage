@@ -23,6 +23,7 @@ import SpeechPrefs from "@/components/SpeechPrefs";
 import PronunciationLexicon from "@/components/PronunciationLexicon";
 import SupportContactDialog from "@/components/SupportContactDialog";
 import { PREMIUM_CTA, PREMIUM_FULL_ACCESS_LABEL, PREMIUM_LIFETIME_LABEL } from "@/lib/premiumOffer";
+import { useMolliePayment } from "@/hooks/useMolliePayment";
 interface Note {
   id: string;
   title: string;
@@ -76,6 +77,7 @@ const Profil = () => {
   const { user, loading, signOut } = useAuth();
   const navigate = useNavigate();
   const { isSupported, isSubscribed, subscribe, unsubscribe, loading: pushLoading } = usePushNotifications();
+  const { startPayment, loading: paymentLoading } = useMolliePayment();
   const [profile, setProfile] = useState<{ first_name: string; email: string | null; is_premium: boolean; current_streak: number; longest_streak: number } | null>(null);
   const [profileLoadError, setProfileLoadError] = useState<string | null>(null);
   const [profileLoaded, setProfileLoaded] = useState(false);
@@ -506,13 +508,14 @@ const Profil = () => {
                         </p>
                       </div>
                     </div>
-                    <Link
-                      to="/paywall"
-                      className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground"
+                    <button
+                      onClick={() => startPayment()}
+                      disabled={paymentLoading}
+                      className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground disabled:opacity-60"
                     >
                       <Crown className="h-4 w-4" />
-                      {PREMIUM_CTA.activate_lifetime}
-                    </Link>
+                      {paymentLoading ? "Chargement…" : PREMIUM_CTA.activate_lifetime}
+                    </button>
                   </div>
                 ) : profile?.is_premium ? (
                   <div className="rounded-xl border border-border bg-card p-4">

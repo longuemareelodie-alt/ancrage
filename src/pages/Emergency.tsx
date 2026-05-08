@@ -5,11 +5,19 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import QuickBackLinks from "@/components/QuickBackLinks";
+import { useMolliePayment } from "@/hooks/useMolliePayment";
+import { useAuth } from "@/contexts/AuthContext";
 
 type EmergencyStep = "loading" | "blocked" | "breathe" | "message" | "done";
 
 const Emergency = () => {
   const { t } = useTranslation();
+  const { user } = useAuth();
+  const { startPayment, loading: paymentLoading } = useMolliePayment();
+  const handlePayment = () => {
+    if (!user) { window.location.href = "/auth?redirect=/urgence&action=pay"; return; }
+    startPayment();
+  };
   const [step, setStep] = useState<EmergencyStep>("loading");
   const [breathCount, setBreathCount] = useState(0);
   const [usage, setUsage] = useState<{
@@ -71,10 +79,10 @@ const Emergency = () => {
                 <p className="text-sm text-muted-foreground leading-relaxed">{t("emergency.blocked_text")}</p>
               </div>
               <div className="space-y-3 w-full">
-                <Link to="/paywall"
-                  className="block w-full rounded-full bg-primary px-6 py-3 text-center text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25">
-                  {t("emergency.blocked_cta")}
-                </Link>
+                <button onClick={handlePayment} disabled={paymentLoading}
+                  className="block w-full rounded-full bg-primary px-6 py-3 text-center text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 disabled:opacity-60">
+                  {paymentLoading ? "Chargement…" : t("emergency.blocked_cta")}
+                </button>
                 <Link to="/dashboard"
                   className="block w-full rounded-full border border-border px-6 py-3 text-center text-sm font-medium">
                   {t("emergency.back_dashboard")}
@@ -140,10 +148,10 @@ const Emergency = () => {
                   {t("emergency.done_back")}
                 </Link>
                 {!usage?.unlimited && (
-                  <Link to="/paywall"
-                    className="block w-full rounded-full border border-border px-6 py-3 text-center text-sm font-medium">
-                    {t("emergency.done_upgrade")}
-                  </Link>
+                  <button onClick={handlePayment} disabled={paymentLoading}
+                    className="block w-full rounded-full border border-border px-6 py-3 text-center text-sm font-medium disabled:opacity-60">
+                    {paymentLoading ? "Chargement…" : t("emergency.done_upgrade")}
+                  </button>
                 )}
               </div>
             </motion.div>

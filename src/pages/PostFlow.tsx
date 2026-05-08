@@ -6,11 +6,17 @@ import QuickBackLinks from "@/components/QuickBackLinks";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useMolliePayment } from "@/hooks/useMolliePayment";
 
 const PostFlow = () => {
   const { user } = useAuth();
   const { t } = useTranslation();
+  const { startPayment, loading: paymentLoading } = useMolliePayment();
   const [isPremium, setIsPremium] = useState(false);
+  const handlePayment = () => {
+    if (!user) { window.location.href = "/auth?redirect=/post-flow&action=pay"; return; }
+    startPayment();
+  };
 
   useEffect(() => {
     if (!user) return;
@@ -64,13 +70,14 @@ const PostFlow = () => {
           </Link>
 
           {!isPremium && (
-            <Link
-              to="/paywall"
-              className="block w-full rounded-2xl bg-gradient-to-r from-primary to-primary/80 p-5 text-center text-primary-foreground shadow-lg shadow-primary/25 transition-transform hover:scale-[1.02] active:scale-[0.98]"
+            <button
+              onClick={handlePayment}
+              disabled={paymentLoading}
+              className="block w-full rounded-2xl bg-gradient-to-r from-primary to-primary/80 p-5 text-center text-primary-foreground shadow-lg shadow-primary/25 transition-transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60"
             >
-              <p className="font-bold">Aller plus loin</p>
+              <p className="font-bold">{paymentLoading ? "Chargement…" : "Aller plus loin — 59€"}</p>
               <p className="mt-1 text-sm opacity-80">Être accompagnée chaque jour</p>
-            </Link>
+            </button>
           )}
         </div>
       </motion.div>
