@@ -38,6 +38,10 @@ const FeelingsHome = () => {
       backTo="/lies-autrement"
       icon={<Rainbow className="h-6 w-6" />}
     >
+      <DiscoveryHint id="feelings-home" title="Aide ton enfant à se dire" tone="lies">
+        Choisis sa tranche d'âge. L'outil propose ensuite des visages, mots ou
+        ressources adaptés. Ouvre l'historique pour suivre l'évolution.
+      </DiscoveryHint>
       <div className="mb-4 flex justify-end">
         <Link
           to="/comment-tu-te-sens/historique"
