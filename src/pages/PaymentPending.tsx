@@ -201,7 +201,10 @@ const PaymentPending = () => {
         updateLastState("confirmed");
         setTimeout(() => {
           if (cancelled.current) return;
-          navigate("/payment-success", { replace: true });
+          const successUrl = paymentId
+            ? `/payment-success?payment_id=${encodeURIComponent(paymentId)}`
+            : "/payment-success";
+          navigate(successUrl, { replace: true });
         }, 1200);
         return;
       }
@@ -225,12 +228,21 @@ const PaymentPending = () => {
       setTimeout(poll, POLL_INTERVAL_MS);
     };
 
-    poll();
+    // Kick off: check Mollie status first to short-circuit cancel/failure.
+    (async () => {
+      const mollieStatus = await checkMollieStatus();
+      if (cancelled.current) return;
+      if (mollieStatus === "terminal_failure") {
+        navigate("/payment-canceled", { replace: true });
+        return;
+      }
+      poll();
+    })();
 
     return () => {
       cancelled.current = true;
     };
-  }, [user?.id, authLoading, navigate]);
+  }, [user?.id, authLoading, navigate, paymentId]);
 
   const progressPct = Math.min(100, Math.round((attempts / MAX_ATTEMPTS) * 100));
 
