@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Loader2,
@@ -42,6 +42,8 @@ const PaymentPending = () => {
   const { user, loading: authLoading } = useAuth();
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const paymentId = searchParams.get("payment_id");
   const [status, setStatus] = useState<Status>("pending");
   const [attempts, setAttempts] = useState(0);
   const [lastState, setLastState] = useState<LastState>("checking");
@@ -153,6 +155,25 @@ const PaymentPending = () => {
 
     cancelled.current = false;
     let attempt = 0;
+
+    // Step 0: if Mollie returned a payment_id, check its status FIRST.
+    // This lets us redirect early to /payment-canceled when the user
+    // bailed out of the Mollie checkout (canceled / failed / expired)
+    // instead of polling profiles forever.
+    const checkMollieStatus = async (): Promise<"paid" | "terminal_failure" | "still_open"> => {
+      if (!paymentId) return "still_open";
+      try {
+        const { data, error } = await supabase.functions.invoke("check-mollie-payment", {
+          body: { paymentId },
+        });
+        if (error || !data?.status) return "still_open";
+        if (data.status === "paid" || data.status === "authorized") return "paid";
+        if (["canceled", "failed", "expired"].includes(data.status)) return "terminal_failure";
+        return "still_open";
+      } catch {
+        return "still_open";
+      }
+    };
 
     const poll = async () => {
       if (cancelled.current) return;
