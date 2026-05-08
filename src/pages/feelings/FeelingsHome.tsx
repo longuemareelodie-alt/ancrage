@@ -19,6 +19,7 @@ import {
   getTeenTools,
 } from "@/data/childEmotionsCatalog";
 import { useChildEmotionEntry } from "@/hooks/useChildEmotionEntry";
+import DiscoveryHint from "@/components/DiscoveryHint";
 
 const AGE_BANDS: { key: AgeBand; emoji: string; label: string }[] = [
   { key: "0_3", emoji: "👶", label: "0–3 ans" },
