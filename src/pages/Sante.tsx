@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import SectionBlock from "@/components/SectionBlock";
 import { Calendar, Pill, HeartPulse, Sparkles, ChevronRight, Lock } from "lucide-react";
 import { PREMIUM_CTA } from "@/lib/premiumOffer";
+import DiscoveryHint from "@/components/DiscoveryHint";
 
 const Sante = () => {
   const navigate = useNavigate();
