@@ -10,7 +10,7 @@ import {
   BASE_EMOTIONS,
   EXTENDED_EMOTIONS,
   Emotion,
-  EmotionKey,
+  
   INTENSITY_3,
   INTENSITY_5,
   BODY_LOCATIONS,
