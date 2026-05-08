@@ -517,12 +517,25 @@ const FlowTeen = () => {
             <h3 className="text-sm font-bold uppercase tracking-wider">Pour toi, maintenant</h3>
           </div>
           <ul className="space-y-2 text-sm text-foreground">
-            <li>• Mets de la musique calme dans ton casque, 5 minutes.</li>
-            <li>• Respiration 4-4-4-4 (carré) : 5 cycles.</li>
-            <li>• Bois un grand verre d'eau, lentement.</li>
-            <li>• Écris ce qui te passe par la tête, sans te corriger.</li>
+            {getTeenTools(emotion.key).map((tool, idx) => (
+              <li key={idx}>• {tool}</li>
+            ))}
           </ul>
         </section>
+
+        {isCrisisEntry({
+          emotion: emotion.key,
+          intensity: intensity ?? undefined,
+          intensityScale: 5,
+        }) && (
+          <Link
+            to="/lies-autrement/crise"
+            className="flex items-center justify-center gap-2 rounded-2xl bg-destructive px-5 py-4 text-base font-bold text-destructive-foreground"
+          >
+            <AlertTriangle className="h-5 w-5" />
+            C'est une crise — j'ai besoin d'aide tout de suite
+          </Link>
+        )}
 
         <button
           onClick={callParent}
