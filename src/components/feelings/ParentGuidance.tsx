@@ -1,14 +1,18 @@
 import { Link } from "react-router-dom";
-import { AlertTriangle, MessageCircle, HandHeart, Sparkles, RotateCcw, Home } from "lucide-react";
+import { AlertTriangle, MessageCircle, HandHeart, Sparkles, RotateCcw, Home, Palette } from "lucide-react";
 import type { Emotion } from "@/data/childEmotionsCatalog";
+import { getChildOutlet } from "@/data/childEmotionsCatalog";
 
 type Props = {
   emotion: Emotion;
   isCrisis: boolean;
   onReset: () => void;
+  /** Show a child-facing expression outlet (used for 9–12). */
+  showChildOutlet?: boolean;
 };
 
-const ParentGuidance = ({ emotion, isCrisis, onReset }: Props) => {
+const ParentGuidance = ({ emotion, isCrisis, onReset, showChildOutlet }: Props) => {
+  const childOutlet = showChildOutlet ? getChildOutlet(emotion.key) : undefined;
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-3 rounded-2xl border border-border bg-card p-4">
@@ -47,6 +51,16 @@ const ParentGuidance = ({ emotion, isCrisis, onReset }: Props) => {
             <h3 className="text-sm font-bold uppercase tracking-wider">Exercice simple</h3>
           </div>
           <p className="text-base leading-relaxed text-foreground">{emotion.parent.exercise}</p>
+        </section>
+      )}
+
+      {childOutlet && (
+        <section className="rounded-2xl border-2 border-[hsl(var(--lies))] bg-[hsl(var(--lies-soft))] p-5">
+          <div className="mb-2 flex items-center gap-2 text-[hsl(var(--lies))]">
+            <Palette className="h-4 w-4" />
+            <h3 className="text-sm font-bold uppercase tracking-wider">Outil d'expression pour ton enfant</h3>
+          </div>
+          <p className="text-base leading-relaxed text-foreground">{childOutlet}</p>
         </section>
       )}
 

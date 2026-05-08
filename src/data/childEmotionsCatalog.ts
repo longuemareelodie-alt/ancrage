@@ -35,7 +35,18 @@ export type Emotion = {
     /** Petit exercice (6–9, 9–12). */
     exercise?: string;
   };
+  /** Outil d'expression proposé à l'enfant (9–12). */
+  childOutlet?: string;
+  /** Exercices autonomes pour l'ado (12+). */
+  teenTools?: string[];
 };
+
+const DEFAULT_TEEN_TOOLS = [
+  "Mets de la musique calme dans ton casque, 5 minutes.",
+  "Respiration carrée 4-4-4-4, 5 cycles.",
+  "Bois un grand verre d'eau, lentement.",
+  "Écris ce qui te passe par la tête, sans te corriger.",
+];
 
 export const BASE_EMOTIONS: Emotion[] = [
   {
@@ -244,3 +255,88 @@ export function getEmotion(key: EmotionKey | undefined | null): Emotion | undefi
   if (!key) return undefined;
   return [...BASE_EMOTIONS, ...EXTENDED_EMOTIONS].find((e) => e.key === key);
 }
+
+const CHILD_OUTLETS: Partial<Record<EmotionKey, string>> = {
+  happy: "Dessine ce qui te rend heureux·se aujourd'hui.",
+  sad: "Écris ou dessine ce qui te rend triste, sans te censurer.",
+  angry: "Tape sur un coussin, ou crie dans un oreiller, c'est ok.",
+  scared: "Fais une liste des choses qui te rassurent.",
+  overwhelmed: "Mets-toi sous une couverture lourde, ferme les yeux.",
+  unknown: "Fais un gribouillage libre, sans réfléchir.",
+  frustrated: "Écris ce que tu voulais et ce qui n'a pas marché.",
+  ashamed: "Écris une lettre à toi-même, gentille, comme à un·e ami·e.",
+  lonely: "Envoie un message à quelqu'un en qui tu as confiance.",
+  misunderstood: "Écris exactement ce que tu aurais voulu dire.",
+  empty: "Liste 3 petites choses que tu vois autour de toi.",
+  anxious: "Note 3 inquiétudes, puis raye celles que tu ne contrôles pas.",
+  flooded: "Mets tes mains sous l'eau froide 30 secondes.",
+};
+
+const TEEN_TOOLS_BY_EMOTION: Partial<Record<EmotionKey, string[]>> = {
+  sad: [
+    "Écoute une chanson qui te comprend, en entier.",
+    "Écris à toi-même comme à un·e ami·e qui souffre.",
+    "Sors prendre l'air 10 minutes, même sur le balcon.",
+  ],
+  angry: [
+    "Bouge fort 2 minutes : pompes, courir sur place, sauts.",
+    "Écris la lettre que tu n'enverras jamais.",
+    "Respiration longue : expire deux fois plus long que tu inspires.",
+  ],
+  scared: [
+    "Nomme 5 choses que tu vois, 4 que tu touches, 3 que tu entends.",
+    "Écris la peur, puis ce qui se passerait vraiment, en vrai.",
+    "Appelle quelqu'un de confiance, même juste pour dire 'salut'.",
+  ],
+  frustrated: [
+    "Écris ce que tu attendais et ce qui s'est passé.",
+    "Bouge ton corps 3 minutes pour décharger.",
+    "Identifie une seule petite action que tu peux faire maintenant.",
+  ],
+  ashamed: [
+    "Écris-toi avec la voix d'un·e ami·e bienveillant·e.",
+    "Repère la pensée 'je suis nul·le' et remplace par 'j'ai fait quelque chose qui ne me ressemble pas'.",
+    "Parle à quelqu'un en qui tu as confiance.",
+  ],
+  lonely: [
+    "Envoie un message à une personne, même court.",
+    "Sors dans un lieu avec d'autres présences (café, bibliothèque).",
+    "Écoute un podcast ou une voix humaine qui te fait du bien.",
+  ],
+  misunderstood: [
+    "Écris ce que tu aurais voulu dire, exactement.",
+    "Identifie une personne qui te comprend déjà, contacte-la.",
+    "Repère ce qui dans ton message a été mal entendu.",
+  ],
+  empty: [
+    "Bouge ton corps 5 minutes, n'importe comment.",
+    "Mange ou bois quelque chose de chaud.",
+    "Liste 3 micro-choses qui t'ont déjà fait du bien.",
+  ],
+  anxious: [
+    "Respiration carrée 4-4-4-4, 5 cycles.",
+    "Note tes inquiétudes, raye celles que tu ne contrôles pas.",
+    "Bouge 5 minutes pour faire baisser l'adrénaline.",
+  ],
+  flooded: [
+    "Mets tes mains sous l'eau froide 30 secondes.",
+    "Réduis les stimulations : lumière baissée, casque, silence.",
+    "Allonge-toi sur le dos, mains sur le ventre, 10 respirations.",
+  ],
+  overwhelmed: [
+    "Mets tout sur pause, vraiment. Pose le téléphone.",
+    "Liste les choses qui te submergent, choisis-en UNE.",
+    "Couvre-toi, ferme les yeux, 2 minutes.",
+  ],
+};
+
+export function getChildOutlet(key: EmotionKey | undefined): string | undefined {
+  if (!key) return undefined;
+  return CHILD_OUTLETS[key];
+}
+
+export function getTeenTools(key: EmotionKey | undefined): string[] {
+  if (!key) return DEFAULT_TEEN_TOOLS;
+  return TEEN_TOOLS_BY_EMOTION[key] ?? DEFAULT_TEEN_TOOLS;
+}
+
