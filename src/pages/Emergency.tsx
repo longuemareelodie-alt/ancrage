@@ -148,10 +148,10 @@ const Emergency = () => {
                   {t("emergency.done_back")}
                 </Link>
                 {!usage?.unlimited && (
-                  <Link to="/paywall"
-                    className="block w-full rounded-full border border-border px-6 py-3 text-center text-sm font-medium">
-                    {t("emergency.done_upgrade")}
-                  </Link>
+                  <button onClick={handlePayment} disabled={paymentLoading}
+                    className="block w-full rounded-full border border-border px-6 py-3 text-center text-sm font-medium disabled:opacity-60">
+                    {paymentLoading ? "Chargement…" : t("emergency.done_upgrade")}
+                  </button>
                 )}
               </div>
             </motion.div>
