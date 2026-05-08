@@ -214,6 +214,29 @@ Deno.serve(async (req) => {
       return jsonResponse({ error: "No checkout URL returned" }, 502);
     }
 
+    // Append the Mollie payment id to the redirectUrl so the front-end can
+    // identify which payment came back (success vs cancel/failed/expired)
+    // and fetch the right invoice. Mollie allows PATCHing redirectUrl while
+    // the payment is still `open`.
+    try {
+      const sep = redirectUrl.includes("?") ? "&" : "?";
+      const finalRedirect = `${redirectUrl}${sep}payment_id=${encodeURIComponent(mollieData.id)}`;
+      const patchRes = await fetch(`https://api.mollie.com/v2/payments/${mollieData.id}`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${mollieKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ redirectUrl: finalRedirect }),
+      });
+      if (!patchRes.ok) {
+        const errBody = await patchRes.text();
+        console.warn("Mollie PATCH redirectUrl failed:", patchRes.status, errBody);
+      }
+    } catch (e) {
+      console.warn("Mollie PATCH redirectUrl error:", (e as Error)?.message);
+    }
+
     console.log("Payment created:", JSON.stringify({
       payment_id: mollieData.id,
       status: mollieData.status,
