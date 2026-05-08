@@ -309,37 +309,45 @@ const Flow69 = () => {
       </div>
     );
   }
-  if (!body) {
-    return (
-      <div className="space-y-4">
-        <p className="text-sm text-muted-foreground">Étape 3 / 3 — Où dans le corps ?</p>
-        <div className="grid gap-2">
-          {BODY_LOCATIONS.map((b) => (
-            <button
-              key={b.key}
-              onClick={() => setBody(b.key)}
-              className="flex items-center gap-4 rounded-xl border border-border bg-card p-4 text-left text-base font-medium transition-all hover:bg-muted"
-            >
-              <span className="text-2xl">{b.emoji}</span>
-              {b.label}
-            </button>
-          ))}
-        </div>
-        <button
-          onClick={handleFinish}
-          disabled={saving}
-          className="hidden"
-        />
-      </div>
-    );
-  }
-  // body just got set → trigger save
-  if (body && !done && !saving) {
-    handleFinish();
-  }
+  const pickBody = async (k: string) => {
+    setBody(k);
+    if (!emotion || !intensity) return;
+    const crisis = isCrisisEntry({
+      emotion: emotion.key,
+      intensity,
+      intensityScale: 3,
+    });
+    const r = await save({
+      age_band: "6_9",
+      emotion: emotion.key,
+      intensity,
+      body_location: k,
+      is_crisis: crisis,
+    });
+    if (r) setDone(true);
+  };
+
   return (
-    <div className="flex justify-center py-12">
-      <Loader2 className="h-6 w-6 animate-spin text-[hsl(var(--lies))]" />
+    <div className="space-y-4">
+      <p className="text-sm text-muted-foreground">Étape 3 / 3 — Où dans le corps ?</p>
+      <div className="grid gap-2">
+        {BODY_LOCATIONS.map((b) => (
+          <button
+            key={b.key}
+            onClick={() => pickBody(b.key)}
+            disabled={saving}
+            className="flex items-center gap-4 rounded-xl border border-border bg-card p-4 text-left text-base font-medium transition-all hover:bg-muted disabled:opacity-50"
+          >
+            <span className="text-2xl">{b.emoji}</span>
+            {b.label}
+          </button>
+        ))}
+      </div>
+      {saving && (
+        <div className="flex justify-center py-2">
+          <Loader2 className="h-5 w-5 animate-spin text-[hsl(var(--lies))]" />
+        </div>
+      )}
     </div>
   );
 };
