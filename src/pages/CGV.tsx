@@ -137,7 +137,7 @@ const CGV = () => (
             <h2 className="text-lg font-semibold text-foreground">5. Prix</h2>
             <p>
               L'accès complet au Service est proposé sous forme d'un{" "}
-              <strong>paiement unique de 39&nbsp;€ TTC</strong> (toutes taxes
+              <strong>paiement unique de 59&nbsp;€ TTC</strong> (toutes taxes
               comprises, en euros), donnant un accès illimité dans le temps
               aux fonctionnalités payantes existantes au moment de l'achat.
               Aucun abonnement n'est souscrit&nbsp;: aucun prélèvement
