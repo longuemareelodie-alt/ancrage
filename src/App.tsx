@@ -15,6 +15,7 @@ import TopNav from "@/components/TopNav";
 import ScrollToHash from "@/components/ScrollToHash";
 import { RouteTransitionProvider } from "@/components/RouteTransition";
 import ParentTypeOnboarding from "@/components/ParentTypeOnboarding";
+import GuidedTour from "@/components/GuidedTour";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import Emotions from "./pages/Emotions";
@@ -98,6 +99,7 @@ const AnimatedRoutes = () => {
       <ScrollToHash />
       <TopNav />
       <ParentTypeOnboarding />
+      <GuidedTour />
       <AnimatePresence mode="wait">
         <RoutesWrapper key={location.pathname}>
           <Routes location={location}>
