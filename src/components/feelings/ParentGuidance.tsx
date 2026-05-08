@@ -70,26 +70,28 @@ const ParentGuidance = ({ emotion, isCrisis, onReset, showChildOutlet }: Props) 
       {isCrisis && (
         <Link
           to="/lies-autrement/crise"
-          className="flex items-center justify-center gap-2 rounded-2xl bg-destructive px-5 py-4 text-base font-bold text-destructive-foreground shadow-md transition-transform hover:scale-[1.01]"
+          aria-label="C'est une crise — accéder au protocole d'aide immédiat"
+          className="flex items-center justify-center gap-2 rounded-2xl bg-destructive px-5 py-4 text-base font-bold text-destructive-foreground shadow-md transition-transform hover:scale-[1.01] focus:outline-none focus-visible:ring-4 focus-visible:ring-destructive/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
-          <AlertTriangle className="h-5 w-5" />
+          <AlertTriangle className="h-5 w-5" aria-hidden="true" />
           C'est une crise — m'aider maintenant
         </Link>
       )}
 
       <div className="flex gap-2">
         <button
+          type="button"
           onClick={onReset}
-          className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-border bg-card px-4 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
+          className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-border bg-card px-4 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-muted focus:outline-none focus-visible:ring-4 focus-visible:ring-[hsl(var(--lies))] focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
-          <RotateCcw className="h-4 w-4" />
+          <RotateCcw className="h-4 w-4" aria-hidden="true" />
           Recommencer
         </button>
         <Link
           to="/comment-tu-te-sens/historique"
-          className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-border bg-card px-4 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
+          className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-border bg-card px-4 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-muted focus:outline-none focus-visible:ring-4 focus-visible:ring-[hsl(var(--lies))] focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
-          <Home className="h-4 w-4" />
+          <Home className="h-4 w-4" aria-hidden="true" />
           Historique
         </Link>
       </div>
