@@ -1,18 +1,12 @@
 import SectionBlock from "@/components/SectionBlock";
 import CTAButton from "@/components/CTAButton";
 import Breadcrumb from "@/components/Breadcrumb";
-import { useAuth } from "@/contexts/AuthContext";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
 
 const AllerPlusLoin = () => {
-  const { user } = useAuth();
   const { startPayment, loading: paymentLoading } = useMolliePayment();
 
   const handlePayment = () => {
-    if (!user) {
-      window.location.href = "/auth?redirect=/aller-plus-loin&action=pay";
-      return;
-    }
     startPayment();
   };
 

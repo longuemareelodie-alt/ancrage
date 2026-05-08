@@ -93,10 +93,6 @@ const Paywall = () => {
   }, [user?.id]);
 
   const handlePurchase = () => {
-    if (!user) {
-      window.location.href = "/auth?redirect=/paywall&action=pay";
-      return;
-    }
     startPayment({ promoCode: appliedPromo });
   };
 

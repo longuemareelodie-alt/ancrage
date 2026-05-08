@@ -53,10 +53,6 @@ const Index = () => {
     (dailyProgress.morning ? 1 : 0) + (dailyProgress.evening ? 1 : 0);
 
   const handlePayment = () => {
-    if (!user) {
-      window.location.href = "/auth?redirect=/&action=pay";
-      return;
-    }
     startPayment();
   };
 

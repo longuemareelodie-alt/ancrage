@@ -48,6 +48,7 @@ test.describe("Price CTA → Mollie (error path)", () => {
   test("/comparaison : erreur 500 → toast d'erreur, aucune redirection", async ({
     page,
   }) => {
+    page.on("dialog", (dialog) => dialog.accept("cliente@example.com"));
     await page.goto("/comparaison");
     await page.waitForLoadState("domcontentloaded");
     await dismissOnboardingIfPresent(page);
