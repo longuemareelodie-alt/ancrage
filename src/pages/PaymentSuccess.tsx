@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { CheckCircle, Sparkles, ArrowRight, Download, Loader2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -10,9 +10,11 @@ import confetti from "canvas-confetti";
 
 const PaymentSuccess = () => {
   const { user } = useAuth();
+  const [searchParams] = useSearchParams();
+  const paymentIdFromUrl = searchParams.get("payment_id");
   const [firstName, setFirstName] = useState("");
   const [hasPendingCheckin, setHasPendingCheckin] = useState(false);
-  const [latestPaymentId, setLatestPaymentId] = useState<string | null>(null);
+  const [latestPaymentId, setLatestPaymentId] = useState<string | null>(paymentIdFromUrl);
   
   const [downloadingInvoice, setDownloadingInvoice] = useState(false);
 
@@ -48,9 +50,10 @@ const PaymentSuccess = () => {
         if (data?.first_name) setFirstName(data.first_name);
       });
 
-    // Find this user's most recent successful payment so we can offer
-    // a downloadable invoice. Scoped by user_id (RLS-safe) and limited to
-    // payment outcomes (paid / already_active).
+    // If Mollie returned a payment_id in the URL, prefer it directly so
+    // the receipt button shows up immediately. Otherwise fall back to
+    // the user's most recent successful payment.
+    if (paymentIdFromUrl) return;
     supabase
       .from("premium_activation_log")
       .select("payment_id, raw")
@@ -65,7 +68,7 @@ const PaymentSuccess = () => {
           setLatestPaymentId(data.payment_id);
         }
       });
-  }, [user]);
+  }, [user, paymentIdFromUrl]);
 
   const handleDownloadInvoice = async () => {
     if (!latestPaymentId || downloadingInvoice) return;
