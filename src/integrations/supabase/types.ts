@@ -53,6 +53,48 @@ export type Database = {
         }
         Relationships: []
       }
+      child_emotion_entries: {
+        Row: {
+          age_band: string
+          body_location: string | null
+          created_at: string
+          emotion: string
+          id: string
+          intensity: number | null
+          is_crisis: boolean
+          needs_parent: boolean
+          note: string | null
+          observed_signs: string[] | null
+          user_id: string
+        }
+        Insert: {
+          age_band: string
+          body_location?: string | null
+          created_at?: string
+          emotion: string
+          id?: string
+          intensity?: number | null
+          is_crisis?: boolean
+          needs_parent?: boolean
+          note?: string | null
+          observed_signs?: string[] | null
+          user_id: string
+        }
+        Update: {
+          age_band?: string
+          body_location?: string | null
+          created_at?: string
+          emotion?: string
+          id?: string
+          intensity?: number | null
+          is_crisis?: boolean
+          needs_parent?: boolean
+          note?: string | null
+          observed_signs?: string[] | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       community_members: {
         Row: {
           display_name: string

@@ -67,6 +67,8 @@ import CrisePage from "./pages/lies/CrisePage";
 import JournalPage from "./pages/lies/JournalPage";
 import CommunautePage from "./pages/lies/CommunautePage";
 import ActivitesPage from "./pages/lies/ActivitesPage";
+import FeelingsHome from "./pages/feelings/FeelingsHome";
+import FeelingsHistory from "./pages/feelings/FeelingsHistory";
 import CommunauteModeration from "./pages/admin/CommunauteModeration";
 
 const queryClient = new QueryClient();
@@ -152,6 +154,8 @@ const AnimatedRoutes = () => {
         <Route path="/lies-autrement/journal" element={<PaidRoute><PageTransition><JournalPage /></PageTransition></PaidRoute>} />
         <Route path="/lies-autrement/communaute" element={<PaidRoute><PageTransition><CommunautePage /></PageTransition></PaidRoute>} />
         <Route path="/lies-autrement/activites" element={<PaidRoute><PageTransition><ActivitesPage /></PageTransition></PaidRoute>} />
+        <Route path="/comment-tu-te-sens" element={<PaidRoute><PageTransition><FeelingsHome /></PageTransition></PaidRoute>} />
+        <Route path="/comment-tu-te-sens/historique" element={<PaidRoute><PageTransition><FeelingsHistory /></PageTransition></PaidRoute>} />
         <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
           </Routes>
         </RoutesWrapper>

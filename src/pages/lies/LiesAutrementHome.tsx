@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { BookOpen, BookHeart, ShieldAlert, NotebookPen, Users, Handshake, Sparkles } from "lucide-react";
+import { BookOpen, BookHeart, ShieldAlert, NotebookPen, Users, Handshake, Sparkles, Rainbow } from "lucide-react";
 import LiesShell from "@/components/lies/LiesShell";
 
 const MODULES = [
@@ -38,6 +38,12 @@ const MODULES = [
     title: "Activités & lien",
     desc: "Idées d'activités par âge et selon les besoins : TSA, TDAH, DYS, surdité, hypersensibilité…",
     icon: Sparkles,
+  },
+  {
+    to: "/comment-tu-te-sens",
+    title: "Comment tu te sens ?",
+    desc: "Aide ton enfant à mettre des mots sur ses émotions et anticipe les crises.",
+    icon: Rainbow,
   },
 ];
 

@@ -1,92 +1,83 @@
-## Section "Liés autrement" — Plan de build v1 (squelette complet)
+## Module "Comment tu te sens ?" — Plan de build
 
-Build complet du squelette des 5 modules avec base de données, routes, navigation, et premiers contenus. Les 5 modules sont premium (PaidRoute) sauf l'entrée Communauté qui requiert en plus un opt-in "Rejoindre".
+Nouveau module émotionnel pour l'enfant, accessible depuis l'accueil et depuis "Liés autrement", avec 5 parcours adaptés par tranche d'âge et historique persistant.
 
-### 1. Design system — accent vert
+### 1. Base de données (1 migration)
 
-Ajouter un token `--lies` (vert doux #7DB89F en HSL) dans `src/index.css` + `tailwind.config.ts`. Variantes utilisées uniquement dans les écrans de la section "Liés autrement" (badges, CTAs, icônes), le reste de l'app conserve violet/rose.
+Nouvelle table `child_emotion_entries` (RLS owner-only) :
+- `user_id uuid not null` (le parent / compte)
+- `age_band text` ('0_3', '3_6', '6_9', '9_12', '12_plus')
+- `emotion text` (clé normalisée : happy, sad, angry, scared, overwhelmed, unknown, frustrated, ashamed, lonely, misunderstood, empty, anxious, flooded)
+- `intensity int null` (1–5 ou 1–3)
+- `body_location text null` ('belly', 'head', 'throat', 'hands', 'all')
+- `observed_signs text[] null` (pour 0–3 ans)
+- `note text null` (journal libre 9–12 et 12+)
+- `is_crisis boolean default false`
+- `needs_parent boolean default false` (bouton ado "J'ai besoin d'aide")
+- `created_at timestamptz default now()`
 
-### 2. Navigation
+Policies : owner CRUD. Index sur `(user_id, created_at desc)`.
 
-- `BottomNav.tsx` : ajouter un 5ᵉ item "Liés" → `/lies-autrement`, icône `Handshake` (lucide-react), accent vert quand actif.
-- Réorganisation : Accueil · Rituel · **Liés** · Santé · Espace (5 items, déjà OK pour l'écran 716px).
+### 2. Données statiques (TS)
 
-### 3. Routes & pages (App.tsx)
+`src/data/childEmotionsCatalog.ts` :
+- Liste des 6 émotions de base (3–9 ans) avec emoji + couleur + libellé.
+- Roue élargie 9–12 et 12+ (12 émotions).
+- Signes observables 0–3 ans.
+- Pour chaque émotion : phrase à dire au parent + geste concret + (si applicable) exercice simple.
+- Mapping crise : émotions noir/rouge ou intensité ≥4 → flag.
 
-Toutes en `PaidRoute` :
-- `/lies-autrement` → hub avec 5 cartes
-- `/lies-autrement/lsf` + `/lies-autrement/lsf/:themeSlug`
-- `/lies-autrement/ressources`
-- `/lies-autrement/crise`
-- `/lies-autrement/journal`
-- `/lies-autrement/communaute` (gate "Rejoindre" intégré dans la page)
+### 3. Routes & navigation
 
-### 4. Base de données (migration unique)
+Dans `App.tsx`, ajouter sous `PaidRoute` :
+- `/comment-tu-te-sens` → page avec sélection d'âge, puis sous-flux selon âge.
+- `/comment-tu-te-sens/historique` → vue parent 7j / 30j.
 
-Nouvelles tables (toutes RLS activée, `user_id uuid not null` lié à `auth.users` via `auth.uid()`) :
+Ajouter une carte dans `LiesAutrementHome.tsx` (icône 🌈, titre "Comment tu te sens ?", desc fournie) qui pointe vers `/comment-tu-te-sens`.
 
-| Table | Usage | Politique RLS |
-|---|---|---|
-| `lsf_progress` | (user_id, sign_key, learned_at) UNIQUE(user_id, sign_key) | Owner CRUD |
-| `private_journal_entries` | id, user_id, mode (`free`/`guided`), prompt_key nullable, content text, created_at, updated_at | Owner CRUD strict |
-| `community_members` | user_id PK, joined_at, display_name | Owner select/insert ; lecture publique du `display_name` via vue limitée |
-| `community_threads` | id, slug, title, description, is_active | Lecture publique (membres), insert admin |
-| `community_posts` | id, thread_id, author_id, kind (`thread_post`/`free_post`/`question`), parent_id nullable, body, status (`pending`/`approved`/`rejected`/`hidden`), created_at | Auteur voit ses pending, tous les membres voient `approved`, admin voit tout & update status |
-| `community_reports` | id, post_id, reporter_id, reason, created_at, resolved | Insert membre, select admin |
+Ajouter un bouton vert (#7DB89F via token `--lies`) sur la page d'accueil (`Index.tsx`), sous les CTAs existants : icône 🌈, "Mon enfant — comment il se sent ?" + sous-titre "Aide-le à mettre des mots · 30 sec".
 
-Données seed initiales : threads "LSF & premiers signes", "Mon enfant TSA", "Gérer le regard des autres", "Nos victoires du jour" + catalogue troubles (constante TS, pas de table).
+### 4. Composants
 
-### 5. Module 1 — LSF
+Sous `src/components/feelings/` :
+- `AgeBandPicker.tsx` — sélecteur 5 tranches (gros boutons emoji).
+- `Observations0_3.tsx` — checkboxes signes + résultat parent.
+- `Faces6.tsx` — grille 6 visages colorés (3–6 et étape 1 de 6–9).
+- `IntensityPicker.tsx` — 3 niveaux (6–9) ou 5 niveaux (9–12, 12+).
+- `BodyLocationPicker.tsx` — 5 zones du corps.
+- `EmotionWheel.tsx` — roue 12 émotions (9–12, 12+).
+- `JournalField.tsx` — textarea optionnelle.
+- `ParentGuidance.tsx` — bloc "À dire / À faire / Exercice / C'est une crise" → lien `/lies-autrement/crise`.
+- `TeenSelfHelp.tsx` — exercices autonomes + bouton "J'ai besoin d'aide" (insère entrée avec `needs_parent=true`).
+- `EmotionHistory.tsx` — onglets 7j/30j + barres simples (recharts déjà présent) des émotions dominantes.
 
-- Données LSF en TS (`src/data/lsfCatalog.ts`) : 4 thèmes, 5–8 fiches par thème (~25 signes au total v1).
-- Génération IA des illustrations via `imagegen--generate_image` (style cohérent : illustration plate, mains stylisées, fond doux). Stockées dans `src/assets/lsf/<slug>.png`.
-- Page thème : grille de fiches, toggle "appris ✓" → `lsf_progress`.
-- Barre de progression par thème.
+Sous `src/pages/feelings/` :
+- `FeelingsHome.tsx` — orchestrateur, gère étape âge → sous-flux.
+- `FeelingsHistory.tsx` — page historique.
 
-### 6. Module 2 — Ressources & troubles
+### 5. Logique de sauvegarde
 
-Catalogue statique TS (`src/data/troublesCatalog.ts`) avec : tsa, tdah, dys, tdi, tsl, troubles_sensoriels, troubles_emotionnels, epilepsie, handicap_moteur, surdite, troubles_rares. Pour chaque : titre, résumé 2–3 phrases, ressources FR (associations + sites + numéros). Affichage en `Accordion` shadcn.
+Hook `useChildEmotionEntry` : insert dans `child_emotion_entries` à la fin de chaque flux (ou à chaque "J'ai besoin d'aide" pour les ados). Toast de confirmation discret.
 
-### 7. Module 3 — Gérer une crise
+### 6. Design
 
-Données TS (`src/data/criseScenarios.ts`) avec matrice contexte × profil parent × situation. UI : 3 selects → étapes numérotées + section "Après la crise". Bouton "Télécharger la carte d'aide PDF" → génération côté client avec `jsPDF` (déjà utilisé dans le projet via `exportCheckinsPdf`).
+- Vert doux `--lies` déjà défini, réutilisé.
+- Visages : emojis Unicode pour v1 (rapide, accessible) avec halos colorés en HSL via tokens — illustrations watercolor à itérer ensuite.
+- Boutons larges (min h-16), tap-friendly mobile, contrast AA.
+- Réutilise `LiesShell` pour cohérence.
 
-### 8. Module 4 — Journal privé
+### 7. Hors scope v1
 
-- Toggle Libre / Guidé (10 prompts bienveillants TS).
-- Liste des entrées (date, extrait), édition, suppression.
-- Stocké en clair dans `private_journal_entries` avec RLS owner-only.
-
-### 9. Module 5 — Communauté (pré-modération)
-
-- Page d'accueil : si pas membre → CTA "Rejoindre la communauté" (insert `community_members` + saisie `display_name`).
-- 3 onglets : Fils thématiques / Posts libres / Q&R.
-- Composer crée un post `status='pending'` ; affichage uniquement des `approved` + ses propres `pending` (badge "en attente").
-- Bouton signaler → `community_reports`.
-- Page admin `/admin/communaute-moderation` : liste pending + reports, actions approve/reject/hide.
-- Notifications réponses : MVP = badge "X nouvelles réponses à vos posts" calculé au chargement (pas de push v1).
-
-### 10. Tests & vérifs
-
-- `bunx vitest run` pour s'assurer que les tests existants passent (nav modifiée).
-- Vérification visuelle preview sur les routes clés.
+- Notification push réelle au parent depuis le bouton ado (insère seulement la ligne `needs_parent=true` ; v1 = badge "ton enfant a demandé de l'aide" dans dashboard parent à itérer ensuite).
+- Profils enfants multiples (v1 = une seule entrée liée au compte parent).
+- Illustrations watercolor custom (v1 = emojis + halos colorés).
 
 ### Détails techniques
 
-- Toutes les pages utilisent `PageTransition` + sont ajoutées au `BottomNav` filter.
-- Composant partagé `LiesSectionShell` pour header vert/retour cohérent.
-- Pas de modification des fonctions edge existantes.
-- Pas de nouveau secret requis (LOVABLE_API_KEY déjà en place pour images, mais on génère côté agent dans `src/assets/`, pas runtime).
-- i18n : nouvelles clés `lies.*` ajoutées dans `fr.json` uniquement v1 (les autres langues hériteront du fr en fallback existant).
+- Migration Supabase unique, RLS strict owner.
+- Pas de nouveau secret.
+- Pas de nouvelle dépendance (recharts déjà présent).
+- i18n : nouvelles clés `feelings.*` dans `fr.json` uniquement v1.
+- Tests : un spec vitest léger pour la logique "is_crisis" (mapping émotion+intensité → flag).
 
-### Hors-scope v1 (à itérer ensuite)
-
-- Notifications push réelles pour réponses communauté.
-- Recherche / filtres dans les fils.
-- Édition des posts approuvés.
-- Versions multilingues complètes des contenus LSF/troubles/crise.
-- Modération automatisée (mots-clés).
-
----
-
-**Volume estimé** : ~25 fichiers créés, 1 migration, ~25 illustrations IA, ~3000 lignes ajoutées. C'est un gros build mais cohérent. Je le ferai en une passe puis on itèrera module par module sur le contenu/finition.
+**Volume** : ~12 fichiers créés, 1 migration, ~700 lignes.
