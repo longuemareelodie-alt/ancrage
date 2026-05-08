@@ -775,12 +775,13 @@ const Checkin = () => {
                 <p className="text-xs text-muted-foreground">
                   Comprends tes schémas, suis ton évolution et apprends à sortir durablement de cet état.
                 </p>
-                <Link
-                  to="/aller-plus-loin"
-                  className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25"
+                <button
+                  onClick={handleUnlock}
+                  disabled={paymentLoading}
+                  className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 disabled:opacity-60"
                 >
-                  {PREMIUM_CTA.unlock_full_program}
-                </Link>
+                  {paymentLoading ? "Chargement…" : PREMIUM_CTA.unlock_full_program}
+                </button>
               </div>
             )}
 
