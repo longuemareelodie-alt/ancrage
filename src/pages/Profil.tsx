@@ -268,13 +268,26 @@ const Profil = () => {
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">{profile?.email}</p>
           </div>
-          <button
-            onClick={handleSignOut}
-            className="flex items-center gap-1.5 rounded-lg bg-white/50 px-3 py-2 text-xs font-medium transition-colors hover:bg-white/70"
-          >
-            <LogOut className="h-3.5 w-3.5" />
-            Déconnexion
-          </button>
+          <div className="flex flex-col items-end gap-2">
+            <button
+              onClick={handleSignOut}
+              className="flex items-center gap-1.5 rounded-lg bg-white/50 px-3 py-2 text-xs font-medium transition-colors hover:bg-white/70"
+            >
+              <LogOut className="h-3.5 w-3.5" />
+              Déconnexion
+            </button>
+            <button
+              onClick={() =>
+                window.dispatchEvent(
+                  new CustomEvent("lovable:start-guided-tour"),
+                )
+              }
+              className="flex items-center gap-1.5 rounded-lg bg-primary/10 px-3 py-2 text-xs font-medium text-primary transition-colors hover:bg-primary/20"
+            >
+              <Sparkles className="h-3.5 w-3.5" />
+              Refaire la visite
+            </button>
+          </div>
         </div>
       </SectionBlock>
 
