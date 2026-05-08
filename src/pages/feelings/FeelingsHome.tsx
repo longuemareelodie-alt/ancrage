@@ -382,6 +382,7 @@ const Flow912 = ({ ageBand }: { ageBand: AgeBand }) => {
           intensityScale: 5,
         })}
         onReset={reset}
+        showChildOutlet
       />
     );
   }
