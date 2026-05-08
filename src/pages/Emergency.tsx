@@ -79,10 +79,10 @@ const Emergency = () => {
                 <p className="text-sm text-muted-foreground leading-relaxed">{t("emergency.blocked_text")}</p>
               </div>
               <div className="space-y-3 w-full">
-                <Link to="/paywall"
-                  className="block w-full rounded-full bg-primary px-6 py-3 text-center text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25">
-                  {t("emergency.blocked_cta")}
-                </Link>
+                <button onClick={handlePayment} disabled={paymentLoading}
+                  className="block w-full rounded-full bg-primary px-6 py-3 text-center text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 disabled:opacity-60">
+                  {paymentLoading ? "Chargement…" : t("emergency.blocked_cta")}
+                </button>
                 <Link to="/dashboard"
                   className="block w-full rounded-full border border-border px-6 py-3 text-center text-sm font-medium">
                   {t("emergency.back_dashboard")}
