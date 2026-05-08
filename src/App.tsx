@@ -37,6 +37,7 @@ import Confidentialite from "./pages/Confidentialite";
 import MentionsLegales from "./pages/MentionsLegales";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import PaymentPending from "./pages/PaymentPending";
+import PaymentCanceled from "./pages/PaymentCanceled";
 import Checkin from "./pages/Checkin";
 import Historique from "./pages/Historique";
 import PostFlow from "./pages/PostFlow";
@@ -116,6 +117,7 @@ const AnimatedRoutes = () => {
         <Route path="/auth" element={<PageTransition><Auth /></PageTransition>} />
         <Route path="/payment-success" element={<ProtectedRoute><PageTransition><PaymentSuccess /></PageTransition></ProtectedRoute>} />
         <Route path="/payment-pending" element={<ProtectedRoute><PageTransition><PaymentPending /></PageTransition></ProtectedRoute>} />
+        <Route path="/payment-canceled" element={<PageTransition><PaymentCanceled /></PageTransition>} />
         <Route path="/profil" element={<PaidRoute><PageTransition><Profil /></PageTransition></PaidRoute>} />
         <Route path="/profil/style" element={<PaidRoute><PageTransition><ProfilStyle /></PageTransition></PaidRoute>} />
         <Route path="/parametres" element={<PageTransition><Parametres /></PageTransition>} />
