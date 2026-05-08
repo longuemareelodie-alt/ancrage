@@ -1,19 +1,13 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Check, Lock } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
 import Breadcrumb from "@/components/Breadcrumb";
 
 const Comparison = () => {
-  const { user } = useAuth();
   const { startPayment, loading: paymentLoading } = useMolliePayment();
 
   const handlePayment = () => {
-    if (!user) {
-      window.location.href = "/auth?redirect=/comparaison&action=pay";
-      return;
-    }
     startPayment();
   };
 

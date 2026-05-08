@@ -65,6 +65,7 @@ test.describe("Price CTA → Mollie", () => {
   test("/comparaison : le CTA 59€ déclenche la création de paiement et redirige vers Mollie", async ({
     page,
   }) => {
+    page.on("dialog", (dialog) => dialog.accept("cliente@example.com"));
     await page.goto("/comparaison");
     await page.waitForLoadState("domcontentloaded");
     await dismissOnboardingIfPresent(page);
@@ -85,9 +86,10 @@ test.describe("Price CTA → Mollie", () => {
     expect(page.url()).toBe(MOCK_CHECKOUT_URL);
   });
 
-  test("Accueil (/) : le CTA hero 59€ ne doit jamais être bloqué par un overlay", async ({
+  test("Accueil (/) : le CTA hero 59€ ne doit jamais être bloqué et redirige vers Mollie", async ({
     page,
   }) => {
+    page.on("dialog", (dialog) => dialog.accept("cliente@example.com"));
     await page.goto("/");
     await page.waitForLoadState("domcontentloaded");
     await dismissOnboardingIfPresent(page);
@@ -109,9 +111,13 @@ test.describe("Price CTA → Mollie", () => {
     });
     expect(blocked, "aucun overlay ne doit recouvrir le CTA prix").toBe(false);
 
-    // Utilisateur non authentifié → redirige vers /auth?action=pay
-    await cta.click();
-    await page.waitForURL(/\/auth\?.*action=pay/, { timeout: 10_000 });
-    expect(page.url()).toMatch(/\/auth\?.*action=pay/);
+    const [request] = await Promise.all([
+      page.waitForRequest("**/functions/v1/create-mollie-payment"),
+      cta.click(),
+    ]);
+    expect(request.method()).toBe("POST");
+
+    await page.waitForURL(MOCK_CHECKOUT_URL, { timeout: 10_000 });
+    expect(page.url()).toBe(MOCK_CHECKOUT_URL);
   });
 });

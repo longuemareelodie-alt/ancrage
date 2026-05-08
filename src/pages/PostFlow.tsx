@@ -14,7 +14,6 @@ const PostFlow = () => {
   const { startPayment, loading: paymentLoading } = useMolliePayment();
   const [isPremium, setIsPremium] = useState(false);
   const handlePayment = () => {
-    if (!user) { window.location.href = "/auth?redirect=/post-flow&action=pay"; return; }
     startPayment();
   };
 
