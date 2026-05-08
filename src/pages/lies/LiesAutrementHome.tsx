@@ -39,6 +39,12 @@ const MODULES = [
     desc: "Idées d'activités par âge et selon les besoins : TSA, TDAH, DYS, surdité, hypersensibilité…",
     icon: Sparkles,
   },
+  {
+    to: "/comment-tu-te-sens",
+    title: "Comment tu te sens ?",
+    desc: "Aide ton enfant à mettre des mots sur ses émotions et anticipe les crises.",
+    icon: Rainbow,
+  },
 ];
 
 const LiesAutrementHome = () => {
