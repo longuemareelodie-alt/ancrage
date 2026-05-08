@@ -321,6 +321,22 @@ const Index = () => {
               <Lock className="h-3 w-3" /> Paiement sécurisé · Paiement unique · Accès à vie
             </p>
           </div>
+          <Link
+            to="/comment-tu-te-sens"
+            className="mt-4 flex items-center gap-3 rounded-2xl border-2 border-[hsl(var(--lies))] bg-[hsl(var(--lies-soft))] p-4 text-left transition-transform hover:scale-[1.01]"
+          >
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-card text-3xl shadow-sm" aria-hidden>
+              🌈
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-base font-bold text-foreground">
+                Mon enfant — comment il se sent ?
+              </span>
+              <span className="block text-xs text-muted-foreground">
+                Aide-le à mettre des mots · 30 sec
+              </span>
+            </span>
+          </Link>
         </motion.div>
       </SectionBlock>
 
