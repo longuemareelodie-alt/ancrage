@@ -56,6 +56,8 @@ import SanteFicheMedicale from "./pages/SanteFicheMedicale";
 import SanteRessources from "./pages/SanteRessources";
 import FicheUrgencePublique from "./pages/FicheUrgencePublique";
 import CalmeEnClair from "./pages/CalmeEnClair";
+import PackSanteFamilial from "./pages/PackSanteFamilial";
+import ChargeMentale from "./pages/ChargeMentale";
 import Danger from "./pages/Danger";
 import PremiumActivationLogPage from "./pages/admin/PremiumActivationLog";
 import PremiumAuditListPage from "./pages/admin/PremiumAuditList";
