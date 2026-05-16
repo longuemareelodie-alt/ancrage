@@ -35,6 +35,31 @@ const AGE_BANDS: { key: AgeBand; emoji: string; label: string }[] = [
 
 const FeelingsHome = () => {
   const [age, setAge] = useState<AgeBand | null>(null);
+  const { user } = useAuth();
+  const tier = useAccessTier();
+  const limited = isFreemiumLimited(tier);
+  const [usageCount, setUsageCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!user || !limited) {
+      setUsageCount(0);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      const { count } = await supabase
+        .from("child_emotion_entries")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", user.id);
+      if (!cancelled) setUsageCount(count ?? 0);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [user, limited]);
+
+  const blocked =
+    limited && usageCount !== null && usageCount >= FREEMIUM_LIMITS.feelingsUses;
 
   return (
     <LiesShell
@@ -43,6 +68,13 @@ const FeelingsHome = () => {
       backTo="/lies-autrement"
       icon={<Rainbow className="h-6 w-6" />}
     >
+      {blocked ? (
+        <FreemiumGate
+          title="Tu commences à ressentir la différence."
+          message="Tu as utilisé ton essai gratuit du module « Comment tu te sens ». Continue avec Ancrage — 59€ accès à vie. Pas d'abonnement, jamais."
+        />
+      ) : (
+        <>
       <DiscoveryHint id="feelings-home" title="Aide ton enfant à se dire" tone="lies">
         Choisis sa tranche d'âge. L'outil propose ensuite des visages, mots ou
         ressources adaptés. Ouvre l'historique pour suivre l'évolution.
