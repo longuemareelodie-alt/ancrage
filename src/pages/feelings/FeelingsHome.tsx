@@ -118,6 +118,8 @@ const FeelingsHome = () => {
       ) : (
         <Flow age={age} onChangeAge={() => setAge(null)} />
       )}
+        </>
+      )}
     </LiesShell>
   );
 };
