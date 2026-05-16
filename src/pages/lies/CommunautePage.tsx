@@ -311,6 +311,12 @@ const CommunautePage = () => {
           })}
         </ul>
       )}
+      <UnlockDialog
+        open={unlockOpen}
+        onOpenChange={setUnlockOpen}
+        title="La communauté t'attend de l'autre côté."
+        description="Poster et commenter sont réservés à Ancrage complet — 59 € · accès à vie. Pas d'abonnement, jamais."
+      />
     </LiesShell>
   );
 };
