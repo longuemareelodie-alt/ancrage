@@ -374,6 +374,27 @@ const Checkin = () => {
     return "Quelque chose a bougé en toi. Même un micro-changement, c'est déjà de la régulation.";
   };
 
+  // Freemium gate — l'utilisateur a consommé ses 3 jours d'essai.
+  if (freemiumBlocked === true) {
+    return (
+      <div className="flex min-h-screen flex-col bg-background px-5 py-6">
+        <div className="flex items-center justify-between">
+          <Link to="/dashboard" className="rounded-full p-2 hover:bg-secondary" aria-label="Retour au tableau de bord">
+            <ArrowLeft className="h-5 w-5" />
+          </Link>
+          <p className="text-xs text-muted-foreground font-medium">Continue avec Ancrage</p>
+          <div className="w-9" aria-hidden />
+        </div>
+        <div className="mx-auto mt-6 w-full max-w-md">
+          <FreemiumGate
+            title="Tu commences à ressentir la différence."
+            message="Tu as utilisé tes 3 jours de check-in offerts. Continue avec Ancrage — 59 € · accès à vie. Pas d'abonnement, jamais."
+          />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex min-h-screen flex-col bg-background px-5 py-6">
       <BadgeCelebration badges={newBadges} onDone={dismissBadges} />
