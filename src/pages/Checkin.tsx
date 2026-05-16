@@ -89,7 +89,9 @@ const Checkin = () => {
   const [streakCount, setStreakCount] = useState(0);
   const [showReward, setShowReward] = useState(false);
   const [paymentFailure, setPaymentFailure] = useState<{ reason: string; ticket?: string } | null>(null);
+  const [freemiumBlocked, setFreemiumBlocked] = useState<boolean | null>(null);
 
+  const accessTier = useAccessTier();
   const dismissBadges = useCallback(() => setNewBadges([]), []);
 
   const hasPaidAccess = isPaid === true || isPremium;
