@@ -18,7 +18,6 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { ALL_LSF_SIGNS } from "@/data/lsfCatalog";
 import { ACTIVITIES } from "@/data/activitiesCatalog";
-import { emotions as ALL_EMOTIONS } from "@/data/emotions";
 
 export type AccessTier = "guest" | "freemium" | "paid";
 
