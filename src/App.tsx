@@ -123,6 +123,8 @@ const AnimatedRoutes = () => {
         
         <Route path="/post-flow" element={<ProtectedRoute><PageTransition><PostFlow /></PageTransition></ProtectedRoute>} />
         <Route path="/paywall" element={<PageTransition><Paywall /></PageTransition>} />
+        <Route path="/pack-sante-familial" element={<PageTransition><PackSanteFamilial /></PageTransition>} />
+        <Route path="/charge-mentale" element={<PageTransition><ChargeMentale /></PageTransition>} />
         <Route path="/comparaison" element={<PageTransition><Comparison /></PageTransition>} />
         <Route path="/auth" element={<PageTransition><Auth /></PageTransition>} />
         <Route path="/payment-success" element={<PageTransition><PaymentSuccess /></PageTransition>} />
