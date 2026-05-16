@@ -14,6 +14,9 @@ import BadgeCelebration from "@/components/BadgeCelebration";
 import MicroRewardPopup from "@/components/MicroRewardPopup";
 import QuickBackLinks from "@/components/QuickBackLinks";
 import DiscoveryHint from "@/components/DiscoveryHint";
+import FreemiumGate from "@/components/FreemiumGate";
+import { useAccessTier } from "@/lib/freemium";
+import { FREEMIUM_LIMITS } from "@/lib/freemium";
 import { PREMIUM_CTA } from "@/lib/premiumOffer";
 
 type Step = "select" | "response" | "teaser" | "action" | "after" | "evolution" | "validation" | "summary";
@@ -86,7 +89,9 @@ const Checkin = () => {
   const [streakCount, setStreakCount] = useState(0);
   const [showReward, setShowReward] = useState(false);
   const [paymentFailure, setPaymentFailure] = useState<{ reason: string; ticket?: string } | null>(null);
+  const [freemiumBlocked, setFreemiumBlocked] = useState<boolean | null>(null);
 
+  const accessTier = useAccessTier();
   const dismissBadges = useCallback(() => setNewBadges([]), []);
 
   const hasPaidAccess = isPaid === true || isPremium;
@@ -112,6 +117,43 @@ const Checkin = () => {
   useEffect(() => {
     void refreshLocalProfile();
   }, [refreshLocalProfile]);
+
+  // Freemium : limite à 3 jours distincts de check-in.
+  // Si l'utilisateur a déjà fait un check-in aujourd'hui, on le laisse continuer.
+  useEffect(() => {
+    if (!user) {
+      setFreemiumBlocked(null);
+      return;
+    }
+    if (accessTier === null) return;
+    if (accessTier === "paid") {
+      setFreemiumBlocked(false);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      const { data } = await supabase
+        .from("emotion_checkins")
+        .select("created_at")
+        .eq("user_id", user.id);
+      if (cancelled) return;
+      const days = new Set<string>();
+      const todayIso = new Date().toISOString().slice(0, 10);
+      let todayUsed = false;
+      (data ?? []).forEach((row) => {
+        const iso = new Date(row.created_at as string).toISOString().slice(0, 10);
+        days.add(iso);
+        if (iso === todayIso) todayUsed = true;
+      });
+      const distinct = days.size;
+      // Bloqué si on a déjà utilisé ses 3 jours ET aujourd'hui n'en fait pas partie.
+      const blocked = distinct >= FREEMIUM_LIMITS.checkinDays && !todayUsed;
+      setFreemiumBlocked(blocked);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [user, accessTier, hasPaidAccess]);
 
   // Reprise après paiement : si une émotion a été choisie en mode essai
   // puis que la personne est revenue payante, on enregistre le check-in
@@ -331,6 +373,27 @@ const Checkin = () => {
     }
     return "Quelque chose a bougé en toi. Même un micro-changement, c'est déjà de la régulation.";
   };
+
+  // Freemium gate — l'utilisateur a consommé ses 3 jours d'essai.
+  if (freemiumBlocked === true) {
+    return (
+      <div className="flex min-h-screen flex-col bg-background px-5 py-6">
+        <div className="flex items-center justify-between">
+          <Link to="/dashboard" className="rounded-full p-2 hover:bg-secondary" aria-label="Retour au tableau de bord">
+            <ArrowLeft className="h-5 w-5" />
+          </Link>
+          <p className="text-xs text-muted-foreground font-medium">Continue avec Ancrage</p>
+          <div className="w-9" aria-hidden />
+        </div>
+        <div className="mx-auto mt-6 w-full max-w-md">
+          <FreemiumGate
+            title="Tu commences à ressentir la différence."
+            message="Tu as utilisé tes 3 jours de check-in offerts. Continue avec Ancrage — 59 € · accès à vie. Pas d'abonnement, jamais."
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen flex-col bg-background px-5 py-6">
