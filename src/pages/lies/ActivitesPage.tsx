@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Sparkles, Clock, Target, Package, ListChecks, Tag, Heart, HeartOff } from "lucide-react";
+import { Sparkles, Clock, Target, Package, ListChecks, Tag, Heart, HeartOff, Lock } from "lucide-react";
 import LiesShell from "@/components/lies/LiesShell";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -18,6 +18,12 @@ import {
   toggleFavorite,
 } from "@/lib/activitiesFavorites";
 import { toast } from "@/hooks/use-toast";
+import {
+  useAccessTier,
+  isFreemiumLimited,
+  FREEMIUM_FREE_ACTIVITY_IDS,
+} from "@/lib/freemium";
+import UnlockDialog from "@/components/UnlockDialog";
 
 const AGES: AgeRange[] = ["0-12m", "1-3a", "3-6a", "6-9a", "9-12a", "12a+"];
 const TROUBLES: TroubleTag[] = [
