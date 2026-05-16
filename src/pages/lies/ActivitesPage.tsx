@@ -143,6 +143,9 @@ const ActivitesPage = () => {
   const [trouble, setTrouble] = useState<TroubleTag>("tous");
   const [view, setView] = useState<View>("all");
   const [favorites, setFavorites] = useState<string[]>(() => getFavorites());
+  const [unlockOpen, setUnlockOpen] = useState(false);
+  const tier = useAccessTier();
+  const limited = isFreemiumLimited(tier);
 
   useEffect(() => subscribeFavorites(setFavorites), []);
 
