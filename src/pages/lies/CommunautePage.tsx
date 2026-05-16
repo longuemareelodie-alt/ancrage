@@ -104,6 +104,10 @@ const CommunautePage = () => {
   };
 
   const handlePost = async () => {
+    if (readOnly) {
+      setUnlockOpen(true);
+      return;
+    }
     if (!user || !body.trim()) return;
     const kind = tab === "threads" ? "thread_post" : tab === "free" ? "free_post" : "question";
     const insertPayload = {
@@ -127,6 +131,10 @@ const CommunautePage = () => {
   };
 
   const handleReport = async (postId: string) => {
+    if (readOnly) {
+      setUnlockOpen(true);
+      return;
+    }
     if (!user) return;
     const reason = window.prompt("Pourquoi signalez-vous ce message ? (optionnel)") ?? "";
     const { error } = await supabase
