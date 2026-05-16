@@ -238,23 +238,41 @@ const CommunautePage = () => {
         </div>
       )}
 
-      <div className="mb-4 rounded-2xl border border-border bg-card p-3">
-        <Textarea
-          value={body}
-          onChange={(e) => setBody(e.target.value)}
-          placeholder={placeholder}
-          rows={3}
-          className="mb-2"
-        />
-        <Button
-          onClick={handlePost}
-          disabled={!body.trim() || (tab === "threads" && !activeThread)}
-          size="sm"
-          className="bg-[hsl(var(--lies))] hover:bg-[hsl(var(--lies)/0.9)] text-[hsl(var(--lies-foreground))]"
+      {readOnly ? (
+        <button
+          type="button"
+          onClick={() => setUnlockOpen(true)}
+          className="mb-4 flex w-full items-center gap-3 rounded-2xl border border-dashed border-border bg-card p-4 text-left transition-colors hover:bg-muted/50"
         >
-          <Send className="mr-2 h-3.5 w-3.5" /> Envoyer (modération)
-        </Button>
-      </div>
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted">
+            <Lock className="h-4 w-4 text-muted-foreground" aria-hidden />
+          </div>
+          <div className="flex-1">
+            <p className="text-sm font-semibold">Lecture seule en version gratuite</p>
+            <p className="text-xs text-muted-foreground">
+              Poster et commenter sont réservés à la version complète. Touche pour déverrouiller.
+            </p>
+          </div>
+        </button>
+      ) : (
+        <div className="mb-4 rounded-2xl border border-border bg-card p-3">
+          <Textarea
+            value={body}
+            onChange={(e) => setBody(e.target.value)}
+            placeholder={placeholder}
+            rows={3}
+            className="mb-2"
+          />
+          <Button
+            onClick={handlePost}
+            disabled={!body.trim() || (tab === "threads" && !activeThread)}
+            size="sm"
+            className="bg-[hsl(var(--lies))] hover:bg-[hsl(var(--lies)/0.9)] text-[hsl(var(--lies-foreground))]"
+          >
+            <Send className="mr-2 h-3.5 w-3.5" /> Envoyer (modération)
+          </Button>
+        </div>
+      )}
 
       {posts.length === 0 ? (
         <p className="rounded-xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
