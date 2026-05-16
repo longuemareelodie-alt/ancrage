@@ -158,7 +158,7 @@ const AnimatedRoutes = () => {
         <Route path="/lies-autrement/ressources" element={<PaidRoute><PageTransition><RessourcesPage /></PageTransition></PaidRoute>} />
         <Route path="/lies-autrement/crise" element={<PaidRoute><PageTransition><CrisePage /></PageTransition></PaidRoute>} />
         <Route path="/lies-autrement/journal" element={<PaidRoute><PageTransition><JournalPage /></PageTransition></PaidRoute>} />
-        <Route path="/lies-autrement/communaute" element={<PaidRoute><PageTransition><CommunautePage /></PageTransition></PaidRoute>} />
+        <Route path="/lies-autrement/communaute" element={<ProtectedRoute><PageTransition><CommunautePage /></PageTransition></ProtectedRoute>} />
         <Route path="/lies-autrement/activites" element={<PaidRoute><PageTransition><ActivitesPage /></PageTransition></PaidRoute>} />
         <Route path="/comment-tu-te-sens" element={<PaidRoute><PageTransition><FeelingsHome /></PageTransition></PaidRoute>} />
         <Route path="/comment-tu-te-sens/historique" element={<PaidRoute><PageTransition><FeelingsHistory /></PageTransition></PaidRoute>} />

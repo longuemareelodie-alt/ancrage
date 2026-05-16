@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Users, Send, Flag, Clock } from "lucide-react";
+import { Users, Send, Flag, Clock, Lock } from "lucide-react";
 import LiesShell from "@/components/lies/LiesShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,6 +7,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
+import { useAccessTier, isFreemiumLimited } from "@/lib/freemium";
+import UnlockDialog from "@/components/UnlockDialog";
 
 type Member = { user_id: string; display_name: string };
 type Thread = { id: string; slug: string; title: string; description: string };
