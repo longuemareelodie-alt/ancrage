@@ -517,6 +517,7 @@ const Paywall = () => {
             </div>
           </motion.div>
 
+          <div className="space-y-3 text-center">
             <div className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
               <Lock className="h-3.5 w-3.5" />
               <span>{t("paywall.secure_long")}</span>
