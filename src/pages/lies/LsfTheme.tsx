@@ -1,12 +1,18 @@
 import { useEffect, useState } from "react";
 import { useParams, Navigate } from "react-router-dom";
-import { Check, BookOpen, PlayCircle } from "lucide-react";
+import { Check, BookOpen, PlayCircle, Lock } from "lucide-react";
 import { lsfVideoUrl, elixSearchUrl } from "@/lib/lsfVideoUrl";
 import LiesShell from "@/components/lies/LiesShell";
 import { getThemeBySlug } from "@/data/lsfCatalog";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
+import {
+  useAccessTier,
+  isFreemiumLimited,
+  FREEMIUM_FREE_LSF_KEYS,
+} from "@/lib/freemium";
+import UnlockDialog from "@/components/UnlockDialog";
 
 const LsfTheme = () => {
   const { themeSlug } = useParams<{ themeSlug: string }>();
