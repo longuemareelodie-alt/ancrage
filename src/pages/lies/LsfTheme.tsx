@@ -20,6 +20,9 @@ const LsfTheme = () => {
   const theme = themeSlug ? getThemeBySlug(themeSlug) : null;
   const [learned, setLearned] = useState<Set<string>>(new Set());
   const [busy, setBusy] = useState<string | null>(null);
+  const [unlockOpen, setUnlockOpen] = useState(false);
+  const tier = useAccessTier();
+  const limited = isFreemiumLimited(tier);
 
   useEffect(() => {
     if (!user || !theme) return;
