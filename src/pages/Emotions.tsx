@@ -118,6 +118,7 @@ const Emotions = () => {
           />
         )}
       </AnimatePresence>
+      <UnlockDialog open={unlockOpen} onOpenChange={setUnlockOpen} />
     </div>
   );
 };
