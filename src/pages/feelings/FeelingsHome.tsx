@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Rainbow, History, Sparkles, AlertTriangle, BellRing, Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -20,6 +20,10 @@ import {
 } from "@/data/childEmotionsCatalog";
 import { useChildEmotionEntry } from "@/hooks/useChildEmotionEntry";
 import DiscoveryHint from "@/components/DiscoveryHint";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { useAccessTier, isFreemiumLimited, FREEMIUM_LIMITS } from "@/lib/freemium";
+import FreemiumGate from "@/components/FreemiumGate";
 
 const AGE_BANDS: { key: AgeBand; emoji: string; label: string }[] = [
   { key: "0_3", emoji: "👶", label: "0–3 ans" },
