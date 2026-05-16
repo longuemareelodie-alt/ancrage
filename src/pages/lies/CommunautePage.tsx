@@ -173,6 +173,11 @@ const CommunautePage = () => {
           <p className="mb-4 text-sm text-muted-foreground">
             Choisissez un pseudo. Il sera visible par les autres membres uniquement.
             Tous les messages sont relus par notre équipe avant publication.
+            {readOnly && (
+              <span className="mt-2 block rounded-lg bg-muted/50 px-3 py-2 text-xs">
+                🔒 En version gratuite, tu peux lire les échanges. Pour poster ou commenter, déverrouille Ancrage complet.
+              </span>
+            )}
           </p>
           <Input
             placeholder="Votre pseudo (ex : Camille_M)"
