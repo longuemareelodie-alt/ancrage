@@ -2,7 +2,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Lock } from "lucide-react";
 import ContextualFAQ, { EmotionKey } from "@/components/ContextualFAQ";
+import UnlockDialog from "@/components/UnlockDialog";
+import {
+  useAccessTier,
+  isFreemiumLimited,
+  FREEMIUM_FREE_EMOTION_KEYS,
+} from "@/lib/freemium";
 
 type EmotionDef = { key: EmotionKey; emoji: string; path: string };
 
