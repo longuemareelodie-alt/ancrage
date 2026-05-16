@@ -31,6 +31,9 @@ type Tab = (typeof TABS)[number]["key"];
 
 const CommunautePage = () => {
   const { user } = useAuth();
+  const accessTier = useAccessTier();
+  const readOnly = isFreemiumLimited(accessTier);
+  const [unlockOpen, setUnlockOpen] = useState(false);
   const [member, setMember] = useState<Member | null>(null);
   const [loadingMember, setLoadingMember] = useState(true);
   const [displayName, setDisplayName] = useState("");
