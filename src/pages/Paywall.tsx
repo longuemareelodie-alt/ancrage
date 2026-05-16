@@ -486,35 +486,47 @@ const Paywall = () => {
               Inclus dans ton accès à vie
             </p>
 
-            <div className="rounded-2xl border border-primary/20 bg-card p-5 shadow-sm">
+            <Link
+              to="/pack-sante-familial"
+              className="block rounded-2xl border border-primary/20 bg-card p-5 shadow-sm transition-all hover:border-primary/40 hover:shadow-md active:scale-[0.99]"
+            >
               <div className="flex items-start gap-3">
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
                   <HeartPulse className="h-5 w-5" />
                 </span>
-                <div className="space-y-1">
+                <div className="flex-1 space-y-1">
                   <p className="text-sm font-bold">🏥 Cerveau médical familial</p>
                   <p className="text-xs leading-relaxed text-muted-foreground">
                     Profils, coffre-fort, timeline, préparation RDV. Toute la charge médicale
                     de ta famille en un seul endroit.
                   </p>
+                  <p className="inline-flex items-center gap-1 pt-1 text-xs font-semibold text-primary">
+                    Voir le détail <ArrowRight className="h-3 w-3" />
+                  </p>
                 </div>
               </div>
-            </div>
+            </Link>
 
-            <div className="rounded-2xl border border-primary/20 bg-card p-5 shadow-sm">
+            <Link
+              to="/charge-mentale"
+              className="block rounded-2xl border border-primary/20 bg-card p-5 shadow-sm transition-all hover:border-primary/40 hover:shadow-md active:scale-[0.99]"
+            >
               <div className="flex items-start gap-3">
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
                   <Brain className="h-5 w-5" />
                 </span>
-                <div className="space-y-1">
+                <div className="flex-1 space-y-1">
                   <p className="text-sm font-bold">🧠 Charge mentale</p>
                   <p className="text-xs leading-relaxed text-muted-foreground">
                     Décharge du jour, mode cerveau saturé, gestion énergie. Pour tenir
                     sans s'effondrer.
                   </p>
+                  <p className="inline-flex items-center gap-1 pt-1 text-xs font-semibold text-primary">
+                    Voir le détail <ArrowRight className="h-3 w-3" />
+                  </p>
                 </div>
               </div>
-            </div>
+            </Link>
           </motion.div>
 
           <div className="space-y-3 text-center">
