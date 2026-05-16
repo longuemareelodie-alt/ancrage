@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import SectionBlock from "@/components/SectionBlock";
 import CTAButton from "@/components/CTAButton";
 import { motion, AnimatePresence } from "framer-motion";
-import { LogOut, Plus, Trash2, Save, User, BookOpen, StickyNote, Lock, Pencil, Check, Bell, BellOff, Flame, Trophy, Download, Share, CreditCard, Wind, Hand, Sparkles, ChevronRight, AlertCircle, MessageCircle, Crown } from "lucide-react";
+import { LogOut, Plus, Trash2, Save, User, BookOpen, StickyNote, Lock, Pencil, Check, Bell, BellOff, Flame, Trophy, Download, Share, CreditCard, Wind, Hand, Sparkles, ChevronRight, AlertCircle, MessageCircle, Crown, HeartPulse, Brain } from "lucide-react";
 import { ActionStyle, ACTION_STYLE_LABELS, getActionStyle } from "@/lib/actionStyle";
 import { useParentType } from "@/hooks/useParentType";
 import { PARENT_TYPE_LABELS, type ParentType } from "@/lib/parentType";
