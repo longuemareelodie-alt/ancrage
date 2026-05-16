@@ -118,6 +118,43 @@ const Checkin = () => {
     void refreshLocalProfile();
   }, [refreshLocalProfile]);
 
+  // Freemium : limite à 3 jours distincts de check-in.
+  // Si l'utilisateur a déjà fait un check-in aujourd'hui, on le laisse continuer.
+  useEffect(() => {
+    if (!user) {
+      setFreemiumBlocked(null);
+      return;
+    }
+    if (accessTier === null) return;
+    if (accessTier === "paid") {
+      setFreemiumBlocked(false);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      const { data } = await supabase
+        .from("emotion_checkins")
+        .select("created_at")
+        .eq("user_id", user.id);
+      if (cancelled) return;
+      const days = new Set<string>();
+      const todayIso = new Date().toISOString().slice(0, 10);
+      let todayUsed = false;
+      (data ?? []).forEach((row) => {
+        const iso = new Date(row.created_at as string).toISOString().slice(0, 10);
+        days.add(iso);
+        if (iso === todayIso) todayUsed = true;
+      });
+      const distinct = days.size;
+      // Bloqué si on a déjà utilisé ses 3 jours ET aujourd'hui n'en fait pas partie.
+      const blocked = distinct >= FREEMIUM_LIMITS.checkinDays && !todayUsed;
+      setFreemiumBlocked(blocked);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [user, accessTier, hasPaidAccess]);
+
   // Reprise après paiement : si une émotion a été choisie en mode essai
   // puis que la personne est revenue payante, on enregistre le check-in
   // et on saute directement à l'étape exercice.
