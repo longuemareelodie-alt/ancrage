@@ -14,6 +14,9 @@ import BadgeCelebration from "@/components/BadgeCelebration";
 import MicroRewardPopup from "@/components/MicroRewardPopup";
 import QuickBackLinks from "@/components/QuickBackLinks";
 import DiscoveryHint from "@/components/DiscoveryHint";
+import FreemiumGate from "@/components/FreemiumGate";
+import { useAccessTier } from "@/lib/freemium";
+import { FREEMIUM_LIMITS } from "@/lib/freemium";
 import { PREMIUM_CTA } from "@/lib/premiumOffer";
 
 type Step = "select" | "response" | "teaser" | "action" | "after" | "evolution" | "validation" | "summary";
