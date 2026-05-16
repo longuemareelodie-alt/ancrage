@@ -283,10 +283,13 @@ const ActivitesPage = () => {
               a={a}
               fav={favorites.includes(a.id)}
               onToggle={handleToggle}
+              locked={limited && !FREEMIUM_FREE_ACTIVITY_IDS.has(a.id)}
+              onUnlock={() => setUnlockOpen(true)}
             />
           ))}
         </div>
       )}
+      <UnlockDialog open={unlockOpen} onOpenChange={setUnlockOpen} />
     </LiesShell>
   );
 };
