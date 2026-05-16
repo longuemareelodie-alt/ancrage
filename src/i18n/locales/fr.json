@@ -511,6 +511,10 @@
     "title": "Questions fréquentes",
     "intro": "Avant de commencer, voici les réponses aux questions qu'on me pose le plus souvent.",
     "items": {
+      "free": {
+        "q": "Est-ce que c'est gratuit ?",
+        "a": "Tu peux découvrir Ancrage gratuitement pendant 3 jours avec un accès limité. Pour accéder à tout le contenu — 59€ · Accès à vie. Pas d'abonnement. Jamais."
+      },
       "what_is": {
         "q": "Ancrage, c'est quoi exactement ?",
         "a": "Un outil pour sortir du mode survie et retrouver ton calme en 30 secondes. Des ancrages courts qui font redescendre ton système nerveux quand il est en alerte. Pas une thérapie, pas un diagnostic : des gestes simples, à faire seule, à ton rythme."
