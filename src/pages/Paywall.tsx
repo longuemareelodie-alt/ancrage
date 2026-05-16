@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
-import { Lock, Check, Infinity as InfinityIcon, ArrowRight, AlertCircle, Tag, X, RefreshCw } from "lucide-react";
+import { Lock, Check, Infinity as InfinityIcon, ArrowRight, AlertCircle, Tag, X, RefreshCw, HeartPulse, Brain } from "lucide-react";
 import { useTranslation, Trans } from "react-i18next";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
@@ -471,6 +471,48 @@ const Paywall = () => {
                     <ArrowRight className="h-3.5 w-3.5" />
                   </Link>
                 )}
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Pitches inclus dans l'accès à vie */}
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="space-y-3"
+          >
+            <p className="text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Inclus dans ton accès à vie
+            </p>
+
+            <div className="rounded-2xl border border-primary/20 bg-card p-5 shadow-sm">
+              <div className="flex items-start gap-3">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
+                  <HeartPulse className="h-5 w-5" />
+                </span>
+                <div className="space-y-1">
+                  <p className="text-sm font-bold">🏥 Cerveau médical familial</p>
+                  <p className="text-xs leading-relaxed text-muted-foreground">
+                    Profils, coffre-fort, timeline, préparation RDV. Toute la charge médicale
+                    de ta famille en un seul endroit.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-primary/20 bg-card p-5 shadow-sm">
+              <div className="flex items-start gap-3">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
+                  <Brain className="h-5 w-5" />
+                </span>
+                <div className="space-y-1">
+                  <p className="text-sm font-bold">🧠 Charge mentale</p>
+                  <p className="text-xs leading-relaxed text-muted-foreground">
+                    Décharge du jour, mode cerveau saturé, gestion énergie. Pour tenir
+                    sans s'effondrer.
+                  </p>
+                </div>
               </div>
             </div>
           </motion.div>
