@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Users, Send, Flag, Clock } from "lucide-react";
+import { Users, Send, Flag, Clock, Lock } from "lucide-react";
 import LiesShell from "@/components/lies/LiesShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,6 +7,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
+import { useAccessTier, isFreemiumLimited } from "@/lib/freemium";
+import UnlockDialog from "@/components/UnlockDialog";
 
 type Member = { user_id: string; display_name: string };
 type Thread = { id: string; slug: string; title: string; description: string };
@@ -29,6 +31,9 @@ type Tab = (typeof TABS)[number]["key"];
 
 const CommunautePage = () => {
   const { user } = useAuth();
+  const accessTier = useAccessTier();
+  const readOnly = isFreemiumLimited(accessTier);
+  const [unlockOpen, setUnlockOpen] = useState(false);
   const [member, setMember] = useState<Member | null>(null);
   const [loadingMember, setLoadingMember] = useState(true);
   const [displayName, setDisplayName] = useState("");
@@ -99,6 +104,10 @@ const CommunautePage = () => {
   };
 
   const handlePost = async () => {
+    if (readOnly) {
+      setUnlockOpen(true);
+      return;
+    }
     if (!user || !body.trim()) return;
     const kind = tab === "threads" ? "thread_post" : tab === "free" ? "free_post" : "question";
     const insertPayload = {
@@ -122,6 +131,10 @@ const CommunautePage = () => {
   };
 
   const handleReport = async (postId: string) => {
+    if (readOnly) {
+      setUnlockOpen(true);
+      return;
+    }
     if (!user) return;
     const reason = window.prompt("Pourquoi signalez-vous ce message ? (optionnel)") ?? "";
     const { error } = await supabase
@@ -160,6 +173,11 @@ const CommunautePage = () => {
           <p className="mb-4 text-sm text-muted-foreground">
             Choisissez un pseudo. Il sera visible par les autres membres uniquement.
             Tous les messages sont relus par notre équipe avant publication.
+            {readOnly && (
+              <span className="mt-2 block rounded-lg bg-muted/50 px-3 py-2 text-xs">
+                🔒 En version gratuite, tu peux lire les échanges. Pour poster ou commenter, déverrouille Ancrage complet.
+              </span>
+            )}
           </p>
           <Input
             placeholder="Votre pseudo (ex : Camille_M)"
@@ -220,23 +238,41 @@ const CommunautePage = () => {
         </div>
       )}
 
-      <div className="mb-4 rounded-2xl border border-border bg-card p-3">
-        <Textarea
-          value={body}
-          onChange={(e) => setBody(e.target.value)}
-          placeholder={placeholder}
-          rows={3}
-          className="mb-2"
-        />
-        <Button
-          onClick={handlePost}
-          disabled={!body.trim() || (tab === "threads" && !activeThread)}
-          size="sm"
-          className="bg-[hsl(var(--lies))] hover:bg-[hsl(var(--lies)/0.9)] text-[hsl(var(--lies-foreground))]"
+      {readOnly ? (
+        <button
+          type="button"
+          onClick={() => setUnlockOpen(true)}
+          className="mb-4 flex w-full items-center gap-3 rounded-2xl border border-dashed border-border bg-card p-4 text-left transition-colors hover:bg-muted/50"
         >
-          <Send className="mr-2 h-3.5 w-3.5" /> Envoyer (modération)
-        </Button>
-      </div>
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted">
+            <Lock className="h-4 w-4 text-muted-foreground" aria-hidden />
+          </div>
+          <div className="flex-1">
+            <p className="text-sm font-semibold">Lecture seule en version gratuite</p>
+            <p className="text-xs text-muted-foreground">
+              Poster et commenter sont réservés à la version complète. Touche pour déverrouiller.
+            </p>
+          </div>
+        </button>
+      ) : (
+        <div className="mb-4 rounded-2xl border border-border bg-card p-3">
+          <Textarea
+            value={body}
+            onChange={(e) => setBody(e.target.value)}
+            placeholder={placeholder}
+            rows={3}
+            className="mb-2"
+          />
+          <Button
+            onClick={handlePost}
+            disabled={!body.trim() || (tab === "threads" && !activeThread)}
+            size="sm"
+            className="bg-[hsl(var(--lies))] hover:bg-[hsl(var(--lies)/0.9)] text-[hsl(var(--lies-foreground))]"
+          >
+            <Send className="mr-2 h-3.5 w-3.5" /> Envoyer (modération)
+          </Button>
+        </div>
+      )}
 
       {posts.length === 0 ? (
         <p className="rounded-xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
@@ -262,7 +298,7 @@ const CommunautePage = () => {
                         <Clock className="h-3 w-3" /> En attente
                       </span>
                     )}
-                    {!isMine && (
+                    {!isMine && !readOnly && (
                       <button onClick={() => handleReport(p.id)} className="hover:text-destructive" aria-label="Signaler">
                         <Flag className="h-3.5 w-3.5" />
                       </button>
@@ -275,6 +311,12 @@ const CommunautePage = () => {
           })}
         </ul>
       )}
+      <UnlockDialog
+        open={unlockOpen}
+        onOpenChange={setUnlockOpen}
+        title="La communauté t'attend de l'autre côté."
+        description="Poster et commenter sont réservés à Ancrage complet — 59 € · accès à vie. Pas d'abonnement, jamais."
+      />
     </LiesShell>
   );
 };
