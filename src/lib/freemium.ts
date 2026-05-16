@@ -16,6 +16,8 @@
  */
 
 import { useAuth } from "@/contexts/AuthContext";
+import { ALL_LSF_SIGNS } from "@/data/lsfCatalog";
+import { ACTIVITIES } from "@/data/activitiesCatalog";
 
 export type AccessTier = "guest" | "freemium" | "paid";
 
@@ -26,6 +28,19 @@ export const FREEMIUM_LIMITS = {
   childActivities: 1,
   feelingsUses: 1,
 } as const;
+
+/** Clé d'émotion accessible en freemium (la première de la liste /emotions). */
+export const FREEMIUM_FREE_EMOTION_KEYS = new Set<string>(["panique"]);
+
+/** Clés de signes LSF accessibles en freemium (2 / catalogue). */
+export const FREEMIUM_FREE_LSF_KEYS = new Set<string>(
+  ALL_LSF_SIGNS.slice(0, FREEMIUM_LIMITS.lsfSigns).map((s) => s.key),
+);
+
+/** IDs d'activités enfant accessibles en freemium (1 / catalogue). */
+export const FREEMIUM_FREE_ACTIVITY_IDS = new Set<string>(
+  ACTIVITIES.slice(0, FREEMIUM_LIMITS.childActivities).map((a) => a.id),
+);
 
 /**
  * Hook central — renvoie le niveau d'accès courant.

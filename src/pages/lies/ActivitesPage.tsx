@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Sparkles, Clock, Target, Package, ListChecks, Tag, Heart, HeartOff } from "lucide-react";
+import { Sparkles, Clock, Target, Package, ListChecks, Tag, Heart, HeartOff, Lock } from "lucide-react";
 import LiesShell from "@/components/lies/LiesShell";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -18,6 +18,12 @@ import {
   toggleFavorite,
 } from "@/lib/activitiesFavorites";
 import { toast } from "@/hooks/use-toast";
+import {
+  useAccessTier,
+  isFreemiumLimited,
+  FREEMIUM_FREE_ACTIVITY_IDS,
+} from "@/lib/freemium";
+import UnlockDialog from "@/components/UnlockDialog";
 
 const AGES: AgeRange[] = ["0-12m", "1-3a", "3-6a", "6-9a", "9-12a", "12a+"];
 const TROUBLES: TroubleTag[] = [
@@ -42,12 +48,16 @@ const ActivityCard = ({
   a,
   fav,
   onToggle,
+  locked,
+  onUnlock,
 }: {
   a: Activity;
   fav: boolean;
   onToggle: (id: string, title: string) => void;
+  locked: boolean;
+  onUnlock: () => void;
 }) => (
-  <article className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+  <article className={`relative rounded-2xl border border-border bg-card p-5 shadow-sm ${locked ? "opacity-60" : ""}`}>
     <header className="mb-3">
       <div className="flex items-start justify-between gap-3">
         <h3 className="font-serif text-lg text-foreground">{a.title}</h3>
@@ -101,14 +111,30 @@ const ActivityCard = ({
         </dt>
         <dd className="flex-1">
           <span className="font-medium">Étapes :</span>
-          <ol className="mt-1 list-decimal space-y-1 pl-5 text-foreground/90">
-            {a.steps.map((s, i) => (
-              <li key={i}>{s}</li>
-            ))}
-          </ol>
+          {locked ? (
+            <p className="mt-1 text-sm italic text-muted-foreground">
+              Étapes complètes réservées à l'accès complet.
+            </p>
+          ) : (
+            <ol className="mt-1 list-decimal space-y-1 pl-5 text-foreground/90">
+              {a.steps.map((s, i) => (
+                <li key={i}>{s}</li>
+              ))}
+            </ol>
+          )}
         </dd>
       </div>
     </dl>
+    {locked && (
+      <button
+        type="button"
+        onClick={onUnlock}
+        className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-[hsl(var(--lies))] px-3 py-1.5 text-xs font-medium text-[hsl(var(--lies-foreground))] hover:opacity-90"
+      >
+        <Lock className="h-3.5 w-3.5" />
+        Déverrouiller
+      </button>
+    )}
   </article>
 );
 
@@ -117,6 +143,9 @@ const ActivitesPage = () => {
   const [trouble, setTrouble] = useState<TroubleTag>("tous");
   const [view, setView] = useState<View>("all");
   const [favorites, setFavorites] = useState<string[]>(() => getFavorites());
+  const [unlockOpen, setUnlockOpen] = useState(false);
+  const tier = useAccessTier();
+  const limited = isFreemiumLimited(tier);
 
   useEffect(() => subscribeFavorites(setFavorites), []);
 
@@ -254,10 +283,13 @@ const ActivitesPage = () => {
               a={a}
               fav={favorites.includes(a.id)}
               onToggle={handleToggle}
+              locked={limited && !FREEMIUM_FREE_ACTIVITY_IDS.has(a.id)}
+              onUnlock={() => setUnlockOpen(true)}
             />
           ))}
         </div>
       )}
+      <UnlockDialog open={unlockOpen} onOpenChange={setUnlockOpen} />
     </LiesShell>
   );
 };

@@ -2,7 +2,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Lock } from "lucide-react";
 import ContextualFAQ, { EmotionKey } from "@/components/ContextualFAQ";
+import UnlockDialog from "@/components/UnlockDialog";
+import {
+  useAccessTier,
+  isFreemiumLimited,
+  FREEMIUM_FREE_EMOTION_KEYS,
+} from "@/lib/freemium";
 
 type EmotionDef = { key: EmotionKey; emoji: string; path: string };
 
@@ -25,8 +32,17 @@ const Emotions = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [selected, setSelected] = useState<{ path: string; key: EmotionKey } | null>(null);
+  const [unlockOpen, setUnlockOpen] = useState(false);
+  const tier = useAccessTier();
+  const limited = isFreemiumLimited(tier);
 
-  const handleSelect = (e: EmotionDef) => setSelected({ path: e.path, key: e.key });
+  const handleSelect = (e: EmotionDef) => {
+    if (limited && !FREEMIUM_FREE_EMOTION_KEYS.has(e.key)) {
+      setUnlockOpen(true);
+      return;
+    }
+    setSelected({ path: e.path, key: e.key });
+  };
 
   const handleContinue = () => {
     if (selected) {
@@ -36,26 +52,33 @@ const Emotions = () => {
     }
   };
 
-  const renderRow = (e: EmotionDef, i: number, delayBase = 0) => (
-    <motion.button
-      key={e.path}
-      initial={{ opacity: 0, y: 15 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: delayBase + i * 0.06 }}
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
-      onClick={() => handleSelect(e)}
-      className={`flex w-full items-center gap-4 rounded-xl bg-card p-5 text-start shadow-sm transition-shadow hover:shadow-md ${delayBase ? "border border-primary/10" : ""}`}
-    >
-      <span className="text-2xl">{e.emoji}</span>
-      <div>
-        <span className="font-medium">{t(`emotions.list.${e.key}.label`)}</span>
-        <p className="text-xs text-muted-foreground mt-0.5">
-          {t(`emotions.list.${e.key}.hook`)}
-        </p>
-      </div>
-    </motion.button>
-  );
+  const renderRow = (e: EmotionDef, i: number, delayBase = 0) => {
+    const locked = limited && !FREEMIUM_FREE_EMOTION_KEYS.has(e.key);
+    return (
+      <motion.button
+        key={e.path}
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: delayBase + i * 0.06 }}
+        whileHover={{ scale: locked ? 1 : 1.02 }}
+        whileTap={{ scale: locked ? 1 : 0.98 }}
+        onClick={() => handleSelect(e)}
+        aria-label={locked ? `${t(`emotions.list.${e.key}.label`)} — contenu verrouillé` : undefined}
+        className={`relative flex w-full items-center gap-4 rounded-xl bg-card p-5 text-start shadow-sm transition-shadow hover:shadow-md ${delayBase ? "border border-primary/10" : ""} ${locked ? "opacity-60" : ""}`}
+      >
+        <span className="text-2xl">{e.emoji}</span>
+        <div className="flex-1">
+          <span className="font-medium">{t(`emotions.list.${e.key}.label`)}</span>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            {t(`emotions.list.${e.key}.hook`)}
+          </p>
+        </div>
+        {locked && (
+          <Lock className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
+        )}
+      </motion.button>
+    );
+  };
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background px-6 py-12">
@@ -95,6 +118,7 @@ const Emotions = () => {
           />
         )}
       </AnimatePresence>
+      <UnlockDialog open={unlockOpen} onOpenChange={setUnlockOpen} />
     </div>
   );
 };
