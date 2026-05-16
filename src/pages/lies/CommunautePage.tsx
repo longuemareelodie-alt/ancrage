@@ -298,7 +298,7 @@ const CommunautePage = () => {
                         <Clock className="h-3 w-3" /> En attente
                       </span>
                     )}
-                    {!isMine && (
+                    {!isMine && !readOnly && (
                       <button onClick={() => handleReport(p.id)} className="hover:text-destructive" aria-label="Signaler">
                         <Flag className="h-3.5 w-3.5" />
                       </button>
