@@ -48,12 +48,16 @@ const ActivityCard = ({
   a,
   fav,
   onToggle,
+  locked,
+  onUnlock,
 }: {
   a: Activity;
   fav: boolean;
   onToggle: (id: string, title: string) => void;
+  locked: boolean;
+  onUnlock: () => void;
 }) => (
-  <article className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+  <article className={`relative rounded-2xl border border-border bg-card p-5 shadow-sm ${locked ? "opacity-60" : ""}`}>
     <header className="mb-3">
       <div className="flex items-start justify-between gap-3">
         <h3 className="font-serif text-lg text-foreground">{a.title}</h3>
