@@ -29,10 +29,8 @@ export const FREEMIUM_LIMITS = {
   feelingsUses: 1,
 } as const;
 
-/** Clés d'émotions accessibles en freemium (1 / total). */
-export const FREEMIUM_FREE_EMOTIONS = new Set<string>(
-  ALL_EMOTIONS.slice(0, FREEMIUM_LIMITS.ancrages).map((e) => e.id),
-);
+/** Clé d'émotion accessible en freemium (la première de la liste /emotions). */
+export const FREEMIUM_FREE_EMOTION_KEYS = new Set<string>(["panique"]);
 
 /** Clés de signes LSF accessibles en freemium (2 / catalogue). */
 export const FREEMIUM_FREE_LSF_KEYS = new Set<string>(
