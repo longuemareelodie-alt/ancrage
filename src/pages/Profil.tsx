@@ -529,9 +529,65 @@ const Profil = () => {
                     </button>
                   </div>
                 ) : profile?.is_premium ? (
-                  <div className="rounded-xl border border-border bg-card p-4">
-                    <p className="text-sm font-semibold">Accès à vie</p>
-                    <p className="text-xs text-muted-foreground">Tu as accès à tout le contenu d'Ancrage. Aucun abonnement, rien à renouveler.</p>
+                  <div className="space-y-3">
+                    <div className="rounded-xl border border-primary/30 bg-primary/5 p-4">
+                      <div className="flex items-center gap-2">
+                        <Crown className="h-4 w-4 text-primary" />
+                        <p className="text-sm font-semibold">Accès à vie actif</p>
+                      </div>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        Tu as accès à tout le contenu d'Ancrage. Aucun abonnement, rien à renouveler.
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                        Packs inclus
+                      </p>
+                      <div className="space-y-2">
+                        <Link
+                          to="/sante"
+                          className="flex items-center gap-3 rounded-2xl border border-border bg-card p-4 shadow-sm transition-colors hover:bg-muted/50"
+                        >
+                          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
+                            <HeartPulse className="h-5 w-5" />
+                          </span>
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <p className="text-sm font-semibold">🏥 Pack Santé familial</p>
+                              <span className="rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-semibold text-primary">
+                                Inclus
+                              </span>
+                            </div>
+                            <p className="text-xs text-muted-foreground">
+                              Profils, coffre-fort, timeline, fiche d'urgence.
+                            </p>
+                          </div>
+                          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                        </Link>
+
+                        <Link
+                          to="/charge-mentale"
+                          className="flex items-center gap-3 rounded-2xl border border-border bg-card p-4 shadow-sm transition-colors hover:bg-muted/50"
+                        >
+                          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
+                            <Brain className="h-5 w-5" />
+                          </span>
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <p className="text-sm font-semibold">🧠 Module Charge mentale</p>
+                              <span className="rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-semibold text-primary">
+                                Inclus
+                              </span>
+                            </div>
+                            <p className="text-xs text-muted-foreground">
+                              Décharge du jour, cerveau saturé, gestion énergie.
+                            </p>
+                          </div>
+                          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                        </Link>
+                      </div>
+                    </div>
                   </div>
                 ) : null}
               </div>
