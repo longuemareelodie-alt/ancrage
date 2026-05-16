@@ -111,14 +111,30 @@ const ActivityCard = ({
         </dt>
         <dd className="flex-1">
           <span className="font-medium">Étapes :</span>
-          <ol className="mt-1 list-decimal space-y-1 pl-5 text-foreground/90">
-            {a.steps.map((s, i) => (
-              <li key={i}>{s}</li>
-            ))}
-          </ol>
+          {locked ? (
+            <p className="mt-1 text-sm italic text-muted-foreground">
+              Étapes complètes réservées à l'accès complet.
+            </p>
+          ) : (
+            <ol className="mt-1 list-decimal space-y-1 pl-5 text-foreground/90">
+              {a.steps.map((s, i) => (
+                <li key={i}>{s}</li>
+              ))}
+            </ol>
+          )}
         </dd>
       </div>
     </dl>
+    {locked && (
+      <button
+        type="button"
+        onClick={onUnlock}
+        className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-[hsl(var(--lies))] px-3 py-1.5 text-xs font-medium text-[hsl(var(--lies-foreground))] hover:opacity-90"
+      >
+        <Lock className="h-3.5 w-3.5" />
+        Déverrouiller
+      </button>
+    )}
   </article>
 );
 
