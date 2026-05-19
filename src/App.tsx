@@ -53,6 +53,7 @@ import Sante from "./pages/Sante";
 import SanteRendezVous from "./pages/SanteRendezVous";
 import SanteMedicaments from "./pages/SanteMedicaments";
 import SanteFicheMedicale from "./pages/SanteFicheMedicale";
+import SanteProfilsFamiliaux from "./pages/SanteProfilsFamiliaux";
 import SanteRessources from "./pages/SanteRessources";
 import FicheUrgencePublique from "./pages/FicheUrgencePublique";
 import CalmeEnClair from "./pages/CalmeEnClair";
@@ -145,6 +146,7 @@ const AnimatedRoutes = () => {
         <Route path="/sante/rendez-vous" element={<PaidRoute><PageTransition><SanteRendezVous /></PageTransition></PaidRoute>} />
         <Route path="/sante/medicaments" element={<PaidRoute><PageTransition><SanteMedicaments /></PageTransition></PaidRoute>} />
         <Route path="/sante/fiche-medicale" element={<PaidRoute><PageTransition><SanteFicheMedicale /></PageTransition></PaidRoute>} />
+        <Route path="/sante/profils-familiaux" element={<PaidRoute><PageTransition><SanteProfilsFamiliaux /></PageTransition></PaidRoute>} />
         <Route path="/sante/ressources" element={<PaidRoute><PageTransition><SanteRessources /></PageTransition></PaidRoute>} />
         <Route path="/fiche-urgence/:token" element={<PageTransition><FicheUrgencePublique /></PageTransition>} />
         <Route path="/unsubscribe" element={<PageTransition><Unsubscribe /></PageTransition>} />
