@@ -51,6 +51,15 @@ const Sante = () => {
       locked: !hasAccess,
     },
     {
+      key: "famille",
+      to: "/sante/profils-familiaux",
+      icon: Users,
+      emoji: "👨‍👩‍👧",
+      title: "Profils médicaux familiaux",
+      desc: "Un profil par membre : allergies, diagnostics, traitements, documents",
+      locked: !hasAccess,
+    },
+    {
       key: "ressources",
       to: "/sante/ressources",
       icon: Sparkles,
