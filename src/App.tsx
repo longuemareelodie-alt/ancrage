@@ -53,6 +53,7 @@ import Sante from "./pages/Sante";
 import SanteRendezVous from "./pages/SanteRendezVous";
 import SanteMedicaments from "./pages/SanteMedicaments";
 import SanteFicheMedicale from "./pages/SanteFicheMedicale";
+import SanteProfilsFamiliaux from "./pages/SanteProfilsFamiliaux";
 import SanteRessources from "./pages/SanteRessources";
 import FicheUrgencePublique from "./pages/FicheUrgencePublique";
 import CalmeEnClair from "./pages/CalmeEnClair";
