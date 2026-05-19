@@ -146,6 +146,7 @@ const AnimatedRoutes = () => {
         <Route path="/sante/rendez-vous" element={<PaidRoute><PageTransition><SanteRendezVous /></PageTransition></PaidRoute>} />
         <Route path="/sante/medicaments" element={<PaidRoute><PageTransition><SanteMedicaments /></PageTransition></PaidRoute>} />
         <Route path="/sante/fiche-medicale" element={<PaidRoute><PageTransition><SanteFicheMedicale /></PageTransition></PaidRoute>} />
+        <Route path="/sante/profils-familiaux" element={<PaidRoute><PageTransition><SanteProfilsFamiliaux /></PageTransition></PaidRoute>} />
         <Route path="/sante/ressources" element={<PaidRoute><PageTransition><SanteRessources /></PageTransition></PaidRoute>} />
         <Route path="/fiche-urgence/:token" element={<PageTransition><FicheUrgencePublique /></PageTransition>} />
         <Route path="/unsubscribe" element={<PageTransition><Unsubscribe /></PageTransition>} />
