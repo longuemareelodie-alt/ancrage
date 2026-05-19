@@ -358,6 +358,110 @@ export type Database = {
         }
         Relationships: []
       }
+      family_medical_documents: {
+        Row: {
+          category: string
+          created_at: string
+          file_name: string
+          id: string
+          mime_type: string
+          profile_id: string
+          size_bytes: number
+          storage_path: string
+          user_id: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          file_name: string
+          id?: string
+          mime_type?: string
+          profile_id: string
+          size_bytes?: number
+          storage_path: string
+          user_id: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          file_name?: string
+          id?: string
+          mime_type?: string
+          profile_id?: string
+          size_bytes?: number
+          storage_path?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "family_medical_documents_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "family_medical_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      family_medical_profiles: {
+        Row: {
+          allergies: string
+          birth_date: string | null
+          blood_type: string
+          created_at: string
+          current_treatments: string
+          diagnoses: string
+          doctor_name: string
+          doctor_phone: string
+          emergency_contact_name: string
+          emergency_contact_phone: string
+          first_name: string
+          id: string
+          medical_history: string
+          notes: string
+          relation: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          allergies?: string
+          birth_date?: string | null
+          blood_type?: string
+          created_at?: string
+          current_treatments?: string
+          diagnoses?: string
+          doctor_name?: string
+          doctor_phone?: string
+          emergency_contact_name?: string
+          emergency_contact_phone?: string
+          first_name?: string
+          id?: string
+          medical_history?: string
+          notes?: string
+          relation?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          allergies?: string
+          birth_date?: string | null
+          blood_type?: string
+          created_at?: string
+          current_treatments?: string
+          diagnoses?: string
+          doctor_name?: string
+          doctor_phone?: string
+          emergency_contact_name?: string
+          emergency_contact_phone?: string
+          first_name?: string
+          id?: string
+          medical_history?: string
+          notes?: string
+          relation?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       lsf_progress: {
         Row: {
           id: string
