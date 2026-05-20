@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ChevronRight, Heart, AlertCircle, Pill as PillIcon, Calendar, Sparkles, Wind, ArrowLeft } from "lucide-react";
-import { Card, SectionTitle, Pill, SoftButton } from "./ui";
+import { Card, SectionTitle, Pill } from "./ui";
 
 type Kid = {
   id: string;
