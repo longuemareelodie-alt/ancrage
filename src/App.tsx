@@ -77,6 +77,12 @@ import ActivitesPage from "./pages/lies/ActivitesPage";
 import FeelingsHome from "./pages/feelings/FeelingsHome";
 import FeelingsHistory from "./pages/feelings/FeelingsHistory";
 import CommunauteModeration from "./pages/admin/CommunauteModeration";
+import AncrageLayout from "./pages/ancrage/AncrageLayout";
+import AncrageAccueil from "./pages/ancrage/Accueil";
+import AncrageEnfants from "./pages/ancrage/Enfants";
+import AncrageDocuments from "./pages/ancrage/Documents";
+import AncrageIA from "./pages/ancrage/IA";
+import AncrageProfil from "./pages/ancrage/Profil";
 
 const queryClient = new QueryClient();
 
@@ -168,6 +174,13 @@ const AnimatedRoutes = () => {
         <Route path="/lies-autrement/activites" element={<PaidRoute><PageTransition><ActivitesPage /></PageTransition></PaidRoute>} />
         <Route path="/comment-tu-te-sens" element={<PaidRoute><PageTransition><FeelingsHome /></PageTransition></PaidRoute>} />
         <Route path="/comment-tu-te-sens/historique" element={<PaidRoute><PageTransition><FeelingsHistory /></PageTransition></PaidRoute>} />
+        <Route path="/ancrage" element={<AncrageLayout />}>
+          <Route index element={<AncrageAccueil />} />
+          <Route path="enfants" element={<AncrageEnfants />} />
+          <Route path="documents" element={<AncrageDocuments />} />
+          <Route path="ia" element={<AncrageIA />} />
+          <Route path="profil" element={<AncrageProfil />} />
+        </Route>
         <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
           </Routes>
         </RoutesWrapper>
