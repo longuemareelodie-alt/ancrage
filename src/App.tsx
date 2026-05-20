@@ -77,6 +77,12 @@ import ActivitesPage from "./pages/lies/ActivitesPage";
 import FeelingsHome from "./pages/feelings/FeelingsHome";
 import FeelingsHistory from "./pages/feelings/FeelingsHistory";
 import CommunauteModeration from "./pages/admin/CommunauteModeration";
+import AncrageLayout from "./pages/ancrage/AncrageLayout";
+import AncrageAccueil from "./pages/ancrage/Accueil";
+import AncrageEnfants from "./pages/ancrage/Enfants";
+import AncrageDocuments from "./pages/ancrage/Documents";
+import AncrageIA from "./pages/ancrage/IA";
+import AncrageProfil from "./pages/ancrage/Profil";
 
 const queryClient = new QueryClient();
 
