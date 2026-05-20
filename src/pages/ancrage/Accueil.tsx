@@ -1,7 +1,7 @@
 import { Bell, Calendar, CheckCircle2, Circle, Sparkles, Leaf, ArrowRight, Landmark, Stethoscope, Zap, GraduationCap, CalendarDays, Wallet } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import { Card, SectionTitle, Pill, SoftButton } from "./ui";
+import { Card, SectionTitle, Pill } from "./ui";
 
 const today = new Date().toLocaleDateString("fr-FR", {
   weekday: "long",
