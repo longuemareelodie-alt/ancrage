@@ -5,11 +5,13 @@ export const Card = ({
   className = "",
   onClick,
   as: Tag = "div",
+  style,
 }: {
   children: ReactNode;
   className?: string;
   onClick?: () => void;
   as?: any;
+  style?: React.CSSProperties;
 }) => (
   <Tag
     onClick={onClick}
@@ -18,6 +20,7 @@ export const Card = ({
       background: "var(--ancrage-surface)",
       border: "1px solid var(--ancrage-soft)",
       boxShadow: "0 1px 2px rgba(46,52,46,0.04), 0 8px 24px -16px rgba(46,52,46,0.12)",
+      ...style,
     }}
   >
     {children}
