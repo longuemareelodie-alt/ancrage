@@ -24,6 +24,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useAccessTier, isFreemiumLimited, FREEMIUM_LIMITS } from "@/lib/freemium";
 import FreemiumGate from "@/components/FreemiumGate";
+import { PREMIUM_PRICE_SHORT } from "@/lib/premiumOffer";
 
 const AGE_BANDS: { key: AgeBand; emoji: string; label: string }[] = [
   { key: "0_3", emoji: "👶", label: "0–3 ans" },
