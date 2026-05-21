@@ -91,24 +91,28 @@
         "a": "Nein. Einmalige Zahlung von 57 €, lebenslanger Zugang zu den beim Kauf verfügbaren Premium-Funktionen."
       },
       "medical": {
-        "q": "Ersetzt es medizinische Betreuung oder eine:n Therapeut:in?",
-        "a": "Nein, niemals. Ancrage ist ein Wohlfühl-Tool: keine Diagnosen, kein Ersatz für Fachpersonal."
+        "q": "Ist es medizinisch?",
+        "a": "Nein. Ancrage ist weder ein Medizinprodukt noch eine Therapie oder Diagnose. Es ist ein emotionales Begleittool und ersetzt keine medizinische Fachkraft."
       },
       "privacy": {
-        "q": "Sind meine Daten privat?",
-        "a": "Ja. Deine Notizen und Emotionszustände werden sicher gespeichert und gehören dir allein. Du kannst alles in deinem Profil exportieren oder löschen. Details in der <lnk>Datenschutz­erklärung</lnk>."
+        "q": "Meine Daten?",
+        "a": "Deine Anker und emotionalen Zustände werden sicher gespeichert und gehören ausschließlich dir. Du kannst alles aus deinem Profil exportieren oder löschen. Details in der <lnk>Datenschutzerklärung</lnk>."
       },
       "duration": {
-        "q": "Wie viel Zeit braucht es pro Tag?",
-        "a": "Wenige Minuten reichen. Die meisten Übungen dauern 1 bis 5 Minuten."
+        "q": "Wie viel Zeit?",
+        "a": "30 Sekunden pro Tag reichen für den Anfang. Die meisten Anker dauern zwischen 30 Sekunden und 5 Minuten."
       },
       "devices": {
-        "q": "Auf welchen Geräten funktioniert es?",
-        "a": "Auf jedem aktuellen Smartphone, Tablet oder Computer, direkt im Browser. Keine Installation nötig."
+        "q": "Geräte?",
+        "a": "Auf jedem aktuellen Smartphone, Tablet oder Computer, direkt im Browser. Deine Anker begleiten dich überall."
       },
       "refund": {
-        "q": "Kann ich eine Rückerstattung erhalten?",
-        "a": "Da der digitale Zugang sofort erfolgt, verzichtest du beim Kauf auf dein Widerrufsrecht. Details in den <lnk>AGB</lnk>."
+        "q": "Rückerstattung?",
+        "a": "Da der digitale Inhalt sofort verfügbar ist, verzichtest du beim Kauf auf dein Widerrufsrecht. Details in den <lnk>AGB</lnk>."
+      },
+      "who": {
+        "q": "Für wen ist es?",
+        "a": "Für Eltern und Familien, die ihr Nervensystem regulieren, wieder Ruhe finden und die Emotionen ihrer Kinder begleiten möchten — ohne medizinischen oder spirituellen Ansatz."
       }
     }
   },
