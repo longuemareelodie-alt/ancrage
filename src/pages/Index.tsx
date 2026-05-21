@@ -24,7 +24,7 @@ import {
   type DailySlot,
 } from "@/lib/morningEveningProgress";
 
-import logo from "@/assets/logo-ancrage.png";
+
 import avatarCamille from "@/assets/avatar-camille.jpg";
 import avatarInes from "@/assets/avatar-ines.jpg";
 import avatarLea from "@/assets/avatar-lea.jpg";
