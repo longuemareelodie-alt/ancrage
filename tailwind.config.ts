@@ -43,6 +43,7 @@ export default {
           DEFAULT: "hsl(var(--accent))",
           foreground: "hsl(var(--accent-foreground))",
         },
+        sage: "hsl(var(--sage))",
         lies: {
           DEFAULT: "hsl(var(--lies))",
           foreground: "hsl(var(--lies-foreground))",
