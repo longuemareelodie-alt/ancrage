@@ -1,3 +1,5 @@
+import { PREMIUM_PRICE_LONG } from "./premiumOffer";
+
 /**
  * Lexique central — Ancrage / Digital Maman Libre
  * ---------------------------------------------------
