@@ -24,11 +24,38 @@ export const PREMIUM_CURRENCY = "EUR" as const;
 /** Valeur numérique en euros, dérivée des centimes (jamais hardcodée ailleurs). */
 export const PREMIUM_PRICE_EUR = PREMIUM_PRICE_CENTS / 100;
 
-/** Prix unique TTC de l'offre Premium, format court sans espace (ex: "57€"). */
-export const PREMIUM_PRICE_SHORT = `${PREMIUM_PRICE_EUR}€`;
+/**
+ * Format canonique d'affichage du prix Premium.
+ *
+ * Règle unique pour TOUTES les langues (FR, EN, DE, AR) :
+ *   - pas de décimales pour un montant entier (57, pas 57,00)
+ *   - séparateur entre montant et symbole = espace insécable (U+00A0)
+ *   - symbole "€" toujours après le montant
+ *
+ * Résultat : `57 €` rendu de façon identique partout dans l'UI, sans
+ * dépendre de la locale active (qui produirait "€57.00" en en-US, etc.).
+ *
+ * Si on doit un jour formater un montant non-entier, on utilise
+ * `formatEurAmount()` plutôt qu'une concaténation à la main.
+ */
+export const formatEurAmount = (amount: number): string => {
+  const hasFraction = !Number.isInteger(amount);
+  const body = new Intl.NumberFormat("fr-FR", {
+    minimumFractionDigits: hasFraction ? 2 : 0,
+    maximumFractionDigits: 2,
+    useGrouping: true,
+  }).format(amount);
+  return `${body}\u00A0€`;
+};
 
-/** Prix unique TTC de l'offre Premium, format long avec espace typographique (ex: "57 €"). */
-export const PREMIUM_PRICE_LONG = `${PREMIUM_PRICE_EUR} €`;
+/**
+ * Prix unique au format canonique (ex: "57 €" avec espace insécable).
+ * Les deux constantes pointent vers la MÊME chaîne — l'historique distinction
+ * "short / long" est conservée pour ne pas casser les imports existants,
+ * mais le rendu est désormais uniforme partout.
+ */
+export const PREMIUM_PRICE_LONG = formatEurAmount(PREMIUM_PRICE_EUR);
+export const PREMIUM_PRICE_SHORT = PREMIUM_PRICE_LONG;
 
 /** Nom commercial de l'offre. */
 export const PREMIUM_OFFER_NAME = "Ancrage Premium";
