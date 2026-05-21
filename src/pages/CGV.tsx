@@ -3,6 +3,7 @@ import Footer from "@/components/Footer";
 import BackToTop from "@/components/BackToTop";
 import Breadcrumb from "@/components/Breadcrumb";
 import { Link } from "react-router-dom";
+import { PREMIUM_PRICE_SHORT } from "@/lib/premiumOffer";
 
 const sections = [
   { id: "objet", title: "1. Objet" },
@@ -177,7 +178,7 @@ const CGV = () => (
                 paiement <code>/paywall</code>, le client prend connaissance de
                 la mention d'acceptation affichée sous le bouton de paiement
                 (reproduite à l'article 8) puis clique sur le bouton{" "}
-                <strong>« Je veux me sentir mieux — 57€ »</strong>. Ce clic
+                <strong>{`« Je veux me sentir mieux — ${PREMIUM_PRICE_SHORT} »`}</strong>. Ce clic
                 vaut <strong>acceptation expresse des présentes CGV</strong> et{" "}
                 <strong>renonciation expresse au droit de rétractation</strong>.
                 Le client est ensuite redirigé vers la page sécurisée du
@@ -251,13 +252,13 @@ const CGV = () => (
               mot pour mot dans l'application) :
             </p>
             <blockquote className="border-l-2 border-primary/40 pl-4 italic text-foreground/80">
-              « En cliquant sur "Je veux me sentir mieux — 57€", j'accepte les
+              {`« En cliquant sur "Je veux me sentir mieux — ${PREMIUM_PRICE_SHORT}", j'accepte les
               Conditions générales de vente et reconnais que l'accès au contenu
               numérique débute immédiatement après le paiement, ce qui entraîne
-              la renonciation expresse à mon droit de rétractation. »
+              la renonciation expresse à mon droit de rétractation. »`}
             </blockquote>
             <p>
-              Le clic sur le bouton <strong>« Je veux me sentir mieux — 57€ »</strong>{" "}
+              Le clic sur le bouton <strong>{`« Je veux me sentir mieux — ${PREMIUM_PRICE_SHORT} »`}</strong>{" "}
               vaut donc, de manière indissociable et simultanée, (i) acceptation
               expresse des présentes CGV, (ii) demande expresse d'exécution
               immédiate du Service après paiement, et (iii) renonciation

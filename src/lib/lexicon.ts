@@ -1,3 +1,5 @@
+import { PREMIUM_PRICE_LONG } from "./premiumOffer";
+
 /**
  * Lexique central — Ancrage / Digital Maman Libre
  * ---------------------------------------------------
@@ -59,7 +61,7 @@ export const CTA_LIBRARY = {
   primary_emotional: "Je récupère mon calme",
 
   /** Engagement payant — on assume la promesse complète */
-  primary_paid: "Je récupère mon calme — 57 €",
+  primary_paid: `Je récupère mon calme — ${PREMIUM_PRICE_LONG}`,
 
   /** Action douce post-exercice */
   secondary_anchor: "Ancrer ce calme",

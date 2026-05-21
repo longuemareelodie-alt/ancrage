@@ -13,6 +13,7 @@ import {
   Check,
 } from "lucide-react";
 import Breadcrumb from "@/components/Breadcrumb";
+import { PREMIUM_PRICE_SHORT } from "@/lib/premiumOffer";
 
 const features = [
   {
@@ -188,7 +189,7 @@ const PackSanteFamilial = () => {
             to="/paywall"
             className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3.5 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 transition-transform hover:scale-[1.02] active:scale-[0.98]"
           >
-            Débloquer le Pack Santé familial — 57€
+            {`Débloquer le Pack Santé familial — ${PREMIUM_PRICE_SHORT}`}
             <ArrowRight className="h-4 w-4" />
           </Link>
           <p className="text-center text-xs text-muted-foreground">

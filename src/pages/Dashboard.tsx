@@ -13,6 +13,7 @@ import InstallPWAPrompt from "@/components/InstallPWAPrompt";
 import ResumeBanner from "@/components/ResumeBanner";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
 import DiscoveryHint from "@/components/DiscoveryHint";
+import { PREMIUM_PRICE_SHORT } from "@/lib/premiumOffer";
 
 type MoodKey = "calm" | "ok" | "tense" | "overflow";
 const MOOD_OPTIONS: { key: MoodKey; emoji: string; label: string; adjust: number }[] = [
@@ -329,7 +330,7 @@ const Dashboard = () => {
                 disabled={paymentLoading}
                 className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 transition-transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60"
               >
-                {paymentLoading ? "Chargement…" : "Je veux me sentir mieux — 57€"}
+                {paymentLoading ? "Chargement…" : `Je veux me sentir mieux — ${PREMIUM_PRICE_SHORT}`}
               </button>
             </motion.div>
           )}

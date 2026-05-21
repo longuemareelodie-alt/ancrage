@@ -24,6 +24,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useAccessTier, isFreemiumLimited, FREEMIUM_LIMITS } from "@/lib/freemium";
 import FreemiumGate from "@/components/FreemiumGate";
+import { PREMIUM_PRICE_SHORT } from "@/lib/premiumOffer";
 
 const AGE_BANDS: { key: AgeBand; emoji: string; label: string }[] = [
   { key: "0_3", emoji: "👶", label: "0–3 ans" },
@@ -71,7 +72,7 @@ const FeelingsHome = () => {
       {blocked ? (
         <FreemiumGate
           title="Tu commences à ressentir la différence."
-          message="Tu as utilisé ton essai gratuit du module « Comment tu te sens ». Continue avec Ancrage — 57€ accès à vie. Pas d'abonnement, jamais."
+          message={`Tu as utilisé ton essai gratuit du module « Comment tu te sens ». Continue avec Ancrage — ${PREMIUM_PRICE_SHORT} accès à vie. Pas d'abonnement, jamais.`}
         />
       ) : (
         <>

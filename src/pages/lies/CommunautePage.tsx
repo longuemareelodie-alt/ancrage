@@ -9,6 +9,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
 import { useAccessTier, isFreemiumLimited } from "@/lib/freemium";
 import UnlockDialog from "@/components/UnlockDialog";
+import { PREMIUM_PRICE_LONG } from "@/lib/premiumOffer";
 
 type Member = { user_id: string; display_name: string };
 type Thread = { id: string; slug: string; title: string; description: string };
@@ -315,7 +316,7 @@ const CommunautePage = () => {
         open={unlockOpen}
         onOpenChange={setUnlockOpen}
         title="La communauté t'attend de l'autre côté."
-        description="Poster et commenter sont réservés à Ancrage complet — 57 € · accès à vie. Pas d'abonnement, jamais."
+        description={`Poster et commenter sont réservés à Ancrage complet — ${PREMIUM_PRICE_LONG} · accès à vie. Pas d'abonnement, jamais.`}
       />
     </LiesShell>
   );

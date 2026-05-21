@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Check, Lock } from "lucide-react";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
 import Breadcrumb from "@/components/Breadcrumb";
+import { PREMIUM_PRICE_SHORT } from "@/lib/premiumOffer";
 
 const Comparison = () => {
   const { startPayment, loading: paymentLoading } = useMolliePayment();
@@ -46,7 +47,7 @@ const Comparison = () => {
           </div>
           <div className="text-center pt-2">
             <p className="text-sm font-medium text-muted-foreground">ANCRAGE</p>
-            <p className="mt-2 text-4xl font-bold">57€</p>
+            <p className="mt-2 text-4xl font-bold">{PREMIUM_PRICE_SHORT}</p>
             <p className="text-xs text-muted-foreground mt-1">Paiement unique · Accès à vie</p>
           </div>
           <ul className="space-y-2">
@@ -65,7 +66,7 @@ const Comparison = () => {
             disabled={paymentLoading}
             className="w-full rounded-xl bg-primary py-3.5 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 transition-transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60"
           >
-            {paymentLoading ? "Chargement…" : "Je veux me sentir mieux — 57€"}
+            {paymentLoading ? "Chargement…" : `Je veux me sentir mieux — ${PREMIUM_PRICE_SHORT}`}
           </button>
           <p className="text-center text-xs text-muted-foreground">
             Paiement unique. Accès à vie. 100% sécurisé via Mollie.

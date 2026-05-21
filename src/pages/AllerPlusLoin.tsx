@@ -2,6 +2,7 @@ import SectionBlock from "@/components/SectionBlock";
 import CTAButton from "@/components/CTAButton";
 import Breadcrumb from "@/components/Breadcrumb";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
+import { PREMIUM_PRICE_SHORT } from "@/lib/premiumOffer";
 
 const AllerPlusLoin = () => {
   const { startPayment, loading: paymentLoading } = useMolliePayment();
@@ -74,7 +75,7 @@ const AllerPlusLoin = () => {
             </div>
           </div>
           <div className="mt-4 space-y-2">
-            <CTAButton to="#" onClick={handlePayment} loading={paymentLoading}>Je veux me sentir mieux — 57€</CTAButton>
+            <CTAButton to="#" onClick={handlePayment} loading={paymentLoading}>{`Je veux me sentir mieux — ${PREMIUM_PRICE_SHORT}`}</CTAButton>
             <p className="text-xs text-muted-foreground">Paiement unique. Accès à vie. 100% sécurisé via Mollie.</p>
           </div>
         </div>
