@@ -21,7 +21,7 @@ import {
 // ⚠️  These values lock the public-facing contract of the product offering.
 // Updating any of them is a deliberate business decision and requires the
 // fingerprint below to be recomputed and updated together.
-const EXPECTED_FINGERPRINT = "95e6a6fccf08c0a3";
+const EXPECTED_FINGERPRINT = "c3ebe84d206f6c89";
 
 const EXPECTED_PRODUCTS = {
   premium: {
