@@ -14,8 +14,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ["Karla", "system-ui", "sans-serif"],
-        serif: ["Cormorant Garamond", "Georgia", "serif"],
+        sans: ["Inter", "system-ui", "sans-serif"],
+        serif: ["Playfair Display", "Georgia", "serif"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -43,6 +43,7 @@ export default {
           DEFAULT: "hsl(var(--accent))",
           foreground: "hsl(var(--accent-foreground))",
         },
+        sage: "hsl(var(--sage))",
         lies: {
           DEFAULT: "hsl(var(--lies))",
           foreground: "hsl(var(--lies-foreground))",

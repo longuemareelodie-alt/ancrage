@@ -2,53 +2,55 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Karla:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap');
 
 @layer base {
   :root {
-    /* Ancrage — Vert sauge, blanc cassé, gris doux */
-    --background: 48 33% 97%;        /* #F9F8F4 blanc cassé */
-    --foreground: 0 0% 10%;          /* noir profond */
+    /* Ancrage — Premium corail × crème × bleu nuit */
+    --background: 36 27% 97%;        /* #FAF8F5 */
+    --foreground: 226 32% 16%;       /* #1B2035 bleu nuit */
 
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 10%;
+    --card: 12 100% 98%;             /* #FFF9F7 */
+    --card-foreground: 226 32% 16%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 10%;
+    --popover: 30 60% 99%;           /* #FFFDFB */
+    --popover-foreground: 226 32% 16%;
 
-    --primary: 96 17% 67%;           /* #A8B89F vert sauge */
-    --primary-foreground: 0 0% 10%;
+    --primary: 4 71% 64%;            /* #E46B62 corail */
+    --primary-foreground: 30 60% 99%;
 
-    --secondary: 60 20% 94%;         /* crème ombrée */
-    --secondary-foreground: 0 0% 10%;
+    --secondary: 30 30% 96%;         /* crème ombrée */
+    --secondary-foreground: 226 32% 16%;
 
-    --muted: 60 14% 92%;
-    --muted-foreground: 0 0% 54%;    /* #8A8A8A gris doux */
+    --muted: 30 22% 94%;
+    --muted-foreground: 0 0% 40%;    /* #676767 */
 
-    --accent: 96 17% 78%;            /* sauge claire */
-    --accent-foreground: 0 0% 10%;
+    --accent: 338 53% 62%;           /* #D36A92 rose premium */
+    --accent-foreground: 30 60% 99%;
 
-    --destructive: 0 50% 50%;
-    --destructive-foreground: 0 0% 100%;
+    --sage: 122 18% 79%;             /* #BFD2C0 accent doux */
 
-    --lies: 96 17% 60%;
-    --lies-foreground: 0 0% 10%;
-    --lies-soft: 96 17% 90%;
+    --destructive: 4 71% 56%;
+    --destructive-foreground: 30 60% 99%;
 
-    --border: 60 14% 88%;
-    --input: 60 14% 88%;
-    --ring: 96 17% 60%;
+    --lies: 338 53% 62%;
+    --lies-foreground: 30 60% 99%;
+    --lies-soft: 338 53% 92%;
 
-    --radius: 1rem;
+    --border: 30 18% 91%;            /* #ECE6E2 */
+    --input: 30 18% 91%;
+    --ring: 4 71% 64%;
 
-    --sidebar-background: 37 37% 96%;
-    --sidebar-foreground: 0 0% 25%;
-    --sidebar-primary: 108 14% 54%;
-    --sidebar-primary-foreground: 37 37% 96%;
-    --sidebar-accent: 102 22% 91%;
-    --sidebar-accent-foreground: 0 0% 18%;
-    --sidebar-border: 102 18% 84%;
-    --sidebar-ring: 108 14% 54%;
+    --radius: 1.75rem;               /* 28px */
+
+    --sidebar-background: 36 27% 97%;
+    --sidebar-foreground: 226 32% 18%;
+    --sidebar-primary: 4 71% 64%;
+    --sidebar-primary-foreground: 30 60% 99%;
+    --sidebar-accent: 30 30% 96%;
+    --sidebar-accent-foreground: 226 32% 16%;
+    --sidebar-border: 30 18% 91%;
+    --sidebar-ring: 4 71% 64%;
   }
 }
 
@@ -62,8 +64,8 @@
   }
 
   h1, h2, h3, .font-serif-display {
-    font-family: 'Cormorant Garamond', Georgia, serif;
-    letter-spacing: -0.01em;
+    font-family: 'Playfair Display', Georgia, serif;
+    letter-spacing: -0.015em;
   }
 
   html {
@@ -73,32 +75,27 @@
 
 @layer utilities {
   .shadow-soft {
-    box-shadow: 0 8px 30px -12px hsl(258 70% 52% / 0.18), 0 2px 8px -2px hsl(258 70% 52% / 0.08);
+    box-shadow: 0 8px 30px -12px hsl(226 32% 16% / 0.10), 0 2px 8px -2px hsl(226 32% 16% / 0.05);
   }
   .shadow-soft-lg {
-    box-shadow: 0 18px 50px -18px hsl(258 70% 52% / 0.25), 0 4px 14px -4px hsl(258 70% 52% / 0.10);
+    box-shadow: 0 24px 60px -24px hsl(226 32% 16% / 0.18), 0 6px 16px -6px hsl(226 32% 16% / 0.08);
   }
 
-  /* === Micro-interactions "je récupère mon calme" === */
-
-  /* Halo qui respire en continu — rythme inspiration/expiration lent (6s) */
-  .calm-breathe {
-    animation: calm-breathe 6s ease-in-out infinite;
+  .bg-cta-gradient {
+    background-image: linear-gradient(135deg, hsl(4 71% 64%) 0%, hsl(338 53% 62%) 100%);
   }
 
-  /* Pression au clic : enfonce doucement, comme on pose la main sur soi */
+  /* === Micro-interactions === */
+  .calm-breathe { animation: calm-breathe 6s ease-in-out infinite; }
+
   .calm-press {
     transition:
       transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
       box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1),
       background-color 0.4s ease;
   }
-  .calm-press:active {
-    transform: scale(0.97);
-    transition-duration: 0.1s;
-  }
+  .calm-press:active { transform: scale(0.97); transition-duration: 0.1s; }
 
-  /* Hover apaisant : élargit doucement le halo, sans rebond */
   .calm-hover {
     transition: box-shadow 0.6s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
   }
@@ -106,45 +103,21 @@
     box-shadow: 0 0 0 6px hsl(var(--primary) / 0.08), 0 12px 32px -10px hsl(var(--primary) / 0.25);
   }
 
-  /* Confirmation "passage en sécurité" — onde verte douce qui s'efface */
-  .safe-confirm {
-    animation: safe-confirm 1.6s cubic-bezier(0.22, 1, 0.36, 1);
-  }
-
-  /* Halo statique de sécurité (pour cartes validées) */
+  .safe-confirm { animation: safe-confirm 1.6s cubic-bezier(0.22, 1, 0.36, 1); }
   .safe-glow {
     box-shadow: 0 0 0 2px hsl(142 50% 60% / 0.25), 0 8px 24px -8px hsl(142 40% 50% / 0.18);
   }
 
-  /* Réduction de mouvement : OS-level (`prefers-reduced-motion`) ou heuristique
-     low-end mobile via `html.no-deco-motion` (posée au démarrage par
-     `src/lib/motionPrefs.ts`). Les deux paths désactivent les animations
-     décoratives qui causent des repaints continus (box-shadow animée, etc.)
-     et raccourcissent les transitions de hover/press qui peuvent saccader. */
   @media (prefers-reduced-motion: reduce) {
-    .calm-breathe,
-    .safe-confirm {
-      animation: none !important;
-    }
-    .calm-press,
-    .calm-hover {
-      transition: none !important;
-    }
+    .calm-breathe, .safe-confirm { animation: none !important; }
+    .calm-press, .calm-hover { transition: none !important; }
   }
 
   :root.no-deco-motion .calm-breathe,
-  :root.no-deco-motion .safe-confirm {
-    animation: none !important;
-  }
+  :root.no-deco-motion .safe-confirm { animation: none !important; }
   :root.no-deco-motion .calm-press,
-  :root.no-deco-motion .calm-hover {
-    /* Garde un retour visuel minimal (100ms) pour le feedback tactile sans
-       déclencher d'animation longue de box-shadow qui repaint en continu. */
-    transition-duration: 0.1s !important;
-  }
-  :root.no-deco-motion .calm-hover:hover {
-    box-shadow: none !important;
-  }
+  :root.no-deco-motion .calm-hover { transition-duration: 0.1s !important; }
+  :root.no-deco-motion .calm-hover:hover { box-shadow: none !important; }
 }
 
 @layer base {
@@ -158,15 +131,8 @@
   }
 
   @keyframes safe-confirm {
-    0% {
-      box-shadow: 0 0 0 0 hsl(142 60% 55% / 0.45);
-    }
-    60% {
-      box-shadow: 0 0 0 14px hsl(142 60% 55% / 0);
-    }
-    100% {
-      box-shadow: 0 0 0 0 hsl(142 60% 55% / 0);
-    }
+    0% { box-shadow: 0 0 0 0 hsl(142 60% 55% / 0.45); }
+    60% { box-shadow: 0 0 0 14px hsl(142 60% 55% / 0); }
+    100% { box-shadow: 0 0 0 0 hsl(142 60% 55% / 0); }
   }
 }
-

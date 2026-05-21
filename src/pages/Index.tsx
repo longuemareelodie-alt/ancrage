@@ -1,10 +1,9 @@
 import Footer from "@/components/Footer";
 import HomeFAQ from "@/components/HomeFAQ";
 import { motion } from "framer-motion";
-import { User, Check, ArrowRight } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Check, ArrowRight, Menu, X, ShieldCheck } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import { useAuth } from "@/contexts/AuthContext";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
 import { PREMIUM_PRICE_LONG, PREMIUM_PRICE_SHORT } from "@/lib/premiumOffer";
 import avatarCamille from "@/assets/avatar-camille.jpg";
@@ -12,10 +11,10 @@ import avatarInes from "@/assets/avatar-ines.jpg";
 import avatarLea from "@/assets/avatar-lea.jpg";
 
 const fadeUp = {
-  initial: { opacity: 0, y: 24 },
+  initial: { opacity: 0, y: 20 },
   whileInView: { opacity: 1, y: 0 },
   viewport: { once: true, amount: 0.2 },
-  transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] as const },
+  transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] as const },
 };
 
 const Section = ({
@@ -33,7 +32,7 @@ const Section = ({
 );
 
 const Eyebrow = ({ children }: { children: React.ReactNode }) => (
-  <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-muted-foreground">
+  <p className="text-[10px] font-medium uppercase tracking-[0.24em] text-muted-foreground">
     {children}
   </p>
 );
@@ -41,21 +40,29 @@ const Eyebrow = ({ children }: { children: React.ReactNode }) => (
 // --- Phone mockup (Hero) ----------------------------------------------------
 const PhoneMockup = () => (
   <div className="relative mx-auto w-[260px] md:w-[300px]">
-    <div className="rounded-[2.5rem] border border-border bg-card p-3 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.18)]">
+    {/* floating cards */}
+    <div className="pointer-events-none absolute -left-10 top-10 hidden rounded-2xl border border-border bg-card px-3 py-2 text-xs shadow-soft md:block">
+      ❤️ Check-in
+    </div>
+    <div className="pointer-events-none absolute -right-12 top-32 hidden rounded-2xl border border-border bg-card px-3 py-2 text-xs shadow-soft md:block">
+      🌿 Exercice
+    </div>
+    <div className="pointer-events-none absolute -left-14 bottom-16 hidden rounded-2xl border border-border bg-card px-3 py-2 text-xs shadow-soft md:block">
+      📈 Calme +38%
+    </div>
+
+    <div className="rounded-[2.5rem] border border-border bg-card p-3 shadow-[0_40px_100px_-30px_rgba(27,32,53,0.18)]">
       <div className="overflow-hidden rounded-[2rem] bg-background">
-        {/* status bar */}
         <div className="flex items-center justify-between px-5 pt-4 pb-2 text-[10px] text-muted-foreground">
           <span>9:41</span>
-          <span className="h-1.5 w-10 rounded-full bg-foreground/20" />
+          <span className="h-1.5 w-10 rounded-full bg-foreground/15" />
         </div>
-        {/* header */}
         <div className="px-5 pt-2 pb-4">
-          <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Ancrage</p>
+          <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Ancrage</p>
           <p className="mt-1 font-serif text-xl leading-tight">Bonjour Camille</p>
         </div>
-        {/* check-in card */}
         <div className="mx-5 rounded-2xl border border-border bg-secondary p-4">
-          <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Check-in</p>
+          <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Check-in</p>
           <p className="mt-1 font-serif text-base">Comment tu te sens ?</p>
           <div className="mt-3 flex gap-1.5">
             {["😌", "😐", "😣", "😶", "🌧"].map((e) => (
@@ -68,21 +75,19 @@ const PhoneMockup = () => (
             ))}
           </div>
         </div>
-        {/* deborde button */}
         <div className="mx-5 mt-3">
           <div className="flex items-center justify-between rounded-2xl bg-primary px-4 py-3 text-primary-foreground">
             <span className="text-sm font-medium">Ça déborde</span>
             <ArrowRight className="h-4 w-4" />
           </div>
         </div>
-        {/* dashboard tiles */}
         <div className="mx-5 mt-3 mb-5 grid grid-cols-2 gap-2">
           {[
             { l: "Jour", v: "12" },
             { l: "Calme", v: "+38%" },
           ].map((t) => (
             <div key={t.l} className="rounded-xl border border-border bg-card p-3">
-              <p className="text-[9px] uppercase tracking-[0.18em] text-muted-foreground">{t.l}</p>
+              <p className="text-[9px] uppercase tracking-[0.2em] text-muted-foreground">{t.l}</p>
               <p className="mt-0.5 font-serif text-lg">{t.v}</p>
             </div>
           ))}
@@ -92,7 +97,6 @@ const PhoneMockup = () => (
   </div>
 );
 
-// --- Faux app screen (carousel) ---------------------------------------------
 const AppScreen = ({
   title,
   kicker,
@@ -103,9 +107,9 @@ const AppScreen = ({
   children: React.ReactNode;
 }) => (
   <div className="w-[240px] shrink-0 snap-start">
-    <div className="rounded-[2rem] border border-border bg-card p-2.5 shadow-[0_20px_50px_-20px_rgba(0,0,0,0.15)]">
+    <div className="rounded-[2rem] border border-border bg-card p-2.5 shadow-[0_20px_50px_-20px_rgba(27,32,53,0.15)]">
       <div className="aspect-[9/16] overflow-hidden rounded-[1.6rem] bg-background p-4">
-        <p className="text-[9px] uppercase tracking-[0.18em] text-muted-foreground">{kicker}</p>
+        <p className="text-[9px] uppercase tracking-[0.2em] text-muted-foreground">{kicker}</p>
         <p className="mt-1 font-serif text-base leading-tight">{title}</p>
         <div className="mt-3 space-y-2">{children}</div>
       </div>
@@ -122,27 +126,36 @@ const Pill = ({ children }: { children: React.ReactNode }) => (
 // ---------------------------------------------------------------------------
 
 const Index = () => {
-  const { user } = useAuth();
-  const { t } = useTranslation();
   const { startPayment, loading: paymentLoading } = useMolliePayment();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const handlePay = () => startPayment();
 
-  const featuresFor = [
-    "Check-ins émotionnels",
-    "Parcours guidé",
-    "Journal",
-    "Progression",
-    "Exercices",
+  const navLinks = [
+    { href: "#dans-ancrage", label: "Fonctionnalités" },
+    { href: "#lies-autrement", label: "Pour qui" },
+    { href: "#temoignages", label: "Témoignages" },
+    { href: "#faq", label: "FAQ" },
   ];
-  const featuresChild = [
-    "Crises guidées",
-    "Comprendre ses émotions",
-    "Activités",
-    "Outils adaptés",
-    "LSF",
+
+  const problems = [
+    { e: "🌀", t: "Je porte tout", d: "Charge mentale." },
+    { e: "🔥", t: "Je déborde", d: "Émotions difficiles." },
+    { e: "🤝", t: "Mon enfant déborde", d: "Transitions, crises." },
+    { e: "🧠", t: "J'oublie tout", d: "Organisation impossible." },
   ];
-  const featuresDaily = ["RDV", "Médicaments", "Fiche urgence", "Ressources", "Rappels"];
+
+  const featuresFor = ["Check-ins émotionnels", "Parcours guidé", "Journal", "Progression", "Exercices"];
+  const featuresChild = ["Crises guidées", "Comprendre ses émotions", "Activités", "Outils adaptés", "LSF"];
+  const featuresDaily = ["Rendez-vous", "Médicaments", "Fiche urgence", "Ressources", "Rappels"];
 
   const liesCards = [
     { e: "🧩", t: "Comprendre son fonctionnement" },
@@ -172,23 +185,33 @@ const Index = () => {
       avatar: avatarInes,
       before: "Les crises de mon fils me submergeaient.",
       used: "Crise guidée + fiche d'urgence.",
-      changed: "On a un langage commun. On respire ensemble.",
+      changed: "On a un langage commun.",
     },
     {
       name: "Léa",
       avatar: avatarLea,
       before: "Je portais tout, sans repère.",
       used: "Journal + parcours 21 jours.",
-      changed: "Je me retrouve. Le calme revient plus vite.",
+      changed: "Je me retrouve.",
     },
   ];
 
-  const CTA = ({ label = `Je récupère mon calme — ${PREMIUM_PRICE_LONG}` }: { label?: string }) => (
+  const CTAButton = ({
+    label = `Je récupère mon calme — ${PREMIUM_PRICE_LONG}`,
+    variant = "primary",
+  }: {
+    label?: string;
+    variant?: "primary" | "white";
+  }) => (
     <button
       type="button"
       onClick={handlePay}
       disabled={paymentLoading}
-      className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-7 py-4 text-sm font-medium text-primary-foreground shadow-sm transition-all hover:brightness-105 active:scale-[0.98] disabled:opacity-60"
+      className={
+        variant === "white"
+          ? "inline-flex items-center justify-center gap-2 rounded-full bg-background px-7 py-4 text-sm font-semibold text-foreground shadow-soft-lg transition-all hover:-translate-y-0.5 active:scale-[0.98] disabled:opacity-60"
+          : "inline-flex items-center justify-center gap-2 rounded-full bg-primary px-7 py-4 text-sm font-semibold text-primary-foreground shadow-soft transition-all hover:bg-[hsl(351_60%_60%)] hover:-translate-y-0.5 active:scale-[0.98] disabled:opacity-60"
+      }
     >
       {label}
     </button>
@@ -196,40 +219,106 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {/* Top bar */}
-      <header className="px-6 py-5">
-        <div className="mx-auto flex max-w-[1200px] items-center justify-between">
-          <Link to="/" className="font-serif text-lg tracking-tight">
+      {/* Sticky header */}
+      <header
+        className={`sticky top-0 z-50 transition-all duration-200 ${
+          scrolled ? "border-b border-border bg-background/85 backdrop-blur-md" : "bg-transparent"
+        }`}
+      >
+        <div className="mx-auto flex max-w-[1200px] items-center justify-between px-6 py-4">
+          <Link to="/" className="font-serif text-xl tracking-tight">
             Ancrage
           </Link>
-          <Link
-            to={user ? "/profil" : "/auth"}
-            className="flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs text-foreground/80 transition-colors hover:bg-secondary"
+          <nav className="hidden items-center gap-8 md:flex">
+            {navLinks.map((l) => (
+              <a
+                key={l.href}
+                href={l.href}
+                className="text-sm text-foreground/75 transition-colors hover:text-foreground"
+              >
+                {l.label}
+              </a>
+            ))}
+          </nav>
+          <div className="hidden md:block">
+            <button
+              type="button"
+              onClick={handlePay}
+              disabled={paymentLoading}
+              className="rounded-full bg-primary px-5 py-2.5 text-xs font-semibold text-primary-foreground transition-all hover:bg-[hsl(351_60%_60%)] disabled:opacity-60"
+            >
+              Je récupère mon calme — {PREMIUM_PRICE_SHORT}
+            </button>
+          </div>
+          <button
+            type="button"
+            aria-label="Menu"
+            onClick={() => setMenuOpen((v) => !v)}
+            className="rounded-full border border-border bg-card p-2 md:hidden"
           >
-            <User className="h-3.5 w-3.5" />
-            {user ? t("nav.my_space") : t("nav.login")}
-          </Link>
+            {menuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+          </button>
         </div>
+        {menuOpen && (
+          <div className="border-t border-border bg-background md:hidden">
+            <div className="mx-auto flex max-w-[1200px] flex-col gap-1 px-6 py-4">
+              {navLinks.map((l) => (
+                <a
+                  key={l.href}
+                  href={l.href}
+                  onClick={() => setMenuOpen(false)}
+                  className="rounded-xl px-3 py-2.5 text-sm text-foreground/80 hover:bg-secondary"
+                >
+                  {l.label}
+                </a>
+              ))}
+              <button
+                type="button"
+                onClick={() => {
+                  setMenuOpen(false);
+                  handlePay();
+                }}
+                disabled={paymentLoading}
+                className="mt-2 rounded-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground disabled:opacity-60"
+              >
+                Je récupère mon calme — {PREMIUM_PRICE_SHORT}
+              </button>
+            </div>
+          </div>
+        )}
       </header>
 
-      {/* PAGE 1 — HERO */}
-      <Section className="pt-6 md:pt-10">
+      {/* HERO */}
+      <Section className="pt-8 md:pt-12">
         <div className="grid items-center gap-14 md:grid-cols-2 md:gap-20">
           <motion.div {...fadeUp}>
-            <Eyebrow>Ancrage</Eyebrow>
-            <h1 className="mt-5 font-serif text-[clamp(2.4rem,6vw,3.75rem)] font-normal leading-[1.05] tracking-tight">
+            <Eyebrow>Bien-être émotionnel — parents & enfants</Eyebrow>
+            <h1 className="mt-5 font-serif text-[clamp(2.4rem,6.5vw,4rem)] font-normal leading-[1.02] tracking-tight">
               Tu n'achètes pas un outil.
               <br />
               <span className="italic text-primary">Tu retrouves un repère.</span>
             </h1>
-            <p className="mt-7 max-w-md text-base leading-relaxed text-foreground/75">
-              Ancrage t'aide à redescendre quand tout déborde — pour toi, ton enfant et votre
-              quotidien.
+            <p className="mt-6 max-w-md text-base leading-relaxed text-foreground/75 md:text-lg">
+              Quand tout déborde, Ancrage t'aide à ralentir, retrouver du calme et remettre du repère
+              dans ton quotidien — pour toi, ton enfant et votre famille.
             </p>
-            <div className="mt-9">
-              <CTA />
-              <p className="mt-4 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-                Paiement unique · Accès à vie · Mobile + ordinateur
+            <ul className="mt-7 flex flex-wrap gap-x-5 gap-y-2 text-sm text-foreground/70">
+              {["Paiement unique", "Accès à vie", "Mobile + ordinateur"].map((p) => (
+                <li key={p} className="flex items-center gap-1.5">
+                  <Check className="h-4 w-4 text-primary" /> {p}
+                </li>
+              ))}
+            </ul>
+            <div className="mt-8">
+              <CTAButton />
+              <p className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+                <span>Sans abonnement</span>
+                <span aria-hidden>·</span>
+                <span>Accès immédiat</span>
+                <span aria-hidden>·</span>
+                <span className="inline-flex items-center gap-1">
+                  <ShieldCheck className="h-3 w-3" /> Paiement sécurisé
+                </span>
               </p>
             </div>
           </motion.div>
@@ -239,14 +328,38 @@ const Index = () => {
         </div>
       </Section>
 
-      <div className="mx-auto h-px w-16 bg-foreground/10" />
+      {/* PROBLÈME */}
+      <Section className="bg-secondary/50">
+        <motion.div {...fadeUp} className="text-center">
+          <Eyebrow>Tu te reconnais ?</Eyebrow>
+          <h2 className="mt-4 font-serif text-[clamp(2rem,4.5vw,2.75rem)] leading-tight">
+            Quand tout devient <span className="italic text-primary">trop</span>…
+          </h2>
+        </motion.div>
+        <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {problems.map((p) => (
+            <motion.div
+              {...fadeUp}
+              key={p.t}
+              className="rounded-[1.75rem] border border-border bg-card p-7 transition-all hover:-translate-y-0.5 hover:shadow-soft"
+            >
+              <div className="text-2xl">{p.e}</div>
+              <h3 className="mt-4 font-serif text-xl">{p.t}</h3>
+              <p className="mt-1.5 text-sm text-foreground/65">{p.d}</p>
+            </motion.div>
+          ))}
+        </div>
+        <p className="mt-12 text-center font-serif text-xl italic text-foreground/80">
+          Tu n'as pas besoin d'aller mieux pour commencer.
+        </p>
+      </Section>
 
-      {/* PAGE 2 — COMMENT ÇA MARCHE */}
+      {/* COMMENT ÇA MARCHE */}
       <Section>
         <motion.div {...fadeUp} className="text-center">
           <Eyebrow>Comment ça marche</Eyebrow>
           <h2 className="mt-4 font-serif text-[clamp(2rem,4.5vw,2.75rem)] leading-tight">
-            30 secondes. Une fois par jour.
+            30 secondes. <span className="italic text-primary">Une fois par jour.</span>
           </h2>
         </motion.div>
         <div className="mt-14 grid gap-6 md:grid-cols-3">
@@ -258,41 +371,37 @@ const Index = () => {
             <motion.div
               {...fadeUp}
               key={s.n}
-              className="rounded-2xl border border-border bg-card p-7"
+              className="rounded-[1.75rem] border border-border bg-card p-8"
             >
-              <p className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-                {s.n}
-              </p>
+              <p className="text-[10px] uppercase tracking-[0.24em] text-muted-foreground">{s.n}</p>
               <h3 className="mt-4 font-serif text-2xl">{s.t}</h3>
               <p className="mt-2 text-sm text-foreground/70">{s.d}</p>
             </motion.div>
           ))}
         </div>
-        <div className="mt-12 text-center">
-          <Link to="/comparaison" className="text-sm text-foreground/70 underline-offset-4 hover:underline">
-            Voir tout ce qui est inclus →
-          </Link>
-        </div>
+        <p className="mt-10 text-center text-sm italic text-muted-foreground">
+          Chaque famille avance à son rythme.
+        </p>
       </Section>
 
-      {/* PAGE 3 — CE QU'IL Y A DANS ANCRAGE */}
-      <Section className="bg-secondary/40">
+      {/* DANS ANCRAGE */}
+      <Section id="dans-ancrage" className="bg-secondary/50">
         <motion.div {...fadeUp} className="text-center">
-          <Eyebrow>Dans Ancrage</Eyebrow>
+          <Eyebrow>Contenu</Eyebrow>
           <h2 className="mt-4 font-serif text-[clamp(2rem,4.5vw,2.75rem)] leading-tight">
             Ce qu'il y a dans Ancrage
           </h2>
         </motion.div>
         <div className="mt-14 grid gap-6 md:grid-cols-3">
           {[
-            { i: "🌿", t: "Pour toi", l: featuresFor },
-            { i: "🤝", t: "Pour ton enfant", l: featuresChild },
-            { i: "🩺", t: "Pour le quotidien", l: featuresDaily },
+            { i: "🌿", t: "Pour toi", l: featuresFor, link: "/comprendre" },
+            { i: "🤝", t: "Pour ton enfant", l: featuresChild, link: "/lies-autrement" },
+            { i: "🩺", t: "Pour le quotidien", l: featuresDaily, link: "/sante" },
           ].map((col) => (
             <motion.div
               {...fadeUp}
               key={col.t}
-              className="rounded-2xl border border-border bg-card p-7"
+              className="flex flex-col rounded-[1.75rem] border border-border bg-card p-8"
             >
               <div className="text-2xl">{col.i}</div>
               <h3 className="mt-3 font-serif text-2xl">{col.t}</h3>
@@ -304,13 +413,19 @@ const Index = () => {
                   </li>
                 ))}
               </ul>
+              <Link
+                to={col.link}
+                className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-primary underline-offset-4 hover:underline"
+              >
+                En savoir plus <ArrowRight className="h-4 w-4" />
+              </Link>
             </motion.div>
           ))}
         </div>
       </Section>
 
-      {/* PAGE 4 — LIÉS AUTREMENT */}
-      <Section>
+      {/* LIÉS AUTREMENT */}
+      <Section id="lies-autrement">
         <div className="grid gap-12 md:grid-cols-2 md:items-center md:gap-16">
           <motion.div {...fadeUp}>
             <Eyebrow>Liés autrement</Eyebrow>
@@ -318,7 +433,7 @@ const Index = () => {
               Et si ton enfant <span className="italic text-primary">avance autrement</span> ?
             </h2>
             <p className="mt-5 max-w-md text-base leading-relaxed text-foreground/75">
-              Pensé pour les familles TSA, TDAH, DYS, sourdes ou en questionnement.
+              Pensé pour les familles TSA, TDAH, DYS, enfants sourds ou en questionnement.
             </p>
             <Link
               to="/lies-autrement"
@@ -331,7 +446,7 @@ const Index = () => {
             {liesCards.map((c) => (
               <div
                 key={c.t}
-                className="rounded-2xl border border-border bg-card p-5"
+                className="rounded-[1.75rem] border border-border bg-card p-5 transition-all hover:-translate-y-0.5 hover:shadow-soft"
               >
                 <div className="text-xl">{c.e}</div>
                 <p className="mt-3 text-sm leading-snug text-foreground/85">{c.t}</p>
@@ -341,44 +456,47 @@ const Index = () => {
         </div>
       </Section>
 
-      {/* PAGE 5 — DANS L'APPLICATION */}
-      <Section className="bg-secondary/40">
+      {/* APPLICATION */}
+      <Section className="bg-secondary/50">
         <motion.div {...fadeUp} className="text-center">
           <Eyebrow>Dans l'application</Eyebrow>
           <h2 className="mt-4 font-serif text-[clamp(2rem,4.5vw,2.75rem)] leading-tight">
-            Conçue pour être ouverte, pas explorée.
+            Conçue pour être utilisée. <span className="italic text-primary">Pas explorée.</span>
           </h2>
         </motion.div>
         <div className="mt-12 flex snap-x snap-mandatory gap-4 overflow-x-auto px-2 pb-6">
-          <AppScreen kicker="Écran 1" title="Dashboard">
+          <AppScreen kicker="Écran" title="Dashboard">
             <Pill>☀️ Matin · fait</Pill>
             <Pill>🌙 Soir · à faire</Pill>
             <Pill>Calme +38%</Pill>
           </AppScreen>
-          <AppScreen kicker="Écran 2" title="Check-in">
+          <AppScreen kicker="Écran" title="Check-in">
             <Pill>Comment tu te sens ?</Pill>
             <Pill>😌 😐 😣 😶 🌧</Pill>
             <Pill>30 sec</Pill>
           </AppScreen>
-          <AppScreen kicker="Écran 3" title="Urgence">
+          <AppScreen kicker="Écran" title="Urgence">
             <Pill>Ça déborde</Pill>
             <Pill>Respiration guidée</Pill>
             <Pill>Fiche d'aide</Pill>
           </AppScreen>
-          <AppScreen kicker="Écran 4" title="Émotions enfant">
+          <AppScreen kicker="Écran" title="Journal">
             <Pill>Mettre des mots</Pill>
             <Pill>Cartes adaptées</Pill>
             <Pill>Anticiper</Pill>
           </AppScreen>
-          <AppScreen kicker="Écran 5" title="Suivi santé">
-            <Pill>Rendez-vous</Pill>
-            <Pill>Médicaments</Pill>
-            <Pill>Fiche urgence</Pill>
+          <AppScreen kicker="Écran" title="Progression">
+            <Pill>Jour 12</Pill>
+            <Pill>Calme +38%</Pill>
+            <Pill>Repère stable</Pill>
           </AppScreen>
         </div>
+        <p className="mt-6 text-center font-serif text-lg italic text-foreground/75">
+          Moins de clics. Plus de repères.
+        </p>
       </Section>
 
-      {/* PAGE 6 — CE QUI CHANGE */}
+      {/* RÉSULTATS */}
       <Section>
         <motion.div {...fadeUp} className="text-center">
           <Eyebrow>Ce qui change</Eyebrow>
@@ -388,9 +506,9 @@ const Index = () => {
         </motion.div>
         <div className="mt-14 grid gap-6 md:grid-cols-4">
           {timeline.map((s, i) => (
-            <motion.div {...fadeUp} key={s.d} className="relative">
-              <div className="rounded-2xl border border-border bg-card p-6">
-                <p className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+            <motion.div {...fadeUp} key={s.d}>
+              <div className="rounded-[1.75rem] border border-border bg-card p-6">
+                <p className="text-[10px] uppercase tracking-[0.24em] text-muted-foreground">
                   Étape 0{i + 1}
                 </p>
                 <p className="mt-3 font-serif text-xl">{s.d}</p>
@@ -404,12 +522,12 @@ const Index = () => {
         </p>
       </Section>
 
-      {/* PAGE 7 — TÉMOIGNAGES */}
-      <Section className="bg-secondary/40">
+      {/* TÉMOIGNAGES */}
+      <Section id="temoignages" className="bg-secondary/50">
         <motion.div {...fadeUp} className="text-center">
           <Eyebrow>Témoignages</Eyebrow>
           <h2 className="mt-4 font-serif text-[clamp(2rem,4.5vw,2.75rem)] leading-tight">
-            Ce qu'elles racontent, après.
+            Ce qu'elles racontent, <span className="italic text-primary">après</span>.
           </h2>
         </motion.div>
         <div className="mt-14 grid gap-6 md:grid-cols-3">
@@ -417,34 +535,34 @@ const Index = () => {
             <motion.div
               {...fadeUp}
               key={m.name}
-              className="flex flex-col rounded-2xl border border-border bg-card p-7"
+              className="flex flex-col rounded-[1.75rem] border border-border bg-card p-7"
             >
               <div className="flex items-center gap-3">
                 <img
                   src={m.avatar}
                   alt={m.name}
-                  className="h-10 w-10 rounded-full object-cover"
+                  className="h-12 w-12 rounded-full object-cover"
                 />
                 <p className="font-serif text-lg">{m.name}</p>
               </div>
               <div className="mt-6 space-y-4 text-sm">
                 <div>
-                  <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Avant</p>
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Avant</p>
                   <p className="mt-1 text-foreground/80">{m.before}</p>
                 </div>
                 <div className="h-px bg-border" />
                 <div>
-                  <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
                     Ce qu'elle a utilisé
                   </p>
                   <p className="mt-1 text-foreground/80">{m.used}</p>
                 </div>
                 <div className="h-px bg-border" />
                 <div>
-                  <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
                     Ce qui a changé
                   </p>
-                  <p className="mt-1 italic text-primary">{m.changed}</p>
+                  <p className="mt-1 font-serif text-base italic text-primary">{m.changed}</p>
                 </div>
               </div>
             </motion.div>
@@ -452,52 +570,70 @@ const Index = () => {
         </div>
       </Section>
 
-      {/* PAGE 8 — TARIF */}
-      <Section>
+      {/* OFFRE */}
+      <Section id="offre">
         <motion.div {...fadeUp} className="mx-auto max-w-md">
-          <div className="rounded-3xl border border-border bg-card p-10 text-center shadow-[0_30px_80px_-40px_rgba(0,0,0,0.18)]">
+          <div className="rounded-[1.75rem] border border-border bg-card p-10 text-center shadow-[0_40px_100px_-40px_rgba(27,32,53,0.22)]">
             <Eyebrow>Ancrage</Eyebrow>
             <p className="mt-5 font-serif text-[clamp(3rem,6vw,4rem)] leading-none">
               {PREMIUM_PRICE_SHORT}
             </p>
-            <p className="mt-2 text-xs uppercase tracking-[0.22em] text-muted-foreground">
+            <p className="mt-2 text-xs uppercase tracking-[0.24em] text-muted-foreground">
               Paiement unique
             </p>
             <ul className="mx-auto mt-8 max-w-xs space-y-2.5 text-left text-sm">
-              {["Accès à vie", "Mises à jour", "Aucun abonnement", "Mobile", "Ordinateur"].map(
-                (f) => (
-                  <li key={f} className="flex items-center gap-2 text-foreground/80">
-                    <Check className="h-4 w-4 text-primary" />
-                    {f}
-                  </li>
-                ),
-              )}
+              {[
+                "Accès à vie",
+                "Mises à jour",
+                "Aucun abonnement",
+                "Mobile",
+                "Ordinateur",
+                "Accès immédiat",
+              ].map((f) => (
+                <li key={f} className="flex items-center gap-2 text-foreground/85">
+                  <Check className="h-4 w-4 text-primary" />
+                  {f}
+                </li>
+              ))}
             </ul>
             <div className="mt-9">
-              <CTA label="Je récupère mon calme" />
+              <CTAButton label="Je récupère mon calme" />
             </div>
+            <p className="mt-4 inline-flex items-center justify-center gap-1.5 text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+              <ShieldCheck className="h-3 w-3" /> Paiement sécurisé SSL
+            </p>
           </div>
         </motion.div>
       </Section>
 
-      {/* PAGE 9 — FAQ */}
-      <div className="bg-secondary/40">
+      {/* FAQ */}
+      <div className="bg-secondary/50">
         <HomeFAQ />
       </div>
 
-      {/* PAGE 10 — FOOTER CTA */}
-      <Section>
-        <motion.div {...fadeUp} className="mx-auto max-w-2xl text-center">
-          <h2 className="font-serif text-[clamp(2rem,5vw,3rem)] leading-tight">
-            Tu n'as pas besoin d'aller mieux
-            <br />
-            <span className="italic text-primary">pour commencer.</span>
-          </h2>
-          <div className="mt-10">
-            <CTA label="Commencer maintenant" />
-          </div>
-        </motion.div>
-      </Section>
+      {/* CTA FINAL — gradient corail × rose premium */}
+      <section className="px-6 py-24 md:py-32">
+        <div className="mx-auto max-w-[1100px]">
+          <motion.div
+            {...fadeUp}
+            className="rounded-[1.75rem] bg-cta-gradient px-8 py-20 text-center text-primary-foreground shadow-[0_50px_120px_-40px_rgba(228,107,98,0.45)] md:px-16"
+          >
+            <h2 className="font-serif text-[clamp(2.25rem,5vw,3.25rem)] leading-[1.05]">
+              Tu n'as pas besoin
+              <br />
+              d'aller mieux
+              <br />
+              <span className="italic">pour commencer.</span>
+            </h2>
+            <p className="mx-auto mt-6 max-w-md text-base text-primary-foreground/85">
+              Commence petit. Commence aujourd'hui.
+            </p>
+            <div className="mt-10">
+              <CTAButton variant="white" label={`Commencer maintenant — ${PREMIUM_PRICE_SHORT}`} />
+            </div>
+          </motion.div>
+        </div>
+      </section>
 
       <Footer />
     </div>
