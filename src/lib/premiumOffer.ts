@@ -10,11 +10,25 @@
  * pas i18n.
  */
 
-/** Prix unique TTC de l'offre Premium, format court sans espace. */
-export const PREMIUM_PRICE_SHORT = "57€";
+/**
+ * Prix unique TTC de l'offre Premium, exprimé en centimes EUR.
+ * Source de vérité UNIQUE côté frontend — DOIT être synchronisé avec
+ * `PRODUCT_CATALOG.premium.priceCents` dans
+ * `supabase/functions/_shared/productCatalog.ts` (vérifié par un test).
+ */
+export const PREMIUM_PRICE_CENTS = 5700;
 
-/** Prix unique TTC de l'offre Premium, format long avec espace insécable typographique. */
-export const PREMIUM_PRICE_LONG = "57 €";
+/** Devise unique de l'offre. */
+export const PREMIUM_CURRENCY = "EUR" as const;
+
+/** Valeur numérique en euros, dérivée des centimes (jamais hardcodée ailleurs). */
+export const PREMIUM_PRICE_EUR = PREMIUM_PRICE_CENTS / 100;
+
+/** Prix unique TTC de l'offre Premium, format court sans espace (ex: "57€"). */
+export const PREMIUM_PRICE_SHORT = `${PREMIUM_PRICE_EUR}€`;
+
+/** Prix unique TTC de l'offre Premium, format long avec espace typographique (ex: "57 €"). */
+export const PREMIUM_PRICE_LONG = `${PREMIUM_PRICE_EUR} €`;
 
 /** Nom commercial de l'offre. */
 export const PREMIUM_OFFER_NAME = "Ancrage Premium";
