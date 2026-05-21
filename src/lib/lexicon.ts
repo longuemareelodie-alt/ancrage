@@ -59,7 +59,7 @@ export const CTA_LIBRARY = {
   primary_emotional: "Je récupère mon calme",
 
   /** Engagement payant — on assume la promesse complète */
-  primary_paid: "Je récupère mon calme — 57 €",
+  primary_paid: PREMIUM_CTA.feel_better,
 
   /** Action douce post-exercice */
   secondary_anchor: "Ancrer ce calme",
