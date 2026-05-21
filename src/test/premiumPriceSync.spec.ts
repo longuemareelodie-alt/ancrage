@@ -33,7 +33,10 @@ describe("premium price — single source of truth", () => {
   it("display strings are derived from PREMIUM_PRICE_CENTS (no hardcoded number drift)", () => {
     const expectedEur = PREMIUM_PRICE_CENTS / 100;
     expect(PREMIUM_PRICE_EUR).toBe(expectedEur);
-    expect(PREMIUM_PRICE_SHORT).toBe(`${expectedEur}€`);
-    expect(PREMIUM_PRICE_LONG).toBe(`${expectedEur} €`);
+    // Format canonique unique : montant + NBSP + €, sans décimales si entier.
+    const canonical = `${expectedEur}\u00A0€`;
+    expect(PREMIUM_PRICE_LONG).toBe(canonical);
+    expect(PREMIUM_PRICE_SHORT).toBe(canonical);
+    expect(PREMIUM_PRICE_SHORT).toBe(PREMIUM_PRICE_LONG);
   });
 });
