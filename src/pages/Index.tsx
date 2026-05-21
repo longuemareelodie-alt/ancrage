@@ -279,66 +279,104 @@ const Index = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-secondary/30 via-background to-background">
-      <div className="flex items-center justify-between px-4 py-3">
-        <div />
-        <Link to="/" className="flex flex-col items-center">
-          <img src={logo} alt="Ancrage" className="h-12 w-auto" />
+    <div className="min-h-screen bg-background">
+      <div className="flex items-center justify-between px-6 py-4">
+        <Link to="/" className="font-serif text-lg font-semibold tracking-tight text-foreground">
+          Ancrage
         </Link>
         <Link
           to={user ? "/profil" : "/auth"}
-          className="flex items-center gap-1.5 rounded-full bg-card px-3 py-1.5 text-xs font-medium shadow-sm transition-colors hover:bg-secondary"
+          className="flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground/80 transition-colors hover:bg-secondary"
         >
           <User className="h-3.5 w-3.5" />
           {user ? t("nav.my_space") : t("nav.login")}
         </Link>
       </div>
 
-      <SectionBlock variant="blue">
+      <section className="px-6 pt-10 pb-16 md:pt-16 md:pb-20">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7 }}
-          className="space-y-6 text-center"
+          transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+          className="mx-auto flex max-w-xl flex-col items-center text-center"
         >
-          <h1 className="text-2xl font-bold leading-tight tracking-tight md:text-3xl">
+          {/* Petit jeton éditorial */}
+          <div className="mb-10 flex h-8 w-8 items-center justify-center rounded-full bg-primary">
+            <div className="h-2.5 w-2.5 rounded-full bg-primary-foreground/50" />
+          </div>
+
+          {/* Titre éditorial — serif, large, calme */}
+          <h1
+            className="font-serif text-[clamp(2.25rem,8vw,3.25rem)] font-normal leading-[1.1] tracking-tight text-foreground"
+          >
             {t(parentType === "papa" ? "home.hero.line1_papa" : "home.hero.line1")}
             <br />
-            {t(parentType === "papa" ? "home.hero.line2_papa" : "home.hero.line2")}
-            <br />
-            <span className="text-primary">{t("home.hero.line3")}</span>
+            <span className="italic">
+              {t(parentType === "papa" ? "home.hero.line2_papa" : "home.hero.line2")}
+            </span>
           </h1>
-          <div className="space-y-2 pt-2">
-            <p className="font-semibold">{t("home.hero.rea1")}</p>
-            <p className="text-sm text-primary font-medium">{t("home.hero.rea2")}</p>
-          </div>
-          <div className="pt-2 space-y-2">
-            <p className="text-xs text-muted-foreground">
-              🤍 {t("home.hero.reassurance")}
+
+          <p className="mt-6 max-w-sm font-serif text-xl italic leading-relaxed text-primary">
+            {t("home.hero.line3")}
+          </p>
+
+          {/* Sous-titre éditorial étiqueté */}
+          <div className="mt-10 space-y-2">
+            <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-foreground/60">
+              {t("home.hero.rea1")}
             </p>
-            <CTAButton to="#" onClick={handlePayment} loading={paymentLoading}>{t("home.hero.cta")}</CTAButton>
-            <p className="text-[11px] text-muted-foreground flex items-center justify-center gap-1.5">
-              <Lock className="h-3 w-3" /> Paiement sécurisé · Paiement unique · Accès à vie
+            <p className="text-base leading-relaxed text-foreground/80">
+              {t("home.hero.rea2")}
             </p>
           </div>
+
+          {/* Action principale unique */}
+          <div className="mt-12 w-full space-y-3">
+            <button
+              type="button"
+              onClick={handlePayment}
+              disabled={paymentLoading}
+              className="w-full rounded-full bg-primary py-4 text-base font-medium text-primary-foreground shadow-sm transition-all hover:brightness-110 active:scale-[0.98] disabled:opacity-60"
+            >
+              {t("home.hero.cta")}
+            </button>
+            <div className="flex items-center justify-center gap-3 text-[10px] uppercase tracking-[0.18em] text-foreground/50">
+              <Lock className="h-3 w-3" />
+              <span>Paiement sécurisé</span>
+              <span className="h-1 w-1 rounded-full bg-foreground/40" />
+              <span>Accès à vie</span>
+            </div>
+          </div>
+
+          {/* Module éditorial — accès enfant */}
           <Link
             to="/comment-tu-te-sens"
-            className="mt-4 flex items-center gap-3 rounded-2xl border-2 border-[hsl(var(--lies))] bg-[hsl(var(--lies-soft))] p-4 text-left transition-transform hover:scale-[1.01]"
+            className="mt-14 w-full rounded-2xl border border-border bg-secondary p-6 text-left transition-transform hover:-translate-y-0.5"
           >
-            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-card text-3xl shadow-sm" aria-hidden>
-              🌈
-            </span>
-            <span className="min-w-0 flex-1">
-              <span className="block text-base font-bold text-foreground">
-                Mon enfant — comment il se sent ?
-              </span>
-              <span className="block text-xs text-muted-foreground">
-                Aide-le à mettre des mots · 30 sec
-              </span>
-            </span>
+            <div className="flex items-center gap-5">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-card">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="hsl(var(--primary))" strokeWidth="1.5" aria-hidden>
+                  <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
+                  <path d="M8 14s1.5 2 4 2 4-2 4-2" />
+                  <path d="M9 9h.01M15 9h.01" />
+                </svg>
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="font-serif text-lg font-semibold leading-tight text-foreground">
+                  Mon enfant — comment il se sent ?
+                </p>
+                <p className="mt-1 text-xs text-foreground/60">
+                  Aide-le à mettre des mots · 30 sec
+                </p>
+              </div>
+            </div>
           </Link>
         </motion.div>
-      </SectionBlock>
+      </section>
+
+      <div className="mx-auto h-px w-16 bg-foreground/10" />
+
+
 
       {/* Recognize — ouverture par la douleur incarnée (4 micro-scènes : matin / soir / corps / tête) */}
       <SectionBlock>
