@@ -9,15 +9,12 @@ import { Link } from "react-router-dom";
 import { useTranslation, Trans } from "react-i18next";
 
 const ITEM_KEYS = [
-  "free",
-  "what_is",
-  "price",
-  "subscription",
+  "who",
   "medical",
-  "privacy",
   "duration",
-  "devices",
+  "privacy",
   "refund",
+  "devices",
 ] as const;
 
 const HomeFAQ = () => {

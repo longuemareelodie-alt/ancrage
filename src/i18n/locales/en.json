@@ -91,24 +91,28 @@
         "a": "No. One-time €57 payment, lifetime access to the paid features available at the time of purchase."
       },
       "medical": {
-        "q": "Does it replace medical care or a therapist?",
-        "a": "No, never. Ancrage is a wellbeing tool: it doesn't diagnose and doesn't replace a healthcare professional."
+        "q": "Is it medical?",
+        "a": "No. Ancrage is not a medical device, therapy or diagnosis. It is an emotional support tool that does not replace a health professional."
       },
       "privacy": {
-        "q": "Is my data private?",
-        "a": "Yes. Your notes and emotional states are securely stored and remain strictly yours. You can export or delete everything from your profile. Full details in the <lnk>Privacy policy</lnk>."
+        "q": "My data?",
+        "a": "Your anchors and emotional states are stored securely and remain strictly yours. You can export or delete everything from your profile. Details in the <lnk>Privacy policy</lnk>."
       },
       "duration": {
-        "q": "How much time does it take per day?",
-        "a": "A few minutes is enough. Most actions take between 1 and 5 minutes."
+        "q": "How much time?",
+        "a": "30 seconds a day is enough to start. Most anchors take between 30 seconds and 5 minutes."
       },
       "devices": {
-        "q": "Which devices does it work on?",
-        "a": "Any recent phone, tablet or computer, straight from your browser. No installation."
+        "q": "Devices?",
+        "a": "Any recent phone, tablet or computer, directly from your browser. Your anchors follow you everywhere."
       },
       "refund": {
-        "q": "Can I get a refund?",
-        "a": "Because digital access is immediate, you waive your withdrawal right at checkout. Details in the <lnk>Terms of sale</lnk>."
+        "q": "Refund?",
+        "a": "Because digital content is delivered immediately, you waive your right of withdrawal at the moment of purchase. Details in the <lnk>Terms of sale</lnk>."
+      },
+      "who": {
+        "q": "Who is it for?",
+        "a": "For parents and families who want to regulate their nervous system, find calm again and support their children's emotions — without a medical or spiritual approach."
       }
     }
   },
