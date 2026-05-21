@@ -388,7 +388,7 @@ const Checkin = () => {
         <div className="mx-auto mt-6 w-full max-w-md">
           <FreemiumGate
             title="Tu commences à ressentir la différence."
-            message="Tu as utilisé tes 3 jours de check-in offerts. Continue avec Ancrage — 59 € · accès à vie. Pas d'abonnement, jamais."
+            message="Tu as utilisé tes 3 jours de check-in offerts. Continue avec Ancrage — 57 € · accès à vie. Pas d'abonnement, jamais."
           />
         </div>
       </div>

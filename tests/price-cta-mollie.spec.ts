@@ -1,7 +1,7 @@
 import { test, expect } from "../playwright-fixture";
 
 /**
- * E2E : on doit pouvoir cliquer sur les CTA de prix (59€) sans qu'aucun
+ * E2E : on doit pouvoir cliquer sur les CTA de prix (57€) sans qu'aucun
  * overlay (modal d'onboarding parent/école, dialog, etc.) ne bloque le clic,
  * et atterrir sur le flow de paiement Mollie.
  *
@@ -62,7 +62,7 @@ test.describe("Price CTA → Mollie", () => {
     }
   };
 
-  test("/comparaison : le CTA 59€ déclenche la création de paiement et redirige vers Mollie", async ({
+  test("/comparaison : le CTA 57€ déclenche la création de paiement et redirige vers Mollie", async ({
     page,
   }) => {
     page.on("dialog", (dialog) => dialog.accept("cliente@example.com"));
@@ -86,7 +86,7 @@ test.describe("Price CTA → Mollie", () => {
     expect(page.url()).toBe(MOCK_CHECKOUT_URL);
   });
 
-  test("Accueil (/) : le CTA hero 59€ ne doit jamais être bloqué et redirige vers Mollie", async ({
+  test("Accueil (/) : le CTA hero 57€ ne doit jamais être bloqué et redirige vers Mollie", async ({
     page,
   }) => {
     page.on("dialog", (dialog) => dialog.accept("cliente@example.com"));
@@ -94,7 +94,7 @@ test.describe("Price CTA → Mollie", () => {
     await page.waitForLoadState("domcontentloaded");
     await dismissOnboardingIfPresent(page);
 
-    // Récupère le premier CTA "Je veux me sentir mieux — 59€" (hero).
+    // Récupère le premier CTA "Je veux me sentir mieux — 57€" (hero).
     const cta = page
       .getByRole("button", { name: /je veux me sentir mieux.*59/i })
       .first();

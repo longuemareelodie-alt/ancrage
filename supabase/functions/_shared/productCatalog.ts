@@ -42,7 +42,7 @@ export const PRODUCT_CATALOG: Readonly<Record<ProductKey, ProductDefinition>> =
   Object.freeze({
     premium: Object.freeze({
       key: "premium",
-      priceCents: 5900,
+      priceCents: 5700,
       currency: "EUR",
       description: "ANCRAGE — Accès Premium",
       allowPromo: true,

@@ -11,10 +11,10 @@
  */
 
 /** Prix unique TTC de l'offre Premium, format court sans espace. */
-export const PREMIUM_PRICE_SHORT = "59€";
+export const PREMIUM_PRICE_SHORT = "57€";
 
 /** Prix unique TTC de l'offre Premium, format long avec espace insécable typographique. */
-export const PREMIUM_PRICE_LONG = "59 €";
+export const PREMIUM_PRICE_LONG = "57 €";
 
 /** Nom commercial de l'offre. */
 export const PREMIUM_OFFER_NAME = "Ancrage Premium";
