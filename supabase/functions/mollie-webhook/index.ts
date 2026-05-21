@@ -1107,7 +1107,7 @@ export const handleMollieWebhook = async (req: Request): Promise<Response> => {
     // --- Determine product type from payment metadata ---
     // Two products are supported:
     //   - "initiation_7d" → 4,99 € : grants only has_initiation_access
-    //   - "premium" (default / "lifetime") → 59 € : grants is_premium + initiation
+    //   - "premium" (default / "lifetime") → 57 € : grants is_premium + initiation
     const rawProduct = firstString(paymentMetadata?.product);
     const rawType = firstString(paymentMetadata?.type);
     const isInitiationProduct =

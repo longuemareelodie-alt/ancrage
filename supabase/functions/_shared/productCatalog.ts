@@ -42,7 +42,7 @@ export const PRODUCT_CATALOG: Readonly<Record<ProductKey, ProductDefinition>> =
   Object.freeze({
     premium: Object.freeze({
       key: "premium",
-      priceCents: 5900,
+      priceCents: 5700,
       currency: "EUR",
       description: "ANCRAGE — Accès Premium",
       allowPromo: true,
@@ -68,7 +68,7 @@ export const PRODUCT_CATALOG: Readonly<Record<ProductKey, ProductDefinition>> =
  * Format: `<sha256-hex-truncated-to-16>` — the same value is asserted by
  * `tests/productCatalog.spec.ts`.
  */
-export const PRODUCT_CATALOG_FINGERPRINT = "95e6a6fccf08c0a3";
+export const PRODUCT_CATALOG_FINGERPRINT = "c3ebe84d206f6c89";
 
 /** Canonical, stable serialization used by the fingerprint algorithm. */
 export function canonicalCatalogString(): string {

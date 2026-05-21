@@ -74,7 +74,7 @@ const PostFlow = () => {
               disabled={paymentLoading}
               className="block w-full rounded-2xl bg-gradient-to-r from-primary to-primary/80 p-5 text-center text-primary-foreground shadow-lg shadow-primary/25 transition-transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60"
             >
-              <p className="font-bold">{paymentLoading ? "Chargement…" : "Aller plus loin — 59€"}</p>
+              <p className="font-bold">{paymentLoading ? "Chargement…" : "Aller plus loin — 57€"}</p>
               <p className="mt-1 text-sm opacity-80">Être accompagnée chaque jour</p>
             </button>
           )}

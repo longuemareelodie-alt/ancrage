@@ -21,11 +21,11 @@ import {
 // ⚠️  These values lock the public-facing contract of the product offering.
 // Updating any of them is a deliberate business decision and requires the
 // fingerprint below to be recomputed and updated together.
-const EXPECTED_FINGERPRINT = "95e6a6fccf08c0a3";
+const EXPECTED_FINGERPRINT = "c3ebe84d206f6c89";
 
 const EXPECTED_PRODUCTS = {
   premium: {
-    priceCents: 5900,
+    priceCents: 5700,
     currency: "EUR" as const,
     description: "ANCRAGE — Accès Premium",
     allowPromo: true,
@@ -94,7 +94,7 @@ describe("validatePaymentAmount", () => {
     expect(
       validatePaymentAmount({
         productKey: "premium",
-        paidCents: 5900,
+        paidCents: 5700,
         currency: "EUR",
       }),
     ).toEqual({ ok: true });
@@ -114,7 +114,7 @@ describe("validatePaymentAmount", () => {
   it("rejects a currency switch", () => {
     const r = validatePaymentAmount({
       productKey: "premium",
-      paidCents: 5900,
+      paidCents: 5700,
       currency: "USD",
     }) as { ok: false; reason: string; expectedCents: number };
     expect(r.ok).toBe(false);

@@ -11,7 +11,7 @@ Deno.serve((req) => {
   }
   return new Response(
     JSON.stringify({
-      error: "Subscriptions are no longer offered. Use create-mollie-payment for the one-time 59€ purchase.",
+      error: "Subscriptions are no longer offered. Use create-mollie-payment for the one-time 57€ purchase.",
     }),
     {
       status: 410,
