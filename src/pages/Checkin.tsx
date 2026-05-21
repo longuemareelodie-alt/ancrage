@@ -17,7 +17,7 @@ import DiscoveryHint from "@/components/DiscoveryHint";
 import FreemiumGate from "@/components/FreemiumGate";
 import { useAccessTier } from "@/lib/freemium";
 import { FREEMIUM_LIMITS } from "@/lib/freemium";
-import { PREMIUM_CTA } from "@/lib/premiumOffer";
+import { PREMIUM_CTA, PREMIUM_PRICE_LONG } from "@/lib/premiumOffer";
 
 type Step = "select" | "response" | "teaser" | "action" | "after" | "evolution" | "validation" | "summary";
 
@@ -388,7 +388,7 @@ const Checkin = () => {
         <div className="mx-auto mt-6 w-full max-w-md">
           <FreemiumGate
             title="Tu commences à ressentir la différence."
-            message="Tu as utilisé tes 3 jours de check-in offerts. Continue avec Ancrage — 57 € · accès à vie. Pas d'abonnement, jamais."
+            message={`Tu as utilisé tes 3 jours de check-in offerts. Continue avec Ancrage — ${PREMIUM_PRICE_LONG} · accès à vie. Pas d'abonnement, jamais.`}
           />
         </div>
       </div>
