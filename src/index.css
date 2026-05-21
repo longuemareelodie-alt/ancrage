@@ -2,53 +2,54 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Karla:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap');
 
 @layer base {
   :root {
-    --background: 36 50% 98%;
-    --foreground: 240 10% 10%;
+    /* Sage & Cream — éditorial, premium, apaisant */
+    --background: 37 37% 94%;        /* #f5f0e8 cream */
+    --foreground: 0 0% 18%;          /* #2d2d2d ink */
 
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 10%;
+    --card-foreground: 0 0% 18%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 10%;
+    --popover-foreground: 0 0% 18%;
 
-    --primary: 258 70% 52%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 108 14% 54%;          /* #7d9b76 sage deep */
+    --primary-foreground: 37 37% 96%;
 
-    --secondary: 327 87% 82%;
-    --secondary-foreground: 240 15% 15%;
+    --secondary: 102 22% 86%;        /* #dce5d4 sage cream */
+    --secondary-foreground: 0 0% 18%;
 
-    --muted: 36 40% 95%;
-    --muted-foreground: 240 8% 32%;
+    --muted: 102 22% 91%;
+    --muted-foreground: 0 0% 35%;
 
-    --accent: 217 85% 50%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 105 23% 69%;           /* #a8c0a0 sage light */
+    --accent-foreground: 0 0% 18%;
 
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 0 50% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    /* "Liés autrement" accent — vert doux #7DB89F */
-    --lies: 150 28% 60%;
-    --lies-foreground: 0 0% 100%;
-    --lies-soft: 150 35% 95%;
+    /* "Liés autrement" — sage */
+    --lies: 108 14% 54%;
+    --lies-foreground: 37 37% 96%;
+    --lies-soft: 102 22% 91%;
 
-    --border: 280 20% 88%;
-    --input: 280 20% 88%;
-    --ring: 258 70% 52%;
+    --border: 102 18% 84%;
+    --input: 102 18% 84%;
+    --ring: 108 14% 54%;
 
     --radius: 1rem;
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 37 37% 96%;
+    --sidebar-foreground: 0 0% 25%;
+    --sidebar-primary: 108 14% 54%;
+    --sidebar-primary-foreground: 37 37% 96%;
+    --sidebar-accent: 102 22% 91%;
+    --sidebar-accent-foreground: 0 0% 18%;
+    --sidebar-border: 102 18% 84%;
+    --sidebar-ring: 108 14% 54%;
   }
 }
 

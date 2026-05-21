@@ -14,7 +14,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ["DM Sans", "system-ui", "sans-serif"],
+        sans: ["Karla", "system-ui", "sans-serif"],
         serif: ["Cormorant Garamond", "Georgia", "serif"],
       },
       colors: {
