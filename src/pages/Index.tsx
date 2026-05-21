@@ -1,1245 +1,503 @@
-import SectionBlock from "@/components/SectionBlock";
-import CTAButton from "@/components/CTAButton";
 import Footer from "@/components/Footer";
 import HomeFAQ from "@/components/HomeFAQ";
 import { motion } from "framer-motion";
-import { Check, User, Lock, X } from "lucide-react";
+import { User, Check, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useRouteTransition } from "@/components/RouteTransition";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/contexts/AuthContext";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
-import { useParentType } from "@/hooks/useParentType";
-import { useSchoolContext, SCHOOL_CONTEXT_LABELS } from "@/lib/schoolContext";
-import { useWorkKidsMode, WORK_KIDS_LABELS, type WorkKidsMode } from "@/lib/workKidsMode";
-import {
-  forgetLastQuickState,
-  rememberLastQuickState,
-  useLastQuickState,
-} from "@/lib/lastQuickState";
-import {
-  markSlotDone,
-  pickNextSlot,
-  useDailyProgress,
-  type DailySlot,
-} from "@/lib/morningEveningProgress";
-
-
+import { PREMIUM_PRICE_LONG, PREMIUM_PRICE_SHORT } from "@/lib/premiumOffer";
 import avatarCamille from "@/assets/avatar-camille.jpg";
 import avatarInes from "@/assets/avatar-ines.jpg";
 import avatarLea from "@/assets/avatar-lea.jpg";
 
-const TESTIMONIAL_AVATARS: Record<string, string> = {
-  Camille: avatarCamille,
-  Inès: avatarInes,
-  Léa: avatarLea,
+const fadeUp = {
+  initial: { opacity: 0, y: 24 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, amount: 0.2 },
+  transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] as const },
 };
 
-const Index = () => {
-  const { user } = useAuth();
-  const { t, i18n } = useTranslation();
-  const { startPayment, loading: paymentLoading } = useMolliePayment();
-  const { navigateWithTransition } = useRouteTransition();
-  const [parentType, setParentType] = useParentType();
-  const [schoolContext, setSchoolContext] = useSchoolContext();
-  const [workKidsMode, setWorkKidsMode] = useWorkKidsMode();
-  const lastQuickState = useLastQuickState();
-  const dailyProgress = useDailyProgress();
-  const SCENE_INDEX_TO_SLOT: Record<number, DailySlot> = { 0: "morning", 3: "evening" };
-  const SLOT_LABELS: Record<DailySlot, string> = { morning: "Matin", evening: "Soir" };
-  const SLOT_EMOJI: Record<DailySlot, string> = { morning: "☀️", evening: "🌙" };
-  const nextSlot = pickNextSlot(dailyProgress);
-  const completedCount =
-    (dailyProgress.morning ? 1 : 0) + (dailyProgress.evening ? 1 : 0);
+const Section = ({
+  children,
+  className = "",
+  id,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  id?: string;
+}) => (
+  <section id={id} className={`px-6 py-20 md:py-28 ${className}`}>
+    <div className="mx-auto w-full max-w-[1200px]">{children}</div>
+  </section>
+);
 
-  const handlePayment = () => {
-    startPayment();
-  };
+const Eyebrow = ({ children }: { children: React.ReactNode }) => (
+  <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-muted-foreground">
+    {children}
+  </p>
+);
 
-
-
-  const steps = [
-    { num: "1", text: t("home.how.step1") },
-    { num: "2", text: t("home.how.step2") },
-    { num: "3", text: t("home.how.step3") },
-  ];
-  const projection = [t("home.projection.i1"), t("home.projection.i2"), t("home.projection.i3")];
-  type RecognizeScene = {
-    tag: string;
-    emoji: string;
-    body: string;
-    punch: string;
-    state?: "panique" | "hypervigilance" | "rumination" | "explosion";
-    stateLabel?: string;
-    cta?: string;
-  };
-  const scenesKey = parentType === "papa" ? "home.recognize.scenes_papa" : "home.recognize.scenes";
-  const baseScenes = (() => {
-    const v = t(scenesKey, { returnObjects: true });
-    if (Array.isArray(v)) return v as RecognizeScene[];
-    // Parent-tailored array missing → fall back to neutral scenes.
-    const fallback = t("home.recognize.scenes", { returnObjects: true });
-    return Array.isArray(fallback) ? (fallback as RecognizeScene[]) : [];
-  })();
-
-  // Context overrides (holiday / work): merged on top of the base scenes by
-  // index — only the matin / soir scenes are rewritten, the body / mind
-  // scenes stay identical. Robust fallback chain:
-  //   parent+context override → neutral context override → no override
-  // and any individual partial override only patches fields it actually
-  // provides (empty strings are ignored so we never blank out a scene).
-  const readOverrides = (
-    key: string,
-  ): Record<string, Partial<RecognizeScene>> | null => {
-    if (!i18n.exists(key)) return null;
-    const v = t(key, { returnObjects: true });
-    return v && typeof v === "object" && !Array.isArray(v)
-      ? (v as Record<string, Partial<RecognizeScene>>)
-      : null;
-  };
-  // Build the candidate keys in order of preference. The first one that
-  // exists wins. work + "with kids" is more specific than plain work.
-  const overrideCandidates: string[] = [];
-  if (schoolContext !== "school") {
-    const ctxKeys: string[] = [];
-    if (schoolContext === "work" && workKidsMode === "with") {
-      ctxKeys.push("work_with_kids");
-    }
-    ctxKeys.push(schoolContext);
-    for (const ctx of ctxKeys) {
-      if (parentType === "papa") {
-        overrideCandidates.push(`home.recognize.scenes_papa_${ctx}_overrides`);
-      }
-      overrideCandidates.push(`home.recognize.scenes_${ctx}_overrides`);
-    }
-  }
-  const contextOverrides: Record<string, Partial<RecognizeScene>> =
-    overrideCandidates
-      .map((k) => readOverrides(k))
-      .find((v) => v !== null) ?? {};
-
-
-  const mergeOverride = (
-    scene: RecognizeScene,
-    patch: Partial<RecognizeScene> | undefined,
-  ): RecognizeScene => {
-    if (!patch || typeof patch !== "object") return scene;
-    const cleaned: Partial<RecognizeScene> = {};
-    (Object.keys(patch) as (keyof RecognizeScene)[]).forEach((k) => {
-      const val = patch[k];
-      // Skip empty strings / null / undefined so partial overrides never
-      // wipe out a working base value.
-      if (val === undefined || val === null) return;
-      if (typeof val === "string" && val.trim() === "") return;
-      (cleaned as Record<string, unknown>)[k as string] = val;
-    });
-    return { ...scene, ...cleaned };
-  };
-
-  // Resolve a translation with an explicit fallback chain — i18next would
-  // otherwise return the key itself when missing, which surfaces as raw
-  // text in the UI.
-  const tWithFallback = (...keys: string[]): string => {
-    for (const k of keys) {
-      if (i18n.exists(k)) {
-        const v = t(k);
-        if (typeof v === "string" && v.trim() !== "" && v !== k) return v;
-      }
-    }
-    return "";
-  };
-
-  // Hardcoded last-resort labels so the CTA is never empty even if every
-  // i18n key is missing (e.g. partial translation files).
-  const HARDCODED_CTA: Record<"morning" | "evening", string> = {
-    morning: "Évacuer en 90 s →",
-    evening: "Redescendre avant la nuit · 60 s →",
-  };
-  const HARDCODED_STATE_LABEL: Record<"morning" | "evening", string> = {
-    morning: "Mode explosion",
-    evening: "Mode panique sourde",
-  };
-
-  const slotForIndex = (i: number): "morning" | "evening" | null =>
-    i === 0 ? "morning" : i === 3 ? "evening" : null;
-
-  const ctaFallback = (slot: "morning" | "evening"): string => {
-    const ctxKey =
-      schoolContext === "holiday"
-        ? `home.recognize.cta_fallback_holiday_${slot}`
-        : schoolContext === "work"
-          ? `home.recognize.cta_fallback_work_${slot}`
-          : "";
-    return (
-      tWithFallback(
-        ctxKey,
-        `home.recognize.cta_fallback_${slot}`,
-      ) || HARDCODED_CTA[slot]
-    );
-  };
-  const stateLabelFallback = (slot: "morning" | "evening"): string =>
-    tWithFallback(`home.recognize.state_label_fallback_${slot}`) ||
-    HARDCODED_STATE_LABEL[slot];
-
-  const recognizeMainScenes: RecognizeScene[] = baseScenes.map((scene, i) => {
-    const merged = mergeOverride(scene, contextOverrides[String(i)]);
-    const slot = slotForIndex(i);
-    if (!slot) return merged;
-    // Guarantee CTA + stateLabel for matin/soir — never expose raw i18n keys.
-    return {
-      ...merged,
-      cta: merged.cta && merged.cta.trim() !== "" ? merged.cta : ctaFallback(slot),
-      stateLabel:
-        merged.stateLabel && merged.stateLabel.trim() !== ""
-          ? merged.stateLabel
-          : stateLabelFallback(slot),
-    };
-  });
-
-  // Each "state" maps to the page that delivers its concrete action,
-  // mirroring the destinations defined in src/data/emotionCTAs.ts.
-  const STATE_ROUTES: Record<NonNullable<RecognizeScene["state"]>, string> = {
-    panique: "/calme",
-    hypervigilance: "/calme",
-    rumination: "/post-flow",
-    explosion: "/calme",
-  };
-  const sceneCtaHref = (scene: RecognizeScene): string => {
-    if (!scene.state) return "/emotions";
-    const target = STATE_ROUTES[scene.state];
-    // /calme and /post-flow are gated; send anonymous visitors through auth
-    // with a redirect back to the right page so the transition stays direct.
-    return user ? target : `/auth?redirect=${encodeURIComponent(target)}`;
-  };
-  const extraText = (slot: "s1" | "s2"): string => {
-    const parentSuffix = parentType === "papa" ? "_papa" : "";
-    if (schoolContext !== "school") {
-      return tWithFallback(
-        `home.recognize.${slot}_${schoolContext}${parentSuffix}`,
-        `home.recognize.${slot}_${schoolContext}`,
-        `home.recognize.${slot}${parentSuffix}`,
-        `home.recognize.${slot}`,
-      );
-    }
-    return tWithFallback(
-      `home.recognize.${slot}${parentSuffix}`,
-      `home.recognize.${slot}`,
-    );
-  };
-  const recognizeExtras = [
-    { emoji: t("home.recognize.s1_emoji"), text: extraText("s1") },
-    { emoji: t("home.recognize.s2_emoji"), text: extraText("s2") },
-  ].filter((e) => e.text);
-
-  type QuickState = {
-    state: NonNullable<RecognizeScene["state"]>;
-    emoji: string;
-    label: string;
-    hint: string;
-  };
-  const quickStates = t("home.recognize.quick_states", { returnObjects: true }) as QuickState[];
-  const quickStateHref = (state: QuickState["state"]): string => {
-    const target = STATE_ROUTES[state];
-    return user ? target : `/auth?redirect=${encodeURIComponent(target)}`;
-  };
-  const beforeItems = t("home.before_after.before", { returnObjects: true }) as string[];
-  const afterItems = t("home.before_after.after", { returnObjects: true }) as string[];
-  type IdentityPillar = {
-    icon: string;
-    identity: string;
-    concrete: string;
-    proof: string;
-    metric_label: string;
-    metric_baseline: string;
-    forecast_7d: string;
-    forecast_30d: string;
-  };
-  const identityPillars = t("home.identity.pillars", { returnObjects: true }) as IdentityPillar[];
-  type TestimonialMetric = { label: string; before: string; after: string };
-  type Testimonial = {
-    name: string;
-    context: string;
-    delay: string;
-    before: string;
-    result: string;
-    metrics: TestimonialMetric[];
-  };
-  const testimonials = t("home.testimonials.items", { returnObjects: true }) as Testimonial[];
-  type TimelineStep = { label: string; text: string };
-  const timelineSteps = t("home.timeline.steps", { returnObjects: true }) as TimelineStep[];
-  const features = [
-    t("paywall.features.ritual"),
-    t("paywall.features.emergency"),
-    t("paywall.features.health"),
-    t("paywall.features.resources"),
-    t("paywall.features.notes"),
-    t("paywall.features.badges"),
-    t("paywall.features.journey"),
-    t("paywall.features.lifetime"),
-  ];
-
-  return (
-    <div className="min-h-screen bg-background">
-      <div className="flex items-center justify-between px-6 py-4">
-        <Link to="/" className="font-serif text-lg font-semibold tracking-tight text-foreground">
-          Ancrage
-        </Link>
-        <Link
-          to={user ? "/profil" : "/auth"}
-          className="flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground/80 transition-colors hover:bg-secondary"
-        >
-          <User className="h-3.5 w-3.5" />
-          {user ? t("nav.my_space") : t("nav.login")}
-        </Link>
-      </div>
-
-      <section className="px-6 pt-10 pb-16 md:pt-16 md:pb-20">
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-          className="mx-auto flex max-w-xl flex-col items-center text-center"
-        >
-          {/* Petit jeton éditorial */}
-          <div className="mb-10 flex h-8 w-8 items-center justify-center rounded-full bg-primary">
-            <div className="h-2.5 w-2.5 rounded-full bg-primary-foreground/50" />
-          </div>
-
-          {/* Titre éditorial — serif, large, calme */}
-          <h1
-            className="font-serif text-[clamp(2.25rem,8vw,3.25rem)] font-normal leading-[1.1] tracking-tight text-foreground"
-          >
-            {t(parentType === "papa" ? "home.hero.line1_papa" : "home.hero.line1")}
-            <br />
-            <span className="italic">
-              {t(parentType === "papa" ? "home.hero.line2_papa" : "home.hero.line2")}
-            </span>
-          </h1>
-
-          <p className="mt-6 max-w-sm font-serif text-xl italic leading-relaxed text-primary">
-            {t("home.hero.line3")}
-          </p>
-
-          {/* Sous-titre éditorial étiqueté */}
-          <div className="mt-10 space-y-2">
-            <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-foreground/60">
-              {t("home.hero.rea1")}
-            </p>
-            <p className="text-base leading-relaxed text-foreground/80">
-              {t("home.hero.rea2")}
-            </p>
-          </div>
-
-          {/* Action principale unique */}
-          <div className="mt-12 w-full space-y-3">
-            <button
-              type="button"
-              onClick={handlePayment}
-              disabled={paymentLoading}
-              className="w-full rounded-full bg-primary py-4 text-base font-medium text-primary-foreground shadow-sm transition-all hover:brightness-110 active:scale-[0.98] disabled:opacity-60"
-            >
-              {t("home.hero.cta")}
-            </button>
-            <div className="flex items-center justify-center gap-3 text-[10px] uppercase tracking-[0.18em] text-foreground/50">
-              <Lock className="h-3 w-3" />
-              <span>Paiement sécurisé</span>
-              <span className="h-1 w-1 rounded-full bg-foreground/40" />
-              <span>Accès à vie</span>
-            </div>
-          </div>
-
-          {/* Module éditorial — accès enfant */}
-          <Link
-            to="/comment-tu-te-sens"
-            className="mt-14 w-full rounded-2xl border border-border bg-secondary p-6 text-left transition-transform hover:-translate-y-0.5"
-          >
-            <div className="flex items-center gap-5">
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-card">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="hsl(var(--primary))" strokeWidth="1.5" aria-hidden>
-                  <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
-                  <path d="M8 14s1.5 2 4 2 4-2 4-2" />
-                  <path d="M9 9h.01M15 9h.01" />
-                </svg>
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="font-serif text-lg font-semibold leading-tight text-foreground">
-                  Mon enfant — comment il se sent ?
-                </p>
-                <p className="mt-1 text-xs text-foreground/60">
-                  Aide-le à mettre des mots · 30 sec
-                </p>
-              </div>
-            </div>
-          </Link>
-        </motion.div>
-      </section>
-
-      <div className="mx-auto h-px w-16 bg-foreground/10" />
-
-
-
-      {/* Recognize — ouverture par la douleur incarnée (4 micro-scènes : matin / soir / corps / tête) */}
-      <SectionBlock>
-        <div className="space-y-6">
-          <div className="text-center space-y-2">
-            <h2 className="text-xl font-bold md:text-2xl">{t("home.recognize.title")}</h2>
-            <p className="text-sm text-muted-foreground max-w-md mx-auto">
-              {t("home.recognize.subtitle")}
-            </p>
-          </div>
-
-          {/* Toggle profil maman / papa — adapte le ton des micro-scènes */}
-          <div
-            role="group"
-            aria-label={t("home.recognize.profile_toggle_label")}
-            className="mx-auto flex max-w-xs flex-col items-center gap-2"
-          >
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-              {t("home.recognize.profile_toggle_label")}
-            </p>
-            <div className="inline-flex rounded-full border border-border bg-card p-1 shadow-sm">
-              {(["maman", "papa"] as const).map((p) => {
-                const active = parentType === p;
-                return (
-                  <button
-                    key={p}
-                    type="button"
-                    onClick={() => setParentType(p)}
-                    aria-pressed={active}
-                    className={`min-w-[84px] rounded-full px-4 py-1.5 text-sm font-semibold transition-all ${
-                      active
-                        ? "bg-primary text-primary-foreground shadow"
-                        : "text-foreground/70 hover:text-foreground"
-                    }`}
-                  >
-                    {t(p === "maman" ? "home.recognize.profile_maman" : "home.recognize.profile_papa")}
-                  </button>
-                );
-              })}
-            </div>
-            <p className="text-[11px] italic text-muted-foreground">
-              {t("home.recognize.profile_toggle_hint")}
-            </p>
-          </div>
-
-          {/* Toggle contexte — adapte le texte des scènes matin / soir */}
-          <div
-            role="group"
-            aria-label={t("home.recognize.school_toggle_label")}
-            className="mx-auto flex w-full max-w-md flex-col items-center gap-2"
-          >
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-              {t("home.recognize.school_toggle_label")}
-            </p>
-            <div className="grid w-full grid-cols-3 gap-1 rounded-2xl border border-border bg-card p-1 shadow-sm">
-              {(["school", "work", "holiday"] as const).map((c) => {
-                const active = schoolContext === c;
-                const labelKey =
-                  c === "school"
-                    ? "home.recognize.school_toggle_school"
-                    : c === "work"
-                      ? "home.recognize.school_toggle_work"
-                      : "home.recognize.school_toggle_holiday";
-                return (
-                  <button
-                    key={c}
-                    type="button"
-                    onClick={() => setSchoolContext(c)}
-                    aria-pressed={active}
-                    className={`rounded-xl px-2 py-1.5 text-xs font-semibold leading-tight transition-all ${
-                      active
-                        ? "bg-primary text-primary-foreground shadow"
-                        : "text-foreground/70 hover:text-foreground"
-                    }`}
-                  >
-                    {t(labelKey)}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Sous-toggle "avec / sans enfants" — seulement en contexte boulot */}
-          {schoolContext === "work" && (
-            <div
-              role="group"
-              aria-label={t("home.recognize.work_kids_label")}
-              className="mx-auto flex w-full max-w-md flex-col items-center gap-2"
-            >
-              <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                {t("home.recognize.work_kids_label")}
-              </p>
-              <div className="grid w-full grid-cols-2 gap-1 rounded-2xl border border-border bg-card p-1 shadow-sm">
-                {(["without", "with"] as WorkKidsMode[]).map((m) => {
-                  const active = workKidsMode === m;
-                  const label =
-                    m === "without"
-                      ? t("home.recognize.work_kids_without")
-                      : t("home.recognize.work_kids_with");
-                  return (
-                    <button
-                      key={m}
-                      type="button"
-                      onClick={() => setWorkKidsMode(m)}
-                      aria-pressed={active}
-                      className={`rounded-xl px-2 py-1.5 text-xs font-semibold leading-tight transition-all ${
-                        active
-                          ? "bg-primary text-primary-foreground shadow"
-                          : "text-foreground/70 hover:text-foreground"
-                      }`}
-                    >
-                      {label}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* Progression du jour : matin / soir + suggestion contextuelle */}
-          <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4 shadow-sm space-y-3">
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <p className="text-[11px] font-bold uppercase tracking-wider text-primary">
-                  Ta micro-séquence du jour
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  Contexte : <span className="font-semibold text-foreground">{SCHOOL_CONTEXT_LABELS[schoolContext]}</span>
-                </p>
-              </div>
+// --- Phone mockup (Hero) ----------------------------------------------------
+const PhoneMockup = () => (
+  <div className="relative mx-auto w-[260px] md:w-[300px]">
+    <div className="rounded-[2.5rem] border border-border bg-card p-3 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.18)]">
+      <div className="overflow-hidden rounded-[2rem] bg-background">
+        {/* status bar */}
+        <div className="flex items-center justify-between px-5 pt-4 pb-2 text-[10px] text-muted-foreground">
+          <span>9:41</span>
+          <span className="h-1.5 w-10 rounded-full bg-foreground/20" />
+        </div>
+        {/* header */}
+        <div className="px-5 pt-2 pb-4">
+          <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Ancrage</p>
+          <p className="mt-1 font-serif text-xl leading-tight">Bonjour Camille</p>
+        </div>
+        {/* check-in card */}
+        <div className="mx-5 rounded-2xl border border-border bg-secondary p-4">
+          <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Check-in</p>
+          <p className="mt-1 font-serif text-base">Comment tu te sens ?</p>
+          <div className="mt-3 flex gap-1.5">
+            {["😌", "😐", "😣", "😶", "🌧"].map((e) => (
               <span
-                className="rounded-full bg-background px-2 py-0.5 text-[11px] font-bold text-primary"
-                aria-label={`${completedCount} sur 2 étapes faites`}
+                key={e}
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-card text-sm"
               >
-                {completedCount}/2
+                {e}
               </span>
-            </div>
-
-            {/* Steppers matin / soir */}
-            <div className="grid grid-cols-2 gap-2">
-              {(["morning", "evening"] as DailySlot[]).map((slot) => {
-                const done = !!dailyProgress[slot];
-                const isNext = nextSlot === slot;
-                return (
-                  <div
-                    key={slot}
-                    className={`flex items-center gap-2 rounded-xl border px-3 py-2 text-xs transition-colors ${
-                      done
-                        ? "border-primary/30 bg-primary/15 text-primary"
-                        : isNext
-                          ? "border-primary/40 bg-background text-foreground ring-1 ring-primary/30"
-                          : "border-border bg-background/60 text-muted-foreground"
-                    }`}
-                  >
-                    <span
-                      aria-hidden
-                      className={`flex h-6 w-6 items-center justify-center rounded-full text-xs ${
-                        done ? "bg-primary text-primary-foreground" : "bg-muted text-foreground/70"
-                      }`}
-                    >
-                      {done ? "✓" : SLOT_EMOJI[slot]}
-                    </span>
-                    <span className="flex flex-col leading-tight">
-                      <span className="font-semibold">{SLOT_LABELS[slot]}</span>
-                      <span className="text-[10px] text-muted-foreground">
-                        {done ? "Fait" : isNext ? "À faire maintenant" : "À venir"}
-                      </span>
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Suggestion : prochaine étape adaptée au contexte */}
-            {(() => {
-              if (!nextSlot) {
-                return (
-                  <p className="text-xs italic text-muted-foreground">
-                    Bravo — les deux moments du jour sont posés. Le reste, c'est du bonus.
-                  </p>
-                );
-              }
-              const sceneIdx = nextSlot === "morning" ? 0 : 3;
-              const scene = recognizeMainScenes[sceneIdx];
-              if (!scene || !scene.state || !scene.cta) return null;
-              return (
-                <button
-                  type="button"
-                  onClick={() => {
-                    rememberLastQuickState({
-                      state: scene.state!,
-                      label: scene.stateLabel ?? scene.state!,
-                      emoji: scene.emoji,
-                      hint: scene.cta!,
-                      href: sceneCtaHref(scene),
-                      source: "scene",
-                    });
-                    markSlotDone(nextSlot);
-                    navigateWithTransition(sceneCtaHref(scene));
-                  }}
-                  className="group flex w-full items-center justify-between gap-3 rounded-xl bg-primary px-4 py-3 text-primary-foreground transition-all active:scale-[0.98]"
-                >
-                  <span className="flex flex-col items-start text-left">
-                    <span className="text-[10px] font-bold uppercase tracking-wider opacity-80">
-                      Prochaine étape · {SLOT_LABELS[nextSlot]} · {SCHOOL_CONTEXT_LABELS[schoolContext]}
-                    </span>
-                    <span className="text-sm font-semibold leading-tight">
-                      {scene.cta}
-                    </span>
-                  </span>
-                  <span aria-hidden className="transition-transform group-hover:translate-x-0.5">→</span>
-                </button>
-              );
-            })()}
-          </div>
-
-          {/* 3 scènes principales — corps / tête / soir */}
-          <div className="space-y-4">
-            {recognizeMainScenes.map((s, i) => (
-              <article
-                key={i}
-                className="rounded-2xl border border-border bg-card p-5 shadow-sm space-y-3"
-              >
-                <div className="flex items-center gap-2">
-                  <span className="text-xl leading-none" aria-hidden>{s.emoji}</span>
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-primary">
-                    {s.tag}
-                  </span>
-                  {SCENE_INDEX_TO_SLOT[i] && dailyProgress[SCENE_INDEX_TO_SLOT[i]] && (
-                    <span
-                      className="ml-auto inline-flex items-center gap-1 rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-primary"
-                      aria-label="Étape déjà faite aujourd'hui"
-                    >
-                      ✓ Fait
-                    </span>
-                  )}
-                </div>
-                <p className="text-sm leading-relaxed text-foreground/90">
-                  {s.body}
-                </p>
-                <p className="border-l-2 border-primary/40 pl-3 text-sm font-semibold italic leading-snug">
-                  {s.punch}
-                </p>
-                {s.state && s.cta && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (s.state) {
-                        rememberLastQuickState({
-                          state: s.state,
-                          label: s.stateLabel ?? s.state,
-                          emoji: s.emoji,
-                          hint: s.cta ?? "",
-                          href: sceneCtaHref(s),
-                          source: "scene",
-                        });
-                      }
-                      const slot = SCENE_INDEX_TO_SLOT[i];
-                      if (slot) markSlotDone(slot);
-                      navigateWithTransition(sceneCtaHref(s));
-                    }}
-                    aria-label={`${s.stateLabel ?? s.state} — ${s.cta}`}
-                    className="group mt-2 flex w-full items-center justify-between gap-3 rounded-xl bg-primary/10 hover:bg-primary/15 active:scale-[0.98] border border-primary/20 px-4 py-3 transition-all"
-                  >
-                    <span className="flex flex-col items-start text-left">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-primary/80">
-                        {s.stateLabel ?? s.state}
-                      </span>
-                      <span className="text-sm font-semibold text-primary leading-tight">
-                        {s.cta}
-                      </span>
-                    </span>
-                    <span
-                      aria-hidden
-                      className="text-primary transition-transform group-hover:translate-x-0.5"
-                    >
-                      →
-                    </span>
-                  </button>
-                )}
-              </article>
             ))}
           </div>
-
-          {/* Scènes bonus — reconnaissance élargie */}
-          <div className="space-y-3 pt-2">
-            <p className="text-center text-xs text-muted-foreground italic">
-              {t("home.recognize.extra_intro")}
-            </p>
-            {recognizeExtras.map((s, i) => (
-              <div
-                key={i}
-                className="flex items-start gap-3 rounded-xl border border-border/60 bg-card/60 p-3 shadow-sm"
-              >
-                <span className="text-lg leading-none shrink-0" aria-hidden>{s.emoji}</span>
-                <p className="text-sm leading-relaxed">{s.text}</p>
-              </div>
-            ))}
-          </div>
-
-          {/* Options rapides — accès direct par état */}
-          <div className="space-y-3 pt-2">
-            <div className="text-center space-y-1">
-              <p className="text-sm font-semibold text-foreground">
-                {t("home.recognize.quick_states_title")}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                {t("home.recognize.quick_states_hint")}
-              </p>
-            </div>
-
-            {/* Rappel — propose le dernier raccourci sélectionné */}
-            {lastQuickState && (
-              <div className="relative rounded-2xl border border-primary/30 bg-primary/10 p-4 shadow-sm">
-                <button
-                  type="button"
-                  onClick={forgetLastQuickState}
-                  aria-label={t("home.recognize.last_state_dismiss")}
-                  className="absolute right-2 top-2 rounded-full p-1 text-foreground/60 hover:bg-primary/15 hover:text-foreground transition-colors"
-                >
-                  <X className="h-3.5 w-3.5" aria-hidden />
-                </button>
-                <p className="text-[11px] font-bold uppercase tracking-wider text-primary">
-                  {t("home.recognize.last_state_title")}
-                </p>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  {t("home.recognize.last_state_hint")}
-                </p>
-                <button
-                  type="button"
-                  onClick={() => {
-                    rememberLastQuickState({
-                      state: lastQuickState.state,
-                      label: lastQuickState.label,
-                      emoji: lastQuickState.emoji,
-                      hint: lastQuickState.hint,
-                      href: lastQuickState.href,
-                      source: lastQuickState.source,
-                    });
-                    navigateWithTransition(lastQuickState.href);
-                  }}
-                  className="mt-3 flex w-full items-center justify-between gap-3 rounded-xl bg-primary text-primary-foreground hover:opacity-90 active:scale-[0.98] px-4 py-3 transition-all"
-                  aria-label={`${t("home.recognize.last_state_cta")} — ${lastQuickState.label}`}
-                >
-                  <span className="flex items-center gap-2 text-left">
-                    <span className="text-lg leading-none" aria-hidden>{lastQuickState.emoji}</span>
-                    <span className="flex flex-col">
-                      <span className="text-sm font-semibold leading-tight">{lastQuickState.label}</span>
-                      {lastQuickState.hint && (
-                        <span className="text-[11px] opacity-90 leading-tight">{lastQuickState.hint}</span>
-                      )}
-                    </span>
-                  </span>
-                  <span className="text-xs font-semibold">
-                    {t("home.recognize.last_state_cta")} →
-                  </span>
-                </button>
-              </div>
-            )}
-
-            <div className="grid grid-cols-2 gap-2.5">
-              {quickStates.map((q) => (
-                <button
-                  key={q.state}
-                  type="button"
-                  onClick={() => {
-                    rememberLastQuickState({
-                      state: q.state,
-                      label: q.label,
-                      emoji: q.emoji,
-                      hint: q.hint,
-                      href: quickStateHref(q.state),
-                      source: "quick",
-                    });
-                    navigateWithTransition(quickStateHref(q.state));
-                  }}
-                  aria-label={`${q.label} — ${q.hint}`}
-                  className="group flex flex-col items-start gap-1 rounded-xl border border-primary/20 bg-primary/5 hover:bg-primary/10 active:scale-[0.98] px-3 py-3 text-left transition-all"
-                >
-                  <span className="flex items-center gap-2">
-                    <span className="text-lg leading-none" aria-hidden>{q.emoji}</span>
-                    <span className="text-sm font-semibold text-foreground leading-tight">
-                      {q.label}
-                    </span>
-                  </span>
-                  <span className="flex w-full items-center justify-between text-[11px] font-medium text-primary">
-                    <span>{q.hint}</span>
-                    <span aria-hidden className="transition-transform group-hover:translate-x-0.5">→</span>
-                  </span>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Outro — pont vers la solution */}
-          <p className="text-center text-sm font-semibold text-primary leading-relaxed pt-2 max-w-md mx-auto">
-            {t("home.recognize.outro")}
-          </p>
         </div>
-      </SectionBlock>
-
-      {/* Enemy — "Ce n'est pas toi le problème" */}
-      <SectionBlock variant="blue">
-        <div className="space-y-4 text-center">
-          <h2 className="text-xl font-bold md:text-2xl">{t("home.enemy.title")}</h2>
-          <div className="space-y-3 text-sm text-muted-foreground leading-relaxed">
-            <p>{t("home.enemy.p1")}</p>
-            <p>{t("home.enemy.p2")}</p>
-            <p>{t("home.enemy.p3")}</p>
-          </div>
-          <p className="rounded-xl bg-primary/10 border border-primary/20 p-4 font-semibold text-primary">
-            {t("home.enemy.highlight")}
-          </p>
-        </div>
-      </SectionBlock>
-
-      <SectionBlock>
-        <div className="space-y-4 text-center">
-          <p className="text-lg font-bold">{t("home.mechanism.title")}</p>
-          <p className="text-primary font-medium">{t("home.mechanism.subtitle")}</p>
-          <div className="space-y-2 text-muted-foreground">
-            <p>{t("home.mechanism.p1")}</p>
-            <p>{t("home.mechanism.p2")}</p>
+        {/* deborde button */}
+        <div className="mx-5 mt-3">
+          <div className="flex items-center justify-between rounded-2xl bg-primary px-4 py-3 text-primary-foreground">
+            <span className="text-sm font-medium">Ça déborde</span>
+            <ArrowRight className="h-4 w-4" />
           </div>
         </div>
-      </SectionBlock>
-
-      <SectionBlock variant="blue">
-        <h2 className="mb-2 text-xl font-bold text-center">{t("home.how.title")}</h2>
-        <p className="mb-6 text-sm text-primary font-medium text-center">{t("home.how.subtitle")}</p>
-        <div className="space-y-4">
-          {steps.map((step) => (
-            <div key={step.num} className="flex items-center gap-4 rounded-xl bg-card p-4 shadow-sm">
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground">
-                {step.num}
-              </span>
-              <span>{step.text}</span>
+        {/* dashboard tiles */}
+        <div className="mx-5 mt-3 mb-5 grid grid-cols-2 gap-2">
+          {[
+            { l: "Jour", v: "12" },
+            { l: "Calme", v: "+38%" },
+          ].map((t) => (
+            <div key={t.l} className="rounded-xl border border-border bg-card p-3">
+              <p className="text-[9px] uppercase tracking-[0.18em] text-muted-foreground">{t.l}</p>
+              <p className="mt-0.5 font-serif text-lg">{t.v}</p>
             </div>
           ))}
         </div>
-      </SectionBlock>
+      </div>
+    </div>
+  </div>
+);
 
-      <SectionBlock>
-        <div className="space-y-4 text-center">
-          <p className="text-lg font-bold">{t("home.urgency.title")}</p>
-          <p className="font-semibold text-primary">{t("home.urgency.subtitle")}</p>
-          <div className="space-y-2 text-sm text-muted-foreground">
-            <p>{t("home.urgency.p1")}</p>
-            <p>{t("home.urgency.p2")}</p>
-          </div>
-          <p className="font-medium">{t("home.urgency.p3")}</p>
-        </div>
-      </SectionBlock>
+// --- Faux app screen (carousel) ---------------------------------------------
+const AppScreen = ({
+  title,
+  kicker,
+  children,
+}: {
+  title: string;
+  kicker: string;
+  children: React.ReactNode;
+}) => (
+  <div className="w-[240px] shrink-0 snap-start">
+    <div className="rounded-[2rem] border border-border bg-card p-2.5 shadow-[0_20px_50px_-20px_rgba(0,0,0,0.15)]">
+      <div className="aspect-[9/16] overflow-hidden rounded-[1.6rem] bg-background p-4">
+        <p className="text-[9px] uppercase tracking-[0.18em] text-muted-foreground">{kicker}</p>
+        <p className="mt-1 font-serif text-base leading-tight">{title}</p>
+        <div className="mt-3 space-y-2">{children}</div>
+      </div>
+    </div>
+  </div>
+);
 
-      <SectionBlock variant="blue">
-        <div className="space-y-4 text-center">
-          <p className="text-lg font-bold">{t("home.projection.title")}</p>
-          <ul className="space-y-3">
-            {projection.map((item) => (
-              <li key={item} className="flex items-center justify-center gap-3">
-                <Check className="h-5 w-5 shrink-0 text-primary" />
-                <span className="font-medium">{item}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </SectionBlock>
+const Pill = ({ children }: { children: React.ReactNode }) => (
+  <div className="rounded-xl border border-border bg-secondary px-3 py-2 text-[11px] text-foreground/80">
+    {children}
+  </div>
+);
 
-      {/* Before / After — récit transformationnel */}
-      <SectionBlock>
-        <div className="space-y-5">
-          <div className="text-center space-y-2">
-            <h2 className="text-xl font-bold md:text-2xl">{t("home.before_after.title")}</h2>
-            <p className="text-sm text-muted-foreground">{t("home.before_after.subtitle")}</p>
-          </div>
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="rounded-2xl border border-destructive/20 bg-destructive/5 p-5 space-y-3">
-              <p className="text-xs font-bold uppercase tracking-wider text-destructive">
-                {t("home.before_after.before_label")}
-              </p>
-              <ul className="space-y-2.5 text-sm leading-relaxed">
-                {beforeItems.map((item, i) => (
-                  <li key={i} className="flex gap-2">
-                    <span aria-hidden>·</span>
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="rounded-2xl border border-primary/30 bg-primary/5 p-5 space-y-3">
-              <p className="text-xs font-bold uppercase tracking-wider text-primary">
-                {t("home.before_after.after_label")}
-              </p>
-              <ul className="space-y-2.5 text-sm leading-relaxed">
-                {afterItems.map((item, i) => (
-                  <li key={i} className="flex gap-2">
-                    <Check className="h-4 w-4 shrink-0 text-primary mt-0.5" />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
-      </SectionBlock>
+// ---------------------------------------------------------------------------
 
-      {/* Identity — promesse d'identité reliée à preuves & bénéfices concrets */}
-      <SectionBlock variant="blue">
-        <div className="space-y-6">
-          <div className="text-center space-y-2">
-            <h2 className="text-xl font-bold md:text-2xl">{t("home.identity.title")}</h2>
-            <p className="text-sm text-muted-foreground">{t("home.identity.subtitle")}</p>
-          </div>
+const Index = () => {
+  const { user } = useAuth();
+  const { t } = useTranslation();
+  const { startPayment, loading: paymentLoading } = useMolliePayment();
 
-          {/* Promesse centrale */}
-          <div className="rounded-2xl bg-gradient-to-b from-primary/10 to-primary/5 border border-primary/20 p-6 text-center space-y-2">
-            <p className="text-[11px] font-bold uppercase tracking-wider text-primary/70">
-              La version de toi qui t'attend
-            </p>
-            <p className="font-serif text-3xl font-semibold text-primary">
-              {t("home.identity.promise")}
-            </p>
-            <p className="text-sm text-foreground/80 leading-relaxed pt-1 max-w-md mx-auto">
-              {t("home.identity.definition")}
-            </p>
-          </div>
+  const handlePay = () => startPayment();
 
-          {/* 3 piliers : identité → concret → preuve */}
-          <div className="space-y-4">
-            {identityPillars.map((p, i) => (
-              <article
-                key={i}
-                className="rounded-2xl bg-card border border-border p-5 shadow-sm space-y-3"
-              >
-                <div className="flex items-start gap-3">
-                  <span className="text-2xl leading-none shrink-0" aria-hidden>{p.icon}</span>
-                  <p className="font-serif text-base font-semibold leading-snug">
-                    « {p.identity} »
-                  </p>
-                </div>
-                <p className="text-sm text-foreground/85 leading-relaxed">
-                  {p.concrete}
-                </p>
-                <div className="flex items-start gap-2 rounded-xl bg-primary/5 border border-primary/10 px-3 py-2">
-                  <Check className="h-4 w-4 shrink-0 text-primary mt-0.5" />
-                  <p className="text-xs text-foreground/75 leading-relaxed">
-                    <span className="font-semibold text-primary">Concrètement dans Ancrage : </span>
-                    {p.proof}
-                  </p>
-                </div>
+  const featuresFor = [
+    "Check-ins émotionnels",
+    "Parcours guidé",
+    "Journal",
+    "Progression",
+    "Exercices",
+  ];
+  const featuresChild = [
+    "Crises guidées",
+    "Comprendre ses émotions",
+    "Activités",
+    "Outils adaptés",
+    "LSF",
+  ];
+  const featuresDaily = ["RDV", "Médicaments", "Fiche urgence", "Ressources", "Rappels"];
 
-                {/* Indicateur mesurable + mini prévision réaliste */}
-                <div className="rounded-xl border border-border bg-background/60 p-3 space-y-2">
-                  <p className="text-[11px] font-bold uppercase tracking-wider text-primary/80">
-                    📊 {p.metric_label}
-                  </p>
-                  <div className="grid grid-cols-1 gap-1.5 text-xs leading-relaxed">
-                    <p className="text-muted-foreground">
-                      <span className="font-semibold text-foreground/70">Aujourd'hui : </span>
-                      {p.metric_baseline}
-                    </p>
-                    <p className="text-foreground/85">
-                      <span className="font-semibold text-primary">À J+7 : </span>
-                      {p.forecast_7d}
-                    </p>
-                    <p className="text-foreground/85">
-                      <span className="font-semibold text-primary">À J+30 : </span>
-                      {p.forecast_30d}
-                    </p>
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
+  const liesCards = [
+    { e: "🧩", t: "Comprendre son fonctionnement" },
+    { e: "🧠", t: "Accompagner les émotions" },
+    { e: "🖐️", t: "LSF" },
+    { e: "🧸", t: "Activités adaptées" },
+    { e: "🚨", t: "Gestion des crises" },
+  ];
 
-          {/* Caveat : pas de promesse universelle */}
-          <p className="text-center text-[11px] text-muted-foreground italic leading-relaxed max-w-md mx-auto pt-1">
-            {t("home.identity.metric_caveat")}
-          </p>
+  const timeline = [
+    { d: "Jour 1", t: "je remarque" },
+    { d: "Jour 7", t: "je repère" },
+    { d: "Jour 21", t: "je récupère" },
+    { d: "Jour 30", t: "ça devient plus automatique" },
+  ];
 
-          {/* Pont émotionnel */}
-          <p className="text-center text-sm font-medium text-foreground/90 italic max-w-md mx-auto pt-1">
-            {t("home.identity.bridge")}
-          </p>
-        </div>
-      </SectionBlock>
+  const testimonials = [
+    {
+      name: "Camille",
+      avatar: avatarCamille,
+      before: "Je m'énervais sans comprendre pourquoi.",
+      used: "Check-in du matin + bouton « Ça déborde ».",
+      changed: "Je vois venir mes vagues avant qu'elles cassent.",
+    },
+    {
+      name: "Inès",
+      avatar: avatarInes,
+      before: "Les crises de mon fils me submergeaient.",
+      used: "Crise guidée + fiche d'urgence.",
+      changed: "On a un langage commun. On respire ensemble.",
+    },
+    {
+      name: "Léa",
+      avatar: avatarLea,
+      before: "Je portais tout, sans repère.",
+      used: "Journal + parcours 21 jours.",
+      changed: "Je me retrouve. Le calme revient plus vite.",
+    },
+  ];
 
-      {/* Preuve sociale enrichie */}
-      <SectionBlock>
-        <div className="space-y-4 text-center">
-          <p className="text-sm font-semibold text-primary">{t("home.social.p1")}</p>
-          <blockquote className="rounded-2xl bg-card border border-border p-5 text-sm italic leading-relaxed shadow-sm text-start">
-            {t("home.social.p2")}
-          </blockquote>
-          <p className="text-sm text-muted-foreground italic">{t("home.social.p3")}</p>
-        </div>
-      </SectionBlock>
+  const CTA = ({ label = `Je récupère mon calme — ${PREMIUM_PRICE_LONG}` }: { label?: string }) => (
+    <button
+      type="button"
+      onClick={handlePay}
+      disabled={paymentLoading}
+      className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-7 py-4 text-sm font-medium text-primary-foreground shadow-sm transition-all hover:brightness-105 active:scale-[0.98] disabled:opacity-60"
+    >
+      {label}
+    </button>
+  );
 
-      {/* Témoignages nommés avec délais et résultats mesurables */}
-      <SectionBlock variant="blue">
-        <div className="space-y-5">
-          <div className="text-center space-y-2">
-            <h2 className="text-xl font-bold md:text-2xl">{t("home.testimonials.title")}</h2>
-            <p className="text-sm text-muted-foreground">{t("home.testimonials.subtitle")}</p>
-          </div>
-          <div className="space-y-4">
-            {testimonials.map((tst, i) => (
-              <article
-                key={i}
-                className="rounded-2xl bg-card border border-border p-5 shadow-sm space-y-3"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-center gap-3 min-w-0">
-                    {TESTIMONIAL_AVATARS[tst.name] && (
-                      <img
-                        src={TESTIMONIAL_AVATARS[tst.name]}
-                        alt={`Portrait illustré de ${tst.name}`}
-                        loading="lazy"
-                        width={56}
-                        height={56}
-                        className="h-14 w-14 shrink-0 rounded-full object-cover ring-2 ring-primary/15 shadow-sm"
-                      />
-                    )}
-                    <div className="min-w-0">
-                      <p className="font-semibold text-sm truncate">{tst.name}</p>
-                      <p className="text-xs text-muted-foreground">{tst.context}</p>
-                    </div>
-                  </div>
-                  <span className="shrink-0 rounded-full bg-primary/10 border border-primary/20 px-2.5 py-1 text-xs font-bold text-primary">
-                    {tst.delay}
-                  </span>
-                </div>
-                <p className="text-xs text-muted-foreground italic">
-                  Avant : {tst.before}
-                </p>
-                <blockquote className="text-sm leading-relaxed border-l-2 border-primary/40 pl-3">
-                  {tst.result}
-                </blockquote>
-                <ul className="space-y-2 pt-1">
-                  {tst.metrics.map((m, mi) => (
-                    <li
-                      key={mi}
-                      className="flex items-start gap-2 rounded-lg bg-primary/5 border border-primary/10 px-3 py-2"
-                    >
-                      <Check className="h-4 w-4 shrink-0 text-primary mt-0.5" aria-hidden />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[11px] font-semibold uppercase tracking-wider text-primary/80">
-                          {m.label}
-                        </p>
-                        <p className="text-xs text-foreground/85 leading-snug mt-0.5">
-                          <span className="text-muted-foreground line-through decoration-muted-foreground/40">
-                            {m.before}
-                          </span>
-                          <span className="mx-1.5 text-primary font-bold" aria-hidden>→</span>
-                          <span className="font-semibold text-primary">{m.after}</span>
-                        </p>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </article>
-            ))}
-          </div>
-          <p className="text-center text-[11px] text-muted-foreground italic pt-1">
-            {t("home.testimonials.disclaimer")}
-          </p>
-
-          {/* CTA témoignages : transition émotionnelle → bouton → réassurance */}
-          <div className="rounded-2xl bg-gradient-to-b from-primary/10 to-primary/5 border border-primary/20 p-5 mt-2 space-y-3 text-center">
-            <p className="font-serif text-lg font-semibold text-primary leading-snug">
-              {t("home.testimonials.cta_lead")}
-            </p>
-            <p className="text-sm text-foreground/85 leading-relaxed max-w-md mx-auto">
-              {t("home.testimonials.cta_sub")}
-            </p>
-            <div className="pt-1 space-y-2">
-              <CTAButton to="#" onClick={handlePayment} loading={paymentLoading}>{t("home.testimonials.cta")}</CTAButton>
-              <p className="text-[11px] text-muted-foreground flex items-center justify-center gap-1.5">
-                <Lock className="h-3 w-3" /> Paiement sécurisé · Paiement unique · Accès à vie
-              </p>
-            </div>
-            <p className="text-xs text-muted-foreground leading-relaxed max-w-sm mx-auto">
-            {t("home.testimonials.cta_justify")}
-            </p>
-          </div>
-        </div>
-      </SectionBlock>
-
-      {/* Bloc dédié "Liés autrement" — fond vert doux */}
-      <section
-        className="px-4 py-10"
-        style={{ backgroundColor: "#F0F7F4" }}
-        aria-labelledby="lies-autrement-title"
-      >
-        <div className="mx-auto max-w-md space-y-5">
-          <div className="space-y-2 text-center">
-            <p className="text-3xl" aria-hidden>🤝</p>
-            <h2
-              id="lies-autrement-title"
-              className="text-xl font-bold md:text-2xl"
-              style={{ color: "#3F7A60" }}
-            >
-              Et si ton enfant avance autrement ?
-            </h2>
-          </div>
-          <div className="space-y-3 text-sm leading-relaxed text-foreground/85">
-            <p>
-              Tu gères chaque jour avec un enfant TSA, TDAH, DYS, sourd, ou pas encore diagnostiqué.
-            </p>
-            <p>
-              Tu portes double — ton propre système nerveux, et celui de ton enfant qui déborde.
-            </p>
-            <p className="font-semibold">Ancrage a pensé à toi aussi.</p>
-            <p>
-              <strong>« Liés autrement »</strong> c'est ton espace dans Ancrage :
-            </p>
-            <ul className="space-y-2 pl-1">
-              {[
-                "Apprendre la LSF pour communiquer autrement",
-                "Comprendre le trouble de ton enfant",
-                "Savoir quoi faire pendant une crise — à la maison, dehors",
-                "Des activités adaptées par âge et par trouble",
-                "Une communauté de parents qui vivent la même chose",
-              ].map((item) => (
-                <li key={item} className="flex items-start gap-2">
-                  <Check className="h-4 w-4 shrink-0 mt-0.5" style={{ color: "#3F7A60" }} aria-hidden />
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-            <p className="italic pt-1">
-              Tu n'as pas à tout porter seule.
-              <br />
-              Et tu n'as pas à tout expliquer pour être comprise.
-            </p>
-          </div>
-          <div className="pt-2 text-center">
-            <button
-              type="button"
-              onClick={handlePayment}
-              disabled={paymentLoading}
-              aria-busy={paymentLoading || undefined}
-              aria-label="Découvrir Liés autrement et accéder au paiement"
-              className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-md transition-all hover:shadow-lg hover:opacity-95 disabled:opacity-60 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-            >
-              {paymentLoading ? "Chargement…" : "Découvrir « Liés autrement » →"}
-            </button>
-            <p className="mt-2 text-[11px] text-muted-foreground flex items-center justify-center gap-1.5">
-              <Lock className="h-3 w-3" /> Paiement sécurisé · Paiement unique · Accès à vie
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Timeline globale — ce qui change semaine après semaine */}
-      <SectionBlock>
-        <div className="space-y-5">
-          <div className="text-center space-y-2">
-            <h2 className="text-xl font-bold md:text-2xl">{t("home.timeline.title")}</h2>
-            <p className="text-sm text-muted-foreground">{t("home.timeline.subtitle")}</p>
-          </div>
-          <ol className="relative border-l-2 border-primary/20 pl-5 space-y-5">
-            {timelineSteps.map((step, i) => (
-              <li key={i} className="relative">
-                <span
-                  className="absolute -left-[27px] flex h-4 w-4 items-center justify-center rounded-full bg-primary ring-4 ring-background"
-                  aria-hidden
-                />
-                <p className="text-xs font-bold uppercase tracking-wider text-primary">
-                  {step.label}
-                </p>
-                <p className="mt-1 text-sm leading-relaxed">{step.text}</p>
-              </li>
-            ))}
-          </ol>
-          <p className="text-center text-[11px] text-muted-foreground italic">
-            {t("home.timeline.footnote")}
-          </p>
-        </div>
-      </SectionBlock>
-
-      <HomeFAQ />
-
-      <SectionBlock variant="blue">
-        <div className="rounded-2xl bg-card p-8 text-center shadow-sm">
-          <p className="text-sm font-medium text-muted-foreground">{t("home.price.access")}</p>
-          <p className="mt-1 text-2xl font-bold text-primary">ANCRAGE</p>
-
-          <div className="mt-4 rounded-xl bg-primary/5 border border-primary/10 p-4 space-y-2">
-            <p className="text-3xl font-bold">{t("home.price.amount")}</p>
-            <p className="text-xs text-muted-foreground">{t("home.price.subtitle")}</p>
-            <div className="space-y-1 text-sm text-muted-foreground text-start pt-2">
-              {features.map((f) => (
-                <p key={f}>✔ {f}</p>
-              ))}
-            </div>
-          </div>
-
-          {/* Carte "Liés autrement" — accent vert doux pour différencier */}
-          <button
-            type="button"
-            onClick={handlePayment}
-            disabled={paymentLoading}
-            aria-busy={paymentLoading || undefined}
-            aria-label="Liés autrement — en savoir plus et accéder au paiement"
-            className="mt-4 block w-full rounded-xl border-2 p-4 text-start transition-all hover:shadow-md disabled:opacity-60 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-            style={{ borderColor: "#7DB89F", backgroundColor: "#F0F7F4" }}
+  return (
+    <div className="min-h-screen bg-background text-foreground">
+      {/* Top bar */}
+      <header className="px-6 py-5">
+        <div className="mx-auto flex max-w-[1200px] items-center justify-between">
+          <Link to="/" className="font-serif text-lg tracking-tight">
+            Ancrage
+          </Link>
+          <Link
+            to={user ? "/profil" : "/auth"}
+            className="flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs text-foreground/80 transition-colors hover:bg-secondary"
           >
-            <div className="flex items-start gap-3">
-              <span className="text-2xl" aria-hidden>🤝</span>
-              <div className="flex-1 min-w-0">
-                <p className="font-bold text-sm" style={{ color: "#3F7A60" }}>
-                  Liés autrement
-                </p>
-                <p className="mt-1 text-xs text-foreground/80 leading-relaxed">
-                  Pour les familles qui avancent à leur rythme.
-                  <br />
-                  LSF · Ressources troubles · Gérer les crises · Activités adaptées · Communauté parents
-                </p>
-                <p className="mt-2 text-xs font-semibold" style={{ color: "#3F7A60" }}>
-                  → {paymentLoading ? "Chargement…" : "En savoir plus"}
-                </p>
-              </div>
+            <User className="h-3.5 w-3.5" />
+            {user ? t("nav.my_space") : t("nav.login")}
+          </Link>
+        </div>
+      </header>
+
+      {/* PAGE 1 — HERO */}
+      <Section className="pt-6 md:pt-10">
+        <div className="grid items-center gap-14 md:grid-cols-2 md:gap-20">
+          <motion.div {...fadeUp}>
+            <Eyebrow>Ancrage</Eyebrow>
+            <h1 className="mt-5 font-serif text-[clamp(2.4rem,6vw,3.75rem)] font-normal leading-[1.05] tracking-tight">
+              Tu n'achètes pas un outil.
+              <br />
+              <span className="italic text-primary">Tu retrouves un repère.</span>
+            </h1>
+            <p className="mt-7 max-w-md text-base leading-relaxed text-foreground/75">
+              Ancrage t'aide à redescendre quand tout déborde — pour toi, ton enfant et votre
+              quotidien.
+            </p>
+            <div className="mt-9">
+              <CTA />
+              <p className="mt-4 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                Paiement unique · Accès à vie · Mobile + ordinateur
+              </p>
             </div>
-          </button>
-
-          <p className="mt-4 mb-2 text-xs text-muted-foreground italic px-2">
-            🤍 {t("home.price.reassurance")}
-          </p>
-          <div>
-            <CTAButton to="#" onClick={handlePayment} loading={paymentLoading}>
-              {t("home.price.cta")}
-            </CTAButton>
-          </div>
-
-          <p className="mt-3 text-xs text-muted-foreground">{t("home.price.note")}</p>
-
-          <div className="mt-3 flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
-            <Lock className="h-3.5 w-3.5" />
-            <span>{t("home.price.secure")}</span>
-          </div>
+          </motion.div>
+          <motion.div {...fadeUp}>
+            <PhoneMockup />
+          </motion.div>
         </div>
-      </SectionBlock>
+      </Section>
 
-      <SectionBlock>
-        <div className="space-y-4 text-center">
-          <p className="font-semibold">{t("home.final.title")}</p>
-          <div className="space-y-1 text-sm text-muted-foreground">
-            <p>{t("home.final.p1")}</p>
-            <p>{t("home.final.p2")}</p>
-            <p>{t("home.final.p3")}</p>
-          </div>
-          <div className="mt-4 space-y-2">
-            <p className="text-xs text-muted-foreground">
-              🤍 {t("home.final.reassurance")}
-            </p>
-            <CTAButton to="#" onClick={handlePayment} loading={paymentLoading}>{t("home.final.cta")}</CTAButton>
-            <p className="text-[11px] text-muted-foreground flex items-center justify-center gap-1.5">
-              <Lock className="h-3 w-3" /> Paiement sécurisé · Paiement unique · Accès à vie
-            </p>
-          </div>
+      <div className="mx-auto h-px w-16 bg-foreground/10" />
+
+      {/* PAGE 2 — COMMENT ÇA MARCHE */}
+      <Section>
+        <motion.div {...fadeUp} className="text-center">
+          <Eyebrow>Comment ça marche</Eyebrow>
+          <h2 className="mt-4 font-serif text-[clamp(2rem,4.5vw,2.75rem)] leading-tight">
+            30 secondes. Une fois par jour.
+          </h2>
+        </motion.div>
+        <div className="mt-14 grid gap-6 md:grid-cols-3">
+          {[
+            { n: "01", t: "Ressentir", d: "Check-in émotion rapide." },
+            { n: "02", t: "Réguler", d: "Exercices adaptés." },
+            { n: "03", t: "Observer", d: "Voir l'évolution." },
+          ].map((s) => (
+            <motion.div
+              {...fadeUp}
+              key={s.n}
+              className="rounded-2xl border border-border bg-card p-7"
+            >
+              <p className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+                {s.n}
+              </p>
+              <h3 className="mt-4 font-serif text-2xl">{s.t}</h3>
+              <p className="mt-2 text-sm text-foreground/70">{s.d}</p>
+            </motion.div>
+          ))}
         </div>
-      </SectionBlock>
+        <div className="mt-12 text-center">
+          <Link to="/comparaison" className="text-sm text-foreground/70 underline-offset-4 hover:underline">
+            Voir tout ce qui est inclus →
+          </Link>
+        </div>
+      </Section>
+
+      {/* PAGE 3 — CE QU'IL Y A DANS ANCRAGE */}
+      <Section className="bg-secondary/40">
+        <motion.div {...fadeUp} className="text-center">
+          <Eyebrow>Dans Ancrage</Eyebrow>
+          <h2 className="mt-4 font-serif text-[clamp(2rem,4.5vw,2.75rem)] leading-tight">
+            Ce qu'il y a dans Ancrage
+          </h2>
+        </motion.div>
+        <div className="mt-14 grid gap-6 md:grid-cols-3">
+          {[
+            { i: "🌿", t: "Pour toi", l: featuresFor },
+            { i: "🤝", t: "Pour ton enfant", l: featuresChild },
+            { i: "🩺", t: "Pour le quotidien", l: featuresDaily },
+          ].map((col) => (
+            <motion.div
+              {...fadeUp}
+              key={col.t}
+              className="rounded-2xl border border-border bg-card p-7"
+            >
+              <div className="text-2xl">{col.i}</div>
+              <h3 className="mt-3 font-serif text-2xl">{col.t}</h3>
+              <ul className="mt-5 space-y-2.5">
+                {col.l.map((f) => (
+                  <li key={f} className="flex items-start gap-2 text-sm text-foreground/80">
+                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                    {f}
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+          ))}
+        </div>
+      </Section>
+
+      {/* PAGE 4 — LIÉS AUTREMENT */}
+      <Section>
+        <div className="grid gap-12 md:grid-cols-2 md:items-center md:gap-16">
+          <motion.div {...fadeUp}>
+            <Eyebrow>Liés autrement</Eyebrow>
+            <h2 className="mt-4 font-serif text-[clamp(2rem,4.5vw,2.75rem)] leading-tight">
+              Et si ton enfant <span className="italic text-primary">avance autrement</span> ?
+            </h2>
+            <p className="mt-5 max-w-md text-base leading-relaxed text-foreground/75">
+              Pensé pour les familles TSA, TDAH, DYS, sourdes ou en questionnement.
+            </p>
+            <Link
+              to="/lies-autrement"
+              className="mt-7 inline-flex items-center gap-2 text-sm font-medium text-primary underline-offset-4 hover:underline"
+            >
+              Découvrir Liés autrement <ArrowRight className="h-4 w-4" />
+            </Link>
+          </motion.div>
+          <motion.div {...fadeUp} className="grid grid-cols-2 gap-3">
+            {liesCards.map((c) => (
+              <div
+                key={c.t}
+                className="rounded-2xl border border-border bg-card p-5"
+              >
+                <div className="text-xl">{c.e}</div>
+                <p className="mt-3 text-sm leading-snug text-foreground/85">{c.t}</p>
+              </div>
+            ))}
+          </motion.div>
+        </div>
+      </Section>
+
+      {/* PAGE 5 — DANS L'APPLICATION */}
+      <Section className="bg-secondary/40">
+        <motion.div {...fadeUp} className="text-center">
+          <Eyebrow>Dans l'application</Eyebrow>
+          <h2 className="mt-4 font-serif text-[clamp(2rem,4.5vw,2.75rem)] leading-tight">
+            Conçue pour être ouverte, pas explorée.
+          </h2>
+        </motion.div>
+        <div className="mt-12 flex snap-x snap-mandatory gap-4 overflow-x-auto px-2 pb-6">
+          <AppScreen kicker="Écran 1" title="Dashboard">
+            <Pill>☀️ Matin · fait</Pill>
+            <Pill>🌙 Soir · à faire</Pill>
+            <Pill>Calme +38%</Pill>
+          </AppScreen>
+          <AppScreen kicker="Écran 2" title="Check-in">
+            <Pill>Comment tu te sens ?</Pill>
+            <Pill>😌 😐 😣 😶 🌧</Pill>
+            <Pill>30 sec</Pill>
+          </AppScreen>
+          <AppScreen kicker="Écran 3" title="Urgence">
+            <Pill>Ça déborde</Pill>
+            <Pill>Respiration guidée</Pill>
+            <Pill>Fiche d'aide</Pill>
+          </AppScreen>
+          <AppScreen kicker="Écran 4" title="Émotions enfant">
+            <Pill>Mettre des mots</Pill>
+            <Pill>Cartes adaptées</Pill>
+            <Pill>Anticiper</Pill>
+          </AppScreen>
+          <AppScreen kicker="Écran 5" title="Suivi santé">
+            <Pill>Rendez-vous</Pill>
+            <Pill>Médicaments</Pill>
+            <Pill>Fiche urgence</Pill>
+          </AppScreen>
+        </div>
+      </Section>
+
+      {/* PAGE 6 — CE QUI CHANGE */}
+      <Section>
+        <motion.div {...fadeUp} className="text-center">
+          <Eyebrow>Ce qui change</Eyebrow>
+          <h2 className="mt-4 font-serif text-[clamp(2rem,4.5vw,2.75rem)] leading-tight">
+            Quelques jours suffisent à <span className="italic text-primary">sentir la différence</span>.
+          </h2>
+        </motion.div>
+        <div className="mt-14 grid gap-6 md:grid-cols-4">
+          {timeline.map((s, i) => (
+            <motion.div {...fadeUp} key={s.d} className="relative">
+              <div className="rounded-2xl border border-border bg-card p-6">
+                <p className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+                  Étape 0{i + 1}
+                </p>
+                <p className="mt-3 font-serif text-xl">{s.d}</p>
+                <p className="mt-1 text-sm italic text-foreground/70">→ {s.t}</p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+        <p className="mt-10 text-center text-sm italic text-muted-foreground">
+          Chaque famille avance à son rythme.
+        </p>
+      </Section>
+
+      {/* PAGE 7 — TÉMOIGNAGES */}
+      <Section className="bg-secondary/40">
+        <motion.div {...fadeUp} className="text-center">
+          <Eyebrow>Témoignages</Eyebrow>
+          <h2 className="mt-4 font-serif text-[clamp(2rem,4.5vw,2.75rem)] leading-tight">
+            Ce qu'elles racontent, après.
+          </h2>
+        </motion.div>
+        <div className="mt-14 grid gap-6 md:grid-cols-3">
+          {testimonials.map((m) => (
+            <motion.div
+              {...fadeUp}
+              key={m.name}
+              className="flex flex-col rounded-2xl border border-border bg-card p-7"
+            >
+              <div className="flex items-center gap-3">
+                <img
+                  src={m.avatar}
+                  alt={m.name}
+                  className="h-10 w-10 rounded-full object-cover"
+                />
+                <p className="font-serif text-lg">{m.name}</p>
+              </div>
+              <div className="mt-6 space-y-4 text-sm">
+                <div>
+                  <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Avant</p>
+                  <p className="mt-1 text-foreground/80">{m.before}</p>
+                </div>
+                <div className="h-px bg-border" />
+                <div>
+                  <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                    Ce qu'elle a utilisé
+                  </p>
+                  <p className="mt-1 text-foreground/80">{m.used}</p>
+                </div>
+                <div className="h-px bg-border" />
+                <div>
+                  <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                    Ce qui a changé
+                  </p>
+                  <p className="mt-1 italic text-primary">{m.changed}</p>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </Section>
+
+      {/* PAGE 8 — TARIF */}
+      <Section>
+        <motion.div {...fadeUp} className="mx-auto max-w-md">
+          <div className="rounded-3xl border border-border bg-card p-10 text-center shadow-[0_30px_80px_-40px_rgba(0,0,0,0.18)]">
+            <Eyebrow>Ancrage</Eyebrow>
+            <p className="mt-5 font-serif text-[clamp(3rem,6vw,4rem)] leading-none">
+              {PREMIUM_PRICE_SHORT}
+            </p>
+            <p className="mt-2 text-xs uppercase tracking-[0.22em] text-muted-foreground">
+              Paiement unique
+            </p>
+            <ul className="mx-auto mt-8 max-w-xs space-y-2.5 text-left text-sm">
+              {["Accès à vie", "Mises à jour", "Aucun abonnement", "Mobile", "Ordinateur"].map(
+                (f) => (
+                  <li key={f} className="flex items-center gap-2 text-foreground/80">
+                    <Check className="h-4 w-4 text-primary" />
+                    {f}
+                  </li>
+                ),
+              )}
+            </ul>
+            <div className="mt-9">
+              <CTA label="Je récupère mon calme" />
+            </div>
+          </div>
+        </motion.div>
+      </Section>
+
+      {/* PAGE 9 — FAQ */}
+      <div className="bg-secondary/40">
+        <HomeFAQ />
+      </div>
+
+      {/* PAGE 10 — FOOTER CTA */}
+      <Section>
+        <motion.div {...fadeUp} className="mx-auto max-w-2xl text-center">
+          <h2 className="font-serif text-[clamp(2rem,5vw,3rem)] leading-tight">
+            Tu n'as pas besoin d'aller mieux
+            <br />
+            <span className="italic text-primary">pour commencer.</span>
+          </h2>
+          <div className="mt-10">
+            <CTA label="Commencer maintenant" />
+          </div>
+        </motion.div>
+      </Section>
 
       <Footer />
     </div>
