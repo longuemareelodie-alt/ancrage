@@ -494,8 +494,8 @@ const Index = () => {
         </motion.div>
         <div className="mt-12 grid items-start gap-4 md:grid-cols-[1fr_auto_1fr_auto_1fr_auto_1fr]">
           {timeline.map((s, i, arr) => (
-            <>
-              <motion.div {...fadeUp} key={s.d} className="flex flex-col items-center text-center">
+            <Fragment key={s.d}>
+              <motion.div {...fadeUp} className="flex flex-col items-center text-center">
                 <span className="flex h-14 w-14 items-center justify-center rounded-full bg-card text-2xl">
                   {s.icon}
                 </span>
@@ -505,11 +505,11 @@ const Index = () => {
                 <p className="mt-1.5 text-sm leading-snug text-foreground/75">{s.t}</p>
               </motion.div>
               {i < arr.length - 1 && (
-                <div key={`${s.d}-arr`} className="hidden items-center justify-center pt-5 md:flex">
+                <div className="hidden items-center justify-center pt-5 md:flex">
                   <ArrowRight className="h-5 w-5 text-primary" />
                 </div>
               )}
-            </>
+            </Fragment>
           ))}
         </div>
       </Section>
