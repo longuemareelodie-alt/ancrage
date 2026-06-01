@@ -6,51 +6,57 @@
 
 @layer base {
   :root {
-    /* Ancrage — Premium corail × crème × bleu nuit */
-    --background: 36 27% 97%;        /* #FAF8F5 */
-    --foreground: 226 32% 16%;       /* #1B2035 bleu nuit */
+    /* Ancrage — Maman Atypique : bleu nuit × corail × jaune lumière */
+    --background: 36 43% 98%;        /* #FDFBF8 */
+    --foreground: 222 47% 16%;       /* #182134 */
 
-    --card: 12 100% 98%;             /* #FFF9F7 */
-    --card-foreground: 226 32% 16%;
+    --card: 12 71% 96%;              /* #FCEAE6 rose poudré (cartes identification) */
+    --card-foreground: 222 47% 16%;
 
-    --popover: 30 60% 99%;           /* #FFFDFB */
-    --popover-foreground: 226 32% 16%;
+    --popover: 36 43% 99%;
+    --popover-foreground: 222 47% 16%;
 
-    --primary: 4 71% 64%;            /* #E46B62 corail */
-    --primary-foreground: 30 60% 99%;
+    /* Primary = corail signature (mots importants, accents émotionnels) */
+    --primary: 351 84% 69%;          /* #F26D85 */
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 30 30% 96%;         /* crème ombrée */
-    --secondary-foreground: 226 32% 16%;
+    --secondary: 36 33% 95%;
+    --secondary-foreground: 222 47% 16%;
 
-    --muted: 30 22% 94%;
-    --muted-foreground: 0 0% 40%;    /* #676767 */
+    --muted: 36 25% 93%;
+    --muted-foreground: 222 16% 38%;
 
-    --accent: 338 53% 62%;           /* #D36A92 rose premium */
-    --accent-foreground: 30 60% 99%;
+    /* Accent = jaune lumière (CTA, surlignages) */
+    --accent: 41 100% 67%;           /* #FFC857 */
+    --accent-foreground: 222 47% 16%;
 
-    --sage: 122 18% 79%;             /* #BFD2C0 accent doux */
+    /* Bleu nuit (sections premium, header, blocs sombres) */
+    --night: 222 47% 16%;            /* #182134 */
+    --night-foreground: 36 43% 98%;
+
+    --sage: 122 18% 79%;
 
     --destructive: 4 71% 56%;
-    --destructive-foreground: 30 60% 99%;
+    --destructive-foreground: 0 0% 100%;
 
-    --lies: 338 53% 62%;
-    --lies-foreground: 30 60% 99%;
-    --lies-soft: 338 53% 92%;
+    --lies: 351 84% 69%;
+    --lies-foreground: 0 0% 100%;
+    --lies-soft: 351 84% 94%;
 
-    --border: 30 18% 91%;            /* #ECE6E2 */
-    --input: 30 18% 91%;
-    --ring: 4 71% 64%;
+    --border: 30 25% 90%;
+    --input: 30 25% 90%;
+    --ring: 351 84% 69%;
 
-    --radius: 1.75rem;               /* 28px */
+    --radius: 1.75rem;
 
-    --sidebar-background: 36 27% 97%;
-    --sidebar-foreground: 226 32% 18%;
-    --sidebar-primary: 4 71% 64%;
-    --sidebar-primary-foreground: 30 60% 99%;
-    --sidebar-accent: 30 30% 96%;
-    --sidebar-accent-foreground: 226 32% 16%;
-    --sidebar-border: 30 18% 91%;
-    --sidebar-ring: 4 71% 64%;
+    --sidebar-background: 36 43% 98%;
+    --sidebar-foreground: 222 47% 18%;
+    --sidebar-primary: 351 84% 69%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 36 33% 95%;
+    --sidebar-accent-foreground: 222 47% 16%;
+    --sidebar-border: 30 25% 90%;
+    --sidebar-ring: 351 84% 69%;
   }
 }
 
