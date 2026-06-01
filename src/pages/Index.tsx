@@ -392,10 +392,9 @@ const Index = () => {
             { n: "02", t: "Réguler", d: "Des exercices simples quand tout déborde.", e: "🌸" },
             { n: "03", t: "Observer", d: "Comprendre ce qui revient et ce qui t'aide.", e: "🔍" },
           ].map((s, i, arr) => (
-            <>
+            <Fragment key={s.n}>
               <motion.div
                 {...fadeUp}
-                key={s.n}
                 className="flex flex-col rounded-[1.75rem] bg-card p-7"
               >
                 <div className="flex items-center gap-3">
@@ -408,11 +407,11 @@ const Index = () => {
                 <p className="mt-1.5 text-sm leading-relaxed text-foreground/70">{s.d}</p>
               </motion.div>
               {i < arr.length - 1 && (
-                <div key={`${s.n}-arr`} className="hidden items-center justify-center md:flex">
+                <div className="hidden items-center justify-center md:flex">
                   <ArrowRight className="h-5 w-5 text-primary" />
                 </div>
               )}
-            </>
+            </Fragment>
           ))}
         </div>
       </Section>
