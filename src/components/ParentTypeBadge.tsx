@@ -3,16 +3,12 @@ import { useParentType } from "@/hooks/useParentType";
 import { PARENT_TYPE_LABELS } from "@/lib/parentType";
 
 /**
- * Small pill that shows the current parent profile (or "Neutre" when not yet
- * chosen) and links to the Settings page for quick switching.
+ * Small pill that shows the current parent profile and links to Settings.
  */
 export default function ParentTypeBadge({ className = "" }: { className?: string }) {
   const [parentType, , hasChosen] = useParentType();
-  const emoji = !hasChosen ? "👤" : parentType === "papa" ? "👨" : "👩";
-  const label = !hasChosen ? "Neutre" : PARENT_TYPE_LABELS[parentType];
-  const title = hasChosen
-    ? `Profil : ${label} — Changer`
-    : "Profil non choisi — Choisir";
+  const label = PARENT_TYPE_LABELS[parentType];
+  const title = `Profil : ${label}`;
 
   return (
     <Link
@@ -20,14 +16,11 @@ export default function ParentTypeBadge({ className = "" }: { className?: string
       title={title}
       aria-label={title}
       className={[
-        "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium transition-colors",
-        hasChosen
-          ? "border-primary/40 bg-primary/10 text-primary hover:bg-primary/15"
-          : "border-dashed border-muted-foreground/40 text-muted-foreground hover:border-primary/40 hover:text-primary",
+        "inline-flex items-center gap-1.5 rounded-full border border-primary/40 bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary transition-colors hover:bg-primary/15",
         className,
       ].join(" ")}
     >
-      <span aria-hidden="true">{emoji}</span>
+      <span aria-hidden="true">👩</span>
       <span>{label}</span>
       {!hasChosen && (
         <span

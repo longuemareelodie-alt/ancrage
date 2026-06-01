@@ -34,12 +34,12 @@ interface Note {
 }
 
 function ParentTypeCard() {
-  const [parentType, setParentType] = useParentType();
+  const [parentType] = useParentType();
   return (
     <div className="mt-4 rounded-2xl border border-border bg-card p-4 shadow-sm">
       <div className="flex items-center gap-3">
         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary text-lg">
-          {parentType === "papa" ? "👨" : "👩"}
+          👩
         </span>
         <div className="flex-1">
           <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
@@ -47,26 +47,6 @@ function ParentTypeCard() {
           </p>
           <p className="font-semibold">{PARENT_TYPE_LABELS[parentType]}</p>
         </div>
-      </div>
-      <div className="mt-3 inline-flex w-full rounded-full border border-border bg-background p-1">
-        {(["maman", "papa"] as const).map((p) => {
-          const active = parentType === p;
-          return (
-            <button
-              key={p}
-              type="button"
-              onClick={() => setParentType(p as ParentType)}
-              aria-pressed={active}
-              className={`flex-1 rounded-full px-3 py-1.5 text-sm font-semibold transition-all ${
-                active
-                  ? "bg-primary text-primary-foreground shadow"
-                  : "text-foreground/70 hover:text-foreground"
-              }`}
-            >
-              {PARENT_TYPE_LABELS[p]}
-            </button>
-          );
-        })}
       </div>
       <p className="mt-2 text-[11px] italic text-muted-foreground">
         On adapte le ton des micro-scènes et de quelques messages clés. L'outil reste le même.
