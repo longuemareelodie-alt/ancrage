@@ -21,10 +21,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 
-const OPTIONS: ParentType[] = ["maman", "papa"];
-
 export default function Parametres() {
-  const [parentType, setParentType, hasChosen] = useParentType();
+  const [parentType, , hasChosen] = useParentType();
   const [confirmReset, setConfirmReset] = useState(false);
 
   function resetOnboarding() {
@@ -63,38 +61,16 @@ export default function Parametres() {
       <section className="mb-6 rounded-2xl border border-border bg-card p-5 shadow-sm">
         <h2 className="font-serif text-lg text-foreground">Profil parent</h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Adapte les textes et illustrations à votre identité.
+          Adapte les textes et illustrations à ton identité.
           {!hasChosen && " (par défaut : Maman)"}
         </p>
 
-        <div className="mt-4 grid grid-cols-2 gap-3">
-          {OPTIONS.map((opt) => {
-            const active = parentType === opt && hasChosen;
-            return (
-              <button
-                key={opt}
-                type="button"
-                onClick={() => {
-                  setParentType(opt);
-                  toast.success(`Profil enregistré : ${PARENT_TYPE_LABELS[opt]}`);
-                }}
-                aria-pressed={active}
-                className={`flex flex-col items-center gap-2 rounded-2xl border-2 p-4 transition-colors ${
-                  active
-                    ? "border-primary bg-primary/5"
-                    : "border-border hover:border-primary/40"
-                }`}
-              >
-                <span className="text-3xl" aria-hidden="true">
-                  {opt === "papa" ? "👨" : "👩"}
-                </span>
-                <span className="flex items-center gap-1 text-sm font-medium text-foreground">
-                  {PARENT_TYPE_LABELS[opt]}
-                  {active && <Check className="h-4 w-4 text-primary" />}
-                </span>
-              </button>
-            );
-          })}
+        <div className="mt-4 flex items-center gap-3 rounded-2xl border-2 border-primary bg-primary/5 p-4">
+          <span className="text-3xl" aria-hidden="true">👩</span>
+          <span className="text-sm font-medium text-foreground">
+            {PARENT_TYPE_LABELS[parentType]}
+            <Check className="ml-1 inline h-4 w-4 text-primary" />
+          </span>
         </div>
       </section>
 
