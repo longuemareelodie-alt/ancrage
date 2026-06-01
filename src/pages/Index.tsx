@@ -2,13 +2,10 @@ import Footer from "@/components/Footer";
 import HomeFAQ from "@/components/HomeFAQ";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { Check, ArrowRight, Menu, X, ShieldCheck } from "lucide-react";
+import { ArrowRight, Menu, X, Heart } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
 import { PREMIUM_PRICE_LONG, PREMIUM_PRICE_SHORT } from "@/lib/premiumOffer";
-import avatarCamille from "@/assets/avatar-camille.jpg";
-import avatarInes from "@/assets/avatar-ines.jpg";
-import avatarLea from "@/assets/avatar-lea.jpg";
 
 const fadeUp = {
   initial: { opacity: 0, y: 20 },
@@ -26,43 +23,72 @@ const Section = ({
   className?: string;
   id?: string;
 }) => (
-  <section id={id} className={`px-6 py-20 md:py-28 ${className}`}>
+  <section id={id} className={`px-6 py-16 md:py-24 ${className}`}>
     <div className="mx-auto w-full max-w-[1200px]">{children}</div>
   </section>
 );
 
 const Eyebrow = ({ children }: { children: React.ReactNode }) => (
-  <p className="text-[10px] font-medium uppercase tracking-[0.24em] text-muted-foreground">
+  <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-primary">
     {children}
   </p>
 );
 
-// --- Phone mockup (Hero) ----------------------------------------------------
+// Petit cœur dessiné main (SVG)
+const HandHeart = ({ className = "h-5 w-5 text-primary" }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+    <path
+      d="M12 20s-7-4.35-7-10a4 4 0 0 1 7-2.65A4 4 0 0 1 19 10c0 5.65-7 10-7 10z"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      fill="currentColor"
+      fillOpacity="0.18"
+    />
+  </svg>
+);
+
+// Trait manuscrit (souligné jaune sous un mot)
+const HandUnderline = ({ className = "" }: { className?: string }) => (
+  <svg
+    viewBox="0 0 200 12"
+    className={`absolute -bottom-1.5 left-0 h-2.5 w-full ${className}`}
+    preserveAspectRatio="none"
+    aria-hidden="true"
+  >
+    <path
+      d="M2 7 C 40 2, 80 11, 120 6 S 195 4, 198 7"
+      stroke="hsl(41 100% 67%)"
+      strokeWidth="4"
+      strokeLinecap="round"
+      fill="none"
+    />
+  </svg>
+);
+
+// Phone mockup (Hero)
 const PhoneMockup = () => (
   <div className="relative mx-auto w-[260px] md:w-[300px]">
-    {/* floating cards */}
-    <div className="pointer-events-none absolute -left-10 top-10 hidden rounded-2xl border border-border bg-card px-3 py-2 text-xs shadow-soft md:block">
-      ❤️ Check-in
-    </div>
-    <div className="pointer-events-none absolute -right-12 top-32 hidden rounded-2xl border border-border bg-card px-3 py-2 text-xs shadow-soft md:block">
-      🌿 Exercice
-    </div>
-    <div className="pointer-events-none absolute -left-14 bottom-16 hidden rounded-2xl border border-border bg-card px-3 py-2 text-xs shadow-soft md:block">
-      📈 Calme +38%
-    </div>
+    {/* taches organiques décoratives */}
+    <div className="pointer-events-none absolute -left-12 top-16 -z-10 h-48 w-48 rounded-full bg-primary/30 blur-2xl" />
+    <div className="pointer-events-none absolute -right-10 bottom-10 -z-10 h-40 w-40 rounded-full bg-night/15 blur-2xl" />
 
-    <div className="rounded-[2.5rem] border border-border bg-card p-3 shadow-[0_40px_100px_-30px_rgba(27,32,53,0.18)]">
+    <div className="rounded-[2.5rem] border border-border bg-card p-3 shadow-[0_40px_100px_-30px_rgba(24,33,52,0.25)]">
       <div className="overflow-hidden rounded-[2rem] bg-background">
         <div className="flex items-center justify-between px-5 pt-4 pb-2 text-[10px] text-muted-foreground">
           <span>9:41</span>
           <span className="h-1.5 w-10 rounded-full bg-foreground/15" />
         </div>
         <div className="px-5 pt-2 pb-4">
-          <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Ancrage</p>
-          <p className="mt-1 font-serif text-xl leading-tight">Bonjour Camille</p>
+          <p className="font-serif text-xl leading-tight">
+            Bonjour Camille <HandHeart className="inline h-4 w-4 text-primary" />
+          </p>
         </div>
         <div className="mx-5 rounded-2xl border border-border bg-secondary p-4">
-          <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Check-in</p>
+          <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+            Check-in émotionnel
+          </p>
           <p className="mt-1 font-serif text-base">Comment tu te sens ?</p>
           <div className="mt-3 flex gap-1.5">
             {["😌", "😐", "😣", "😶", "🌧"].map((e) => (
@@ -82,48 +108,23 @@ const PhoneMockup = () => (
           </div>
         </div>
         <div className="mx-5 mt-3 mb-5 grid grid-cols-2 gap-2">
-          {[
-            { l: "Jour", v: "12" },
-            { l: "Calme", v: "+38%" },
-          ].map((t) => (
-            <div key={t.l} className="rounded-xl border border-border bg-card p-3">
-              <p className="text-[9px] uppercase tracking-[0.2em] text-muted-foreground">{t.l}</p>
-              <p className="mt-0.5 font-serif text-lg">{t.v}</p>
-            </div>
-          ))}
+          <div className="rounded-xl border border-border bg-card p-3">
+            <p className="text-[9px] uppercase tracking-[0.2em] text-muted-foreground">
+              Aujourd'hui
+            </p>
+            <p className="mt-0.5 font-serif text-base text-primary">Calme +38 %</p>
+          </div>
+          <div className="rounded-xl border border-border bg-card p-3">
+            <p className="text-[9px] uppercase tracking-[0.2em] text-muted-foreground">
+              Ma semaine
+            </p>
+            <p className="mt-0.5 font-serif text-base">7 check-ins</p>
+          </div>
         </div>
       </div>
     </div>
   </div>
 );
-
-const AppScreen = ({
-  title,
-  kicker,
-  children,
-}: {
-  title: string;
-  kicker: string;
-  children: React.ReactNode;
-}) => (
-  <div className="w-[240px] shrink-0 snap-start">
-    <div className="rounded-[2rem] border border-border bg-card p-2.5 shadow-[0_20px_50px_-20px_rgba(27,32,53,0.15)]">
-      <div className="aspect-[9/16] overflow-hidden rounded-[1.6rem] bg-background p-4">
-        <p className="text-[9px] uppercase tracking-[0.2em] text-muted-foreground">{kicker}</p>
-        <p className="mt-1 font-serif text-base leading-tight">{title}</p>
-        <div className="mt-3 space-y-2">{children}</div>
-      </div>
-    </div>
-  </div>
-);
-
-const Pill = ({ children }: { children: React.ReactNode }) => (
-  <div className="rounded-xl border border-border bg-secondary px-3 py-2 text-[11px] text-foreground/80">
-    {children}
-  </div>
-);
-
-// ---------------------------------------------------------------------------
 
 const Index = () => {
   const { startPayment, loading: paymentLoading } = useMolliePayment();
@@ -139,115 +140,106 @@ const Index = () => {
 
   const handlePay = () => startPayment();
 
+  const CTA_LABEL = `Je reprends mon souffle — ${PREMIUM_PRICE_LONG}`;
+
   const navLinks = [
-    { href: "#dans-ancrage", label: "Fonctionnalités" },
-    { href: "#lies-autrement", label: "Pour qui" },
-    { href: "#temoignages", label: "Témoignages" },
-    { href: "#faq", label: "FAQ" },
+    { href: "#pour-toi", label: "Pour toi" },
+    { href: "#pour-enfant", label: "Pour ton enfant" },
+    { href: "#quotidien", label: "Pour le quotidien" },
+    { href: "#familles", label: "Liés autrement" },
+    { href: "#offre", label: "Tarifs" },
   ];
 
   const problems = [
-    { e: "🌀", t: "Je porte tout", d: "Charge mentale." },
-    { e: "🔥", t: "Je déborde", d: "Émotions difficiles." },
-    { e: "🤝", t: "Mon enfant déborde", d: "Transitions, crises." },
+    { e: "🌀", t: "Je porte tout", d: "Charge mentale permanente." },
+    { e: "🔥", t: "Je déborde", d: "Stress, fatigue, émotions difficiles." },
+    { e: "💗", t: "Mon enfant déborde", d: "Crises, transitions compliquées, hypersensibilités." },
     { e: "🧠", t: "J'oublie tout", d: "Organisation impossible." },
+    { e: "💔", t: "Je culpabilise", d: "J'ai l'impression de ne jamais en faire assez." },
+    { e: "🌙", t: "Je suis épuisée", d: "Je tiens, mais à quel prix ?" },
   ];
 
-  const featuresFor = ["Check-ins émotionnels", "Parcours guidé", "Journal", "Progression", "Exercices"];
-  const featuresChild = ["Crises guidées", "Comprendre ses émotions", "Activités", "Outils adaptés", "LSF"];
-  const featuresDaily = ["Rendez-vous", "Médicaments", "Fiche urgence", "Ressources", "Rappels"];
-
-  const liesCards = [
-    { e: "🧩", t: "Comprendre son fonctionnement" },
-    { e: "🧠", t: "Accompagner les émotions" },
-    { e: "🖐️", t: "LSF" },
-    { e: "🧸", t: "Activités adaptées" },
-    { e: "🚨", t: "Gestion des crises" },
+  const familles = [
+    { e: "🧩", t: "TSA" },
+    { e: "🧠", t: "TDAH" },
+    { e: "📚", t: "DYS" },
+    { e: "🤟", t: "Surdité" },
+    { e: "❤️", t: "Handicap" },
+    { e: "🌱", t: "Besoins spécifiques" },
   ];
 
   const timeline = [
-    { d: "Jour 1", t: "je remarque" },
-    { d: "Jour 7", t: "je repère" },
-    { d: "Jour 21", t: "je récupère" },
-    { d: "Jour 30", t: "ça devient plus automatique" },
+    { d: "Jour 1", t: "Je souffle.", icon: "🌱" },
+    { d: "Jour 7", t: "Je comprends mieux ce qui me déborde.", icon: "☀️" },
+    { d: "Jour 21", t: "Je retrouve des repères.", icon: "⚓" },
+    { d: "Jour 30", t: "Je me sens plus solide.", icon: "💗" },
   ];
 
-  const testimonials = [
-    {
-      name: "Camille",
-      avatar: avatarCamille,
-      before: "Je m'énervais sans comprendre pourquoi.",
-      used: "Check-in du matin + bouton « Ça déborde ».",
-      changed: "Je vois venir mes vagues avant qu'elles cassent.",
-    },
-    {
-      name: "Inès",
-      avatar: avatarInes,
-      before: "Les crises de mon fils me submergeaient.",
-      used: "Crise guidée + fiche d'urgence.",
-      changed: "On a un langage commun.",
-    },
-    {
-      name: "Léa",
-      avatar: avatarLea,
-      before: "Je portais tout, sans repère.",
-      used: "Journal + parcours 21 jours.",
-      changed: "Je me retrouve.",
-    },
-  ];
-
+  // Bouton CTA jaune lumière (Maman Atypique signature)
   const CTAButton = ({
-    label = `Je récupère mon calme — ${PREMIUM_PRICE_LONG}`,
-    variant = "primary",
+    label = CTA_LABEL,
+    variant = "yellow",
   }: {
     label?: string;
-    variant?: "primary" | "white";
+    variant?: "yellow" | "night";
   }) => (
     <button
       type="button"
       onClick={handlePay}
       disabled={paymentLoading}
       className={
-        variant === "white"
-          ? "inline-flex items-center justify-center gap-2 rounded-full bg-background px-7 py-4 text-sm font-semibold text-foreground shadow-soft-lg transition-all hover:-translate-y-0.5 active:scale-[0.98] disabled:opacity-60"
-          : "inline-flex items-center justify-center gap-2 rounded-full bg-primary px-7 py-4 text-sm font-semibold text-primary-foreground shadow-soft transition-all hover:bg-[hsl(351_60%_60%)] hover:-translate-y-0.5 active:scale-[0.98] disabled:opacity-60"
+        variant === "night"
+          ? "inline-flex items-center justify-center gap-2 rounded-full bg-night px-7 py-4 text-sm font-semibold text-night-foreground shadow-soft-lg transition-all hover:-translate-y-0.5 active:scale-[0.98] disabled:opacity-60"
+          : "inline-flex items-center justify-center gap-2 rounded-full bg-accent px-7 py-4 text-sm font-semibold text-accent-foreground shadow-soft-lg transition-all hover:-translate-y-0.5 hover:brightness-[1.03] active:scale-[0.98] disabled:opacity-60"
       }
     >
+      <Heart className="h-4 w-4 fill-current" />
       {label}
     </button>
   );
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {/* Sticky header */}
+      {/* Header */}
       <header
         className={`sticky top-0 z-50 transition-all duration-200 ${
-          scrolled ? "border-b border-border bg-background/85 backdrop-blur-md" : "bg-transparent"
+          scrolled ? "border-b border-border bg-background/90 backdrop-blur-md" : "bg-transparent"
         }`}
       >
         <div className="mx-auto flex max-w-[1200px] items-center justify-between px-6 py-4">
-          <Link to="/" className="font-serif text-xl tracking-tight">
-            Ancrage
+          <Link to="/" className="flex flex-col leading-none">
+            <span className="font-serif text-2xl tracking-tight text-night">
+              Ancrage <HandHeart className="inline h-4 w-4 -translate-y-1 text-primary" />
+            </span>
+            <span className="mt-0.5 text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+              Bien-être émotionnel · parents & enfants
+            </span>
           </Link>
-          <nav className="hidden items-center gap-8 md:flex">
+          <nav className="hidden items-center gap-7 lg:flex">
             {navLinks.map((l) => (
               <a
                 key={l.href}
                 href={l.href}
-                className="text-sm text-foreground/75 transition-colors hover:text-foreground"
+                className="text-sm text-foreground/75 transition-colors hover:text-primary"
               >
                 {l.label}
               </a>
             ))}
           </nav>
-          <div className="hidden md:block">
+          <div className="hidden items-center gap-3 md:flex">
+            <Link
+              to="/auth"
+              className="rounded-full bg-night px-5 py-2.5 text-xs font-semibold text-night-foreground transition-colors hover:bg-night/90"
+            >
+              Se connecter
+            </Link>
             <button
               type="button"
               onClick={handlePay}
               disabled={paymentLoading}
-              className="rounded-full bg-primary px-5 py-2.5 text-xs font-semibold text-primary-foreground transition-all hover:bg-[hsl(351_60%_60%)] disabled:opacity-60"
+              className="rounded-full bg-accent px-5 py-2.5 text-xs font-semibold text-accent-foreground transition-all hover:brightness-[1.03] disabled:opacity-60"
             >
-              Je récupère mon calme — {PREMIUM_PRICE_SHORT}
+              Je commence
             </button>
           </div>
           <button
@@ -279,9 +271,9 @@ const Index = () => {
                   handlePay();
                 }}
                 disabled={paymentLoading}
-                className="mt-2 rounded-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground disabled:opacity-60"
+                className="mt-2 rounded-full bg-accent px-5 py-3 text-sm font-semibold text-accent-foreground disabled:opacity-60"
               >
-                Je récupère mon calme — {PREMIUM_PRICE_SHORT}
+                Je commence
               </button>
             </div>
           </div>
@@ -289,36 +281,49 @@ const Index = () => {
       </header>
 
       {/* HERO */}
-      <Section className="pt-8 md:pt-12">
+      <Section className="pt-6 md:pt-10">
         <div className="grid items-center gap-14 md:grid-cols-2 md:gap-20">
           <motion.div {...fadeUp}>
-            <Eyebrow>Bien-être émotionnel — parents & enfants</Eyebrow>
-            <h1 className="mt-5 font-serif text-[clamp(2.4rem,6.5vw,4rem)] font-normal leading-[1.02] tracking-tight">
-              Tu n'achètes pas un outil.
-              <br />
-              <span className="italic text-primary">Tu retrouves un repère.</span>
-            </h1>
-            <p className="mt-6 max-w-md text-base leading-relaxed text-foreground/75 md:text-lg">
-              Quand tout déborde, Ancrage t'aide à ralentir, retrouver du calme et remettre du repère
-              dans ton quotidien — pour toi, ton enfant et votre famille.
+            <p className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-primary">
+              <HandHeart className="h-4 w-4" />
+              Pour les mamans qui portent trop
             </p>
-            <ul className="mt-7 flex flex-wrap gap-x-5 gap-y-2 text-sm text-foreground/70">
-              {["Paiement unique", "Accès à vie", "Mobile + ordinateur"].map((p) => (
-                <li key={p} className="flex items-center gap-1.5">
-                  <Check className="h-4 w-4 text-primary" /> {p}
-                </li>
-              ))}
+            <h1 className="mt-5 font-serif text-[clamp(2.4rem,6.5vw,4.25rem)] font-normal leading-[1.02] tracking-tight text-night">
+              Quand tout déborde,
+              <br />
+              <span className="relative inline-block text-primary">
+                commence par toi.
+                <HandUnderline />
+              </span>
+            </h1>
+            <ul className="mt-7 space-y-3 text-base leading-relaxed text-foreground/85">
+              <li className="flex gap-3">
+                <HandHeart className="mt-1 h-4 w-4 shrink-0 text-primary" />
+                Rendez-vous, papiers, crises, nuits trop courtes…
+              </li>
+              <li className="flex gap-3">
+                <HandHeart className="mt-1 h-4 w-4 shrink-0 text-primary" />
+                Charge mentale, culpabilité, émotions à fleur de peau…
+              </li>
+              <li className="flex gap-3">
+                <HandHeart className="mt-1 h-4 w-4 shrink-0 text-primary" />
+                Ancrage t'aide à <span className="text-primary">retrouver un peu de calme</span>{" "}
+                quand ton cerveau te dit qu'il ne{" "}
+                <span className="relative inline-block">
+                  tiendra
+                  <HandUnderline />
+                </span>{" "}
+                plus.
+              </li>
             </ul>
-            <div className="mt-8">
+            <div className="mt-9">
               <CTAButton />
-              <p className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
-                <span>Sans abonnement</span>
+              <p className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                <span>🔒 Paiement unique</span>
                 <span aria-hidden>·</span>
-                <span>Accès immédiat</span>
+                <span>∞ Accès à vie</span>
                 <span aria-hidden>·</span>
-                <span className="inline-flex items-center gap-1">
-                  <ShieldCheck className="h-3 w-3" /> Paiement sécurisé
-                </span>
+                <span>📱 Mobile & ordinateur</span>
               </p>
             </div>
           </motion.div>
@@ -328,308 +333,254 @@ const Index = () => {
         </div>
       </Section>
 
-      {/* PROBLÈME */}
-      <Section className="bg-secondary/50">
+      {/* IDENTIFICATION */}
+      <Section>
         <motion.div {...fadeUp} className="text-center">
-          <Eyebrow>Tu te reconnais ?</Eyebrow>
-          <h2 className="mt-4 font-serif text-[clamp(2rem,4.5vw,2.75rem)] leading-tight">
-            Quand tout devient <span className="italic text-primary">trop</span>…
-          </h2>
+          <p className="inline-flex items-center justify-center gap-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-night">
+            Maman, est-ce que tu te reconnais ?
+            <HandHeart className="h-4 w-4 text-primary" />
+          </p>
         </motion.div>
-        <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {problems.map((p) => (
             <motion.div
               {...fadeUp}
               key={p.t}
-              className="rounded-[1.75rem] border border-border bg-card p-7 transition-all hover:-translate-y-0.5 hover:shadow-soft"
+              className="rounded-[1.75rem] bg-card p-7 transition-all hover:-translate-y-0.5 hover:shadow-soft"
             >
               <div className="text-2xl">{p.e}</div>
-              <h3 className="mt-4 font-serif text-xl">{p.t}</h3>
-              <p className="mt-1.5 text-sm text-foreground/65">{p.d}</p>
-            </motion.div>
-          ))}
-        </div>
-        <p className="mt-12 text-center font-serif text-xl italic text-foreground/80">
-          Tu n'as pas besoin d'aller mieux pour commencer.
-        </p>
-      </Section>
-
-      {/* COMMENT ÇA MARCHE */}
-      <Section>
-        <motion.div {...fadeUp} className="text-center">
-          <Eyebrow>Comment ça marche</Eyebrow>
-          <h2 className="mt-4 font-serif text-[clamp(2rem,4.5vw,2.75rem)] leading-tight">
-            30 secondes. <span className="italic text-primary">Une fois par jour.</span>
-          </h2>
-        </motion.div>
-        <div className="mt-14 grid gap-6 md:grid-cols-3">
-          {[
-            { n: "01", t: "Ressentir", d: "Check-in émotion rapide." },
-            { n: "02", t: "Réguler", d: "Exercices adaptés." },
-            { n: "03", t: "Observer", d: "Voir l'évolution." },
-          ].map((s) => (
-            <motion.div
-              {...fadeUp}
-              key={s.n}
-              className="rounded-[1.75rem] border border-border bg-card p-8"
-            >
-              <p className="text-[10px] uppercase tracking-[0.24em] text-muted-foreground">{s.n}</p>
-              <h3 className="mt-4 font-serif text-2xl">{s.t}</h3>
-              <p className="mt-2 text-sm text-foreground/70">{s.d}</p>
-            </motion.div>
-          ))}
-        </div>
-        <p className="mt-10 text-center text-sm italic text-muted-foreground">
-          Chaque famille avance à son rythme.
-        </p>
-      </Section>
-
-      {/* DANS ANCRAGE */}
-      <Section id="dans-ancrage" className="bg-secondary/50">
-        <motion.div {...fadeUp} className="text-center">
-          <Eyebrow>Contenu</Eyebrow>
-          <h2 className="mt-4 font-serif text-[clamp(2rem,4.5vw,2.75rem)] leading-tight">
-            Ce qu'il y a dans Ancrage
-          </h2>
-        </motion.div>
-        <div className="mt-14 grid gap-6 md:grid-cols-3">
-          {[
-            { i: "🌿", t: "Pour toi", l: featuresFor, link: "/comprendre" },
-            { i: "🤝", t: "Pour ton enfant", l: featuresChild, link: "/lies-autrement" },
-            { i: "🩺", t: "Pour le quotidien", l: featuresDaily, link: "/sante" },
-          ].map((col) => (
-            <motion.div
-              {...fadeUp}
-              key={col.t}
-              className="flex flex-col rounded-[1.75rem] border border-border bg-card p-8"
-            >
-              <div className="text-2xl">{col.i}</div>
-              <h3 className="mt-3 font-serif text-2xl">{col.t}</h3>
-              <ul className="mt-5 space-y-2.5">
-                {col.l.map((f) => (
-                  <li key={f} className="flex items-start gap-2 text-sm text-foreground/80">
-                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              <Link
-                to={col.link}
-                className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-primary underline-offset-4 hover:underline"
-              >
-                En savoir plus <ArrowRight className="h-4 w-4" />
-              </Link>
+              <h3 className="mt-4 font-serif text-xl text-night">{p.t}</h3>
+              <p className="mt-1.5 text-sm leading-relaxed text-foreground/70">{p.d}</p>
             </motion.div>
           ))}
         </div>
       </Section>
 
-      {/* LIÉS AUTREMENT */}
-      <Section id="lies-autrement">
-        <div className="grid gap-12 md:grid-cols-2 md:items-center md:gap-16">
-          <motion.div {...fadeUp}>
-            <Eyebrow>Liés autrement</Eyebrow>
-            <h2 className="mt-4 font-serif text-[clamp(2rem,4.5vw,2.75rem)] leading-tight">
-              Et si ton enfant <span className="italic text-primary">avance autrement</span> ?
-            </h2>
-            <p className="mt-5 max-w-md text-base leading-relaxed text-foreground/75">
-              Pensé pour les familles TSA, TDAH, DYS, enfants sourds ou en questionnement.
-            </p>
-            <Link
-              to="/lies-autrement"
-              className="mt-7 inline-flex items-center gap-2 text-sm font-medium text-primary underline-offset-4 hover:underline"
-            >
-              Découvrir Liés autrement <ArrowRight className="h-4 w-4" />
-            </Link>
-          </motion.div>
-          <motion.div {...fadeUp} className="grid grid-cols-2 gap-3">
-            {liesCards.map((c) => (
-              <div
-                key={c.t}
-                className="rounded-[1.75rem] border border-border bg-card p-5 transition-all hover:-translate-y-0.5 hover:shadow-soft"
-              >
-                <div className="text-xl">{c.e}</div>
-                <p className="mt-3 text-sm leading-snug text-foreground/85">{c.t}</p>
-              </div>
-            ))}
-          </motion.div>
-        </div>
-      </Section>
-
-      {/* APPLICATION */}
-      <Section className="bg-secondary/50">
-        <motion.div {...fadeUp} className="text-center">
-          <Eyebrow>Dans l'application</Eyebrow>
-          <h2 className="mt-4 font-serif text-[clamp(2rem,4.5vw,2.75rem)] leading-tight">
-            Conçue pour être utilisée. <span className="italic text-primary">Pas explorée.</span>
-          </h2>
-        </motion.div>
-        <div className="mt-12 flex snap-x snap-mandatory gap-4 overflow-x-auto px-2 pb-6">
-          <AppScreen kicker="Écran" title="Dashboard">
-            <Pill>☀️ Matin · fait</Pill>
-            <Pill>🌙 Soir · à faire</Pill>
-            <Pill>Calme +38%</Pill>
-          </AppScreen>
-          <AppScreen kicker="Écran" title="Check-in">
-            <Pill>Comment tu te sens ?</Pill>
-            <Pill>😌 😐 😣 😶 🌧</Pill>
-            <Pill>30 sec</Pill>
-          </AppScreen>
-          <AppScreen kicker="Écran" title="Urgence">
-            <Pill>Ça déborde</Pill>
-            <Pill>Respiration guidée</Pill>
-            <Pill>Fiche d'aide</Pill>
-          </AppScreen>
-          <AppScreen kicker="Écran" title="Journal">
-            <Pill>Mettre des mots</Pill>
-            <Pill>Cartes adaptées</Pill>
-            <Pill>Anticiper</Pill>
-          </AppScreen>
-          <AppScreen kicker="Écran" title="Progression">
-            <Pill>Jour 12</Pill>
-            <Pill>Calme +38%</Pill>
-            <Pill>Repère stable</Pill>
-          </AppScreen>
-        </div>
-        <p className="mt-6 text-center font-serif text-lg italic text-foreground/75">
-          Moins de clics. Plus de repères.
-        </p>
-      </Section>
-
-      {/* RÉSULTATS */}
-      <Section>
-        <motion.div {...fadeUp} className="text-center">
-          <Eyebrow>Ce qui change</Eyebrow>
-          <h2 className="mt-4 font-serif text-[clamp(2rem,4.5vw,2.75rem)] leading-tight">
-            Quelques jours suffisent à <span className="italic text-primary">sentir la différence</span>.
-          </h2>
-        </motion.div>
-        <div className="mt-14 grid gap-6 md:grid-cols-4">
-          {timeline.map((s, i) => (
-            <motion.div {...fadeUp} key={s.d}>
-              <div className="rounded-[1.75rem] border border-border bg-card p-6">
-                <p className="text-[10px] uppercase tracking-[0.24em] text-muted-foreground">
-                  Étape 0{i + 1}
-                </p>
-                <p className="mt-3 font-serif text-xl">{s.d}</p>
-                <p className="mt-1 text-sm italic text-foreground/70">→ {s.t}</p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-        <p className="mt-10 text-center text-sm italic text-muted-foreground">
-          Chaque famille avance à son rythme.
-        </p>
-      </Section>
-
-      {/* TÉMOIGNAGES */}
-      <Section id="temoignages" className="bg-secondary/50">
-        <motion.div {...fadeUp} className="text-center">
-          <Eyebrow>Témoignages</Eyebrow>
-          <h2 className="mt-4 font-serif text-[clamp(2rem,4.5vw,2.75rem)] leading-tight">
-            Ce qu'elles racontent, <span className="italic text-primary">après</span>.
-          </h2>
-        </motion.div>
-        <div className="mt-14 grid gap-6 md:grid-cols-3">
-          {testimonials.map((m) => (
-            <motion.div
-              {...fadeUp}
-              key={m.name}
-              className="flex flex-col rounded-[1.75rem] border border-border bg-card p-7"
-            >
-              <div className="flex items-center gap-3">
-                <img
-                  src={m.avatar}
-                  alt={m.name}
-                  className="h-12 w-12 rounded-full object-cover"
-                />
-                <p className="font-serif text-lg">{m.name}</p>
-              </div>
-              <div className="mt-6 space-y-4 text-sm">
-                <div>
-                  <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Avant</p>
-                  <p className="mt-1 text-foreground/80">{m.before}</p>
-                </div>
-                <div className="h-px bg-border" />
-                <div>
-                  <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-                    Ce qu'elle a utilisé
-                  </p>
-                  <p className="mt-1 text-foreground/80">{m.used}</p>
-                </div>
-                <div className="h-px bg-border" />
-                <div>
-                  <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-                    Ce qui a changé
-                  </p>
-                  <p className="mt-1 font-serif text-base italic text-primary">{m.changed}</p>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </Section>
-
-      {/* OFFRE */}
-      <Section id="offre">
-        <motion.div {...fadeUp} className="mx-auto max-w-md">
-          <div className="rounded-[1.75rem] border border-border bg-card p-10 text-center shadow-[0_40px_100px_-40px_rgba(27,32,53,0.22)]">
-            <Eyebrow>Ancrage</Eyebrow>
-            <p className="mt-5 font-serif text-[clamp(3rem,6vw,4rem)] leading-none">
-              {PREMIUM_PRICE_SHORT}
-            </p>
-            <p className="mt-2 text-xs uppercase tracking-[0.24em] text-muted-foreground">
-              Paiement unique
-            </p>
-            <ul className="mx-auto mt-8 max-w-xs space-y-2.5 text-left text-sm">
-              {[
-                "Accès à vie",
-                "Mises à jour",
-                "Aucun abonnement",
-                "Mobile",
-                "Ordinateur",
-                "Accès immédiat",
-              ].map((f) => (
-                <li key={f} className="flex items-center gap-2 text-foreground/85">
-                  <Check className="h-4 w-4 text-primary" />
-                  {f}
-                </li>
-              ))}
-            </ul>
-            <div className="mt-9">
-              <CTAButton label="Je récupère mon calme" />
-            </div>
-            <p className="mt-4 inline-flex items-center justify-center gap-1.5 text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
-              <ShieldCheck className="h-3 w-3" /> Paiement sécurisé SSL
+      {/* TRANSITION douce */}
+      <Section className="pt-0">
+        <motion.div
+          {...fadeUp}
+          className="relative overflow-hidden rounded-[1.75rem] bg-card p-8 md:p-12"
+        >
+          <HandHeart className="absolute left-6 top-6 h-8 w-8 text-primary/70" />
+          <div className="mx-auto max-w-2xl space-y-3 text-center font-serif text-xl italic leading-relaxed text-night md:text-2xl">
+            <p>Tu n'as pas besoin d'aller mieux pour commencer.</p>
+            <p>Tu n'as pas besoin d'être parfaitement organisée.</p>
+            <p>Tu n'as pas besoin d'avoir plus de temps.</p>
+            <p className="not-italic font-sans text-base text-foreground/75 md:text-lg">
+              Tu as simplement besoin d'un point d'appui.
             </p>
           </div>
         </motion.div>
       </Section>
 
+      {/* COMMENT ÇA MARCHE */}
+      <Section id="pour-toi">
+        <motion.div {...fadeUp} className="text-center">
+          <p className="inline-block font-semibold uppercase tracking-[0.24em] text-[11px] text-night">
+            Comment ça{" "}
+            <span className="relative inline-block">
+              marche
+              <HandUnderline />
+            </span>
+          </p>
+        </motion.div>
+        <div className="mt-12 grid items-stretch gap-4 md:grid-cols-[1fr_auto_1fr_auto_1fr]">
+          {[
+            { n: "01", t: "Ressentir", d: "Check-in émotionnel en moins de 30 secondes.", e: "🧠" },
+            { n: "02", t: "Réguler", d: "Des exercices simples quand tout déborde.", e: "🌸" },
+            { n: "03", t: "Observer", d: "Comprendre ce qui revient et ce qui t'aide.", e: "🔍" },
+          ].map((s, i, arr) => (
+            <>
+              <motion.div
+                {...fadeUp}
+                key={s.n}
+                className="flex flex-col rounded-[1.75rem] bg-card p-7"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-night text-sm font-semibold text-night-foreground">
+                    {s.n}
+                  </span>
+                  <span className="text-2xl">{s.e}</span>
+                </div>
+                <h3 className="mt-5 font-serif text-xl text-night">{s.t}</h3>
+                <p className="mt-1.5 text-sm leading-relaxed text-foreground/70">{s.d}</p>
+              </motion.div>
+              {i < arr.length - 1 && (
+                <div key={`${s.n}-arr`} className="hidden items-center justify-center md:flex">
+                  <ArrowRight className="h-5 w-5 text-primary" />
+                </div>
+              )}
+            </>
+          ))}
+        </div>
+      </Section>
+
+      {/* FAMILLES ATYPIQUES + HISTOIRE FONDATRICE */}
+      <Section id="familles">
+        <div className="grid gap-6 md:grid-cols-2">
+          {/* Bloc bleu nuit — familles atypiques */}
+          <motion.div
+            {...fadeUp}
+            className="rounded-[1.75rem] bg-night p-8 text-night-foreground md:p-10"
+          >
+            <p className="text-[11px] font-semibold uppercase tracking-[0.24em]">
+              Pensé pour les familles
+            </p>
+            <h2 className="mt-2 font-serif text-2xl leading-tight md:text-3xl">
+              <span className="relative inline-block text-primary">
+                qui avancent autrement.
+                <HandUnderline />
+              </span>
+            </h2>
+            <div className="mt-7 grid grid-cols-3 gap-4 sm:grid-cols-6 md:grid-cols-3 lg:grid-cols-6">
+              {familles.map((f) => (
+                <div key={f.t} className="flex flex-col items-center text-center">
+                  <span className="text-2xl">{f.e}</span>
+                  <span className="mt-2 text-[11px] font-medium uppercase tracking-wider text-night-foreground/85">
+                    {f.t}
+                  </span>
+                </div>
+              ))}
+            </div>
+            <div className="mt-7 space-y-1 text-sm leading-relaxed text-night-foreground/85">
+              <p>Chaque famille avance à son rythme.</p>
+              <p className="font-semibold text-night-foreground">Ancrage respecte ce rythme.</p>
+            </div>
+            <HandHeart className="mt-4 h-5 w-5 text-primary" />
+          </motion.div>
+
+          {/* Histoire fondatrice */}
+          <motion.div
+            {...fadeUp}
+            className="rounded-[1.75rem] bg-card p-8 md:p-10"
+          >
+            <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-primary">
+              Pourquoi Ancrage existe ?
+            </p>
+            <div className="mt-5 space-y-3 text-sm leading-relaxed text-foreground/85">
+              <p>
+                Je m'appelle <span className="font-semibold text-night">Élodie</span>. Je suis maman,
+                belle-maman, maman d'enfants atypiques.
+              </p>
+              <p>
+                Comme beaucoup de parents, j'ai connu les rendez-vous qui s'enchaînent.{" "}
+                <span className="font-semibold text-night">La charge mentale.</span> La peur.
+                L'épuisement. Les moments où tout semble trop lourd.
+              </p>
+              <p className="text-primary">
+                J'avais besoin d'un endroit simple pour souffler, me recentrer et retrouver des
+                repères.
+              </p>
+              <p>
+                Alors j'ai créé l'outil que j'aurais aimé avoir dans les périodes les plus
+                difficiles.
+              </p>
+              <p className="font-serif text-base italic text-night">
+                Ancrage est né de la vraie vie. Pas d'une théorie.
+              </p>
+            </div>
+          </motion.div>
+        </div>
+      </Section>
+
+      {/* TRANSFORMATION TIMELINE */}
+      <Section id="quotidien">
+        <motion.div {...fadeUp} className="text-center">
+          <p className="inline-flex items-center justify-center gap-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-night">
+            Quelques jours suffisent à sentir la différence
+            <HandHeart className="h-4 w-4 text-primary" />
+          </p>
+        </motion.div>
+        <div className="mt-12 grid items-start gap-4 md:grid-cols-[1fr_auto_1fr_auto_1fr_auto_1fr]">
+          {timeline.map((s, i, arr) => (
+            <>
+              <motion.div {...fadeUp} key={s.d} className="flex flex-col items-center text-center">
+                <span className="flex h-14 w-14 items-center justify-center rounded-full bg-card text-2xl">
+                  {s.icon}
+                </span>
+                <p className="mt-4 text-[11px] font-semibold uppercase tracking-[0.2em] text-night">
+                  {s.d}
+                </p>
+                <p className="mt-1.5 text-sm leading-snug text-foreground/75">{s.t}</p>
+              </motion.div>
+              {i < arr.length - 1 && (
+                <div key={`${s.d}-arr`} className="hidden items-center justify-center pt-5 md:flex">
+                  <ArrowRight className="h-5 w-5 text-primary" />
+                </div>
+              )}
+            </>
+          ))}
+        </div>
+      </Section>
+
+      {/* OFFRE — carte tarif */}
+      <Section id="offre">
+        <motion.div {...fadeUp} className="mx-auto max-w-md">
+          <div className="rounded-[1.75rem] bg-card p-10 text-center shadow-[0_40px_100px_-40px_rgba(24,33,52,0.22)]">
+            <Eyebrow>Ancrage</Eyebrow>
+            <p className="mt-5 font-serif text-[clamp(3rem,6vw,4rem)] leading-none text-night">
+              {PREMIUM_PRICE_SHORT}
+            </p>
+            <p className="mt-2 text-xs uppercase tracking-[0.24em] text-muted-foreground">
+              Paiement unique · Accès à vie
+            </p>
+            <ul className="mx-auto mt-8 max-w-xs space-y-2.5 text-left text-sm">
+              {[
+                "Accès immédiat",
+                "Sans abonnement",
+                "Mises à jour incluses",
+                "Mobile & ordinateur",
+              ].map((f) => (
+                <li key={f} className="flex items-center gap-2 text-foreground/85">
+                  <HandHeart className="h-4 w-4 text-primary" />
+                  {f}
+                </li>
+              ))}
+            </ul>
+            <div className="mt-9">
+              <CTAButton />
+            </div>
+          </div>
+        </motion.div>
+      </Section>
+
       {/* FAQ */}
-      <div className="bg-secondary/50">
+      <div className="bg-secondary/60">
         <HomeFAQ />
       </div>
 
-      {/* CTA FINAL — gradient corail × rose premium */}
-      <section className="px-6 py-24 md:py-32">
+      {/* CTA FINAL — bleu nuit avec bouton jaune */}
+      <section id="pour-enfant" className="px-6 py-20 md:py-28">
         <div className="mx-auto max-w-[1100px]">
           <motion.div
             {...fadeUp}
-            className="rounded-[1.75rem] bg-cta-gradient px-8 py-20 text-center text-primary-foreground shadow-[0_50px_120px_-40px_rgba(228,107,98,0.45)] md:px-16"
+            className="relative overflow-hidden rounded-[1.75rem] bg-night px-8 py-16 text-night-foreground md:grid md:grid-cols-[1.2fr_1fr] md:gap-10 md:px-14 md:py-20"
           >
-            <h2 className="font-serif text-[clamp(2.25rem,5vw,3.25rem)] leading-[1.05]">
-              Tu n'as pas besoin
-              <br />
-              d'aller mieux
-              <br />
-              <span className="italic">pour commencer.</span>
-            </h2>
-            <p className="mx-auto mt-6 max-w-md text-base text-primary-foreground/85">
-              Commence petit. Commence aujourd'hui.
-            </p>
-            <div className="mt-10">
-              <CTAButton variant="white" label={`Commencer maintenant — ${PREMIUM_PRICE_SHORT}`} />
+            <HandHeart className="absolute right-8 top-8 h-8 w-8 text-primary/70" />
+            <div>
+              <h2 className="font-serif text-[clamp(1.9rem,4vw,2.75rem)] leading-[1.1] text-night-foreground">
+                Tu n'as pas besoin d'être{" "}
+                <span className="relative inline-block">
+                  parfaite.
+                  <HandUnderline />
+                </span>
+                <br />
+                <span className="text-primary">
+                  Tu as juste besoin d'un endroit où revenir
+                </span>{" "}
+                quand tout devient trop.
+              </h2>
+            </div>
+            <div className="mt-10 flex flex-col items-start gap-4 md:mt-0 md:items-end md:justify-center md:text-right">
+              <CTAButton />
+              <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] uppercase tracking-[0.18em] text-night-foreground/75">
+                <span>⚡ Accès immédiat</span>
+                <span aria-hidden>·</span>
+                <span>🔒 Paiement unique</span>
+                <span aria-hidden>·</span>
+                <span>∞ Accès à vie</span>
+              </p>
             </div>
           </motion.div>
         </div>
