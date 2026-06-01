@@ -10,7 +10,6 @@ import ParentTypeBadge from "@/components/ParentTypeBadge";
  * collapsible vertical sidebar pinned to the right edge.
  */
 const PUBLIC_PATHS = new Set<string>([
-  "/",
   "/cgv",
   "/mentions-legales",
   "/confidentialite",
