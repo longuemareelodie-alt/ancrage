@@ -28,7 +28,11 @@ export const PARENT_TYPE_CHOSEN_KEY = "ancrage_parent_type_chosen";
 export function getParentType(): ParentType {
   if (typeof window === "undefined") return DEFAULT_PARENT_TYPE;
   const v = localStorage.getItem(STORAGE_KEY);
-  return v === "papa" || v === "maman" ? v : DEFAULT_PARENT_TYPE;
+  // Profil Papa retiré temporairement de l'interface — tout le monde repasse sur Maman.
+  if (v === "papa") {
+    localStorage.setItem(STORAGE_KEY, DEFAULT_PARENT_TYPE);
+  }
+  return v === "maman" ? "maman" : DEFAULT_PARENT_TYPE;
 }
 
 /**

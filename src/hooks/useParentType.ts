@@ -31,11 +31,8 @@ export function useParentType(): [ParentType, (v: ParentType) => void, boolean] 
       setChosen(hasChosenParentType());
     };
     const onStorage = (e: StorageEvent) => {
-      if (
-        e.key === PARENT_TYPE_STORAGE_KEY &&
-        (e.newValue === "papa" || e.newValue === "maman")
-      ) {
-        setValue(e.newValue);
+      if (e.key === PARENT_TYPE_STORAGE_KEY && e.newValue === "maman") {
+        setValue("maman");
       }
       if (e.key === PARENT_TYPE_CHOSEN_KEY) {
         setChosen(hasChosenParentType());

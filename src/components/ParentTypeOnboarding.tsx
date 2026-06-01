@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { setParentType, hasChosenParentType, markParentTypeChosen, type ParentType } from "@/lib/parentType";
+import { setParentType, hasChosenParentType, markParentTypeChosen } from "@/lib/parentType";
 import {
   setSchoolContext,
   hasChosenSchoolContext,
@@ -10,7 +10,7 @@ import {
 
 /**
  * First-run modal: 2 steps.
- *  1. Parent profile (maman / papa)
+ *  1. Parent profile (Maman — unique choix pour le moment)
  *  2. Daily context (avant l'école / boulot / vacances)
  *
  * Each step can be skipped independently with "Plus tard".
@@ -28,8 +28,8 @@ export default function ParentTypeOnboarding() {
     }
   }, []);
 
-  function chooseParent(value: ParentType) {
-    setParentType(value);
+  function chooseMaman() {
+    setParentType("maman");
     if (!hasChosenSchoolContext()) setStep("school");
     else setOpen(false);
   }
@@ -90,24 +90,14 @@ export default function ParentTypeOnboarding() {
               les exemples et les accords. Tu pourras changer à tout moment.
             </p>
 
-            <div className="grid grid-cols-2 gap-3">
-              <button
-                onClick={() => chooseParent("maman")}
-                className="rounded-2xl border border-border bg-background p-4 text-center transition-colors hover:border-primary hover:bg-primary/5"
-              >
-                <div className="mb-1 text-3xl">🌸</div>
-                <div className="text-base font-semibold text-foreground">Maman</div>
-                <div className="text-xs text-muted-foreground">Ton plus doux, déculpabilisant</div>
-              </button>
-              <button
-                onClick={() => chooseParent("papa")}
-                className="rounded-2xl border border-border bg-background p-4 text-center transition-colors hover:border-primary hover:bg-primary/5"
-              >
-                <div className="mb-1 text-3xl">🌊</div>
-                <div className="text-base font-semibold text-foreground">Papa</div>
-                <div className="text-xs text-muted-foreground">Ton plus direct, opérationnel</div>
-              </button>
-            </div>
+            <button
+              onClick={chooseMaman}
+              className="w-full rounded-2xl border border-border bg-background p-4 text-center transition-colors hover:border-primary hover:bg-primary/5"
+            >
+              <div className="mb-1 text-3xl">🌸</div>
+              <div className="text-base font-semibold text-foreground">Maman</div>
+              <div className="text-xs text-muted-foreground">Ton plus doux, déculpabilisant</div>
+            </button>
 
             <button
               onClick={skipParent}
