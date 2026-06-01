@@ -1,5 +1,6 @@
 import Footer from "@/components/Footer";
 import HomeFAQ from "@/components/HomeFAQ";
+import { Fragment } from "react";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { ArrowRight, Menu, X, Heart } from "lucide-react";
