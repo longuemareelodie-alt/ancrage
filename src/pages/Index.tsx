@@ -149,6 +149,8 @@ const Index = () => {
     { href: "#quotidien", label: "Pour le quotidien" },
     { href: "#familles", label: "Liés autrement" },
     { href: "#offre", label: "Tarifs" },
+    { href: "#faq", label: "FAQ" },
+    { href: "/emotions", label: "L'outil" },
   ];
 
   const problems = [
