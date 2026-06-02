@@ -433,7 +433,7 @@ const Index = () => {
       </section>
 
 
-      {/* TIMELINE TRANSFORMATION */}
+      {/* TIMELINE TRANSFORMATION — verticale, élégante */}
       <Section id="quotidien">
         <motion.div {...fadeUp} className="text-center">
           <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-primary">
@@ -447,27 +447,36 @@ const Index = () => {
             </span>
           </h2>
         </motion.div>
-        <div className="mt-14 grid items-start gap-6 md:grid-cols-[1fr_auto_1fr_auto_1fr_auto_1fr]">
-          {timeline.map((s, i, arr) => (
-            <Fragment key={s.d}>
-              <motion.div {...fadeUp} className="flex flex-col items-center text-center">
-                <span className="flex h-16 w-16 items-center justify-center rounded-full bg-secondary text-2xl">
+        <div className="relative mx-auto mt-12 max-w-xl">
+          {/* Ligne verticale */}
+          <div
+            aria-hidden
+            className="absolute left-8 top-2 bottom-2 w-px bg-gradient-to-b from-primary/20 via-primary/50 to-primary/20"
+          />
+          <ol className="space-y-7">
+            {timeline.map((s) => (
+              <motion.li
+                {...fadeUp}
+                key={s.d}
+                className="relative flex items-start gap-5 pl-0"
+              >
+                <span className="relative z-10 flex h-16 w-16 flex-none items-center justify-center rounded-full bg-secondary text-2xl ring-4 ring-background">
                   {s.icon}
                 </span>
-                <p className="mt-5 text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">
-                  {s.d}
-                </p>
-                <p className="mt-2 max-w-[18ch] text-sm leading-snug text-foreground/80">{s.t}</p>
-              </motion.div>
-              {i < arr.length - 1 && (
-                <div className="hidden items-center justify-center pt-6 md:flex">
-                  <ArrowRight className="h-5 w-5 text-primary" />
+                <div className="pt-2">
+                  <p className="text-xs font-semibold uppercase tracking-[0.22em] text-primary">
+                    {s.d}
+                  </p>
+                  <p className="mt-1.5 font-serif text-xl leading-snug text-night md:text-2xl">
+                    {s.t}
+                  </p>
                 </div>
-              )}
-            </Fragment>
-          ))}
+              </motion.li>
+            ))}
+          </ol>
         </div>
       </Section>
+
 
       {/* OFFRE — carte tarif */}
       <Section id="offre">
