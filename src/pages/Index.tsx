@@ -480,7 +480,14 @@ const Index = () => {
 
       {/* OFFRE — carte tarif */}
       <Section id="offre">
-        <motion.div {...fadeUp} className="mx-auto max-w-md">
+        <motion.div {...fadeUp} className="mx-auto max-w-2xl text-center">
+          <p className="font-serif text-2xl italic leading-relaxed text-night md:text-3xl">
+            Tu n'as pas besoin d'aller mieux pour commencer.
+            <br />
+            <span className="text-primary">Tu peux simplement commencer aujourd'hui.</span>
+          </p>
+        </motion.div>
+        <motion.div {...fadeUp} className="mx-auto mt-12 max-w-md">
           <div className="rounded-[2rem] bg-secondary/60 p-10 text-center shadow-[0_40px_100px_-40px_rgba(30,43,82,0.25)]">
             <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-primary">
               Ancrage Premium
