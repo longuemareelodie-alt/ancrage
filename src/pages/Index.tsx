@@ -1,18 +1,18 @@
 import Footer from "@/components/Footer";
 import HomeFAQ from "@/components/HomeFAQ";
-import { Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
-import { ArrowRight, Menu, X, Heart } from "lucide-react";
+import { ArrowRight, Menu, X, Heart, Check } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
 import { PREMIUM_PRICE_LONG, PREMIUM_PRICE_SHORT } from "@/lib/premiumOffer";
+import heroPhoto from "@/assets/hero-fondatrice.png.asset.json";
 
 const fadeUp = {
-  initial: { opacity: 0, y: 20 },
+  initial: { opacity: 0, y: 24 },
   whileInView: { opacity: 1, y: 0 },
   viewport: { once: true, amount: 0.2 },
-  transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] as const },
+  transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] as const },
 };
 
 const Section = ({
@@ -24,18 +24,11 @@ const Section = ({
   className?: string;
   id?: string;
 }) => (
-  <section id={id} className={`px-6 py-16 md:py-24 ${className}`}>
+  <section id={id} className={`px-6 py-20 md:py-28 ${className}`}>
     <div className="mx-auto w-full max-w-[1200px]">{children}</div>
   </section>
 );
 
-const Eyebrow = ({ children }: { children: React.ReactNode }) => (
-  <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-primary">
-    {children}
-  </p>
-);
-
-// Petit cœur dessiné main (SVG)
 const HandHeart = ({ className = "h-5 w-5 text-primary" }: { className?: string }) => (
   <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
     <path
@@ -45,12 +38,11 @@ const HandHeart = ({ className = "h-5 w-5 text-primary" }: { className?: string 
       strokeLinecap="round"
       strokeLinejoin="round"
       fill="currentColor"
-      fillOpacity="0.18"
+      fillOpacity="0.22"
     />
   </svg>
 );
 
-// Trait manuscrit (souligné jaune sous un mot)
 const HandUnderline = ({ className = "" }: { className?: string }) => (
   <svg
     viewBox="0 0 200 12"
@@ -60,71 +52,12 @@ const HandUnderline = ({ className = "" }: { className?: string }) => (
   >
     <path
       d="M2 7 C 40 2, 80 11, 120 6 S 195 4, 198 7"
-      stroke="hsl(41 100% 67%)"
+      stroke="hsl(41 86% 62%)"
       strokeWidth="4"
       strokeLinecap="round"
       fill="none"
     />
   </svg>
-);
-
-// Phone mockup (Hero)
-const PhoneMockup = () => (
-  <div className="relative mx-auto w-[260px] md:w-[300px]">
-    {/* taches organiques décoratives */}
-    <div className="pointer-events-none absolute -left-12 top-16 -z-10 h-48 w-48 rounded-full bg-primary/30 blur-2xl" />
-    <div className="pointer-events-none absolute -right-10 bottom-10 -z-10 h-40 w-40 rounded-full bg-night/15 blur-2xl" />
-
-    <div className="rounded-[2.5rem] border border-border bg-card p-3 shadow-[0_40px_100px_-30px_rgba(24,33,52,0.25)]">
-      <div className="overflow-hidden rounded-[2rem] bg-background">
-        <div className="flex items-center justify-between px-5 pt-4 pb-2 text-[10px] text-muted-foreground">
-          <span>9:41</span>
-          <span className="h-1.5 w-10 rounded-full bg-foreground/15" />
-        </div>
-        <div className="px-5 pt-2 pb-4">
-          <p className="font-serif text-xl leading-tight">
-            Bonjour Camille <HandHeart className="inline h-4 w-4 text-primary" />
-          </p>
-        </div>
-        <div className="mx-5 rounded-2xl border border-border bg-secondary p-4">
-          <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-            Check-in émotionnel
-          </p>
-          <p className="mt-1 font-serif text-base">Comment tu te sens ?</p>
-          <div className="mt-3 flex gap-1.5">
-            {["😌", "😐", "😣", "😶", "🌧"].map((e) => (
-              <span
-                key={e}
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-card text-sm"
-              >
-                {e}
-              </span>
-            ))}
-          </div>
-        </div>
-        <div className="mx-5 mt-3">
-          <div className="flex items-center justify-between rounded-2xl bg-primary px-4 py-3 text-primary-foreground">
-            <span className="text-sm font-medium">Ça déborde</span>
-            <ArrowRight className="h-4 w-4" />
-          </div>
-        </div>
-        <div className="mx-5 mt-3 mb-5 grid grid-cols-2 gap-2">
-          <div className="rounded-xl border border-border bg-card p-3">
-            <p className="text-[9px] uppercase tracking-[0.2em] text-muted-foreground">
-              Aujourd'hui
-            </p>
-            <p className="mt-0.5 font-serif text-base text-primary">Calme +38 %</p>
-          </div>
-          <div className="rounded-xl border border-border bg-card p-3">
-            <p className="text-[9px] uppercase tracking-[0.2em] text-muted-foreground">
-              Ma semaine
-            </p>
-            <p className="mt-0.5 font-serif text-base">7 check-ins</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 );
 
 const Index = () => {
@@ -140,15 +73,13 @@ const Index = () => {
   }, []);
 
   const handlePay = () => startPayment();
-
   const CTA_LABEL = `Je reprends mon souffle — ${PREMIUM_PRICE_LONG}`;
 
   const navLinks = [
     { href: "#pour-toi", label: "Pour toi" },
-    { href: "#pour-enfant", label: "Pour ton enfant" },
-    { href: "#quotidien", label: "Pour le quotidien" },
+    { href: "#quotidien", label: "Le quotidien" },
     { href: "#familles", label: "Liés autrement" },
-    { href: "#offre", label: "Tarifs" },
+    { href: "#offre", label: "Tarif" },
     { href: "#faq", label: "FAQ" },
     { href: "/emotions", label: "L'outil" },
   ];
@@ -156,7 +87,7 @@ const Index = () => {
   const problems = [
     { e: "🌀", t: "Je porte tout", d: "Charge mentale permanente." },
     { e: "🔥", t: "Je déborde", d: "Stress, fatigue, émotions difficiles." },
-    { e: "💗", t: "Mon enfant déborde", d: "Crises, transitions compliquées, hypersensibilités." },
+    { e: "🩷", t: "Mon enfant déborde", d: "Crises, transitions, hypersensibilités." },
     { e: "🧠", t: "J'oublie tout", d: "Organisation impossible." },
     { e: "💔", t: "Je culpabilise", d: "J'ai l'impression de ne jamais en faire assez." },
     { e: "🌙", t: "Je suis épuisée", d: "Je tiens, mais à quel prix ?" },
@@ -175,37 +106,40 @@ const Index = () => {
     { d: "Jour 1", t: "Je souffle.", icon: "🌱" },
     { d: "Jour 7", t: "Je comprends mieux ce qui me déborde.", icon: "☀️" },
     { d: "Jour 21", t: "Je retrouve des repères.", icon: "⚓" },
-    { d: "Jour 30", t: "Je me sens plus solide.", icon: "💗" },
+    { d: "Jour 30", t: "Je me sens plus solide.", icon: "🩷" },
   ];
 
-  // Bouton CTA jaune lumière (Maman Atypique signature)
   const CTAButton = ({
     label = CTA_LABEL,
-    variant = "yellow",
+    variant = "gold",
   }: {
     label?: string;
-    variant?: "yellow" | "night";
-  }) => (
-    <button
-      type="button"
-      onClick={handlePay}
-      disabled={paymentLoading}
-      className={
-        variant === "night"
-          ? "inline-flex items-center justify-center gap-2 rounded-full bg-night px-7 py-4 text-sm font-semibold text-night-foreground shadow-soft-lg transition-all hover:-translate-y-0.5 active:scale-[0.98] disabled:opacity-60"
-          : "inline-flex items-center justify-center gap-2 rounded-full bg-accent px-7 py-4 text-sm font-semibold text-accent-foreground shadow-soft-lg transition-all hover:-translate-y-0.5 hover:brightness-[1.03] active:scale-[0.98] disabled:opacity-60"
-      }
-    >
-      <Heart className="h-4 w-4 fill-current" />
-      {label}
-    </button>
-  );
+    variant?: "gold" | "rose" | "night";
+  }) => {
+    const styles =
+      variant === "night"
+        ? "bg-night text-night-foreground hover:bg-night/90"
+        : variant === "rose"
+        ? "bg-primary text-primary-foreground hover:brightness-[1.03]"
+        : "bg-accent text-accent-foreground hover:brightness-[1.04]";
+    return (
+      <button
+        type="button"
+        onClick={handlePay}
+        disabled={paymentLoading}
+        className={`inline-flex items-center justify-center gap-2 rounded-full px-7 py-4 text-sm font-semibold shadow-soft-lg transition-all duration-300 hover:-translate-y-0.5 active:scale-[0.98] disabled:opacity-60 ${styles}`}
+      >
+        <Heart className="h-4 w-4 fill-current" />
+        {label}
+      </button>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Header */}
       <header
-        className={`sticky top-0 z-50 transition-all duration-200 ${
+        className={`sticky top-0 z-50 transition-all duration-300 ${
           scrolled ? "border-b border-border bg-background/90 backdrop-blur-md" : "bg-transparent"
         }`}
       >
@@ -240,7 +174,7 @@ const Index = () => {
               type="button"
               onClick={handlePay}
               disabled={paymentLoading}
-              className="rounded-full bg-accent px-5 py-2.5 text-xs font-semibold text-accent-foreground transition-all hover:brightness-[1.03] disabled:opacity-60"
+              className="rounded-full bg-accent px-5 py-2.5 text-xs font-semibold text-accent-foreground transition-all hover:brightness-[1.04] disabled:opacity-60"
             >
               Je commence
             </button>
@@ -284,14 +218,14 @@ const Index = () => {
       </header>
 
       {/* HERO */}
-      <Section className="pt-6 md:pt-10">
-        <div className="grid items-center gap-14 md:grid-cols-2 md:gap-20">
+      <Section className="pt-8 md:pt-12">
+        <div className="grid items-center gap-12 md:grid-cols-2 md:gap-16">
           <motion.div {...fadeUp}>
-            <p className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-primary">
+            <p className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.28em] text-primary">
               <HandHeart className="h-4 w-4" />
               Pour les mamans qui portent trop
             </p>
-            <h1 className="mt-5 font-serif text-[clamp(2.4rem,6.5vw,4.25rem)] font-normal leading-[1.02] tracking-tight text-night">
+            <h1 className="mt-6 font-serif text-[clamp(2.5rem,6.5vw,4.5rem)] font-normal leading-[1.02] tracking-tight text-night">
               Quand tout déborde,
               <br />
               <span className="relative inline-block text-primary">
@@ -299,26 +233,18 @@ const Index = () => {
                 <HandUnderline />
               </span>
             </h1>
-            <ul className="mt-7 space-y-3 text-base leading-relaxed text-foreground/85">
-              <li className="flex gap-3">
-                <HandHeart className="mt-1 h-4 w-4 shrink-0 text-primary" />
-                Rendez-vous, papiers, crises, nuits trop courtes…
-              </li>
-              <li className="flex gap-3">
-                <HandHeart className="mt-1 h-4 w-4 shrink-0 text-primary" />
-                Charge mentale, culpabilité, émotions à fleur de peau…
-              </li>
-              <li className="flex gap-3">
-                <HandHeart className="mt-1 h-4 w-4 shrink-0 text-primary" />
-                Ancrage t'aide à <span className="text-primary">retrouver un peu de calme</span>{" "}
-                quand ton cerveau te dit qu'il ne{" "}
+            <div className="mt-7 space-y-2 text-base leading-relaxed text-foreground/80">
+              <p>Charge mentale. Fatigue. Culpabilité. Émotions qui débordent.</p>
+              <p>
+                Ancrage t'aide à <span className="text-primary font-medium">retrouver un peu de calme</span> quand ton
+                cerveau te dit qu'il ne{" "}
                 <span className="relative inline-block">
                   tiendra
                   <HandUnderline />
                 </span>{" "}
                 plus.
-              </li>
-            </ul>
+              </p>
+            </div>
             <div className="mt-9">
               <CTAButton />
               <p className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
@@ -330,47 +256,63 @@ const Index = () => {
               </p>
             </div>
           </motion.div>
-          <motion.div {...fadeUp}>
-            <PhoneMockup />
+
+          <motion.div {...fadeUp} className="relative">
+            <div className="pointer-events-none absolute -left-8 -top-8 -z-10 h-56 w-56 rounded-full bg-secondary blur-3xl" />
+            <div className="pointer-events-none absolute -right-6 bottom-10 -z-10 h-48 w-48 rounded-full bg-primary/30 blur-3xl" />
+            <div className="overflow-hidden rounded-[2.5rem] shadow-[0_40px_100px_-30px_rgba(30,43,82,0.35)]">
+              <img
+                src={heroPhoto.url}
+                alt="Maman fondatrice d'Ancrage prenant un café, ambiance douce et chaleureuse"
+                className="aspect-[4/5] w-full object-cover"
+                loading="eager"
+              />
+            </div>
           </motion.div>
         </div>
       </Section>
 
       {/* IDENTIFICATION */}
-      <Section>
+      <Section id="pour-toi">
         <motion.div {...fadeUp} className="text-center">
-          <p className="inline-flex items-center justify-center gap-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-night">
-            Maman, est-ce que tu te reconnais ?
-            <HandHeart className="h-4 w-4 text-primary" />
+          <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-primary">
+            Identification
           </p>
+          <h2 className="mt-4 font-serif text-[clamp(2rem,4.5vw,3rem)] leading-tight text-night">
+            Tu te reconnais{" "}
+            <span className="relative inline-block">
+              ici&nbsp;?
+              <HandUnderline />
+            </span>
+          </h2>
         </motion.div>
-        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-14 grid gap-6 sm:grid-cols-2">
           {problems.map((p) => (
             <motion.div
               {...fadeUp}
               key={p.t}
-              className="rounded-[1.75rem] bg-card p-7 transition-all hover:-translate-y-0.5 hover:shadow-soft"
+              className="rounded-[2rem] bg-card p-8 transition-all duration-500 hover:-translate-y-1 hover:shadow-soft-lg"
             >
               <div className="text-2xl">{p.e}</div>
               <h3 className="mt-4 font-serif text-xl text-night">{p.t}</h3>
-              <p className="mt-1.5 text-sm leading-relaxed text-foreground/70">{p.d}</p>
+              <p className="mt-2 text-sm leading-relaxed text-foreground/70">{p.d}</p>
             </motion.div>
           ))}
         </div>
       </Section>
 
-      {/* TRANSITION douce */}
+      {/* CITATION — Tu n'as pas besoin */}
       <Section className="pt-0">
         <motion.div
           {...fadeUp}
-          className="relative overflow-hidden rounded-[1.75rem] bg-card p-8 md:p-12"
+          className="relative overflow-hidden rounded-[2rem] bg-secondary/60 p-10 md:p-20"
         >
-          <HandHeart className="absolute left-6 top-6 h-8 w-8 text-primary/70" />
-          <div className="mx-auto max-w-2xl space-y-3 text-center font-serif text-xl italic leading-relaxed text-night md:text-2xl">
+          <HandHeart className="absolute left-8 top-8 h-8 w-8 text-primary" />
+          <div className="mx-auto max-w-2xl space-y-6 text-center font-serif text-2xl italic leading-relaxed text-night md:text-3xl">
             <p>Tu n'as pas besoin d'aller mieux pour commencer.</p>
             <p>Tu n'as pas besoin d'être parfaitement organisée.</p>
             <p>Tu n'as pas besoin d'avoir plus de temps.</p>
-            <p className="not-italic font-sans text-base text-foreground/75 md:text-lg">
+            <p className="not-italic pt-4 text-lg text-primary md:text-xl">
               Tu as simplement besoin d'un point d'appui.
             </p>
           </div>
@@ -378,35 +320,35 @@ const Index = () => {
       </Section>
 
       {/* COMMENT ÇA MARCHE */}
-      <Section id="pour-toi">
+      <Section>
         <motion.div {...fadeUp} className="text-center">
-          <p className="inline-block font-semibold uppercase tracking-[0.24em] text-[11px] text-night">
-            Comment ça{" "}
+          <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-primary">
+            Comment ça marche
+          </p>
+          <h2 className="mt-4 font-serif text-[clamp(2rem,4.5vw,3rem)] leading-tight text-night">
+            Trois gestes simples,{" "}
             <span className="relative inline-block">
-              marche
+              chaque jour.
               <HandUnderline />
             </span>
-          </p>
+          </h2>
         </motion.div>
-        <div className="mt-12 grid items-stretch gap-4 md:grid-cols-[1fr_auto_1fr_auto_1fr]">
+        <div className="mt-14 grid items-stretch gap-5 md:grid-cols-[1fr_auto_1fr_auto_1fr]">
           {[
             { n: "01", t: "Ressentir", d: "Check-in émotionnel en moins de 30 secondes.", e: "🧠" },
             { n: "02", t: "Réguler", d: "Des exercices simples quand tout déborde.", e: "🌸" },
-            { n: "03", t: "Observer", d: "Comprendre ce qui revient et ce qui t'aide.", e: "🔍" },
+            { n: "03", t: "Observer", d: "Comprendre ce qui revient et ce qui t'aide.", e: "🔎" },
           ].map((s, i, arr) => (
             <Fragment key={s.n}>
-              <motion.div
-                {...fadeUp}
-                className="flex flex-col rounded-[1.75rem] bg-card p-7"
-              >
+              <motion.div {...fadeUp} className="flex flex-col rounded-[2rem] bg-card p-8">
                 <div className="flex items-center gap-3">
                   <span className="flex h-10 w-10 items-center justify-center rounded-full bg-night text-sm font-semibold text-night-foreground">
                     {s.n}
                   </span>
                   <span className="text-2xl">{s.e}</span>
                 </div>
-                <h3 className="mt-5 font-serif text-xl text-night">{s.t}</h3>
-                <p className="mt-1.5 text-sm leading-relaxed text-foreground/70">{s.d}</p>
+                <h3 className="mt-6 font-serif text-2xl text-night">{s.t}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-foreground/70">{s.d}</p>
               </motion.div>
               {i < arr.length - 1 && (
                 <div className="hidden items-center justify-center md:flex">
@@ -416,98 +358,122 @@ const Index = () => {
             </Fragment>
           ))}
         </div>
+        <div className="mt-12 flex justify-center">
+          <CTAButton />
+        </div>
       </Section>
 
-      {/* FAMILLES ATYPIQUES + HISTOIRE FONDATRICE */}
-      <Section id="familles">
-        <div className="grid gap-6 md:grid-cols-2">
-          {/* Bloc bleu nuit — familles atypiques */}
-          <motion.div
-            {...fadeUp}
-            className="rounded-[1.75rem] bg-night p-8 text-night-foreground md:p-10"
-          >
-            <p className="text-[11px] font-semibold uppercase tracking-[0.24em]">
-              Pensé pour les familles
+      {/* FAMILLES ATYPIQUES — fond bleu nuit pleine largeur */}
+      <section id="familles" className="bg-night px-6 py-24 text-night-foreground md:py-32">
+        <div className="mx-auto max-w-[1200px]">
+          <motion.div {...fadeUp} className="text-center">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-primary">
+              Familles atypiques
             </p>
-            <h2 className="mt-2 font-serif text-2xl leading-tight md:text-3xl">
+            <h2 className="mx-auto mt-4 max-w-3xl font-serif text-[clamp(2rem,4.5vw,3rem)] leading-tight">
+              Pensé pour les familles qui{" "}
               <span className="relative inline-block text-primary">
-                qui avancent autrement.
+                avancent autrement.
                 <HandUnderline />
               </span>
             </h2>
-            <div className="mt-7 grid grid-cols-3 gap-4 sm:grid-cols-6 md:grid-cols-3 lg:grid-cols-6">
-              {familles.map((f) => (
-                <div key={f.t} className="flex flex-col items-center text-center">
-                  <span className="text-2xl">{f.e}</span>
-                  <span className="mt-2 text-[11px] font-medium uppercase tracking-wider text-night-foreground/85">
-                    {f.t}
-                  </span>
-                </div>
-              ))}
-            </div>
-            <div className="mt-7 space-y-1 text-sm leading-relaxed text-night-foreground/85">
-              <p>Chaque famille avance à son rythme.</p>
-              <p className="font-semibold text-night-foreground">Ancrage respecte ce rythme.</p>
-            </div>
-            <HandHeart className="mt-4 h-5 w-5 text-primary" />
           </motion.div>
-
-          {/* Histoire fondatrice */}
           <motion.div
             {...fadeUp}
-            className="rounded-[1.75rem] bg-card p-8 md:p-10"
+            className="mx-auto mt-14 grid max-w-3xl grid-cols-3 gap-6 sm:grid-cols-6"
           >
-            <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-primary">
+            {familles.map((f) => (
+              <div
+                key={f.t}
+                className="flex flex-col items-center rounded-2xl border border-night-foreground/10 bg-night-foreground/5 px-3 py-5 text-center transition-colors hover:bg-night-foreground/10"
+              >
+                <span className="text-2xl">{f.e}</span>
+                <span className="mt-3 text-[11px] font-medium uppercase tracking-wider text-night-foreground/85">
+                  {f.t}
+                </span>
+              </div>
+            ))}
+          </motion.div>
+          <motion.div
+            {...fadeUp}
+            className="mx-auto mt-10 max-w-xl text-center text-base leading-relaxed text-night-foreground/85"
+          >
+            <p>Chaque famille avance à son rythme.</p>
+            <p className="mt-1 font-semibold text-night-foreground">Ancrage respecte ce rythme.</p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* FONDATRICE — photo pleine largeur + récit */}
+      <Section>
+        <div className="grid items-center gap-12 md:grid-cols-[1.1fr_1fr] md:gap-16">
+          <motion.div {...fadeUp} className="order-2 md:order-1">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-primary">
               Pourquoi Ancrage existe ?
             </p>
-            <div className="mt-5 space-y-3 text-sm leading-relaxed text-foreground/85">
+            <h2 className="mt-4 font-serif text-[clamp(2rem,4vw,2.75rem)] leading-tight text-night">
+              L'outil que j'aurais aimé{" "}
+              <span className="relative inline-block">
+                avoir.
+                <HandUnderline />
+              </span>
+            </h2>
+            <div className="mt-7 space-y-4 text-base leading-relaxed text-foreground/85">
+              <p>Je suis maman.</p>
               <p>
-                Je m'appelle <span className="font-semibold text-night">Élodie</span>. Je suis maman,
-                belle-maman, maman d'enfants atypiques.
+                Comme beaucoup de parents, j'ai connu la charge mentale, les rendez-vous qui
+                s'enchaînent, la peur, la fatigue et cette sensation de tout porter.
               </p>
               <p>
-                Comme beaucoup de parents, j'ai connu les rendez-vous qui s'enchaînent.{" "}
-                <span className="font-semibold text-night">La charge mentale.</span> La peur.
-                L'épuisement. Les moments où tout semble trop lourd.
+                J'avais besoin d'un endroit simple pour souffler, retrouver des repères et reprendre
+                un peu de place pour moi.
               </p>
-              <p className="text-primary">
-                J'avais besoin d'un endroit simple pour souffler, me recentrer et retrouver des
-                repères.
+              <p className="font-serif text-lg italic text-night">
+                Alors j'ai créé l'outil que j'aurais aimé avoir.
               </p>
-              <p>
-                Alors j'ai créé l'outil que j'aurais aimé avoir dans les périodes les plus
-                difficiles.
-              </p>
-              <p className="font-serif text-base italic text-night">
-                Ancrage est né de la vraie vie. Pas d'une théorie.
-              </p>
+            </div>
+          </motion.div>
+          <motion.div {...fadeUp} className="order-1 md:order-2">
+            <div className="overflow-hidden rounded-[2.5rem] shadow-[0_40px_100px_-30px_rgba(30,43,82,0.35)]">
+              <img
+                src={heroPhoto.url}
+                alt="La fondatrice d'Ancrage chez elle"
+                className="aspect-[4/5] w-full object-cover"
+                loading="lazy"
+              />
             </div>
           </motion.div>
         </div>
       </Section>
 
-      {/* TRANSFORMATION TIMELINE */}
+      {/* TIMELINE TRANSFORMATION */}
       <Section id="quotidien">
         <motion.div {...fadeUp} className="text-center">
-          <p className="inline-flex items-center justify-center gap-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-night">
-            Quelques jours suffisent à sentir la différence
-            <HandHeart className="h-4 w-4 text-primary" />
+          <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-primary">
+            Ta transformation
           </p>
+          <h2 className="mt-4 font-serif text-[clamp(2rem,4.5vw,3rem)] leading-tight text-night">
+            Quelques jours suffisent à sentir la{" "}
+            <span className="relative inline-block">
+              différence.
+              <HandUnderline />
+            </span>
+          </h2>
         </motion.div>
-        <div className="mt-12 grid items-start gap-4 md:grid-cols-[1fr_auto_1fr_auto_1fr_auto_1fr]">
+        <div className="mt-14 grid items-start gap-6 md:grid-cols-[1fr_auto_1fr_auto_1fr_auto_1fr]">
           {timeline.map((s, i, arr) => (
             <Fragment key={s.d}>
               <motion.div {...fadeUp} className="flex flex-col items-center text-center">
-                <span className="flex h-14 w-14 items-center justify-center rounded-full bg-card text-2xl">
+                <span className="flex h-16 w-16 items-center justify-center rounded-full bg-secondary text-2xl">
                   {s.icon}
                 </span>
-                <p className="mt-4 text-[11px] font-semibold uppercase tracking-[0.2em] text-night">
+                <p className="mt-5 text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">
                   {s.d}
                 </p>
-                <p className="mt-1.5 text-sm leading-snug text-foreground/75">{s.t}</p>
+                <p className="mt-2 max-w-[18ch] text-sm leading-snug text-foreground/80">{s.t}</p>
               </motion.div>
               {i < arr.length - 1 && (
-                <div className="hidden items-center justify-center pt-5 md:flex">
+                <div className="hidden items-center justify-center pt-6 md:flex">
                   <ArrowRight className="h-5 w-5 text-primary" />
                 </div>
               )}
@@ -519,23 +485,27 @@ const Index = () => {
       {/* OFFRE — carte tarif */}
       <Section id="offre">
         <motion.div {...fadeUp} className="mx-auto max-w-md">
-          <div className="rounded-[1.75rem] bg-card p-10 text-center shadow-[0_40px_100px_-40px_rgba(24,33,52,0.22)]">
-            <Eyebrow>Ancrage</Eyebrow>
-            <p className="mt-5 font-serif text-[clamp(3rem,6vw,4rem)] leading-none text-night">
+          <div className="rounded-[2rem] bg-secondary/60 p-10 text-center shadow-[0_40px_100px_-40px_rgba(30,43,82,0.25)]">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-primary">
+              Ancrage Premium
+            </p>
+            <p className="mt-6 font-serif text-[clamp(3.5rem,6vw,4.5rem)] leading-none text-night">
               {PREMIUM_PRICE_SHORT}
             </p>
-            <p className="mt-2 text-xs uppercase tracking-[0.24em] text-muted-foreground">
+            <p className="mt-3 text-xs uppercase tracking-[0.24em] text-muted-foreground">
               Paiement unique · Accès à vie
             </p>
-            <ul className="mx-auto mt-8 max-w-xs space-y-2.5 text-left text-sm">
+            <ul className="mx-auto mt-8 max-w-xs space-y-3 text-left text-sm">
               {[
                 "Accès immédiat",
                 "Sans abonnement",
                 "Mises à jour incluses",
                 "Mobile & ordinateur",
               ].map((f) => (
-                <li key={f} className="flex items-center gap-2 text-foreground/85">
-                  <HandHeart className="h-4 w-4 text-primary" />
+                <li key={f} className="flex items-center gap-3 text-foreground/85">
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-accent text-accent-foreground">
+                    <Check className="h-3 w-3" strokeWidth={3} />
+                  </span>
                   {f}
                 </li>
               ))}
@@ -548,20 +518,20 @@ const Index = () => {
       </Section>
 
       {/* FAQ */}
-      <div className="bg-secondary/60">
+      <div id="faq" className="bg-secondary/40">
         <HomeFAQ />
       </div>
 
-      {/* CTA FINAL — bleu nuit avec bouton jaune */}
-      <section id="pour-enfant" className="px-6 py-20 md:py-28">
+      {/* CTA FINAL */}
+      <section className="px-6 py-24 md:py-32">
         <div className="mx-auto max-w-[1100px]">
           <motion.div
             {...fadeUp}
-            className="relative overflow-hidden rounded-[1.75rem] bg-night px-8 py-16 text-night-foreground md:grid md:grid-cols-[1.2fr_1fr] md:gap-10 md:px-14 md:py-20"
+            className="relative overflow-hidden rounded-[2rem] bg-night px-8 py-16 text-night-foreground md:grid md:grid-cols-[1.2fr_1fr] md:gap-10 md:px-14 md:py-20"
           >
-            <HandHeart className="absolute right-8 top-8 h-8 w-8 text-primary/70" />
+            <HandHeart className="absolute right-8 top-8 h-8 w-8 text-primary" />
             <div>
-              <h2 className="font-serif text-[clamp(1.9rem,4vw,2.75rem)] leading-[1.1] text-night-foreground">
+              <h2 className="font-serif text-[clamp(1.9rem,4vw,2.75rem)] leading-[1.1]">
                 Tu n'as pas besoin d'être{" "}
                 <span className="relative inline-block">
                   parfaite.
