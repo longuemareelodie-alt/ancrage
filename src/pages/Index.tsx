@@ -279,7 +279,7 @@ const Index = () => {
             <motion.div
               {...fadeUp}
               key={p.t}
-              className="rounded-[2rem] bg-card p-8 transition-all duration-500 hover:-translate-y-1 hover:shadow-soft-lg"
+              className="rounded-[2rem] bg-[hsl(353_45%_96%)] p-8 transition-all duration-500 hover:-translate-y-1 hover:shadow-soft-lg"
             >
               <div className="text-2xl">{p.e}</div>
               <h3 className="mt-4 font-serif text-xl text-night">{p.t}</h3>
