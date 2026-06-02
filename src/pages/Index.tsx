@@ -289,6 +289,45 @@ const Index = () => {
         </div>
       </Section>
 
+      {/* FONDATRICE — photo + récit (remontée juste après identification) */}
+      <Section>
+        <div className="grid items-center gap-12 md:grid-cols-[1.1fr_1fr] md:gap-16">
+          <motion.div {...fadeUp} className="order-2 md:order-1">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-primary">
+              Pourquoi Ancrage existe ?
+            </p>
+            <h2 className="mt-4 font-serif text-[clamp(2rem,4vw,2.75rem)] leading-tight text-night">
+              L'outil que j'aurais aimé{" "}
+              <span className="relative inline-block">
+                avoir.
+                <HandUnderline />
+              </span>
+            </h2>
+            <div className="mt-7 space-y-4 text-base leading-relaxed text-foreground/85">
+              <p>Je suis maman.</p>
+              <p>
+                Comme beaucoup de parents, j'ai connu la charge mentale, les rendez-vous qui
+                s'enchaînent, la peur, la fatigue et cette impression de toujours devoir tenir.
+              </p>
+              <p>J'avais besoin d'un endroit simple pour souffler.</p>
+              <p className="font-serif text-lg italic text-night">
+                Alors j'ai créé l'outil que j'aurais aimé avoir.
+              </p>
+            </div>
+          </motion.div>
+          <motion.div {...fadeUp} className="order-1 md:order-2">
+            <div className="overflow-hidden rounded-[2.5rem] shadow-[0_40px_100px_-30px_rgba(30,43,82,0.35)]">
+              <img
+                src={heroPhoto.url}
+                alt="La fondatrice d'Ancrage chez elle"
+                className="aspect-[4/5] w-full object-cover"
+                loading="lazy"
+              />
+            </div>
+          </motion.div>
+        </div>
+      </Section>
+
       {/* CITATION — Tu n'as pas besoin */}
       <Section className="pt-0">
         <motion.div
@@ -384,55 +423,15 @@ const Index = () => {
           </motion.div>
           <motion.div
             {...fadeUp}
-            className="mx-auto mt-10 max-w-xl text-center text-base leading-relaxed text-night-foreground/85"
+            className="mx-auto mt-10 max-w-2xl text-center font-serif text-xl italic leading-relaxed text-night-foreground/90 md:text-2xl"
           >
-            <p>Chaque famille avance à son rythme.</p>
-            <p className="mt-1 font-semibold text-night-foreground">Ancrage respecte ce rythme.</p>
+            <p>
+              Parce qu'aucune famille ne devrait avoir à rentrer dans une case pour être comprise.
+            </p>
           </motion.div>
         </div>
       </section>
 
-      {/* FONDATRICE — photo pleine largeur + récit */}
-      <Section>
-        <div className="grid items-center gap-12 md:grid-cols-[1.1fr_1fr] md:gap-16">
-          <motion.div {...fadeUp} className="order-2 md:order-1">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-primary">
-              Pourquoi Ancrage existe ?
-            </p>
-            <h2 className="mt-4 font-serif text-[clamp(2rem,4vw,2.75rem)] leading-tight text-night">
-              L'outil que j'aurais aimé{" "}
-              <span className="relative inline-block">
-                avoir.
-                <HandUnderline />
-              </span>
-            </h2>
-            <div className="mt-7 space-y-4 text-base leading-relaxed text-foreground/85">
-              <p>Je suis maman.</p>
-              <p>
-                Comme beaucoup de parents, j'ai connu la charge mentale, les rendez-vous qui
-                s'enchaînent, la peur, la fatigue et cette sensation de tout porter.
-              </p>
-              <p>
-                J'avais besoin d'un endroit simple pour souffler, retrouver des repères et reprendre
-                un peu de place pour moi.
-              </p>
-              <p className="font-serif text-lg italic text-night">
-                Alors j'ai créé l'outil que j'aurais aimé avoir.
-              </p>
-            </div>
-          </motion.div>
-          <motion.div {...fadeUp} className="order-1 md:order-2">
-            <div className="overflow-hidden rounded-[2.5rem] shadow-[0_40px_100px_-30px_rgba(30,43,82,0.35)]">
-              <img
-                src={heroPhoto.url}
-                alt="La fondatrice d'Ancrage chez elle"
-                className="aspect-[4/5] w-full object-cover"
-                loading="lazy"
-              />
-            </div>
-          </motion.div>
-        </div>
-      </Section>
 
       {/* TIMELINE TRANSFORMATION */}
       <Section id="quotidien">
