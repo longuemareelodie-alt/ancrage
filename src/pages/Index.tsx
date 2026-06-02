@@ -279,13 +279,52 @@ const Index = () => {
             <motion.div
               {...fadeUp}
               key={p.t}
-              className="rounded-[2rem] bg-card p-8 transition-all duration-500 hover:-translate-y-1 hover:shadow-soft-lg"
+              className="rounded-[2rem] bg-[hsl(353_45%_96%)] p-8 transition-all duration-500 hover:-translate-y-1 hover:shadow-soft-lg"
             >
               <div className="text-2xl">{p.e}</div>
               <h3 className="mt-4 font-serif text-xl text-night">{p.t}</h3>
               <p className="mt-2 text-sm leading-relaxed text-foreground/70">{p.d}</p>
             </motion.div>
           ))}
+        </div>
+      </Section>
+
+      {/* FONDATRICE — photo + récit (remontée juste après identification) */}
+      <Section>
+        <div className="grid items-center gap-12 md:grid-cols-[1.1fr_1fr] md:gap-16">
+          <motion.div {...fadeUp} className="order-2 md:order-1">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-primary">
+              Pourquoi Ancrage existe ?
+            </p>
+            <h2 className="mt-4 font-serif text-[clamp(2rem,4vw,2.75rem)] leading-tight text-night">
+              L'outil que j'aurais aimé{" "}
+              <span className="relative inline-block">
+                avoir.
+                <HandUnderline />
+              </span>
+            </h2>
+            <div className="mt-7 space-y-4 text-base leading-relaxed text-foreground/85">
+              <p>Je suis maman.</p>
+              <p>
+                Comme beaucoup de parents, j'ai connu la charge mentale, les rendez-vous qui
+                s'enchaînent, la peur, la fatigue et cette impression de toujours devoir tenir.
+              </p>
+              <p>J'avais besoin d'un endroit simple pour souffler.</p>
+              <p className="font-serif text-lg italic text-night">
+                Alors j'ai créé l'outil que j'aurais aimé avoir.
+              </p>
+            </div>
+          </motion.div>
+          <motion.div {...fadeUp} className="order-1 md:order-2">
+            <div className="overflow-hidden rounded-[2.5rem] shadow-[0_40px_100px_-30px_rgba(30,43,82,0.35)]">
+              <img
+                src={heroPhoto.url}
+                alt="La fondatrice d'Ancrage chez elle"
+                className="aspect-[4/5] w-full object-cover"
+                loading="lazy"
+              />
+            </div>
+          </motion.div>
         </div>
       </Section>
 
@@ -384,57 +423,17 @@ const Index = () => {
           </motion.div>
           <motion.div
             {...fadeUp}
-            className="mx-auto mt-10 max-w-xl text-center text-base leading-relaxed text-night-foreground/85"
+            className="mx-auto mt-10 max-w-2xl text-center font-serif text-xl italic leading-relaxed text-night-foreground/90 md:text-2xl"
           >
-            <p>Chaque famille avance à son rythme.</p>
-            <p className="mt-1 font-semibold text-night-foreground">Ancrage respecte ce rythme.</p>
+            <p>
+              Parce qu'aucune famille ne devrait avoir à rentrer dans une case pour être comprise.
+            </p>
           </motion.div>
         </div>
       </section>
 
-      {/* FONDATRICE — photo pleine largeur + récit */}
-      <Section>
-        <div className="grid items-center gap-12 md:grid-cols-[1.1fr_1fr] md:gap-16">
-          <motion.div {...fadeUp} className="order-2 md:order-1">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-primary">
-              Pourquoi Ancrage existe ?
-            </p>
-            <h2 className="mt-4 font-serif text-[clamp(2rem,4vw,2.75rem)] leading-tight text-night">
-              L'outil que j'aurais aimé{" "}
-              <span className="relative inline-block">
-                avoir.
-                <HandUnderline />
-              </span>
-            </h2>
-            <div className="mt-7 space-y-4 text-base leading-relaxed text-foreground/85">
-              <p>Je suis maman.</p>
-              <p>
-                Comme beaucoup de parents, j'ai connu la charge mentale, les rendez-vous qui
-                s'enchaînent, la peur, la fatigue et cette sensation de tout porter.
-              </p>
-              <p>
-                J'avais besoin d'un endroit simple pour souffler, retrouver des repères et reprendre
-                un peu de place pour moi.
-              </p>
-              <p className="font-serif text-lg italic text-night">
-                Alors j'ai créé l'outil que j'aurais aimé avoir.
-              </p>
-            </div>
-          </motion.div>
-          <motion.div {...fadeUp} className="order-1 md:order-2">
-            <div className="overflow-hidden rounded-[2.5rem] shadow-[0_40px_100px_-30px_rgba(30,43,82,0.35)]">
-              <img
-                src={heroPhoto.url}
-                alt="La fondatrice d'Ancrage chez elle"
-                className="aspect-[4/5] w-full object-cover"
-                loading="lazy"
-              />
-            </div>
-          </motion.div>
-        </div>
-      </Section>
 
-      {/* TIMELINE TRANSFORMATION */}
+      {/* TIMELINE TRANSFORMATION — verticale, élégante */}
       <Section id="quotidien">
         <motion.div {...fadeUp} className="text-center">
           <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-primary">
@@ -448,31 +447,47 @@ const Index = () => {
             </span>
           </h2>
         </motion.div>
-        <div className="mt-14 grid items-start gap-6 md:grid-cols-[1fr_auto_1fr_auto_1fr_auto_1fr]">
-          {timeline.map((s, i, arr) => (
-            <Fragment key={s.d}>
-              <motion.div {...fadeUp} className="flex flex-col items-center text-center">
-                <span className="flex h-16 w-16 items-center justify-center rounded-full bg-secondary text-2xl">
+        <div className="relative mx-auto mt-12 max-w-xl">
+          {/* Ligne verticale */}
+          <div
+            aria-hidden
+            className="absolute left-8 top-2 bottom-2 w-px bg-gradient-to-b from-primary/20 via-primary/50 to-primary/20"
+          />
+          <ol className="space-y-7">
+            {timeline.map((s) => (
+              <motion.li
+                {...fadeUp}
+                key={s.d}
+                className="relative flex items-start gap-5 pl-0"
+              >
+                <span className="relative z-10 flex h-16 w-16 flex-none items-center justify-center rounded-full bg-secondary text-2xl ring-4 ring-background">
                   {s.icon}
                 </span>
-                <p className="mt-5 text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">
-                  {s.d}
-                </p>
-                <p className="mt-2 max-w-[18ch] text-sm leading-snug text-foreground/80">{s.t}</p>
-              </motion.div>
-              {i < arr.length - 1 && (
-                <div className="hidden items-center justify-center pt-6 md:flex">
-                  <ArrowRight className="h-5 w-5 text-primary" />
+                <div className="pt-2">
+                  <p className="text-xs font-semibold uppercase tracking-[0.22em] text-primary">
+                    {s.d}
+                  </p>
+                  <p className="mt-1.5 font-serif text-xl leading-snug text-night md:text-2xl">
+                    {s.t}
+                  </p>
                 </div>
-              )}
-            </Fragment>
-          ))}
+              </motion.li>
+            ))}
+          </ol>
         </div>
       </Section>
 
+
       {/* OFFRE — carte tarif */}
       <Section id="offre">
-        <motion.div {...fadeUp} className="mx-auto max-w-md">
+        <motion.div {...fadeUp} className="mx-auto max-w-2xl text-center">
+          <p className="font-serif text-2xl italic leading-relaxed text-night md:text-3xl">
+            Tu n'as pas besoin d'aller mieux pour commencer.
+            <br />
+            <span className="text-primary">Tu peux simplement commencer aujourd'hui.</span>
+          </p>
+        </motion.div>
+        <motion.div {...fadeUp} className="mx-auto mt-12 max-w-md">
           <div className="rounded-[2rem] bg-secondary/60 p-10 text-center shadow-[0_40px_100px_-40px_rgba(30,43,82,0.25)]">
             <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-primary">
               Ancrage Premium
