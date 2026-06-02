@@ -257,18 +257,6 @@ const Index = () => {
             </div>
           </motion.div>
 
-          <motion.div {...fadeUp} className="relative">
-            <div className="pointer-events-none absolute -left-8 -top-8 -z-10 h-56 w-56 rounded-full bg-secondary blur-3xl" />
-            <div className="pointer-events-none absolute -right-6 bottom-10 -z-10 h-48 w-48 rounded-full bg-primary/30 blur-3xl" />
-            <div className="overflow-hidden rounded-[2.5rem] shadow-[0_40px_100px_-30px_rgba(30,43,82,0.35)]">
-              <img
-                src={heroPhoto.url}
-                alt="Maman fondatrice d'Ancrage prenant un café, ambiance douce et chaleureuse"
-                className="aspect-[4/5] w-full object-cover"
-                loading="eager"
-              />
-            </div>
-          </motion.div>
         </div>
       </Section>
 
