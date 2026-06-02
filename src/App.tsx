@@ -111,7 +111,7 @@ const AnimatedRoutes = () => {
       <ScrollToHash />
       <TopNav />
       <DiscoveryBadge />
-      <ParentTypeOnboarding />
+      
       <GuidedTour />
       <AnimatePresence mode="wait">
         <RoutesWrapper key={location.pathname}>
