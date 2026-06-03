@@ -336,7 +336,7 @@ const Index = () => {
       </Section>
 
       {/* CITATION — Tu n'as pas besoin */}
-      <Section className="pt-0">
+      <Section className="pt-0 pb-12 md:pb-20">
         <motion.div
           {...fadeUp}
           className="relative overflow-hidden rounded-[2rem] bg-secondary/60 p-10 md:p-20"
