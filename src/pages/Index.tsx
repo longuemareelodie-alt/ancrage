@@ -564,7 +564,7 @@ const Index = () => {
                   Je reprends mon souffle
                 </button>
                 <span className="text-[11px] uppercase tracking-[0.18em] text-night-foreground/75">
-                  {PREMIUM_PRICE_LONG} · Paiement unique · Accès à vie
+                  {PREMIUM_PRICE_LONG}
                 </span>
               </div>
               <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] uppercase tracking-[0.18em] text-night-foreground/75">
