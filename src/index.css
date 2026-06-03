@@ -19,6 +19,7 @@
     /* Primary = rose poudré signature */
     --primary: 350 71% 79%;          /* #EFA3B1 */
     --primary-foreground: 224 47% 22%;
+    --primary-dark: 350 60% 55%;     /* #C55A70 */
 
     --secondary: 350 65% 91%;        /* #F6D7DD rose secondaire doux */
     --secondary-foreground: 224 47% 22%;

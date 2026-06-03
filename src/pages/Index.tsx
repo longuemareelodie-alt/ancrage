@@ -221,7 +221,7 @@ const Index = () => {
       <Section className="pt-8 md:pt-12">
         <div className="grid items-center gap-12 md:grid-cols-2 md:gap-16">
           <motion.div {...fadeUp}>
-            <p className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.28em] text-primary">
+            <p className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.28em] text-primary-dark">
               <HandHeart className="h-4 w-4" />
               Pour les mamans qui portent trop
             </p>
@@ -263,7 +263,7 @@ const Index = () => {
       {/* IDENTIFICATION */}
       <Section id="pour-toi">
         <motion.div {...fadeUp} className="text-center">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-primary">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-primary-dark">
             Identification
           </p>
           <h2 className="mt-4 font-serif text-[clamp(2rem,4.5vw,3rem)] leading-tight text-night">
@@ -293,7 +293,7 @@ const Index = () => {
       <Section>
         <div className="grid items-center gap-12 md:grid-cols-[1.1fr_1fr] md:gap-16">
           <motion.div {...fadeUp} className="order-2 md:order-1">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-primary">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-primary-dark">
               Pourquoi Ancrage existe ?
             </p>
             <h2 className="mt-4 font-serif text-[clamp(2rem,4vw,2.75rem)] leading-tight text-night">
@@ -346,7 +346,7 @@ const Index = () => {
             <p>Tu n'as pas besoin d'aller mieux pour commencer.</p>
             <p>Tu n'as pas besoin d'être parfaitement organisée.</p>
             <p>Tu n'as pas besoin d'avoir plus de temps.</p>
-            <p className="not-italic pt-4 text-lg text-primary md:text-xl">
+            <p className="not-italic pt-4 text-lg text-primary-dark md:text-xl">
               Tu as simplement besoin d'un point d'appui.
             </p>
           </div>
@@ -356,7 +356,7 @@ const Index = () => {
       {/* COMMENT ÇA MARCHE */}
       <Section className="pt-12 md:pt-20">
         <motion.div {...fadeUp} className="text-center">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-primary">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-primary-dark">
             Comment ça marche
           </p>
           <h2 className="mt-4 font-serif text-[clamp(2rem,4.5vw,3rem)] leading-tight text-night">
@@ -439,9 +439,9 @@ const Index = () => {
 
 
       {/* TIMELINE TRANSFORMATION — verticale, élégante */}
-      <Section id="quotidien">
+      <Section id="quotidien" className="!pb-12 md:!pb-20">
         <motion.div {...fadeUp} className="text-center">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-primary">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-primary-dark">
             Ta transformation
           </p>
           <h2 className="mt-4 font-serif text-[clamp(2rem,4.5vw,3rem)] leading-tight text-night">
@@ -484,7 +484,7 @@ const Index = () => {
 
 
       {/* OFFRE — carte tarif */}
-      <Section id="offre">
+      <Section id="offre" className="!pt-12 md:!pt-20">
         <motion.div {...fadeUp} className="mx-auto max-w-2xl text-center">
           <p className="font-serif text-2xl italic leading-relaxed text-night md:text-3xl">
             Tu n'as pas besoin d'aller mieux pour commencer.
@@ -494,7 +494,7 @@ const Index = () => {
         </motion.div>
         <motion.div {...fadeUp} className="mx-auto mt-12 max-w-md">
           <div className="rounded-[2rem] bg-secondary/60 p-10 text-center shadow-[0_40px_100px_-40px_rgba(30,43,82,0.25)]">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-primary">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-primary-dark">
               Ancrage Premium
             </p>
             <p className="mt-6 font-serif text-[clamp(3.5rem,6vw,4.5rem)] leading-none text-night">
