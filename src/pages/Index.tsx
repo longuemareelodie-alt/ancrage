@@ -336,7 +336,7 @@ const Index = () => {
       </Section>
 
       {/* CITATION — Tu n'as pas besoin */}
-      <Section className="pt-0">
+      <Section className="pt-0 pb-12 md:pb-20">
         <motion.div
           {...fadeUp}
           className="relative overflow-hidden rounded-[2rem] bg-secondary/60 p-10 md:p-20"
@@ -354,7 +354,7 @@ const Index = () => {
       </Section>
 
       {/* COMMENT ÇA MARCHE */}
-      <Section>
+      <Section className="pt-12 md:pt-20">
         <motion.div {...fadeUp} className="text-center">
           <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-primary">
             Comment ça marche
@@ -553,7 +553,20 @@ const Index = () => {
               </h2>
             </div>
             <div className="mt-10 flex flex-col items-start gap-4 md:mt-0 md:items-end md:justify-center md:text-right">
-              <CTAButton />
+              <div className="flex flex-col items-start md:items-end gap-1.5">
+                <button
+                  type="button"
+                  onClick={handlePay}
+                  disabled={paymentLoading}
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-accent px-7 py-4 text-sm font-semibold text-accent-foreground shadow-soft-lg transition-all duration-300 hover:-translate-y-0.5 hover:brightness-[1.04] active:scale-[0.98] disabled:opacity-60"
+                >
+                  <span className="text-base leading-none">💛</span>
+                  Je reprends mon souffle
+                </button>
+                <span className="text-[11px] uppercase tracking-[0.18em] text-night-foreground/75">
+                  {PREMIUM_PRICE_LONG}
+                </span>
+              </div>
               <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] uppercase tracking-[0.18em] text-night-foreground/75">
                 <span>⚡ Accès immédiat</span>
                 <span aria-hidden>·</span>
