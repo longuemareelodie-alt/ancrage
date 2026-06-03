@@ -306,8 +306,15 @@ const Index = () => {
             <div className="mt-7 space-y-4 text-base leading-relaxed text-foreground/85">
               <p>Je suis maman.</p>
               <p>
-                Comme beaucoup de parents, j'ai connu la charge mentale, les rendez-vous qui
-                s'enchaînent, la peur, la fatigue et cette impression de toujours devoir tenir.
+                Pendant longtemps, j'ai cru qu'il fallait simplement tenir.
+              </p>
+              <p>
+                Tenir encore une journée.
+                <br />
+                Puis une autre.
+              </p>
+              <p>
+                Gérer les rendez-vous, la charge mentale, la fatigue, les émotions qui débordent et cette impression constante de devoir être forte pour tout le monde.
               </p>
               <p>J'avais besoin d'un endroit simple pour souffler.</p>
               <p className="font-serif text-lg italic text-night">
