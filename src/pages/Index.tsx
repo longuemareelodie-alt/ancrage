@@ -392,9 +392,6 @@ const Index = () => {
             </Fragment>
           ))}
         </div>
-        <div className="mt-12 flex justify-center">
-          <CTAButton />
-        </div>
       </Section>
 
       {/* FAMILLES ATYPIQUES — fond bleu nuit pleine largeur */}
@@ -430,11 +427,12 @@ const Index = () => {
           </motion.div>
           <motion.div
             {...fadeUp}
-            className="mx-auto mt-10 max-w-2xl text-center font-serif text-xl italic leading-relaxed text-night-foreground/90 md:text-2xl"
+            className="mx-auto mt-10 max-w-2xl space-y-4 text-center font-serif text-xl italic leading-relaxed text-night-foreground/90 md:text-2xl"
           >
-            <p>
-              Parce qu'aucune famille ne devrait avoir à rentrer dans une case pour être comprise.
-            </p>
+            <p>Chaque famille avance à son rythme.</p>
+            <p>TSA, TDAH, DYS, hypersensibilité, handicap ou besoins spécifiques.</p>
+            <p>Ici, il n'y a rien à réparer.</p>
+            <p>Seulement des ressources pour avancer avec plus de calme et de repères.</p>
           </motion.div>
         </div>
       </section>
