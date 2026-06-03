@@ -290,7 +290,7 @@ const Index = () => {
       </Section>
 
       {/* FONDATRICE — photo + récit (remontée juste après identification) */}
-      <Section>
+      <Section className="pt-12 md:pt-20">
         <div className="grid items-center gap-12 md:grid-cols-[1.1fr_1fr] md:gap-16">
           <motion.div {...fadeUp} className="order-2 md:order-1">
             <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-primary">
