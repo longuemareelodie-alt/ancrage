@@ -155,6 +155,7 @@ Deno.serve(async (req) => {
       return jsonResponse({ error: "amount_below_minimum" }, 400);
     }
     const finalAmountEur = (finalCents / 100).toFixed(2);
+    const vatAmountEur = (Math.round(finalCents / 6) / 100).toFixed(2);
 
     const description = promo
       ? `${product.description} (${promo.label})`
@@ -168,6 +169,19 @@ Deno.serve(async (req) => {
       webhookUrl,
       locale: "fr_FR",
       method: ["creditcard", "klarna", "paypal", "bancontact", "ideal"],
+      lines: [
+        {
+          type: "digital",
+          description,
+          quantity: 1,
+          quantityUnit: "pcs",
+          unitPrice: { currency: "EUR", value: finalAmountEur },
+          totalAmount: { currency: "EUR", value: finalAmountEur },
+          vatRate: "20.00",
+          vatAmount: { currency: "EUR", value: vatAmountEur },
+          sku: productKey,
+        },
+      ],
       metadata: {
         user_id: authedUser?.id ?? null,
         email: effectiveEmail,
