@@ -167,6 +167,7 @@ Deno.serve(async (req) => {
       redirectUrl,
       webhookUrl,
       locale: "fr_FR",
+      method: ["creditcard", "klarna", "paypal", "bancontact", "ideal"],
       metadata: {
         user_id: authedUser?.id ?? null,
         email: effectiveEmail,
