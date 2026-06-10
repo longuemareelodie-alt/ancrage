@@ -166,6 +166,7 @@ Deno.serve(async (req) => {
       description,
       redirectUrl,
       webhookUrl,
+      locale: "fr_FR",
       metadata: {
         user_id: authedUser?.id ?? null,
         email: effectiveEmail,
