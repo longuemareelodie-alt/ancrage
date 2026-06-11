@@ -6,6 +6,7 @@ import { ArrowRight, Menu, X, Heart, Check } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
 import { PREMIUM_PRICE_LONG, PREMIUM_PRICE_SHORT } from "@/lib/premiumOffer";
+import KlarnaPayButton from "@/components/KlarnaPayButton";
 import heroPhoto from "@/assets/hero-fondatrice.png.asset.json";
 
 const fadeUp = {
@@ -246,7 +247,10 @@ const Index = () => {
               </p>
             </div>
             <div className="mt-9">
-              <CTAButton />
+              <div className="flex flex-col items-start gap-3">
+                <CTAButton />
+                <KlarnaPayButton className="inline-flex items-center justify-center rounded-full border border-primary/40 bg-background px-6 py-3 text-xs font-semibold text-primary transition-colors hover:bg-primary/5" />
+              </div>
               <p className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
                 <span>🔒 Paiement unique</span>
                 <span aria-hidden>·</span>
@@ -518,8 +522,9 @@ const Index = () => {
                 </li>
               ))}
             </ul>
-            <div className="mt-9">
+            <div className="mt-9 flex flex-col items-start gap-3">
               <CTAButton />
+              <KlarnaPayButton className="inline-flex items-center justify-center rounded-full border border-primary/40 bg-background px-6 py-3 text-xs font-semibold text-primary transition-colors hover:bg-primary/5" />
             </div>
           </div>
         </motion.div>
@@ -566,6 +571,7 @@ const Index = () => {
                 <span className="text-[11px] uppercase tracking-[0.18em] text-night-foreground/75">
                   {PREMIUM_PRICE_LONG}
                 </span>
+                <KlarnaPayButton className="inline-flex items-center justify-center rounded-full border border-night-foreground/40 bg-transparent px-6 py-3 text-xs font-semibold text-night-foreground transition-colors hover:bg-night-foreground/10" />
               </div>
               <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] uppercase tracking-[0.18em] text-night-foreground/75">
                 <span>⚡ Accès immédiat</span>
