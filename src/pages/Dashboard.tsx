@@ -14,6 +14,7 @@ import ResumeBanner from "@/components/ResumeBanner";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
 import DiscoveryHint from "@/components/DiscoveryHint";
 import { PREMIUM_PRICE_SHORT } from "@/lib/premiumOffer";
+import KlarnaStatusIndicator from "@/components/KlarnaStatusIndicator";
 
 type MoodKey = "calm" | "ok" | "tense" | "overflow";
 const MOOD_OPTIONS: { key: MoodKey; emoji: string; label: string; adjust: number }[] = [
@@ -332,6 +333,7 @@ const Dashboard = () => {
               >
                 {paymentLoading ? "Chargement…" : `Je veux me sentir mieux — ${PREMIUM_PRICE_SHORT}`}
               </button>
+              <KlarnaStatusIndicator />
             </motion.div>
           )}
 
