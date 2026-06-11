@@ -94,7 +94,7 @@ describe("validatePaymentAmount", () => {
     expect(
       validatePaymentAmount({
         productKey: "premium",
-        paidCents: 5700,
+        paidCents: 9700,
         currency: "EUR",
       }),
     ).toEqual({ ok: true });
