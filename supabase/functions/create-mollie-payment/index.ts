@@ -167,14 +167,39 @@ Deno.serve(async (req) => {
       ? `${product.description} (${promo.label})`
       : product.description;
 
+    // Validate optional billing address (required by Klarna)
+    let validatedBillingAddress: Record<string, string> | null = null;
+    if (billingAddress) {
+      const required = ["streetAndNumber", "postalCode", "city", "country"];
+      const missing = required.filter((k) => !(billingAddress as any)[k]);
+      if (missing.length) {
+        return jsonResponse({ error: "billing_address_incomplete", missing }, 400);
+      }
+      const givenName = (billingAddress as any).givenName?.toString().trim();
+      const familyName = (billingAddress as any).familyName?.toString().trim();
+      validatedBillingAddress = {
+        streetAndNumber: String((billingAddress as any).streetAndNumber).trim(),
+        postalCode: String((billingAddress as any).postalCode).trim(),
+        city: String((billingAddress as any).city).trim(),
+        country: String((billingAddress as any).country).trim().toUpperCase(),
+        ...(givenName ? { givenName } : {}),
+        ...(familyName ? { familyName } : {}),
+        ...(effectiveEmail ? { email: effectiveEmail } : {}),
+      };
+    }
+
+    const methodField = forceMethod
+      ? forceMethod
+      : ["creditcard", "klarna", "paypal", "bancontact", "ideal"];
+
     // Create Mollie payment with user metadata
-    const molliePayload = {
+    const molliePayload: Record<string, unknown> = {
       amount: { currency: "EUR", value: finalAmountEur },
       description,
       redirectUrl,
       webhookUrl,
       locale: "fr_FR",
-      method: ["creditcard", "klarna", "paypal", "bancontact", "ideal"],
+      method: methodField,
       lines: [
         {
           type: "digital",
@@ -198,8 +223,12 @@ Deno.serve(async (req) => {
         discount_cents: discountCents,
         final_cents: finalCents,
         promo_code: promo ? normalizedPromo : null,
+        method_forced: forceMethod ?? null,
       },
     };
+    if (validatedBillingAddress) {
+      molliePayload.billingAddress = validatedBillingAddress;
+    }
 
     console.log("Creating Mollie payment:", JSON.stringify({
       user_id: authedUser?.id ?? null,
