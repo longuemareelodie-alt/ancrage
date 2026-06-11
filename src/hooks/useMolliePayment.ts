@@ -13,6 +13,17 @@ interface StartPaymentOptions {
    * authed email is always used in that case.
    */
   guestEmail?: string;
+  /** Force a single Mollie payment method (e.g. "klarna"). */
+  method?: string;
+  /** Billing address (required by Klarna). */
+  billingAddress?: {
+    givenName?: string;
+    familyName?: string;
+    streetAndNumber: string;
+    postalCode: string;
+    city: string;
+    country: string;
+  };
 }
 
 export const useMolliePayment = () => {
@@ -40,6 +51,8 @@ export const useMolliePayment = () => {
             // the email is optional before payment: Mollie/customer details are
             // used by the webhook to send the account activation link after payment.
             guestEmail: user ? undefined : guestEmail,
+            method: options.method,
+            billingAddress: options.billingAddress,
           },
         }
       );

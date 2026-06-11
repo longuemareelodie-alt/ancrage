@@ -15,6 +15,7 @@ import {
 import Breadcrumb from "@/components/Breadcrumb";
 import { PREMIUM_PRICE_CENTS } from "@/lib/premiumOffer";
 import KlarnaStatusIndicator from "@/components/KlarnaStatusIndicator";
+import KlarnaPayButton from "@/components/KlarnaPayButton";
 
 const Paywall = () => {
   const { user, refreshEligibility, isPaid: ctxIsPaid } = useAuth();
@@ -398,6 +399,7 @@ const Paywall = () => {
                     })
                   : t("paywall.cta")}
             </button>
+            <KlarnaPayButton promoCode={appliedPromo} />
             {user && !isPaid && (
               <button
                 type="button"
