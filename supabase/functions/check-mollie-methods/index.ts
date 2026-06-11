@@ -60,7 +60,7 @@ Deno.serve(async (req) => {
           redirectUrl: "https://digitalmamanlibre.com/payment-pending",
           locale: "fr_FR",
           method: "klarna",
-          billingAddress: { country: "FR" },
+
           lines: [
             {
               type: "digital",
