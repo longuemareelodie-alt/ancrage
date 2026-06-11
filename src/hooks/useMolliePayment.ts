@@ -51,6 +51,8 @@ export const useMolliePayment = () => {
             // the email is optional before payment: Mollie/customer details are
             // used by the webhook to send the account activation link after payment.
             guestEmail: user ? undefined : guestEmail,
+            method: options.method,
+            billingAddress: options.billingAddress,
           },
         }
       );
