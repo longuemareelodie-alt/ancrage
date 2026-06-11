@@ -137,7 +137,7 @@ describe("validatePaymentAmount", () => {
     expect(
       validatePaymentAmount({
         productKey: "premium",
-        paidCents: 4200, // 5700 - 1500
+        paidCents: 8200, // 9700 - 1500
         discountCents: 1500,
         currency: "EUR",
       }),
