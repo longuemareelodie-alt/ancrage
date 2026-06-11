@@ -382,6 +382,8 @@ const Paywall = () => {
               ))}
             </ul>
 
+            <KlarnaStatusIndicator />
+
             <button
               onClick={handlePurchase}
               disabled={paymentLoading}
