@@ -114,7 +114,7 @@ describe("validatePaymentAmount", () => {
   it("rejects a currency switch", () => {
     const r = validatePaymentAmount({
       productKey: "premium",
-      paidCents: 5700,
+      paidCents: 9700,
       currency: "USD",
     }) as { ok: false; reason: string; expectedCents: number };
     expect(r.ok).toBe(false);
