@@ -487,45 +487,122 @@ const Index = () => {
       </Section>
 
 
+      {/* TOUT CE QUI EST INCLUS */}
+      <Section id="inclus" className="!pt-12 md:!pt-20 !pb-8">
+        <motion.div {...fadeUp} className="mx-auto max-w-3xl text-center">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-primary-dark">
+            Ce que tu reçois
+          </p>
+          <h2 className="mt-4 font-serif text-[clamp(2rem,4.5vw,3rem)] leading-tight text-night">
+            Tout ce qui est inclus dans Ancrage{" "}
+            <span className="relative inline-block">
+              🌿
+            </span>
+          </h2>
+          <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-foreground/75">
+            Ancrage n'est pas une simple ressource.
+            <br />
+            C'est un espace conçu pour accompagner les mamans qui portent beaucoup trop seules.
+          </p>
+        </motion.div>
+        <motion.ul
+          {...fadeUp}
+          className="mx-auto mt-12 grid max-w-4xl gap-3 sm:grid-cols-2 lg:grid-cols-3"
+        >
+          {[
+            "Séances d'ancrage et de régulation émotionnelle",
+            "Journal personnel privé",
+            "Outils pour retrouver des repères quand tout déborde",
+            "Espace santé familial",
+            "Profils médicaux des enfants et de la famille",
+            "Suivi des traitements et médicaments",
+            "Fiches médicales d'urgence",
+            "Outils de gestion des crises",
+            "Ressources TSA, TDAH, DYS et besoins spécifiques",
+            "Activités adaptées pour les enfants",
+            "Parcours d'initiation à la LSF",
+            "Espace ressources pour les familles atypiques",
+            "Communauté bienveillante",
+            "Futures mises à jour incluses",
+            "Présence humaine si besoin",
+          ].map((item) => (
+            <li
+              key={item}
+              className="flex items-start gap-3 rounded-2xl border border-border/60 bg-card/70 p-4 text-sm leading-relaxed text-foreground/85 shadow-soft-lg/0 transition-all duration-300 hover:-translate-y-0.5 hover:bg-card"
+            >
+              <span className="mt-0.5 text-base leading-none" aria-hidden>🌿</span>
+              <span>{item}</span>
+            </li>
+          ))}
+        </motion.ul>
+      </Section>
+
+      {/* VALEUR */}
+      <Section className="!pt-8 !pb-12 md:!pb-20">
+        <motion.div
+          {...fadeUp}
+          className="mx-auto max-w-3xl rounded-[2rem] bg-secondary/40 p-10 md:p-14"
+        >
+          <h2 className="font-serif text-[clamp(1.75rem,3.5vw,2.25rem)] leading-tight text-night">
+            Pourquoi Ancrage vaut bien plus que son prix&nbsp;?
+          </h2>
+          <div className="mt-6 space-y-4 text-base leading-relaxed text-foreground/85">
+            <p>Une seule consultation spécialisée coûte souvent entre 50&nbsp;€ et 100&nbsp;€.</p>
+            <p>Les ressources adaptées aux familles atypiques sont souvent dispersées sur plusieurs plateformes.</p>
+            <p>Les outils d'organisation, de gestion émotionnelle et les ressources spécialisées sont généralement vendus séparément.</p>
+            <p>Ancrage rassemble tout cela dans un seul espace conçu pour les mamans qui portent déjà beaucoup trop.</p>
+            <p className="font-serif text-xl italic text-night">Tu n'achètes pas un outil.</p>
+            <p>Tu rejoins un espace ressource pensé pour te faire gagner du temps, de l'énergie et des repères.</p>
+          </div>
+        </motion.div>
+      </Section>
+
       {/* OFFRE — carte tarif */}
-      <Section id="offre" className="!pt-12 md:!pt-20">
+      <Section id="offre" className="!pt-4 md:!pt-8">
         <motion.div {...fadeUp} className="mx-auto max-w-2xl text-center">
           <p className="font-serif text-2xl italic leading-relaxed text-night md:text-3xl">
-            Tu n'as pas besoin d'aller mieux pour commencer.
+            Tu n'as pas besoin de tout porter seule.
             <br />
-            <span className="text-primary">Tu peux simplement commencer aujourd'hui.</span>
+            <span className="text-primary">Ancrage a été créé pour ça.</span>
           </p>
         </motion.div>
         <motion.div {...fadeUp} className="mx-auto mt-12 max-w-md">
-          <div className="rounded-[2rem] bg-secondary/60 p-10 text-center shadow-[0_40px_100px_-40px_rgba(30,43,82,0.25)]">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-primary-dark">
+          <div className="relative rounded-[2rem] bg-secondary/60 p-10 text-center shadow-[0_40px_100px_-40px_rgba(30,43,82,0.25)]">
+            <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-night px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-night-foreground shadow-soft-lg">
+              ✨ Accès à vie
+            </span>
+            <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.28em] text-primary-dark">
               Ancrage Premium
             </p>
             <p className="mt-6 font-serif text-[clamp(3.5rem,6vw,4.5rem)] leading-none text-night">
               {PREMIUM_PRICE_SHORT}
             </p>
-            <p className="mt-3 text-xs uppercase tracking-[0.24em] text-muted-foreground">
-              Paiement unique · Accès à vie
+            <p className="mt-3 text-sm text-foreground/75">
+              ou <span className="font-semibold text-night">3 fois 32,33&nbsp;€</span> avec Klarna
             </p>
-            <ul className="mx-auto mt-8 max-w-xs space-y-3 text-left text-sm">
-              {[
-                "Accès immédiat",
-                "Sans abonnement",
-                "Mises à jour incluses",
-                "Mobile & ordinateur",
-              ].map((f) => (
-                <li key={f} className="flex items-center gap-3 text-foreground/85">
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-accent text-accent-foreground">
-                    <Check className="h-3 w-3" strokeWidth={3} />
-                  </span>
-                  {f}
-                </li>
-              ))}
-            </ul>
-            <div className="mt-9 flex flex-col items-start gap-3">
+            <p className="mt-4 text-sm italic leading-relaxed text-foreground/70">
+              Prends soin de toi aujourd'hui.
+              <br />
+              Choisis le paiement qui te convient le mieux.
+            </p>
+            <div className="mt-8 flex flex-col items-stretch gap-3">
               <CTAButton />
               <KlarnaPayButton className="inline-flex items-center justify-center rounded-full border border-primary/40 bg-background px-6 py-3 text-xs font-semibold text-primary transition-colors hover:bg-primary/5" />
             </div>
+            <ul className="mx-auto mt-8 space-y-2.5 text-left text-sm text-foreground/85">
+              {[
+                { e: "🌿", t: "Accès immédiat" },
+                { e: "🔒", t: "Paiement sécurisé CB, PayPal ou Klarna" },
+                { e: "💳", t: "Paiement possible en 3 fois avec Klarna" },
+                { e: "💌", t: "Je reste disponible si tu as besoin d'aide" },
+                { e: "♾️", t: "Accès à vie et futures améliorations incluses" },
+              ].map((f) => (
+                <li key={f.t} className="flex items-start gap-3">
+                  <span className="mt-0.5 text-base leading-none" aria-hidden>{f.e}</span>
+                  <span>{f.t}</span>
+                </li>
+              ))}
+            </ul>
           </div>
         </motion.div>
       </Section>
