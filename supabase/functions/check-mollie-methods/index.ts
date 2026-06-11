@@ -41,12 +41,58 @@ Deno.serve(async (req) => {
       }));
     const klarnaIds = methods.filter((m) => m.id.startsWith("klarna")).map((m) => m.id);
 
+    // Optional deep test: try to create a Klarna-ONLY payment so Mollie
+    // tells us exactly why Klarna would be rejected (then we don't pay it —
+    // the payment simply expires).
+    let klarnaTest: unknown = undefined;
+    if (url.searchParams.get("testKlarna") === "1") {
+      const value = Number(amount).toFixed(2);
+      const vat = (Math.round(Number(amount) * 100 / 6) / 100).toFixed(2);
+      const res2 = await fetch("https://api.mollie.com/v2/payments", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${mollieKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          amount: { currency: "EUR", value },
+          description: "Diagnostic Klarna (ne pas payer)",
+          redirectUrl: "https://digitalmamanlibre.com/payment-pending",
+          locale: "fr_FR",
+          method: "klarna",
+          billingAddress: { country: "FR" },
+          lines: [
+            {
+              type: "digital",
+              description: "Diagnostic Klarna",
+              quantity: 1,
+              quantityUnit: "pcs",
+              unitPrice: { currency: "EUR", value },
+              totalAmount: { currency: "EUR", value },
+              vatRate: "20.00",
+              vatAmount: { currency: "EUR", value: vat },
+              sku: "diagnostic",
+            },
+          ],
+        }),
+      });
+      const body2 = await res2.json();
+      klarnaTest = {
+        status: res2.status,
+        ok: res2.ok,
+        paymentId: body2?.id ?? null,
+        checkoutUrl: body2?._links?.checkout?.href ?? null,
+        error: res2.ok ? null : body2,
+      };
+    }
+
     return json({
       mode: mollieKey.startsWith("live_") ? "live" : "test",
       amount,
       klarnaAvailable: klarnaIds.length > 0,
       klarnaIds,
       methods,
+      klarnaTest,
     });
   } catch (e) {
     console.error("check-mollie-methods error:", (e as Error)?.message);
