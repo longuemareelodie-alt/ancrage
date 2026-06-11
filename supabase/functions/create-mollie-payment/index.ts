@@ -78,6 +78,8 @@ Deno.serve(async (req) => {
     let rawPromoCode: string | null = null;
     let rawProduct: string | null = null;
     let guestEmail: string | null = null;
+    let billingAddress: Record<string, string> | null = null;
+    let forceMethod: string | null = null;
 
     try {
       const body = await req.json();
@@ -86,6 +88,10 @@ Deno.serve(async (req) => {
       if (typeof body?.promoCode === "string") rawPromoCode = body.promoCode;
       if (typeof body?.product === "string") rawProduct = body.product;
       if (typeof body?.guestEmail === "string") guestEmail = body.guestEmail.trim().toLowerCase();
+      if (body?.billingAddress && typeof body.billingAddress === "object") {
+        billingAddress = body.billingAddress;
+      }
+      if (typeof body?.method === "string") forceMethod = body.method;
     } catch {
       // No body or invalid JSON — use defaults
     }
