@@ -17,6 +17,7 @@ import { toast } from "sonner";
 
 interface Props {
   promoCode?: string | null;
+  className?: string;
 }
 
 /**
@@ -25,7 +26,7 @@ interface Props {
  * on la collecte dans un mini-formulaire, puis on force `method: "klarna"`
  * côté Mollie pour ouvrir directement le checkout Klarna.
  */
-const KlarnaPayButton = ({ promoCode = null }: Props) => {
+const KlarnaPayButton = ({ promoCode = null, className }: Props) => {
   const { startPayment, loading } = useMolliePayment();
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({
@@ -66,7 +67,10 @@ const KlarnaPayButton = ({ promoCode = null }: Props) => {
       <DialogTrigger asChild>
         <button
           type="button"
-          className="w-full rounded-xl border border-primary/30 bg-background py-3 text-sm font-semibold text-primary hover:bg-primary/5"
+          className={
+            className ??
+            "w-full rounded-xl border border-primary/30 bg-background py-3 text-sm font-semibold text-primary hover:bg-primary/5"
+          }
         >
           Payer en plusieurs fois avec Klarna
         </button>
