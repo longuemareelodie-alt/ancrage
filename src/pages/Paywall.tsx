@@ -399,6 +399,7 @@ const Paywall = () => {
                     })
                   : t("paywall.cta")}
             </button>
+            <KlarnaPayButton promoCode={appliedPromo} />
             {user && !isPaid && (
               <button
                 type="button"
