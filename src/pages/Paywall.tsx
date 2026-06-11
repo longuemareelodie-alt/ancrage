@@ -14,6 +14,7 @@ import {
 } from "@/lib/paywallPolicy";
 import Breadcrumb from "@/components/Breadcrumb";
 import { PREMIUM_PRICE_CENTS } from "@/lib/premiumOffer";
+import KlarnaStatusIndicator from "@/components/KlarnaStatusIndicator";
 
 const Paywall = () => {
   const { user, refreshEligibility, isPaid: ctxIsPaid } = useAuth();
