@@ -16,7 +16,7 @@
  * `PRODUCT_CATALOG.premium.priceCents` dans
  * `supabase/functions/_shared/productCatalog.ts` (vérifié par un test).
  */
-export const PREMIUM_PRICE_CENTS = 5700;
+export const PREMIUM_PRICE_CENTS = 9700;
 
 /** Devise unique de l'offre. */
 export const PREMIUM_CURRENCY = "EUR" as const;
