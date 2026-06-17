@@ -186,6 +186,7 @@ const AnimatedRoutes = () => {
         </Route>
         <Route path="/portrait-transformation" element={<PaidRoute><PageTransition><PortraitTransformation /></PageTransition></PaidRoute>} />
         <Route path="/livre-reconstruction" element={<PaidRoute><PageTransition><LivreReconstruction /></PageTransition></PaidRoute>} />
+        <Route path="/frise-evolution" element={<PaidRoute><PageTransition><FriseEvolution /></PageTransition></PaidRoute>} />
         <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
           </Routes>
         </RoutesWrapper>

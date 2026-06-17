@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
-import { User, Heart, Flame, BarChart3, AlertCircle, Flower2 } from "lucide-react";
+import { User, Heart, Flame, BarChart3, AlertCircle, Flower2, Clock, BookHeart } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { getDailyMessage } from "@/data/dailyMessages";
@@ -310,6 +310,54 @@ const Dashboard = () => {
                   <p className="text-sm font-bold">Mon Portrait de Transformation 🌸</p>
                   <p className="text-xs text-muted-foreground">
                     Ce que tu traverses, développes et deviens — chaque mois.
+                  </p>
+                </div>
+              </Link>
+            </motion.div>
+          )}
+
+          {/* Frise d'Évolution */}
+          {isPremium && (
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.47 }}
+            >
+              <Link
+                to="/frise-evolution"
+                className="flex w-full items-center gap-4 rounded-2xl bg-gradient-to-r from-accent/30 to-primary/5 border border-primary/15 p-5 text-left shadow-soft transition-transform hover:scale-[1.02] active:scale-[0.98]"
+              >
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/15">
+                  <Clock className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm font-bold">Ma Frise d'Évolution 🕰️</p>
+                  <p className="text-xs text-muted-foreground">
+                    Avant, tempête, aujourd'hui — ton chemin en trois étapes.
+                  </p>
+                </div>
+              </Link>
+            </motion.div>
+          )}
+
+          {/* Livre de Reconstruction */}
+          {isPremium && (
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.49 }}
+            >
+              <Link
+                to="/livre-reconstruction"
+                className="flex w-full items-center gap-4 rounded-2xl bg-gradient-to-r from-primary/5 to-accent/20 border border-primary/15 p-5 text-left shadow-soft transition-transform hover:scale-[1.02] active:scale-[0.98]"
+              >
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/15">
+                  <BookHeart className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm font-bold">Mon Livre de Reconstruction 📖</p>
+                  <p className="text-xs text-muted-foreground">
+                    Tes pages, portraits et victoires — exportables en PDF.
                   </p>
                 </div>
               </Link>
