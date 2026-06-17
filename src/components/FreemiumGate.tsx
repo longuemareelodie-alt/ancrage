@@ -25,7 +25,7 @@ const FreemiumGate = ({ title, message }: FreemiumGateProps) => {
         <h2 className="text-xl font-bold leading-snug">{title}</h2>
         <p className="text-sm text-muted-foreground leading-relaxed">
           {message ??
-            `Continue avec Ancrage — ${PREMIUM_PRICE_LONG} · ${PREMIUM_LIFETIME_LABEL}. Pas d'abonnement, jamais.`}
+            `Continue avec Eclosia — ${PREMIUM_PRICE_LONG} · ${PREMIUM_LIFETIME_LABEL}. Pas d'abonnement, jamais.`}
         </p>
         <button
           type="button"

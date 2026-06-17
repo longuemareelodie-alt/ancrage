@@ -1,6 +1,6 @@
 {
-  "name": "Ancrage",
-  "short_name": "Ancrage",
+  "name": "Eclosia",
+  "short_name": "Eclosia",
   "description": "Prends soin de toi, un check-in à la fois",
   "start_url": "/dashboard",
   "display": "standalone",

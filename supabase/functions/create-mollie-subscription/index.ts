@@ -1,4 +1,4 @@
-// Endpoint deprecated: Ancrage no longer offers subscriptions.
+// Endpoint deprecated: Eclosia no longer offers subscriptions.
 // Kept as a 410 Gone stub so any stale client receives a clear error.
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",

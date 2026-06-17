@@ -27,13 +27,13 @@ export const RecoveryEmail = ({
 }: RecoveryEmailProps) => (
   <Html lang="fr" dir="ltr">
     <Head />
-    <Preview>Réinitialise ton mot de passe Ancrage</Preview>
+    <Preview>Réinitialise ton mot de passe Eclosia</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Img src={LOGO_URL} alt="Ancrage" width="120" height="auto" style={logo} />
+        <Img src={LOGO_URL} alt="Eclosia" width="120" height="auto" style={logo} />
         <Heading style={h1}>Mot de passe oublié ?</Heading>
         <Text style={text}>
-          Tu as demandé à réinitialiser ton mot de passe pour Ancrage.
+          Tu as demandé à réinitialiser ton mot de passe pour Eclosia.
           Clique ci-dessous pour en choisir un nouveau.
         </Text>
         <Button style={button} href={confirmationUrl}>

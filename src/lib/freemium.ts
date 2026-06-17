@@ -1,5 +1,5 @@
 /**
- * Freemium policy — Ancrage
+ * Freemium policy — Eclosia
  * --------------------------
  * Trois niveaux d'accès :
  *  - "guest"     : non connecté

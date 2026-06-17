@@ -22,10 +22,10 @@ const LOGO_URL = 'https://mpadkxqomykztvqrnmfv.supabase.co/storage/v1/object/pub
 export const ReauthenticationEmail = ({ token }: ReauthenticationEmailProps) => (
   <Html lang="fr" dir="ltr">
     <Head />
-    <Preview>Ton code de vérification Ancrage</Preview>
+    <Preview>Ton code de vérification Eclosia</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Img src={LOGO_URL} alt="Ancrage" width="120" height="auto" style={logo} />
+        <Img src={LOGO_URL} alt="Eclosia" width="120" height="auto" style={logo} />
         <Heading style={h1}>Confirme ton identité</Heading>
         <Text style={text}>Utilise le code ci-dessous pour vérifier ton identité :</Text>
         <Text style={codeStyle}>{token}</Text>

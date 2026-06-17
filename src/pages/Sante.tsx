@@ -112,7 +112,7 @@ const Sante = () => {
           <div className="mt-6 rounded-2xl border border-primary/20 bg-primary/5 p-4">
             <p className="text-xs font-semibold text-primary">💡 Débloque tout ton suivi santé</p>
             <p className="mt-1 text-xs text-muted-foreground">
-              L'accès à vie te donne tout : agenda médical, suivi des traitements, fiche d'urgence et tout le contenu d'Ancrage.
+              L'accès à vie te donne tout : agenda médical, suivi des traitements, fiche d'urgence et tout le contenu d'Eclosia.
             </p>
             <button
               onClick={() => navigate("/paywall")}

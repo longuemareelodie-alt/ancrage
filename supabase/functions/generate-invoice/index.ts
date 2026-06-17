@@ -97,7 +97,7 @@ function buildInvoicePDF(invoice: {
 
   // Footer
   yPos = 60;
-  addText(50, yPos, 8, "Ancrage - Application de bien-etre emotionnel");
+  addText(50, yPos, 8, "Eclosia - Application de bien-etre emotionnel");
   yPos -= 12;
   addText(50, yPos, 8, "Merci pour votre confiance.");
 

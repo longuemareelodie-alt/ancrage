@@ -1,7 +1,7 @@
 import { PREMIUM_PRICE_LONG } from "./premiumOffer";
 
 /**
- * Lexique central — Ancrage / Digital Maman Libre
+ * Lexique central — Eclosia / Digital Maman Libre
  * ---------------------------------------------------
  * RÈGLE D'OR : tout texte visible par l'utilisatrice (CTA, titre, réassurance,
  * confirmation, sous-titre) doit utiliser ce vocabulaire ou y faire référence.

@@ -55,7 +55,7 @@ const InstallPWAPrompt = () => {
           </div>
           <div className="flex-1">
             <p className="text-sm font-bold text-foreground">
-              Installe Ancrage sur ton téléphone
+              Installe Eclosia sur ton téléphone
             </p>
             <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
               {isIOS ? (

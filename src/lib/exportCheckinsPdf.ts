@@ -59,7 +59,7 @@ export function exportCheckinsToPdf(
   doc.setTextColor(255, 255, 255);
   doc.setFont("helvetica", "bold");
   doc.setFontSize(22);
-  doc.text("Ancrage", margin, 42);
+  doc.text("Eclosia", margin, 42);
   doc.setFont("helvetica", "normal");
   doc.setFontSize(11);
   doc.text("Mon suivi émotionnel", margin, 62);
@@ -325,7 +325,7 @@ export function exportCheckinsToPdf(
     doc.setFont("helvetica", "normal");
     doc.setFontSize(8);
     doc.text(
-      "Ancrage — Ton compagnon de régulation émotionnelle",
+      "Eclosia — Ton compagnon de régulation émotionnelle",
       pageWidth / 2,
       pageHeight - 20,
       { align: "center" },

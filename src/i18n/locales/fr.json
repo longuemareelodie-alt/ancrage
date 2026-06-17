@@ -377,7 +377,7 @@
     "social": {
       "p1": "Plus de 2 000 mamans francophones ont commencé ce chemin.",
       "p2": "« J'ai pleuré dès le premier exercice. Pas de tristesse. De soulagement. Personne ne m'avait jamais expliqué que mon corps avait le droit de redescendre. » — Sarah, 34 ans, 2 enfants",
-      "p3": "J'ai créé Ancrage parce que j'en avais besoin moi aussi. Et parce qu'aucune maman ne devrait avoir à choisir entre tenir et exister."
+      "p3": "J'ai créé Eclosia parce que j'en avais besoin moi aussi. Et parce qu'aucune maman ne devrait avoir à choisir entre tenir et exister."
     },
     "testimonials": {
       "title": "Elles l'ont fait avant toi.",
@@ -512,7 +512,7 @@
     "intro": "Avant de commencer, voici les réponses aux questions qu'on me pose le plus souvent.",
     "items": {
       "what_is": {
-        "q": "Ancrage, c'est quoi exactement ?",
+        "q": "Eclosia, c'est quoi exactement ?",
         "a": "Un outil pour sortir du mode survie et retrouver ton calme en 30 secondes. Des ancrages courts qui font redescendre ton système nerveux quand il est en alerte. Pas une thérapie, pas un diagnostic : des gestes simples, à faire seule, à ton rythme."
       },
       "price": {
@@ -525,7 +525,7 @@
       },
       "medical": {
         "q": "Est-ce médical ?",
-        "a": "Non. Ancrage n'est ni un dispositif médical, ni une thérapie, ni un diagnostic. C'est un outil d'accompagnement émotionnel qui ne remplace pas un professionnel de santé."
+        "a": "Non. Eclosia n'est ni un dispositif médical, ni une thérapie, ni un diagnostic. C'est un outil d'accompagnement émotionnel qui ne remplace pas un professionnel de santé."
       },
       "privacy": {
         "q": "Mes données ?",
@@ -1179,23 +1179,23 @@
     },
     "lifetime_box": {
       "title": "Accès à vie après ton paiement unique",
-      "text": "Tu paies 57€ une seule fois. À la confirmation du paiement, tout Ancrage est débloqué dans ton compte — pour toujours.",
+      "text": "Tu paies 57€ une seule fois. À la confirmation du paiement, tout Eclosia est débloqué dans ton compte — pour toujours.",
       "bullet_one_payment": "Un seul paiement de 57€",
       "bullet_no_renewal": "Aucun abonnement, rien à renouveler",
       "bullet_all_devices": "Sur tous tes appareils, à vie",
       "active_title": "Ton accès à vie est actif 💛",
-      "active_text": "Tu as déjà payé. Tout Ancrage est débloqué dans ton compte, à vie.",
+      "active_text": "Tu as déjà payé. Tout Eclosia est débloqué dans ton compte, à vie.",
       "active_cta": "Aller à mon espace"
     },
     "blocked": {
       "title": "Ton accès complet n'est pas encore activé 💛",
-      "text": "Ton compte a été créé après l'ouverture de l'accès payant à Ancrage. Pour débloquer toutes les fonctionnalités (rituel, urgence, espace santé, parcours…), il te faut le paiement unique de 57€.",
-      "cta": "Débloquer Ancrage — 57€"
+      "text": "Ton compte a été créé après l'ouverture de l'accès payant à Eclosia. Pour débloquer toutes les fonctionnalités (rituel, urgence, espace santé, parcours…), il te faut le paiement unique de 57€.",
+      "cta": "Débloquer Eclosia — 57€"
     },
     "redirected": {
       "title": "Cette page nécessite ton accès complet 💛",
-      "text": "Pour ouvrir cette page, il te faut l'accès complet à Ancrage. Tu peux reprendre ton paiement en un clic.",
-      "text_with_page": "Pour ouvrir « {{page}} », il te faut l'accès complet à Ancrage. Tu peux reprendre ton paiement en un clic.",
+      "text": "Pour ouvrir cette page, il te faut l'accès complet à Eclosia. Tu peux reprendre ton paiement en un clic.",
+      "text_with_page": "Pour ouvrir « {{page}} », il te faut l'accès complet à Eclosia. Tu peux reprendre ton paiement en un clic.",
       "resume_cta": "Reprendre le paiement",
       "page": {
         "dashboard": "Mon espace",
@@ -1239,12 +1239,12 @@
     },
     "confirmed": {
       "title": "Accès confirmé 💛",
-      "text": "Tout Ancrage est débloqué dans ton compte, à vie.",
+      "text": "Tout Eclosia est débloqué dans ton compte, à vie.",
       "redirect": "Redirection en cours…"
     },
     "error": {
       "title": "L'activation prend plus de temps que prévu",
-      "text": "En attendant la confirmation de ton paiement, ton compte reste limité à la page de paiement : les autres pages d'Ancrage ne sont pas encore accessibles. Pas d'inquiétude, ton paiement n'est pas perdu — l'accès s'ouvrira automatiquement dès la validation par la banque.",
+      "text": "En attendant la confirmation de ton paiement, ton compte reste limité à la page de paiement : les autres pages d'Eclosia ne sont pas encore accessibles. Pas d'inquiétude, ton paiement n'est pas perdu — l'accès s'ouvrira automatiquement dès la validation par la banque.",
       "steps_title": "Étapes rapides :",
       "step_1": "Patiente 2 à 3 minutes puis appuie sur « Vérifier à nouveau ».",
       "step_2": "Vérifie l'email de confirmation Mollie dans ta boîte (et tes spams).",

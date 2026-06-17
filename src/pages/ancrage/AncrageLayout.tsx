@@ -17,7 +17,7 @@ const AncrageLayout = () => {
       className="min-h-screen w-full"
       style={
         {
-          // Scoped Ancrage palette — sage / beige / off-white
+          // Scoped Eclosia palette — sage / beige / off-white
           ["--ancrage-bg" as string]: "#F7F4EE",
           ["--ancrage-surface" as string]: "#FFFFFF",
           ["--ancrage-soft" as string]: "#EFEAE0",

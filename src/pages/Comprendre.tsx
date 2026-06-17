@@ -48,7 +48,7 @@ const Comprendre = () => {
         <Link to="/dashboard" className="rounded-full p-2 hover:bg-secondary">
           <ArrowLeft className="h-5 w-5" />
         </Link>
-        <img src={logo} alt="Ancrage" className="h-8 w-auto" />
+        <img src={logo} alt="Eclosia" className="h-8 w-auto" />
         <div className="w-9" />
       </div>
 

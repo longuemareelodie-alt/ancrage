@@ -32,13 +32,13 @@ export const EmailChangeEmail = ({
 }: EmailChangeEmailProps) => (
   <Html lang="fr" dir="ltr">
     <Head />
-    <Preview>Confirme ton changement d'email pour Ancrage</Preview>
+    <Preview>Confirme ton changement d'email pour Eclosia</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Img src={LOGO_URL} alt="Ancrage" width="120" height="auto" style={logo} />
+        <Img src={LOGO_URL} alt="Eclosia" width="120" height="auto" style={logo} />
         <Heading style={h1}>Changement d'adresse email</Heading>
         <Text style={text}>
-          Tu as demandé à modifier ton email pour Ancrage de{' '}
+          Tu as demandé à modifier ton email pour Eclosia de{' '}
           <Link href={`mailto:${email}`} style={link}>
             {email}
           </Link>{' '}

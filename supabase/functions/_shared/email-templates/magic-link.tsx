@@ -27,13 +27,13 @@ export const MagicLinkEmail = ({
 }: MagicLinkEmailProps) => (
   <Html lang="fr" dir="ltr">
     <Head />
-    <Preview>Ton lien de connexion Ancrage</Preview>
+    <Preview>Ton lien de connexion Eclosia</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Img src={LOGO_URL} alt="Ancrage" width="120" height="auto" style={logo} />
+        <Img src={LOGO_URL} alt="Eclosia" width="120" height="auto" style={logo} />
         <Heading style={h1}>Ton lien de connexion</Heading>
         <Text style={text}>
-          Clique ci-dessous pour te connecter à Ancrage. Ce lien expire rapidement.
+          Clique ci-dessous pour te connecter à Eclosia. Ce lien expire rapidement.
         </Text>
         <Button style={button} href={confirmationUrl}>
           Se connecter

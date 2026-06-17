@@ -102,7 +102,7 @@ const Profil = () => (
     </button>
 
     <p className="pt-2 text-center text-[11px]" style={{ color: "var(--ancrage-ink-soft)" }}>
-      Ancrage · v1.0 · fait avec douceur 🌿
+      Eclosia · v1.0 · fait avec douceur 🌿
     </p>
   </div>
 );

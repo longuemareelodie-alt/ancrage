@@ -129,7 +129,7 @@ function downloadHelpCard(opts: {
     M,
     H - 6
   );
-  doc.text("Ancrage — digitalmamanlibre.com", M, H - 3);
+  doc.text("Eclosia — digitalmamanlibre.com", M, H - 3);
 
   const safe = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
   doc.save(`carte-aide-crise-${safe(opts.ctxLabel)}-${safe(opts.parentLabel)}.pdf`);

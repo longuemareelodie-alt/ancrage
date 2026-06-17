@@ -119,7 +119,7 @@ const PaymentSuccess = () => {
         transition={{ duration: 0.6, ease: "easeOut" }}
         className="w-full max-w-md space-y-8 text-center"
       >
-        <img src={logo} alt="Ancrage" className="mx-auto h-14 w-auto" />
+        <img src={logo} alt="Eclosia" className="mx-auto h-14 w-auto" />
 
         <motion.div
           initial={{ scale: 0 }}

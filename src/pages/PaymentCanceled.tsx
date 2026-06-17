@@ -12,7 +12,7 @@ const PaymentCanceled = () => {
         transition={{ duration: 0.4 }}
         className="w-full max-w-md space-y-6 text-center"
       >
-        <img src={logo} alt="Ancrage" className="mx-auto h-14 w-auto" />
+        <img src={logo} alt="Eclosia" className="mx-auto h-14 w-auto" />
 
         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-muted">
           <XCircle className="h-8 w-8 text-muted-foreground" />

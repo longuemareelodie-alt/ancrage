@@ -32,7 +32,7 @@ describe("testimonialSchema — règles unitaires", () => {
   it("rejette le vocabulaire médical", () => {
     const r = validateTestimonial({
       ...valid,
-      result: "« Ancrage a guéri ma dépression en 5 jours. »",
+      result: "« Eclosia a guéri ma dépression en 5 jours. »",
     });
     expect(r.valid).toBe(false);
     expect(r.errors.some((e) => e.rule === "vocab.medical")).toBe(true);
