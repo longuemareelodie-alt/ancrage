@@ -224,26 +224,19 @@ const Index = () => {
           <motion.div {...fadeUp}>
             <p className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.28em] text-primary-dark">
               <HandHeart className="h-4 w-4" />
-              Pour les mamans qui portent trop
+              Pour les femmes qui ont traversé une tempête
             </p>
             <h1 className="mt-6 font-serif text-[clamp(2.5rem,6.5vw,4.5rem)] font-normal leading-[1.02] tracking-tight text-night">
-              Quand tout déborde,
+              La vie t'a transformée.
               <br />
               <span className="relative inline-block text-primary">
-                commence par toi.
+                Eclosia t'aide à découvrir qui tu es devenue.
                 <HandUnderline />
               </span>
             </h1>
             <div className="mt-7 space-y-2 text-base leading-relaxed text-foreground/80">
-              <p>Charge mentale. Fatigue. Culpabilité. Émotions qui débordent.</p>
               <p>
-                Eclosia t'aide à <span className="text-primary font-medium">retrouver un peu de calme</span> quand ton
-                cerveau te dit qu'il ne{" "}
-                <span className="relative inline-block">
-                  tiendra
-                  <HandUnderline />
-                </span>{" "}
-                plus.
+                Tu ne te demandes pas comment redevenir celle d'avant. Tu te demandes qui tu es devenue. Eclosia est là pour ça.
               </p>
             </div>
             <div className="mt-9">
