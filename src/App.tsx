@@ -83,6 +83,7 @@ import AncrageEnfants from "./pages/ancrage/Enfants";
 import AncrageDocuments from "./pages/ancrage/Documents";
 import AncrageIA from "./pages/ancrage/IA";
 import AncrageProfil from "./pages/ancrage/Profil";
+import PortraitTransformation from "./pages/PortraitTransformation";
 
 const queryClient = new QueryClient();
 
@@ -181,6 +182,7 @@ const AnimatedRoutes = () => {
           <Route path="ia" element={<AncrageIA />} />
           <Route path="profil" element={<AncrageProfil />} />
         </Route>
+        <Route path="/portrait-transformation" element={<PaidRoute><PageTransition><PortraitTransformation /></PageTransition></PaidRoute>} />
         <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
           </Routes>
         </RoutesWrapper>
