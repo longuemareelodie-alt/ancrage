@@ -85,6 +85,7 @@ import AncrageIA from "./pages/ancrage/IA";
 import AncrageProfil from "./pages/ancrage/Profil";
 import PortraitTransformation from "./pages/PortraitTransformation";
 import LivreReconstruction from "./pages/LivreReconstruction";
+import FriseEvolution from "./pages/FriseEvolution";
 
 const queryClient = new QueryClient();
 
