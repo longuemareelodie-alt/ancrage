@@ -996,6 +996,51 @@ export type Database = {
         }
         Relationships: []
       }
+      transformation_portraits: {
+        Row: {
+          becoming: string
+          created_at: string
+          developing: string
+          entry_count: number
+          generation_mode: string
+          id: string
+          month: number
+          new_strengths: string
+          overcome: string
+          updated_at: string
+          user_id: string
+          year: number
+        }
+        Insert: {
+          becoming: string
+          created_at?: string
+          developing: string
+          entry_count?: number
+          generation_mode?: string
+          id?: string
+          month: number
+          new_strengths: string
+          overcome: string
+          updated_at?: string
+          user_id: string
+          year: number
+        }
+        Update: {
+          becoming?: string
+          created_at?: string
+          developing?: string
+          entry_count?: number
+          generation_mode?: string
+          id?: string
+          month?: number
+          new_strengths?: string
+          overcome?: string
+          updated_at?: string
+          user_id?: string
+          year?: number
+        }
+        Relationships: []
+      }
       user_badges: {
         Row: {
           badge_key: string
