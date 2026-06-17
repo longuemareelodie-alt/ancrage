@@ -126,7 +126,7 @@ const PortraitTransformation = () => {
           </p>
         </div>
 
-        <div className="mt-6 flex justify-center">
+        <div className="mt-6 flex flex-col items-center gap-2">
           <Button onClick={generate} disabled={generating} size="lg" className="rounded-full">
             {generating ? (
               <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Génération…</>
@@ -134,6 +134,12 @@ const PortraitTransformation = () => {
               <><Sparkles className="mr-2 h-4 w-4" /> Générer mon portrait</>
             )}
           </Button>
+          <Link
+            to="/livre-reconstruction"
+            className="text-sm text-primary hover:underline inline-flex items-center gap-1"
+          >
+            📖 Voir mon Livre de Reconstruction
+          </Link>
         </div>
 
         {portraits.length > 1 && (
