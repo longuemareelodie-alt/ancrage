@@ -2,18 +2,61 @@ import { useEffect, useState } from "react";
 import { Sparkles, RefreshCw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useAuth } from "@/contexts/AuthContext";
 
 type Props = {
   /** Bump this number to force a refresh (e.g. after saving a new entry). */
   refreshKey?: number;
 };
 
+const CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 1 semaine
+const cacheKey = (userId: string) => `journal-memory-insight:${userId}`;
+
+type CachedInsight = { insight: string; cachedAt: number };
+
+const readCache = (userId: string): CachedInsight | null => {
+  try {
+    const raw = localStorage.getItem(cacheKey(userId));
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as CachedInsight;
+    if (!parsed?.insight || !parsed?.cachedAt) return null;
+    return parsed;
+  } catch {
+    return null;
+  }
+};
+
+const writeCache = (userId: string, insight: string) => {
+  try {
+    localStorage.setItem(
+      cacheKey(userId),
+      JSON.stringify({ insight, cachedAt: Date.now() } satisfies CachedInsight)
+    );
+  } catch {
+    // ignore quota errors
+  }
+};
+
 const JournalMemoryInsight = ({ refreshKey = 0 }: Props) => {
+  const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [insight, setInsight] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
 
-  const fetchInsight = async () => {
+  const fetchInsight = async (force = false) => {
+    if (!user) return;
+
+    // Cache : si <7j et pas de forçage → on évite l'appel IA
+    if (!force) {
+      const cached = readCache(user.id);
+      if (cached && Date.now() - cached.cachedAt < CACHE_TTL_MS) {
+        setInsight(cached.insight);
+        setError(null);
+        setLoading(false);
+        return;
+      }
+    }
+
     setLoading(true);
     setError(null);
     try {
@@ -21,6 +64,7 @@ const JournalMemoryInsight = ({ refreshKey = 0 }: Props) => {
       if (error) throw error;
       if (data?.insight) {
         setInsight(data.insight);
+        writeCache(user.id, data.insight);
       } else if (data?.message) {
         setError(data.message);
       } else {
@@ -34,9 +78,10 @@ const JournalMemoryInsight = ({ refreshKey = 0 }: Props) => {
   };
 
   useEffect(() => {
-    fetchInsight();
+    // refreshKey > 0 = nouvelle entrée enregistrée → on régénère
+    fetchInsight(refreshKey > 0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refreshKey]);
+  }, [refreshKey, user?.id]);
 
   return (
     <section
@@ -50,7 +95,7 @@ const JournalMemoryInsight = ({ refreshKey = 0 }: Props) => {
         </h2>
         <button
           type="button"
-          onClick={fetchInsight}
+          onClick={() => fetchInsight(true)}
           disabled={loading}
           className="inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-background/60 disabled:opacity-50"
           aria-label="Régénérer le message"
