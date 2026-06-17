@@ -18,7 +18,7 @@ const STEPS: Step[] = [
   {
     path: "/dashboard",
     emoji: "🏠",
-    title: "Bienvenue dans ton Ancrage",
+    title: "Bienvenue dans ton Eclosia",
     body:
       "Voici ton accueil. Chaque jour, tu y retrouves ton rituel matin/soir, ton humeur du moment et un accès rapide à tes outils.",
   },

@@ -41,7 +41,7 @@ Tout témoignage publié sur la home **doit** passer la validation de
 `burn-out`, `TDAH`, `anxiété généralisée`, `antidépresseur`, `anxiolytique`,
 `remplace ma thérapie`, `plus besoin de mon traitement`…
 
-> Ancrage est un outil de bien-être. Toute formulation laissant entendre un
+> Eclosia est un outil de bien-être. Toute formulation laissant entendre un
 > soin, un diagnostic, ou une guérison expose juridiquement le projet
 > (allégation de santé non autorisée).
 

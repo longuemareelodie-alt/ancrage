@@ -17,7 +17,7 @@
 export type TestimonialMetric = {
   /** Libellé court de l'indicateur (ex. "Fréquence des crises"). */
   label: string;
-  /** État avant l'utilisation d'Ancrage. */
+  /** État avant l'utilisation d'Eclosia. */
   before: string;
   /** État après. */
   after: string;
@@ -57,7 +57,7 @@ export type ValidationResult = {
 
 /**
  * Vocabulaire médical / thérapeutique INTERDIT.
- * Ancrage est un outil de bien-être, pas un dispositif médical.
+ * Eclosia est un outil de bien-être, pas un dispositif médical.
  * Toute formulation laissant entendre un soin, un diagnostic ou une guérison
  * expose à un risque juridique (allégation de santé non autorisée).
  */

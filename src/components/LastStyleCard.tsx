@@ -47,7 +47,7 @@ const LastStyleCard = () => {
   if (!last) return null;
 
   const Icon = last.style === "breathing" ? Wind : Hand;
-  const label = last.style === "breathing" ? "Respiration" : "Ancrage sensoriel";
+  const label = last.style === "breathing" ? "Respiration" : "Eclosia sensoriel";
   const otherStyle: ActionStyle = last.style === "breathing" ? "sensory" : "breathing";
   const otherLabel = ACTION_STYLE_LABELS[otherStyle];
 

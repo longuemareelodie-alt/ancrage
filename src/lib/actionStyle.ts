@@ -10,7 +10,7 @@ const SYNC_KEY = "calm_action_style_sync";
 export const ACTION_STYLE_LABELS: Record<ActionStyle, string> = {
   any: "Sans préférence",
   breathing: "Respiration",
-  sensory: "Ancrage sensoriel",
+  sensory: "Eclosia sensoriel",
 };
 
 export type SyncStatus = "idle" | "syncing" | "synced" | "offline" | "error" | "local";

@@ -55,7 +55,7 @@
     },
     "social": {
       "p1": "You're not the only one feeling this.",
-      "p2": "Women use Ancrage exactly for moments like this.",
+      "p2": "Women use Eclosia exactly for moments like this.",
       "p3": "I built this because I needed it too."
     },
     "price": {
@@ -79,7 +79,7 @@
     "intro": "Before you start, here are the answers to the questions I get the most.",
     "items": {
       "what_is": {
-        "q": "What exactly is Ancrage?",
+        "q": "What exactly is Eclosia?",
         "a": "A wellbeing tool designed to help your body settle when your nervous system is on alert. Not a therapy, not a diagnosis — just simple, short actions you can do on your own, at your own pace."
       },
       "price": {
@@ -92,7 +92,7 @@
       },
       "medical": {
         "q": "Is it medical?",
-        "a": "No. Ancrage is not a medical device, therapy or diagnosis. It is an emotional support tool that does not replace a health professional."
+        "a": "No. Eclosia is not a medical device, therapy or diagnosis. It is an emotional support tool that does not replace a health professional."
       },
       "privacy": {
         "q": "My data?",
@@ -544,23 +544,23 @@
     },
     "lifetime_box": {
       "title": "Lifetime access after your one-time payment",
-      "text": "You pay €57 once. As soon as the payment is confirmed, all of Ancrage is unlocked in your account — forever.",
+      "text": "You pay €57 once. As soon as the payment is confirmed, all of Eclosia is unlocked in your account — forever.",
       "bullet_one_payment": "One single €57 payment",
       "bullet_no_renewal": "No subscription, nothing to renew",
       "bullet_all_devices": "On all your devices, for life",
       "active_title": "Your lifetime access is active 💛",
-      "active_text": "You've already paid. All of Ancrage is unlocked in your account, for life.",
+      "active_text": "You've already paid. All of Eclosia is unlocked in your account, for life.",
       "active_cta": "Go to my space"
     },
     "blocked": {
       "title": "Your full access isn't active yet 💛",
-      "text": "Your account was created after Ancrage's paid access launched. To unlock everything (ritual, emergency, health space, journey…), you need the one-time €57 payment.",
-      "cta": "Unlock Ancrage — €57"
+      "text": "Your account was created after Eclosia's paid access launched. To unlock everything (ritual, emergency, health space, journey…), you need the one-time €57 payment.",
+      "cta": "Unlock Eclosia — €57"
     },
     "redirected": {
       "title": "This page requires your full access 💛",
-      "text": "To open this page, you need full access to Ancrage. You can resume your payment in one click.",
-      "text_with_page": "To open « {{page}} », you need full access to Ancrage. You can resume your payment in one click.",
+      "text": "To open this page, you need full access to Eclosia. You can resume your payment in one click.",
+      "text_with_page": "To open « {{page}} », you need full access to Eclosia. You can resume your payment in one click.",
       "resume_cta": "Resume payment",
       "page": {
         "dashboard": "My space",
@@ -604,12 +604,12 @@
     },
     "confirmed": {
       "title": "Access confirmed 💛",
-      "text": "All of Ancrage is unlocked in your account, for life.",
+      "text": "All of Eclosia is unlocked in your account, for life.",
       "redirect": "Redirecting…"
     },
     "error": {
       "title": "Activation is taking longer than expected",
-      "text": "While we wait for your payment to be confirmed, your account stays limited to the payment page — the rest of Ancrage isn't available yet. Don't worry, your payment isn't lost: access will open automatically as soon as your bank validates it.",
+      "text": "While we wait for your payment to be confirmed, your account stays limited to the payment page — the rest of Eclosia isn't available yet. Don't worry, your payment isn't lost: access will open automatically as soon as your bank validates it.",
       "steps_title": "Quick steps:",
       "step_1": "Wait 2–3 minutes, then tap “Check again”.",
       "step_2": "Check the Mollie confirmation email in your inbox (and spam folder).",

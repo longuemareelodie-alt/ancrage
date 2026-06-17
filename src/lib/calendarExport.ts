@@ -51,7 +51,7 @@ export const buildICS = (e: CalendarEvent): string => {
   const lines = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//Ancrage//RDV//FR",
+    "PRODID:-//Eclosia//RDV//FR",
     "CALSCALE:GREGORIAN",
     "BEGIN:VEVENT",
     `UID:${uid}`,

@@ -30,15 +30,15 @@ export const InviteEmail = ({
 }: InviteEmailProps) => (
   <Html lang="fr" dir="ltr">
     <Head />
-    <Preview>Tu es invitée à rejoindre Ancrage 💛</Preview>
+    <Preview>Tu es invitée à rejoindre Eclosia 💛</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Img src={LOGO_URL} alt="Ancrage" width="120" height="auto" style={logo} />
+        <Img src={LOGO_URL} alt="Eclosia" width="120" height="auto" style={logo} />
         <Heading style={h1}>Tu es invitée 💛</Heading>
         <Text style={text}>
           Tu as été invitée à rejoindre{' '}
           <Link href={siteUrl} style={link}>
-            <strong>Ancrage</strong>
+            <strong>Eclosia</strong>
           </Link>
           . Clique ci-dessous pour accepter l'invitation et créer ton espace.
         </Text>

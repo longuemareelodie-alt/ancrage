@@ -217,8 +217,8 @@ function buildNotification(ctx: UserContext): { title: string; body: string; url
       body = pick(nonPremiumMessages);
     }
     return {
-      title: "Ancrage",
-      body: body + "\n→ Accède à la suite dans Ancrage",
+      title: "Eclosia",
+      body: body + "\n→ Accède à la suite dans Eclosia",
       url: "/aller-plus-loin",
     };
   }
@@ -228,22 +228,22 @@ function buildNotification(ctx: UserContext): { title: string; body: string; url
   if (checkedToday && ctx.lastEmotion && emotionResponses[ctx.lastEmotion]) {
     const emotionMsgs = emotionResponses[ctx.lastEmotion];
     const msgs = ctx.type === "evening" ? emotionMsgs.evening : emotionMsgs.morning;
-    return { title: "Ancrage 💛", body: pick(msgs), url: "/checkin" };
+    return { title: "Eclosia 💛", body: pick(msgs), url: "/checkin" };
   }
 
   // 2. Inactive > 24h → reactivation
   if (isInactive) {
-    return { title: "Ancrage 💛", body: pick(premiumReactivation), url: "/checkin" };
+    return { title: "Eclosia 💛", body: pick(premiumReactivation), url: "/checkin" };
   }
 
   // 3. Active user → encouragement (30% chance) or regular message
   if (isActive && Math.random() < 0.3) {
-    return { title: "Ancrage 💛", body: pick(premiumEncouragement), url: "/checkin" };
+    return { title: "Eclosia 💛", body: pick(premiumEncouragement), url: "/checkin" };
   }
 
   // 4. Regular time-based message
   const body = ctx.type === "evening" ? pick(premiumEvening) : pick(premiumMorning);
-  return { title: "Ancrage 💛", body, url: "/checkin" };
+  return { title: "Eclosia 💛", body, url: "/checkin" };
 }
 
 // ─── Main handler ───

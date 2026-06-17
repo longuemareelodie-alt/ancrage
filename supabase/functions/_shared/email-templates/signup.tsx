@@ -32,15 +32,15 @@ export const SignupEmail = ({
 }: SignupEmailProps) => (
   <Html lang="fr" dir="ltr">
     <Head />
-    <Preview>Confirme ton email pour Ancrage 💛</Preview>
+    <Preview>Confirme ton email pour Eclosia 💛</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Img src={LOGO_URL} alt="Ancrage" width="120" height="auto" style={logo} />
-        <Heading style={h1}>Bienvenue sur Ancrage 💛</Heading>
+        <Img src={LOGO_URL} alt="Eclosia" width="120" height="auto" style={logo} />
+        <Heading style={h1}>Bienvenue sur Eclosia 💛</Heading>
         <Text style={text}>
           Merci d'avoir créé ton espace sur{' '}
           <Link href={siteUrl} style={link}>
-            <strong>Ancrage</strong>
+            <strong>Eclosia</strong>
           </Link>
           .
         </Text>

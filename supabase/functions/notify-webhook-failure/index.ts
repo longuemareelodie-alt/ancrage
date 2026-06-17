@@ -18,7 +18,7 @@ const COOLDOWN_MINUTES = 30;             // anti-spam: 1 alert max per cooldown 
 const ALERT_KEY = "mollie_webhook_failures";
 const ALERT_EMAIL_TO = "contact@digitalmamanlibre.com";
 const ALERT_FROM_DOMAIN = "notify.digitalmamanlibre.com";
-const ALERT_FROM_NAME = "Ancrage Alerts";
+const ALERT_FROM_NAME = "Eclosia Alerts";
 
 // Slack: optional. Set SLACK_WEBHOOK_URL secret to enable.
 const SLACK_WEBHOOK_URL = Deno.env.get("SLACK_WEBHOOK_URL") ?? null;
@@ -208,7 +208,7 @@ async function sendEmailAlert(
     to: ALERT_EMAIL_TO,
     from: `${ALERT_FROM_NAME} <alerts@${ALERT_FROM_DOMAIN}>`,
     sender_domain: ALERT_FROM_DOMAIN,
-    subject: `[Ancrage] ⚠️ Webhook Mollie : ${failures.length} erreurs en ${WINDOW_MINUTES} min`,
+    subject: `[Eclosia] ⚠️ Webhook Mollie : ${failures.length} erreurs en ${WINDOW_MINUTES} min`,
     html,
     text,
     label: "webhook_alert",

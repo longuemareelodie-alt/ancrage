@@ -27,7 +27,7 @@ const OPTIONS: {
   },
   {
     value: "sensory",
-    title: "Ancrage sensoriel",
+    title: "Eclosia sensoriel",
     description:
       "Tes exercices privilégient les sensations : toucher, voir, écouter pour revenir dans ton corps et l'instant présent.",
     Icon: Hand,

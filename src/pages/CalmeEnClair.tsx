@@ -121,7 +121,7 @@ const MICRO_ACTIONS: Record<MoodKey, ActionVariants> = {
         "5-4-3-2-1 : 5 choses vues, 4 entendues, 3 touchées, 2 senties, 1 goûtée.",
         "Dis-toi : « La vague passe. Je suis là. »",
       ],
-      why: "Ancrage sensoriel pour sortir du débordement.",
+      why: "Eclosia sensoriel pour sortir du débordement.",
     },
   },
 };

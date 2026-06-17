@@ -101,7 +101,7 @@ const IA = () => {
           <Sparkles className="h-4 w-4 text-white" />
         </span>
         <div>
-          <p className="text-[14px] font-semibold">Ancrage IA</p>
+          <p className="text-[14px] font-semibold">Eclosia IA</p>
           <p className="text-[11px]" style={{ color: "var(--ancrage-sage-deep)" }}>
             • en ligne
           </p>

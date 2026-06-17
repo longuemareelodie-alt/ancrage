@@ -176,7 +176,7 @@ const CommunautePage = () => {
             Tous les messages sont relus par notre équipe avant publication.
             {readOnly && (
               <span className="mt-2 block rounded-lg bg-muted/50 px-3 py-2 text-xs">
-                🔒 En version gratuite, tu peux lire les échanges. Pour poster ou commenter, déverrouille Ancrage complet.
+                🔒 En version gratuite, tu peux lire les échanges. Pour poster ou commenter, déverrouille Eclosia complet.
               </span>
             )}
           </p>
@@ -316,7 +316,7 @@ const CommunautePage = () => {
         open={unlockOpen}
         onOpenChange={setUnlockOpen}
         title="La communauté t'attend de l'autre côté."
-        description={`Poster et commenter sont réservés à Ancrage complet — ${PREMIUM_PRICE_LONG} · accès à vie. Pas d'abonnement, jamais.`}
+        description={`Poster et commenter sont réservés à Eclosia complet — ${PREMIUM_PRICE_LONG} · accès à vie. Pas d'abonnement, jamais.`}
       />
     </LiesShell>
   );

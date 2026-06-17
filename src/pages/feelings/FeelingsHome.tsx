@@ -72,7 +72,7 @@ const FeelingsHome = () => {
       {blocked ? (
         <FreemiumGate
           title="Tu commences à ressentir la différence."
-          message={`Tu as utilisé ton essai gratuit du module « Comment tu te sens ». Continue avec Ancrage — ${PREMIUM_PRICE_SHORT} accès à vie. Pas d'abonnement, jamais.`}
+          message={`Tu as utilisé ton essai gratuit du module « Comment tu te sens ». Continue avec Eclosia — ${PREMIUM_PRICE_SHORT} accès à vie. Pas d'abonnement, jamais.`}
         />
       ) : (
         <>

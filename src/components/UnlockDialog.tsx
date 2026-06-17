@@ -32,7 +32,7 @@ const UnlockDialog = ({
   const navigate = useNavigate();
   const fullDescription =
     description ??
-    `Ancrage complet — ${PREMIUM_PRICE_LONG} · ${PREMIUM_LIFETIME_LABEL}. Pas d'abonnement, jamais.`;
+    `Eclosia complet — ${PREMIUM_PRICE_LONG} · ${PREMIUM_LIFETIME_LABEL}. Pas d'abonnement, jamais.`;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

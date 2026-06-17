@@ -55,7 +55,7 @@
     },
     "social": {
       "p1": "Du bist nicht die Einzige, die das spürt.",
-      "p2": "Frauen nutzen Ancrage genau für solche Momente.",
+      "p2": "Frauen nutzen Eclosia genau für solche Momente.",
       "p3": "Ich habe das gebaut, weil ich es selbst gebraucht habe."
     },
     "price": {
@@ -79,7 +79,7 @@
     "intro": "Bevor du loslegst, hier die Antworten auf die häufigsten Fragen.",
     "items": {
       "what_is": {
-        "q": "Was genau ist Ancrage?",
+        "q": "Was genau ist Eclosia?",
         "a": "Ein Wohlfühl-Tool, das deinem Körper hilft, runterzukommen, wenn dein Nervensystem auf Alarm steht. Keine Therapie, keine Diagnose – nur einfache, kurze Übungen, die du allein in deinem Tempo machen kannst."
       },
       "price": {
@@ -92,7 +92,7 @@
       },
       "medical": {
         "q": "Ist es medizinisch?",
-        "a": "Nein. Ancrage ist weder ein Medizinprodukt noch eine Therapie oder Diagnose. Es ist ein emotionales Begleittool und ersetzt keine medizinische Fachkraft."
+        "a": "Nein. Eclosia ist weder ein Medizinprodukt noch eine Therapie oder Diagnose. Es ist ein emotionales Begleittool und ersetzt keine medizinische Fachkraft."
       },
       "privacy": {
         "q": "Meine Daten?",
@@ -544,23 +544,23 @@
     },
     "lifetime_box": {
       "title": "Lebenslanger Zugang nach deiner einmaligen Zahlung",
-      "text": "Du zahlst einmal 57 €. Sobald die Zahlung bestätigt ist, wird ganz Ancrage in deinem Konto freigeschaltet — für immer.",
+      "text": "Du zahlst einmal 57 €. Sobald die Zahlung bestätigt ist, wird ganz Eclosia in deinem Konto freigeschaltet — für immer.",
       "bullet_one_payment": "Eine einzige Zahlung von 57 €",
       "bullet_no_renewal": "Kein Abo, nichts zu verlängern",
       "bullet_all_devices": "Auf allen deinen Geräten, lebenslang",
       "active_title": "Dein lebenslanger Zugang ist aktiv 💛",
-      "active_text": "Du hast bereits bezahlt. Ganz Ancrage ist in deinem Konto freigeschaltet, lebenslang.",
+      "active_text": "Du hast bereits bezahlt. Ganz Eclosia ist in deinem Konto freigeschaltet, lebenslang.",
       "active_cta": "Zu meinem Bereich"
     },
     "blocked": {
       "title": "Dein voller Zugang ist noch nicht aktiv 💛",
-      "text": "Dein Konto wurde nach dem Start des kostenpflichtigen Zugangs zu Ancrage erstellt. Um alles freizuschalten (Ritual, Notfall, Gesundheitsbereich, Weg…), brauchst du die einmalige Zahlung von 57€.",
-      "cta": "Ancrage freischalten — 57€"
+      "text": "Dein Konto wurde nach dem Start des kostenpflichtigen Zugangs zu Eclosia erstellt. Um alles freizuschalten (Ritual, Notfall, Gesundheitsbereich, Weg…), brauchst du die einmalige Zahlung von 57€.",
+      "cta": "Eclosia freischalten — 57€"
     },
     "redirected": {
       "title": "Diese Seite erfordert deinen vollen Zugang 💛",
-      "text": "Um diese Seite zu öffnen, brauchst du den vollen Zugang zu Ancrage. Du kannst deine Zahlung mit einem Klick fortsetzen.",
-      "text_with_page": "Um « {{page}} » zu öffnen, brauchst du den vollen Zugang zu Ancrage. Du kannst deine Zahlung mit einem Klick fortsetzen.",
+      "text": "Um diese Seite zu öffnen, brauchst du den vollen Zugang zu Eclosia. Du kannst deine Zahlung mit einem Klick fortsetzen.",
+      "text_with_page": "Um « {{page}} » zu öffnen, brauchst du den vollen Zugang zu Eclosia. Du kannst deine Zahlung mit einem Klick fortsetzen.",
       "resume_cta": "Zahlung fortsetzen",
       "page": {
         "dashboard": "Mein Bereich",
@@ -604,12 +604,12 @@
     },
     "confirmed": {
       "title": "Zugang bestätigt 💛",
-      "text": "Ganz Ancrage ist in deinem Konto freigeschaltet — für immer.",
+      "text": "Ganz Eclosia ist in deinem Konto freigeschaltet — für immer.",
       "redirect": "Weiterleitung läuft…"
     },
     "error": {
       "title": "Die Aktivierung dauert länger als erwartet",
-      "text": "Solange wir auf die Bestätigung deiner Zahlung warten, bleibt dein Konto auf die Zahlungsseite beschränkt — die übrigen Bereiche von Ancrage sind noch nicht verfügbar. Keine Sorge, deine Zahlung ist nicht verloren: Sobald deine Bank sie bestätigt, wird der Zugang automatisch freigeschaltet.",
+      "text": "Solange wir auf die Bestätigung deiner Zahlung warten, bleibt dein Konto auf die Zahlungsseite beschränkt — die übrigen Bereiche von Eclosia sind noch nicht verfügbar. Keine Sorge, deine Zahlung ist nicht verloren: Sobald deine Bank sie bestätigt, wird der Zugang automatisch freigeschaltet.",
       "steps_title": "Kurze Schritte:",
       "step_1": "Warte 2–3 Minuten und tippe dann auf „Erneut prüfen“.",
       "step_2": "Schau in deinem Posteingang (und Spam) nach der Mollie-Bestätigungsmail.",

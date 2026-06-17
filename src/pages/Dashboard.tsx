@@ -115,7 +115,7 @@ const Dashboard = () => {
       {/* Top bar */}
       <div className="flex items-center justify-between px-4 py-3">
         <div />
-        <img src={logo} alt="Ancrage" className="h-10 w-auto" />
+        <img src={logo} alt="Eclosia" className="h-10 w-auto" />
         <Link
           to="/profil"
           className="flex items-center gap-1.5 rounded-full bg-card px-3 py-1.5 text-xs font-medium shadow-sm transition-colors hover:bg-secondary"

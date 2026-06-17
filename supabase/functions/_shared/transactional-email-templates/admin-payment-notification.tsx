@@ -23,7 +23,7 @@ const AdminPaymentNotificationEmail = ({
 }: AdminPaymentNotificationProps) => (
   <Html lang="fr" dir="ltr">
     <Head />
-    <Preview>Nouveau paiement reçu sur Ancrage 🎉</Preview>
+    <Preview>Nouveau paiement reçu sur Eclosia 🎉</Preview>
     <Body style={main}>
       <Container style={container}>
         <Section style={logoSection}>
@@ -67,7 +67,7 @@ const AdminPaymentNotificationEmail = ({
 
 export const template = {
   component: AdminPaymentNotificationEmail,
-  subject: '🎉 Nouveau paiement reçu sur Ancrage',
+  subject: '🎉 Nouveau paiement reçu sur Eclosia',
   displayName: 'Admin payment notification',
   to: 'longuemareelodie9@gmail.com',
   previewData: {

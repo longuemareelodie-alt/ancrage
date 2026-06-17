@@ -147,7 +147,7 @@ const Index = () => {
         <div className="mx-auto flex max-w-[1200px] items-center justify-between px-6 py-4">
           <Link to="/" className="flex flex-col leading-none">
             <span className="font-serif text-2xl tracking-tight text-night">
-              Ancrage <HandHeart className="inline h-4 w-4 -translate-y-1 text-primary" />
+              Eclosia <HandHeart className="inline h-4 w-4 -translate-y-1 text-primary" />
             </span>
             <span className="mt-0.5 text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
               Bien-être émotionnel · parents & enfants
@@ -237,7 +237,7 @@ const Index = () => {
             <div className="mt-7 space-y-2 text-base leading-relaxed text-foreground/80">
               <p>Charge mentale. Fatigue. Culpabilité. Émotions qui débordent.</p>
               <p>
-                Ancrage t'aide à <span className="text-primary font-medium">retrouver un peu de calme</span> quand ton
+                Eclosia t'aide à <span className="text-primary font-medium">retrouver un peu de calme</span> quand ton
                 cerveau te dit qu'il ne{" "}
                 <span className="relative inline-block">
                   tiendra
@@ -298,7 +298,7 @@ const Index = () => {
         <div className="grid items-center gap-12 md:grid-cols-[1.1fr_1fr] md:gap-16">
           <motion.div {...fadeUp} className="order-2 md:order-1">
             <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-primary-dark">
-              Pourquoi Ancrage existe ?
+              Pourquoi Eclosia existe ?
             </p>
             <h2 className="mt-4 font-serif text-[clamp(2rem,4vw,2.75rem)] leading-tight text-night">
               L'outil que j'aurais aimé{" "}
@@ -330,7 +330,7 @@ const Index = () => {
             <div className="overflow-hidden rounded-[2.5rem] shadow-[0_40px_100px_-30px_rgba(30,43,82,0.35)]">
               <img
                 src={heroPhoto.url}
-                alt="La fondatrice d'Ancrage chez elle"
+                alt="La fondatrice d'Eclosia chez elle"
                 className="aspect-[4/5] w-full object-cover"
                 loading="lazy"
               />
@@ -494,13 +494,13 @@ const Index = () => {
             Ce que tu reçois
           </p>
           <h2 className="mt-4 font-serif text-[clamp(2rem,4.5vw,3rem)] leading-tight text-night">
-            Tout ce qui est inclus dans Ancrage{" "}
+            Tout ce qui est inclus dans Eclosia{" "}
             <span className="relative inline-block">
               🌿
             </span>
           </h2>
           <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-foreground/75">
-            Ancrage n'est pas une simple ressource.
+            Eclosia n'est pas une simple ressource.
             <br />
             C'est un espace conçu pour accompagner les mamans qui portent beaucoup trop seules.
           </p>
@@ -544,13 +544,13 @@ const Index = () => {
           className="mx-auto max-w-3xl rounded-[2rem] bg-secondary/40 p-10 md:p-14"
         >
           <h2 className="font-serif text-[clamp(1.75rem,3.5vw,2.25rem)] leading-tight text-night">
-            Pourquoi Ancrage vaut bien plus que son prix&nbsp;?
+            Pourquoi Eclosia vaut bien plus que son prix&nbsp;?
           </h2>
           <div className="mt-6 space-y-4 text-base leading-relaxed text-foreground/85">
             <p>Une seule consultation spécialisée coûte souvent entre 50&nbsp;€ et 100&nbsp;€.</p>
             <p>Les ressources adaptées aux familles atypiques sont souvent dispersées sur plusieurs plateformes.</p>
             <p>Les outils d'organisation, de gestion émotionnelle et les ressources spécialisées sont généralement vendus séparément.</p>
-            <p>Ancrage rassemble tout cela dans un seul espace conçu pour les mamans qui portent déjà beaucoup trop.</p>
+            <p>Eclosia rassemble tout cela dans un seul espace conçu pour les mamans qui portent déjà beaucoup trop.</p>
             <p className="font-serif text-xl italic text-night">Tu n'achètes pas un outil.</p>
             <p>Tu rejoins un espace ressource pensé pour te faire gagner du temps, de l'énergie et des repères.</p>
           </div>
@@ -563,7 +563,7 @@ const Index = () => {
           <p className="font-serif text-2xl italic leading-relaxed text-night md:text-3xl">
             Tu n'as pas besoin de tout porter seule.
             <br />
-            <span className="text-primary">Ancrage a été créé pour ça.</span>
+            <span className="text-primary">Eclosia a été créé pour ça.</span>
           </p>
         </motion.div>
         <motion.div {...fadeUp} className="mx-auto mt-12 max-w-md">
@@ -572,7 +572,7 @@ const Index = () => {
               ✨ Accès à vie
             </span>
             <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.28em] text-primary-dark">
-              Ancrage Premium
+              Eclosia Premium
             </p>
             <p className="mt-6 font-serif text-[clamp(3.5rem,6vw,4.5rem)] leading-none text-night">
               {PREMIUM_PRICE_SHORT}

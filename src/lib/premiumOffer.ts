@@ -1,5 +1,5 @@
 /**
- * Lexique central — Offre Premium (Ancrage)
+ * Lexique central — Offre Premium (Eclosia)
  * ------------------------------------------
  * Toutes les mentions textuelles de l'offre Premium (nom, prix, libellés
  * « programme complet » / « accès complet », CTA de déblocage) doivent passer
@@ -58,7 +58,7 @@ export const PREMIUM_PRICE_LONG = formatEurAmount(PREMIUM_PRICE_EUR);
 export const PREMIUM_PRICE_SHORT = PREMIUM_PRICE_LONG;
 
 /** Nom commercial de l'offre. */
-export const PREMIUM_OFFER_NAME = "Ancrage Premium";
+export const PREMIUM_OFFER_NAME = "Eclosia Premium";
 
 /** Libellé canonique du périmètre de l'offre — à utiliser partout (UI, emails, PDF). */
 export const PREMIUM_SCOPE_LABEL = "programme complet";
@@ -90,5 +90,5 @@ export const PREMIUM_CTA = {
   activate_lifetime: `Activer mon ${PREMIUM_LIFETIME_LABEL}`,
 
   /** CTA générique de découverte */
-  discover_premium: `Découvrir l'offre ${PREMIUM_OFFER_NAME.replace("Ancrage ", "")}`,
+  discover_premium: `Découvrir l'offre ${PREMIUM_OFFER_NAME.replace("Eclosia ", "")}`,
 } as const;

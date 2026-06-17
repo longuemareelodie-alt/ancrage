@@ -382,13 +382,13 @@ const Checkin = () => {
           <Link to="/dashboard" className="rounded-full p-2 hover:bg-secondary" aria-label="Retour au tableau de bord">
             <ArrowLeft className="h-5 w-5" />
           </Link>
-          <p className="text-xs text-muted-foreground font-medium">Continue avec Ancrage</p>
+          <p className="text-xs text-muted-foreground font-medium">Continue avec Eclosia</p>
           <div className="w-9" aria-hidden />
         </div>
         <div className="mx-auto mt-6 w-full max-w-md">
           <FreemiumGate
             title="Tu commences à ressentir la différence."
-            message={`Tu as utilisé tes 3 jours de check-in offerts. Continue avec Ancrage — ${PREMIUM_PRICE_LONG} · accès à vie. Pas d'abonnement, jamais.`}
+            message={`Tu as utilisé tes 3 jours de check-in offerts. Continue avec Eclosia — ${PREMIUM_PRICE_LONG} · accès à vie. Pas d'abonnement, jamais.`}
           />
         </div>
       </div>

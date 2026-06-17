@@ -178,10 +178,10 @@ const Accueil = () => {
               Que dois-je faire aujourd'hui ?
             </h3>
             <p className="mt-1.5 text-[13px] text-white/85">
-              Ancrage te répond en quelques secondes.
+              Eclosia te répond en quelques secondes.
             </p>
             <div className="mt-5 inline-flex items-center gap-2 rounded-2xl bg-white px-4 py-2.5 text-[13px] font-semibold" style={{ color: "var(--ancrage-sage-deep)" }}>
-              Demander à Ancrage IA <ArrowRight className="h-4 w-4" />
+              Demander à Eclosia IA <ArrowRight className="h-4 w-4" />
             </div>
           </div>
         </Link>

@@ -105,7 +105,7 @@ const TopNav = () => {
           className="text-base font-semibold tracking-tight"
           aria-label={t("nav.back_home")}
         >
-          Ancrage
+          Eclosia
         </Link>
 
         <nav aria-label={t("nav.main")}>
