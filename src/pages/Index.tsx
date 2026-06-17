@@ -150,7 +150,7 @@ const Index = () => {
               Eclosia <HandHeart className="inline h-4 w-4 -translate-y-1 text-primary" />
             </span>
             <span className="mt-0.5 text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-              Bien-être émotionnel · parents & enfants
+              Ton parcours de reconstruction
             </span>
           </Link>
           <nav className="hidden items-center gap-7 lg:flex">
