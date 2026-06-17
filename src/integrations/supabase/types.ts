@@ -1217,6 +1217,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      _trigger_monthly_portraits: { Args: never; Returns: undefined }
       award_badges: { Args: { _badge_keys: string[] }; Returns: undefined }
       cleanup_pending_account_emails: { Args: never; Returns: Json }
       delete_email: {
