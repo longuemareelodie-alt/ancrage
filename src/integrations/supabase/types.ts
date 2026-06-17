@@ -358,6 +358,36 @@ export type Database = {
         }
         Relationships: []
       }
+      evolution_timelines: {
+        Row: {
+          before_text: string
+          created_at: string
+          id: string
+          storm_text: string
+          today_text: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          before_text?: string
+          created_at?: string
+          id?: string
+          storm_text?: string
+          today_text?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          before_text?: string
+          created_at?: string
+          id?: string
+          storm_text?: string
+          today_text?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       family_medical_documents: {
         Row: {
           category: string
