@@ -21,12 +21,15 @@ Deno.serve(async (req) => {
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
 
+    const cronSecret = Deno.env.get("PORTRAIT_CRON_SECRET");
+    const providedCronSecret = req.headers.get("x-cron-secret");
+    const isServiceCall =
+      typeof body.userId === "string" &&
+      ((cronSecret && providedCronSecret === cronSecret) ||
+        authHeader.includes(serviceKey));
+
     let userId: string | null = null;
     let supabase;
-
-    // Service-role call (cron) → must pass userId
-    const isServiceCall =
-      authHeader.includes(serviceKey) && typeof body.userId === "string";
 
     if (isServiceCall) {
       supabase = createClient(supabaseUrl, serviceKey);
