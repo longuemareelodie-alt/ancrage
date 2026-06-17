@@ -135,7 +135,7 @@ const PaymentSuccess = () => {
             {firstName ? `Bienvenue, ${firstName} 💛` : "Bienvenue 💛"}
           </h1>
           <p className="text-muted-foreground">
-            Ton accès premium est maintenant actif.
+            Ton accès Eclosia est actif. Voici par où commencer.
           </p>
         </div>
 
@@ -143,40 +143,54 @@ const PaymentSuccess = () => {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5, duration: 0.5 }}
-          className="rounded-2xl bg-card p-6 shadow-sm space-y-4"
+          className="rounded-2xl bg-card p-6 shadow-sm space-y-4 text-left"
         >
           <div className="flex items-center justify-center gap-2 text-primary">
             <Sparkles className="h-5 w-5" />
-            <p className="font-bold">Ce qui t'attend</p>
+            <p className="font-bold">Tes 3 prochains pas</p>
           </div>
-          <ul className="space-y-2 text-sm text-muted-foreground text-left">
+          <ol className="space-y-3 text-sm text-muted-foreground">
             {[
-              "Tous les exercices débloqués",
-              "Le parcours guidé complet",
-              "Les outils de suivi et de progression",
-              "Un espace sécurisé, à ton rythme",
-            ].map((item) => (
-              <li key={item} className="flex items-start gap-2">
-                <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                <span>{item}</span>
+              { n: "1", t: "Pose ton premier check-in", d: "2 minutes pour dire où tu en es aujourd'hui." },
+              { n: "2", t: "Découvre ton portrait", d: "Ta première lecture de qui tu es devenue." },
+              { n: "3", t: "Choisis une mission", d: "Un petit pas concret, à ton rythme." },
+            ].map((step) => (
+              <li key={step.n} className="flex items-start gap-3">
+                <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/15 text-xs font-bold text-primary">
+                  {step.n}
+                </span>
+                <span>
+                  <span className="block font-medium text-foreground">{step.t}</span>
+                  <span className="block">{step.d}</span>
+                </span>
               </li>
             ))}
-          </ul>
+          </ol>
         </motion.div>
 
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8, duration: 0.5 }}
+          className="space-y-3"
         >
           <Link
-            to={hasPendingCheckin ? "/checkin" : "/dashboard"}
+            to="/checkin"
             className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-8 py-4 text-base font-semibold text-primary-foreground shadow-lg shadow-primary/25 transition-transform hover:scale-[1.02] active:scale-[0.98]"
           >
-            {hasPendingCheckin ? "Reprendre mon check-in" : "Commencer maintenant"}
+            <BookOpen className="h-4 w-4" />
+            {hasPendingCheckin ? "Reprendre mon check-in" : "Commencer mon premier check-in"}
             <ArrowRight className="h-4 w-4" />
           </Link>
+          <Link
+            to="/dashboard"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-border bg-card px-8 py-3 text-sm font-medium text-foreground hover:bg-accent"
+          >
+            <Compass className="h-4 w-4" />
+            Explorer mon espace
+          </Link>
         </motion.div>
+
 
         {latestPaymentId && (
           <motion.div
