@@ -28,6 +28,9 @@ Deno.serve(async (req) => {
       ((cronSecret && providedCronSecret === cronSecret) ||
         authHeader.includes(serviceKey));
 
+    let userId: string | null = null;
+    let supabase;
+
     if (isServiceCall) {
       supabase = createClient(supabaseUrl, serviceKey);
       userId = body.userId!;
