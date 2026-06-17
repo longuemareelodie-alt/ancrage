@@ -257,6 +257,15 @@ const Index = () => {
         </div>
       </Section>
 
+      {/* Sous-hero */}
+      <Section className="py-10">
+        <motion.div {...fadeUp} className="mx-auto max-w-3xl text-center">
+          <p className="text-lg leading-relaxed text-foreground/80 md:text-xl">
+            Eclosia t’accompagne au quotidien avec un journal intelligent, un portrait mensuel de ta transformation et des missions pour avancer — pas pour revenir en arrière, mais pour devenir celle que la tempête t’a révélée.
+          </p>
+        </motion.div>
+      </Section>
+
       {/* IDENTIFICATION */}
       <Section id="pour-toi">
         <motion.div {...fadeUp} className="text-center">
