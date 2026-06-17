@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { JOURNAL_PROMPTS } from "@/data/journalPrompts";
 import { toast } from "@/hooks/use-toast";
+import JournalMemoryInsight from "@/components/journal/JournalMemoryInsight";
 
 type Entry = {
   id: string;
@@ -23,6 +24,7 @@ const JournalPage = () => {
   const [promptKey, setPromptKey] = useState<string | null>(null);
   const [content, setContent] = useState("");
   const [saving, setSaving] = useState(false);
+  const [insightKey, setInsightKey] = useState(0);
 
   const load = async () => {
     if (!user) return;
@@ -57,6 +59,7 @@ const JournalPage = () => {
     setPromptKey(null);
     toast({ title: "Entrée enregistrée", description: "Votre journal a été mis à jour." });
     load();
+    setInsightKey((k) => k + 1);
   };
 
   const handleDelete = async (id: string) => {
@@ -81,6 +84,7 @@ const JournalPage = () => {
       subtitle="Un espace rien qu'à vous. Personne d'autre ne peut le lire."
       icon={<NotebookPen className="h-6 w-6" />}
     >
+      <JournalMemoryInsight refreshKey={insightKey} />
       <div className="mb-5 rounded-2xl border border-border bg-card p-4">
         <div className="mb-3 flex gap-2">
           <button
