@@ -44,7 +44,7 @@ export const PRODUCT_CATALOG: Readonly<Record<ProductKey, ProductDefinition>> =
       key: "premium",
       priceCents: 9700,
       currency: "EUR",
-      description: "ANCRAGE — Accès Premium",
+      description: "ECLOSIA — Accès à vie",
       allowPromo: true,
       allowGuestCheckout: true,
       metadataType: "lifetime",
@@ -68,7 +68,7 @@ export const PRODUCT_CATALOG: Readonly<Record<ProductKey, ProductDefinition>> =
  * Format: `<sha256-hex-truncated-to-16>` — the same value is asserted by
  * `tests/productCatalog.spec.ts`.
  */
-export const PRODUCT_CATALOG_FINGERPRINT = "03a9b7fad46b757d";
+export const PRODUCT_CATALOG_FINGERPRINT = "72781ad47bdaf5a1";
 
 /** Canonical, stable serialization used by the fingerprint algorithm. */
 export function canonicalCatalogString(): string {
