@@ -236,7 +236,7 @@ const Index = () => {
             </h1>
             <div className="mt-7 space-y-2 text-base leading-relaxed text-foreground/80">
               <p>
-                Tu ne te demandes pas comment redevenir celle d'avant. Tu te demandes qui tu es devenue. Eclosia est là pour ça.
+                Tu as survécu. Maintenant tu veux vivre.
               </p>
             </div>
             <div className="mt-9">
