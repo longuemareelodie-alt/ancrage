@@ -197,7 +197,41 @@ const AllerPlusLoin = () => {
         </motion.div>
       </section>
 
+      {/* SECTION 4.5 — APERÇU INTÉRIEUR */}
+      <section className="px-6 py-16 md:py-20">
+        <motion.div {...fadeUp} className="mx-auto max-w-5xl">
+          <div className="text-center">
+            <h2 className="font-serif text-2xl leading-tight text-night md:text-3xl">
+              Découvre l'intérieur d'Eclosia <span aria-hidden>🌱</span>
+            </h2>
+            <p className="mt-3 text-base text-muted-foreground md:text-lg">
+              Voici concrètement ce qui t'attend à l'intérieur.
+            </p>
+          </div>
+          <ul className="mt-10 grid grid-cols-2 gap-5 md:grid-cols-4 md:gap-6">
+            {showcase.map(({ src, caption }) => (
+              <li key={caption} className="flex flex-col">
+                <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-soft">
+                  <div className="aspect-[3/5] w-full bg-secondary/40">
+                    <img
+                      src={src}
+                      alt={caption}
+                      loading="lazy"
+                      className="h-full w-full object-cover object-top"
+                    />
+                  </div>
+                </div>
+                <p className="mt-3 text-center text-xs leading-snug text-muted-foreground md:text-sm">
+                  {caption}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </motion.div>
+      </section>
+
       {/* SECTION 5 — PRIX */}
+
       <section className="px-6 py-16 md:py-24">
         <motion.div
           {...fadeUp}
