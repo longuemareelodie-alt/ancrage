@@ -71,7 +71,7 @@
   }
 
   h1, h2, h3, .font-serif-display {
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: 'Playfair Display', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji', Georgia, serif;
     letter-spacing: -0.015em;
   }
 
