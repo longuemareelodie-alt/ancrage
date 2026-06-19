@@ -370,6 +370,18 @@ const Index = () => {
         </motion.div>
       </Section>
 
+      {/* POURQUOI ÇA FONCTIONNE */}
+      <Section className="!py-10 md:!py-16">
+        <motion.div {...fadeUp} className="mx-auto max-w-2xl text-center">
+          <h2 className="font-serif text-[clamp(1.75rem,3.5vw,2.25rem)] leading-tight text-night">
+            Pourquoi ça fonctionne
+          </h2>
+          <p className="mt-6 text-base leading-[1.8] text-foreground/80 md:text-lg">
+            Quand on est épuisée, on cherche souvent une solution compliquée. Eclosia fait l’inverse. Quelques minutes par jour suffisent pour retrouver des repères, comprendre ce que tu traverses, et avancer avec plus de calme.
+          </p>
+        </motion.div>
+      </Section>
+
       {/* COMMENT ÇA MARCHE */}
       <Section className="pt-12 md:pt-20">
         <motion.div {...fadeUp} className="text-center">
