@@ -8,6 +8,17 @@ import { useMolliePayment } from "@/hooks/useMolliePayment";
 import { PREMIUM_PRICE_LONG, PREMIUM_PRICE_SHORT } from "@/lib/premiumOffer";
 import KlarnaPayButton from "@/components/KlarnaPayButton";
 import heroPhoto from "@/assets/hero-fondatrice.png.asset.json";
+import journalShot from "@/assets/showcase/journal.jpg.asset.json";
+import portraitShot from "@/assets/showcase/portrait.jpg.asset.json";
+import friseShot from "@/assets/showcase/frise.jpg.asset.json";
+import dashboardShot from "@/assets/showcase/dashboard.jpg.asset.json";
+
+const showcaseShots = [
+  { src: journalShot.url, caption: "Ton journal, avec l'IA qui se souvient de toi" },
+  { src: portraitShot.url, caption: "Ton Portrait de Transformation, généré chaque mois" },
+  { src: friseShot.url, caption: "Ta Frise d'Évolution, pour voir le chemin parcouru" },
+  { src: dashboardShot.url, caption: "Ton tableau de bord, simple et apaisant" },
+];
 
 const fadeUp = {
   initial: { opacity: 0, y: 24 },
