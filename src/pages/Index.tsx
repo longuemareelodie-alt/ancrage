@@ -550,7 +550,41 @@ const Index = () => {
         </motion.ul>
       </Section>
 
+      {/* APERÇU INTÉRIEUR */}
+      <Section className="!pt-8 !pb-12 md:!pt-12 md:!pb-16">
+        <motion.div {...fadeUp} className="mx-auto max-w-5xl">
+          <div className="text-center">
+            <h2 className="font-serif text-[clamp(1.75rem,3.5vw,2.25rem)] leading-tight text-night">
+              Découvre l'intérieur d'Eclosia <span aria-hidden>🌱</span>
+            </h2>
+            <p className="mt-3 text-base text-muted-foreground md:text-lg">
+              Voici concrètement ce qui t'attend à l'intérieur.
+            </p>
+          </div>
+          <ul className="mt-10 grid grid-cols-2 gap-5 md:grid-cols-4 md:gap-6">
+            {showcaseShots.map(({ src, caption }) => (
+              <li key={caption} className="flex flex-col">
+                <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-soft">
+                  <div className="aspect-[3/5] w-full bg-secondary/40">
+                    <img
+                      src={src}
+                      alt={caption}
+                      loading="lazy"
+                      className="h-full w-full object-cover object-top"
+                    />
+                  </div>
+                </div>
+                <p className="mt-3 text-center text-xs leading-snug text-muted-foreground md:text-sm">
+                  {caption}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </motion.div>
+      </Section>
+
       {/* VALEUR */}
+
       <Section className="!pt-8 !pb-12 md:!pb-20">
         <motion.div
           {...fadeUp}
