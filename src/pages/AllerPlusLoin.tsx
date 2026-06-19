@@ -11,6 +11,20 @@ import {
   HeartHandshake,
   Check,
 } from "lucide-react";
+import journalAsset from "@/assets/showcase/journal.jpg.asset.json";
+import portraitAsset from "@/assets/showcase/portrait.jpg.asset.json";
+import friseAsset from "@/assets/showcase/frise.jpg.asset.json";
+import dashboardAsset from "@/assets/showcase/dashboard.jpg.asset.json";
+
+const showcase = [
+  { src: journalAsset.url, caption: "Ton journal, avec l'IA qui se souvient de toi" },
+  { src: portraitAsset.url, caption: "Ton Portrait de Transformation, généré chaque mois" },
+  { src: friseAsset.url, caption: "Ta Frise d'Évolution, pour voir le chemin parcouru" },
+  { src: dashboardAsset.url, caption: "Ton tableau de bord, simple et apaisant" },
+];
+
+const _unused = {
+} from "lucide-react";
 
 const fadeUp = {
   initial: { opacity: 0, y: 24 },
