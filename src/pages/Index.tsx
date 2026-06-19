@@ -511,6 +511,45 @@ const Index = () => {
         </div>
       </Section>
 
+      {/* L'IA QUI SE SOUVIENT */}
+      <Section className="!pb-8 md:!pb-12">
+        <motion.div {...fadeUp} className="mx-auto max-w-2xl text-center">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-primary-dark">
+            Intelligence bienveillante
+          </p>
+          <h2 className="mt-4 font-serif text-[clamp(2rem,4.5vw,3rem)] leading-tight text-night">
+            L'IA qui se souvient de ton parcours
+          </h2>
+          <p className="mt-6 text-base leading-relaxed text-foreground/80 md:text-lg">
+            Eclosia retient ton histoire, tes peurs, tes progrès, tes victoires. Et te montre ce que toi-même tu ne vois plus.
+          </p>
+          <div className="mt-8 rounded-2xl border border-border bg-card p-6 text-left shadow-soft md:p-8">
+            <p className="font-serif text-lg italic leading-relaxed text-night md:text-xl">
+              « Jour 1 tu écrivais que tu étais perdue. Aujourd'hui tu parles de projets. Voici ce qui a changé. »
+            </p>
+          </div>
+        </motion.div>
+      </Section>
+
+      {/* PORTRAIT DE TRANSFORMATION */}
+      <Section className="!pt-8 !pb-12 md:!pt-12 md:!pb-20">
+        <motion.div
+          {...fadeUp}
+          className="relative mx-auto max-w-3xl overflow-hidden rounded-[2rem] bg-gradient-to-br from-secondary/60 via-secondary/40 to-sage/30 p-10 md:p-16"
+        >
+          <div className="text-center">
+            <h2 className="font-serif text-[clamp(1.75rem,3.5vw,2.25rem)] leading-tight text-night">
+              Ton Portrait de Transformation <span aria-hidden>🌸</span>
+            </h2>
+            <p className="mt-6 text-base leading-relaxed text-foreground/85 md:text-lg">
+              Chaque mois, Eclosia relit ton parcours et te montre ce que tu ne voyais plus. Tes progrès. Tes nouvelles forces. Les schémas qui reviennent. Le chemin que tu as parcouru.
+            </p>
+            <p className="mt-5 font-serif text-lg italic text-primary-dark md:text-xl">
+              Ce n’est pas un simple résumé. C’est le miroir de qui tu es en train de devenir.
+            </p>
+          </div>
+        </motion.div>
+      </Section>
 
       {/* TOUT CE QUI EST INCLUS */}
       <Section id="inclus" className="!pt-12 md:!pt-20 !pb-8">
