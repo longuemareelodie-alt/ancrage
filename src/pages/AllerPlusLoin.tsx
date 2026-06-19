@@ -23,8 +23,6 @@ const showcase = [
   { src: dashboardAsset.url, caption: "Ton tableau de bord, simple et apaisant" },
 ];
 
-const _unused = {
-} from "lucide-react";
 
 const fadeUp = {
   initial: { opacity: 0, y: 24 },
