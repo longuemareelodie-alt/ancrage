@@ -1353,7 +1353,66 @@ export const handleMollieWebhook = async (req: Request): Promise<Response> => {
       },
     });
 
-    // --- Send welcome premium email ---
+    // --- Programme Ambassadrices : ensure profile + attribution commission ---
+    try {
+      // 1. Toute nouvelle premium devient automatiquement ambassadrice (idempotent)
+      const { error: ensureErr } = await supabase.rpc("ensure_ambassador_profile", {
+        _user_id: updatedProfile.user_id,
+      });
+      if (ensureErr) {
+        logError("ensure_ambassador_profile failed (non-fatal)", ensureErr, {
+          user_id: updatedProfile.user_id,
+        });
+      }
+
+      // 2. Si la commande vient d'un lien d'ambassadrice, créer la commission
+      const refCode = firstString(paymentMetadata?.ref_code);
+      if (refCode) {
+        const { data: ambassador } = await supabase
+          .from("ambassador_profiles")
+          .select("user_id, current_tier")
+          .eq("referral_code", refCode)
+          .maybeSingle();
+
+        if (ambassador && ambassador.user_id !== updatedProfile.user_id) {
+          const rate =
+            ambassador.current_tier === "fondatrice"
+              ? 0.30
+              : ambassador.current_tier === "fleur"
+              ? 0.25
+              : 0.20;
+          const commissionCents = Math.round(amountCents * rate);
+
+          const { error: refErr } = await supabase.from("ambassador_referrals").insert({
+            ambassador_user_id: ambassador.user_id,
+            referred_user_id: updatedProfile.user_id,
+            referral_code_used: refCode,
+            payment_id: paymentId,
+            amount_paid_cents: amountCents,
+            commission_rate: rate,
+            commission_cents: commissionCents,
+            status: "pending",
+          });
+
+          if (refErr && !refErr.message?.includes("duplicate key")) {
+            logError("ambassador_referrals insert failed (non-fatal)", refErr, {
+              ambassador_user_id: ambassador.user_id,
+              payment_id: paymentId,
+            });
+          } else {
+            logDebug("Ambassador commission created", {
+              ambassador_user_id: ambassador.user_id,
+              referred_user_id: updatedProfile.user_id,
+              commission_cents: commissionCents,
+              rate,
+            });
+          }
+        }
+      }
+    } catch (ambErr) {
+      logError("Ambassador program block crashed (non-fatal)", ambErr, { paymentId });
+    }
+
     try {
       // Fetch first_name for personalization
       const { data: profileData } = await supabase

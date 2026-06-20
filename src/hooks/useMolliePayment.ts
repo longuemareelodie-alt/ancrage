@@ -2,6 +2,7 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import { getStoredReferralCode } from "@/lib/referralTracking";
 
 interface StartPaymentOptions {
   promoCode?: string | null;
@@ -39,6 +40,7 @@ export const useMolliePayment = () => {
 
     setLoading(true);
     try {
+      const referralCode = getStoredReferralCode();
       const { data, error } = await supabase.functions.invoke(
         "create-mollie-payment",
         {
@@ -53,6 +55,7 @@ export const useMolliePayment = () => {
             guestEmail: user ? undefined : guestEmail,
             method: options.method,
             billingAddress: options.billingAddress,
+            referralCode,
           },
         }
       );

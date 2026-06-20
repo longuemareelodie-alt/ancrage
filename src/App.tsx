@@ -86,8 +86,18 @@ import AncrageProfil from "./pages/ancrage/Profil";
 import PortraitTransformation from "./pages/PortraitTransformation";
 import LivreReconstruction from "./pages/LivreReconstruction";
 import FriseEvolution from "./pages/FriseEvolution";
+import MonImpact from "./pages/MonImpact";
+import { useEffect } from "react";
+import { captureReferralCodeFromUrl } from "@/lib/referralTracking";
 
 const queryClient = new QueryClient();
+
+const ReferralCapture = () => {
+  useEffect(() => {
+    captureReferralCodeFromUrl();
+  }, []);
+  return null;
+};
 
 /**
  * AnimatePresence (framer-motion) attaches a ref to its direct child to
@@ -187,6 +197,7 @@ const AnimatedRoutes = () => {
         <Route path="/portrait-transformation" element={<PaidRoute><PageTransition><PortraitTransformation /></PageTransition></PaidRoute>} />
         <Route path="/livre-reconstruction" element={<PaidRoute><PageTransition><LivreReconstruction /></PageTransition></PaidRoute>} />
         <Route path="/frise-evolution" element={<PaidRoute><PageTransition><FriseEvolution /></PageTransition></PaidRoute>} />
+        <Route path="/mon-impact" element={<PaidRoute><PageTransition><MonImpact /></PageTransition></PaidRoute>} />
         <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
           </Routes>
         </RoutesWrapper>
@@ -205,6 +216,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
+            <ReferralCapture />
             <AnimatedRoutes />
           </BrowserRouter>
         </TooltipProvider>
