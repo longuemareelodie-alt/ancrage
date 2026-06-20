@@ -80,6 +80,7 @@ Deno.serve(async (req) => {
     let guestEmail: string | null = null;
     let billingAddress: Record<string, string> | null = null;
     let forceMethod: string | null = null;
+    let referralCode: string | null = null;
 
     try {
       const body = await req.json();
@@ -92,6 +93,10 @@ Deno.serve(async (req) => {
         billingAddress = body.billingAddress;
       }
       if (typeof body?.method === "string") forceMethod = body.method;
+      if (typeof body?.referralCode === "string") {
+        const normalized = body.referralCode.trim().toUpperCase();
+        if (/^ECL-[A-Z0-9]{4,12}$/.test(normalized)) referralCode = normalized;
+      }
     } catch {
       // No body or invalid JSON — use defaults
     }
@@ -224,6 +229,7 @@ Deno.serve(async (req) => {
         final_cents: finalCents,
         promo_code: promo ? normalizedPromo : null,
         method_forced: forceMethod ?? null,
+        ref_code: referralCode,
       },
     };
     if (validatedBillingAddress) {
