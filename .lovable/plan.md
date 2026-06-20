@@ -1,83 +1,91 @@
-## Module "Comment tu te sens ?" — Plan de build
 
-Nouveau module émotionnel pour l'enfant, accessible depuis l'accueil et depuis "Liés autrement", avec 5 parcours adaptés par tranche d'âge et historique persistant.
+# Programme Ambassadrices Eclosia
 
-### 1. Base de données (1 migration)
+Une cliente premium devient automatiquement ambassadrice. Elle reçoit un lien unique. Chaque maman qu'elle aide à rejoindre Eclosia est comptée et déclenche une commission, validée 14 jours après le paiement (le temps qu'un remboursement ne soit plus possible).
 
-Nouvelle table `child_emotion_entries` (RLS owner-only) :
-- `user_id uuid not null` (le parent / compte)
-- `age_band text` ('0_3', '3_6', '6_9', '9_12', '12_plus')
-- `emotion text` (clé normalisée : happy, sad, angry, scared, overwhelmed, unknown, frustrated, ashamed, lonely, misunderstood, empty, anxious, flooded)
-- `intensity int null` (1–5 ou 1–3)
-- `body_location text null` ('belly', 'head', 'throat', 'hands', 'all')
-- `observed_signs text[] null` (pour 0–3 ans)
-- `note text null` (journal libre 9–12 et 12+)
-- `is_crisis boolean default false`
-- `needs_parent boolean default false` (bouton ado "J'ai besoin d'aide")
-- `created_at timestamptz default now()`
+## Vocabulaire (impact, jamais commercial)
 
-Policies : owner CRUD. Index sur `(user_id, created_at desc)`.
+- Pas de "ventes" → **"mamans accompagnées"**
+- Pas de "commission" → **"contribution reçue"** (mais on garde "commission" en interne BDD)
+- Pas de "niveau / palier commercial" → **"cercle"** : 🌱 Graine · 🌸 Fleur · 💛 Fondatrice
+- Pas de "filleule" → **"maman recommandée"**
+- Le tableau s'appelle **"Mon Impact"**
 
-### 2. Données statiques (TS)
+## Les trois cercles (acquis à vie, jamais de retour en arrière)
 
-`src/data/childEmotionsCatalog.ts` :
-- Liste des 6 émotions de base (3–9 ans) avec emoji + couleur + libellé.
-- Roue élargie 9–12 et 12+ (12 émotions).
-- Signes observables 0–3 ans.
-- Pour chaque émotion : phrase à dire au parent + geste concret + (si applicable) exercice simple.
-- Mapping crise : émotions noir/rouge ou intensité ≥4 → flag.
+| Cercle | Mamans accompagnées | Part reversée |
+|---|---|---|
+| 🌱 Graine | 0 à 4 | 20 % |
+| 🌸 Fleur | 5 à 14 | 25 % |
+| 💛 Fondatrice | 15 et + | 30 % |
 
-### 3. Routes & navigation
+Le passage de cercle est automatique dès que le seuil est franchi par une commission **validée** (pas seulement en attente).
 
-Dans `App.tsx`, ajouter sous `PaidRoute` :
-- `/comment-tu-te-sens` → page avec sélection d'âge, puis sous-flux selon âge.
-- `/comment-tu-te-sens/historique` → vue parent 7j / 30j.
+## Parcours utilisateur
 
-Ajouter une carte dans `LiesAutrementHome.tsx` (icône 🌈, titre "Comment tu te sens ?", desc fournie) qui pointe vers `/comment-tu-te-sens`.
+1. **Activation** : dès qu'une utilisatrice devient premium, son profil reçoit un `referral_code` unique (ex. `ECL-MARIE-7F2A`) et un lien `https://eclosiia.lovable.app/?ref=ECL-MARIE-7F2A`.
+2. **Partage** : depuis "Mon Impact", elle copie son lien, partage par WhatsApp / Instagram / mail (boutons de partage natifs).
+3. **Attribution** : quand quelqu'un visite avec `?ref=CODE`, on stocke le code en cookie 30 jours + localStorage. Au moment du paiement Mollie, on rattache la commande au code.
+4. **Création commission** : webhook Mollie marque la commission `pending`, montant = part du cercle × prix payé.
+5. **Validation** : un cron quotidien passe les commissions `pending` de + de 14 jours en `validated` → met à jour le compteur du cercle et déclenche éventuellement un passage de cercle.
+6. **Tableau de bord "Mon Impact"** affiche : mamans accompagnées · cercle actuel · part actuelle · total reversé (validé) · en attente · progression vers le prochain cercle.
 
-Ajouter un bouton vert (#7DB89F via token `--lies`) sur la page d'accueil (`Index.tsx`), sous les CTAs existants : icône 🌈, "Mon enfant — comment il se sent ?" + sous-titre "Aide-le à mettre des mots · 30 sec".
+## Versement automatique — décision à prendre
 
-### 4. Composants
+Tu as choisi "versement automatique". Mollie permet les **payouts** vers ton propre compte, mais **pas vers les comptes des ambassadrices** sans passer par Mollie Connect (offre marchande, KYC par ambassadrice, IBAN vérifié, contrat). C'est lourd à déployer.
 
-Sous `src/components/feelings/` :
-- `AgeBandPicker.tsx` — sélecteur 5 tranches (gros boutons emoji).
-- `Observations0_3.tsx` — checkboxes signes + résultat parent.
-- `Faces6.tsx` — grille 6 visages colorés (3–6 et étape 1 de 6–9).
-- `IntensityPicker.tsx` — 3 niveaux (6–9) ou 5 niveaux (9–12, 12+).
-- `BodyLocationPicker.tsx` — 5 zones du corps.
-- `EmotionWheel.tsx` — roue 12 émotions (9–12, 12+).
-- `JournalField.tsx` — textarea optionnelle.
-- `ParentGuidance.tsx` — bloc "À dire / À faire / Exercice / C'est une crise" → lien `/lies-autrement/crise`.
-- `TeenSelfHelp.tsx` — exercices autonomes + bouton "J'ai besoin d'aide" (insère entrée avec `needs_parent=true`).
-- `EmotionHistory.tsx` — onglets 7j/30j + barres simples (recharts déjà présent) des émotions dominantes.
+Je propose une **approche hybride réaliste** qui reste "automatique" du point de vue de l'ambassadrice :
 
-Sous `src/pages/feelings/` :
-- `FeelingsHome.tsx` — orchestrateur, gère étape âge → sous-flux.
-- `FeelingsHistory.tsx` — page historique.
+- L'ambassadrice renseigne son IBAN + nom dans son profil (chiffré côté BDD).
+- Dès qu'une commission est validée, elle est ajoutée à son solde "disponible".
+- Le 1er de chaque mois, un cron génère automatiquement un **ordre de virement** (CSV SEPA) pour toutes les ambassadrices avec solde ≥ 20 €, te l'envoie par mail, et marque les commissions `paid`. Tu fais l'import dans ta banque (1 clic, format standard SEPA XML).
+- Côté ambassadrice c'est invisible : elle voit "versement programmé le X" puis "versé le Y".
 
-### 5. Logique de sauvegarde
+Si tu veux **vrai versement 100 % automatique sans toi**, il faut activer Mollie Connect (ou Stripe Connect) : prévoir 2-3 semaines de dev en plus, KYC obligatoire pour chaque ambassadrice, et frais Mollie par transfert. Je peux le faire dans une 2e phase.
 
-Hook `useChildEmotionEntry` : insert dans `child_emotion_entries` à la fin de chaque flux (ou à chaque "J'ai besoin d'aide" pour les ados). Toast de confirmation discret.
+**Cette première version livre tout sauf le déclenchement bancaire — je te demanderai confirmation sur l'approche SEPA avant de l'implémenter.**
 
-### 6. Design
+## Implémentation technique
 
-- Vert doux `--lies` déjà défini, réutilisé.
-- Visages : emojis Unicode pour v1 (rapide, accessible) avec halos colorés en HSL via tokens — illustrations watercolor à itérer ensuite.
-- Boutons larges (min h-16), tap-friendly mobile, contrast AA.
-- Réutilise `LiesShell` pour cohérence.
+### Base de données (nouvelles tables)
 
-### 7. Hors scope v1
+- `ambassador_profiles` : `user_id` (PK), `referral_code` unique, `current_tier` (graine/fleur/fondatrice), `validated_referrals_count`, `iban_encrypted`, `iban_holder_name`, `joined_at`
+- `ambassador_referrals` : `id`, `ambassador_user_id`, `referred_user_id`, `referral_code_used`, `payment_id` (Mollie), `amount_paid_cents`, `commission_rate`, `commission_cents`, `status` (pending/validated/paid/refunded), `validated_at`, `paid_at`, `created_at`
+- `ambassador_payouts` : `id`, `ambassador_user_id`, `amount_cents`, `referral_ids` (array), `sepa_batch_id`, `status` (scheduled/sent/failed), `created_at`, `paid_at`
 
-- Notification push réelle au parent depuis le bouton ado (insère seulement la ligne `needs_parent=true` ; v1 = badge "ton enfant a demandé de l'aide" dans dashboard parent à itérer ensuite).
-- Profils enfants multiples (v1 = une seule entrée liée au compte parent).
-- Illustrations watercolor custom (v1 = emojis + halos colorés).
+RLS : chaque ambassadrice voit uniquement ses propres lignes. Service role pour webhooks et cron. Admin peut tout voir.
 
-### Détails techniques
+### Fonctions edge (Supabase)
 
-- Migration Supabase unique, RLS strict owner.
-- Pas de nouveau secret.
-- Pas de nouvelle dépendance (recharts déjà présent).
-- i18n : nouvelles clés `feelings.*` dans `fr.json` uniquement v1.
-- Tests : un spec vitest léger pour la logique "is_crisis" (mapping émotion+intensité → flag).
+- `create-ambassador-profile` : déclenchée à l'activation premium → génère code unique.
+- Modif `mollie-webhook` : si payment metadata contient `ref_code`, crée une ligne `ambassador_referrals` en `pending`.
+- `validate-ambassador-referrals` (cron quotidien) : passe en `validated` les `pending` de + de 14 jours, met à jour le compteur et le cercle.
+- `generate-monthly-payouts` (cron mensuel, 1er du mois) : crée les `ambassador_payouts`, génère SEPA XML, envoie par mail à l'admin.
+- `get-ambassador-dashboard` : retourne toutes les stats agrégées pour "Mon Impact".
 
-**Volume** : ~12 fichiers créés, 1 migration, ~700 lignes.
+### Frontend
+
+- **Capture du `?ref=`** : nouveau hook `useReferralTracking` dans `App.tsx`, lit `searchParams`, stocke en cookie 30j.
+- **Envoi au paiement** : modif `useMolliePayment` pour passer le code en metadata Mollie.
+- **Page `/mon-impact`** (nouvelle route protégée) : affiche les 5 stats + lien + boutons partage + barre de progression vers prochain cercle + IBAN form + historique des mamans recommandées (anonymisé : "Une maman t'a rejoint le X").
+- **Lien dans le Dashboard** : carte "🌱 Mon Impact" visible uniquement pour les ambassadrices (= tous les premium).
+- **Page admin `/admin/ambassadrices`** : vue d'ensemble, validations manuelles si besoin, déclenchement payout.
+
+### Design
+
+Cohérent avec l'existant : palette rose/sauge, polices Playfair + sans-serif body, cartes `rounded-[2rem]` avec `bg-card`, `shadow-soft`. Les trois cercles avec un dégradé doux (vert tendre → rose → ambre). Animations légères (framer-motion déjà utilisé).
+
+## Découpage en livraisons
+
+1. **Migration BDD** + RLS + GRANT — j'envoie pour ton approbation en premier.
+2. **Tracking referral frontend + intégration paiement Mollie + webhook**.
+3. **Page "Mon Impact"** complète + carte dashboard.
+4. **Crons de validation** (J+14) **et de payout mensuel**.
+5. **Page admin** + tests.
+
+## Questions ouvertes avant de coder
+
+1. Confirme l'approche SEPA mensuelle (vs Mollie Connect plus tard) ?
+2. Seuil minimum de versement : **20 €** ok ou autre montant ?
+3. Le code referral : généré (`ECL-XXXX`) ou laisser la maman choisir son code personnalisé ?
+4. Pour une maman qui s'inscrit via un lien puis ne paie qu'1 mois après : on attribue toujours la commission ? (J'ai prévu cookie 30j — confirme.)
