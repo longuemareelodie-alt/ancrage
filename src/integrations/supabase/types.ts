@@ -14,6 +14,135 @@ export type Database = {
   }
   public: {
     Tables: {
+      ambassador_payouts: {
+        Row: {
+          ambassador_user_id: string
+          amount_cents: number
+          created_at: string
+          failure_reason: string | null
+          id: string
+          paid_at: string | null
+          referral_count: number
+          scheduled_for: string | null
+          sepa_batch_id: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          ambassador_user_id: string
+          amount_cents: number
+          created_at?: string
+          failure_reason?: string | null
+          id?: string
+          paid_at?: string | null
+          referral_count?: number
+          scheduled_for?: string | null
+          sepa_batch_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          ambassador_user_id?: string
+          amount_cents?: number
+          created_at?: string
+          failure_reason?: string | null
+          id?: string
+          paid_at?: string | null
+          referral_count?: number
+          scheduled_for?: string | null
+          sepa_batch_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      ambassador_profiles: {
+        Row: {
+          created_at: string
+          current_tier: string
+          iban_encrypted: string | null
+          iban_holder_name: string | null
+          joined_at: string
+          referral_code: string
+          updated_at: string
+          user_id: string
+          validated_referrals_count: number
+        }
+        Insert: {
+          created_at?: string
+          current_tier?: string
+          iban_encrypted?: string | null
+          iban_holder_name?: string | null
+          joined_at?: string
+          referral_code: string
+          updated_at?: string
+          user_id: string
+          validated_referrals_count?: number
+        }
+        Update: {
+          created_at?: string
+          current_tier?: string
+          iban_encrypted?: string | null
+          iban_holder_name?: string | null
+          joined_at?: string
+          referral_code?: string
+          updated_at?: string
+          user_id?: string
+          validated_referrals_count?: number
+        }
+        Relationships: []
+      }
+      ambassador_referrals: {
+        Row: {
+          ambassador_user_id: string
+          amount_paid_cents: number
+          commission_cents: number
+          commission_rate: number
+          created_at: string
+          id: string
+          paid_at: string | null
+          payment_id: string
+          payout_id: string | null
+          referral_code_used: string
+          referred_user_id: string | null
+          status: string
+          updated_at: string
+          validated_at: string | null
+        }
+        Insert: {
+          ambassador_user_id: string
+          amount_paid_cents: number
+          commission_cents: number
+          commission_rate: number
+          created_at?: string
+          id?: string
+          paid_at?: string | null
+          payment_id: string
+          payout_id?: string | null
+          referral_code_used: string
+          referred_user_id?: string | null
+          status?: string
+          updated_at?: string
+          validated_at?: string | null
+        }
+        Update: {
+          ambassador_user_id?: string
+          amount_paid_cents?: number
+          commission_cents?: number
+          commission_rate?: number
+          created_at?: string
+          id?: string
+          paid_at?: string | null
+          payment_id?: string
+          payout_id?: string | null
+          referral_code_used?: string
+          referred_user_id?: string | null
+          status?: string
+          updated_at?: string
+          validated_at?: string | null
+        }
+        Relationships: []
+      }
       appointments: {
         Row: {
           appointment_at: string
@@ -1258,9 +1387,12 @@ export type Database = {
         Args: { payload: Json; queue_name: string }
         Returns: number
       }
+      ensure_ambassador_profile: { Args: { _user_id: string }; Returns: string }
+      generate_referral_code: { Args: never; Returns: string }
       get_emergency_usage: { Args: never; Returns: Json }
       get_is_premium: { Args: { _user_id: string }; Returns: boolean }
       get_medical_record_by_token: { Args: { _token: string }; Returns: Json }
+      get_my_ambassador_impact: { Args: never; Returns: Json }
       get_premium_activation_log: {
         Args: {
           _from?: string
@@ -1328,6 +1460,10 @@ export type Database = {
         Returns: undefined
       }
       use_emergency: { Args: never; Returns: Json }
+      validate_pending_referrals: {
+        Args: { _older_than_days?: number }
+        Returns: Json
+      }
     }
     Enums: {
       app_role: "admin" | "user"
