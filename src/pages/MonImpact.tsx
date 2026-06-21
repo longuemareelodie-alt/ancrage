@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Copy, Share2, ArrowLeft, Sparkles, Heart } from "lucide-react";
+import { Copy, Share2, ArrowLeft, Sparkles, Heart, CheckCircle2, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 type Tier = "graine" | "fleur" | "fondatrice";
 
@@ -262,15 +264,105 @@ export default function MonImpact() {
           </p>
         </section>
 
-        {/* Note IBAN */}
-        <section className="rounded-2xl border border-dashed border-border p-5 text-sm text-muted-foreground">
-          <p className="mb-1 font-medium text-foreground">Recevoir tes contributions</p>
-          <p>
-            Le programme de versement automatique est en cours d'activation. Tes contributions
-            s'accumulent en attendant — tu seras notifiée dès que tu pourras renseigner ton IBAN.
-          </p>
-        </section>
+        <IbanSection hasIban={!!impact.has_iban} onSaved={load} />
       </div>
     </div>
+  );
+}
+
+function IbanSection({ hasIban, onSaved }: { hasIban: boolean; onSaved: () => void }) {
+  const [editing, setEditing] = useState(!hasIban);
+  const [iban, setIban] = useState("");
+  const [holder, setHolder] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  const save = async () => {
+    if (!iban.trim() || !holder.trim()) {
+      toast.error("Renseigne ton IBAN et le nom du titulaire.");
+      return;
+    }
+    setSaving(true);
+    const { error } = await supabase.rpc("set_my_iban", {
+      _iban: iban,
+      _holder_name: holder,
+    });
+    setSaving(false);
+    if (error) {
+      toast.error(
+        error.message?.includes("Invalid IBAN")
+          ? "Format d'IBAN invalide. Vérifie qu'il commence par 2 lettres (ex: FR76...)."
+          : "Impossible d'enregistrer ton IBAN.",
+      );
+      return;
+    }
+    toast.success("IBAN enregistré 🌸");
+    setIban("");
+    setEditing(false);
+    onSaved();
+  };
+
+  if (hasIban && !editing) {
+    return (
+      <section className="rounded-2xl bg-sage/15 border border-sage/30 p-5 text-sm">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2 text-foreground">
+            <CheckCircle2 className="w-4 h-4 text-sage" />
+            <span>Ton IBAN est enregistré. Les virements sont effectués chaque 1<sup>er</sup> du mois (seuil : 20 €).</span>
+          </div>
+          <Button variant="ghost" size="sm" onClick={() => setEditing(true)}>
+            Modifier
+          </Button>
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section className="rounded-2xl bg-card p-6 shadow-soft space-y-4">
+      <div>
+        <h3 className="font-serif-display text-lg text-primary-dark">Recevoir tes contributions</h3>
+        <p className="text-sm text-muted-foreground mt-1">
+          Renseigne ton IBAN une seule fois. Tes commissions validées de plus de 20 € sont virées
+          automatiquement le 1<sup>er</sup> du mois.
+        </p>
+      </div>
+      <div className="space-y-3">
+        <div>
+          <Label htmlFor="holder">Nom du titulaire du compte</Label>
+          <Input
+            id="holder"
+            value={holder}
+            onChange={(e) => setHolder(e.target.value)}
+            placeholder="Marie Dupont"
+            className="mt-1"
+          />
+        </div>
+        <div>
+          <Label htmlFor="iban">IBAN</Label>
+          <Input
+            id="iban"
+            value={iban}
+            onChange={(e) => setIban(e.target.value.toUpperCase())}
+            placeholder="FR76 1234 5678 9012 3456 7890 123"
+            className="mt-1 font-mono"
+            autoComplete="off"
+          />
+          <p className="text-xs text-muted-foreground mt-1">
+            Seul toi peux le voir. Il est utilisé uniquement pour te virer tes contributions.
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Button onClick={save} disabled={saving} className="rounded-full">
+            {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
+            Enregistrer
+          </Button>
+          {hasIban && (
+            <Button variant="ghost" onClick={() => setEditing(false)} disabled={saving}>
+              Annuler
+            </Button>
+          )}
+        </div>
+      </div>
+    </section>
   );
 }
