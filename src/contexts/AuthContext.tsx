@@ -48,6 +48,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   // Remember which user ids we've already warned about so we don't spam logs.
   const loggedAnomaliesRef = useRef<Set<string>>(new Set());
 
+  const checkAdmin = useCallback(async (userId: string | null) => {
+    const seq = ++adminCheckSeqRef.current;
+    if (!userId) {
+      setIsAdmin(null);
+      return;
+    }
+    const { data, error } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", userId)
+      .eq("role", "admin")
+      .maybeSingle();
+    if (seq !== adminCheckSeqRef.current) return;
+    setIsAdmin(!error && !!data);
+  }, []);
+
   const checkEligibility = useCallback(async (userId: string | null) => {
     const seq = ++checkSeqRef.current;
     if (!userId) {
