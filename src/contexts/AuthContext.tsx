@@ -123,10 +123,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setSession(nextSession);
         setAuthLoading(false);
         const uid = nextSession?.user?.id ?? null;
-        // Reset paid state immediately on auth change so old value never leaks across users.
+        // Reset states immediately on auth change so old value never leaks across users.
         setIsPaid(null);
+        setIsAdmin(null);
         setEligibilityPhase(uid ? "checking" : "idle");
         void checkEligibility(uid);
+        void checkAdmin(uid);
         if (nextSession?.user) {
           setTimeout(() => { void pullStyleFromRemote(); }, 0);
           setTimeout(() => { void pullParentTypeFromRemote(); }, 0);
