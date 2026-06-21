@@ -393,7 +393,7 @@ export default function AmbassadriceContrat() {
         </article>
 
         {!alreadyCurrent && (
-          <section className="rounded-2xl bg-card p-6 shadow-soft space-y-4 print:hidden">
+          <section ref={acceptSectionRef} className="rounded-2xl bg-card p-6 shadow-soft space-y-4 print:hidden">
             <h3 className="font-serif-display text-lg text-primary-dark">
               Acceptation électronique
             </h3>
