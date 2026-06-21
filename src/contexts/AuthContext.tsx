@@ -15,6 +15,8 @@ interface AuthContextType {
   loading: boolean;
   /** True if the user is allowed into paid pages (premium or grandfathered). null while unknown. */
   isPaid: boolean | null;
+  /** True if the user has the admin role. null while unknown. */
+  isAdmin: boolean | null;
   /** Status of the eligibility check itself. */
   eligibilityPhase: EligibilityPhase;
   /** Force a re-check (e.g. after returning from payment). */
