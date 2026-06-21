@@ -29,6 +29,7 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
   isPaid: null,
+  isAdmin: null,
   eligibilityPhase: "idle",
   refreshEligibility: async () => {},
   signOut: async () => {},
