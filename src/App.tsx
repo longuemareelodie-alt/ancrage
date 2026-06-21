@@ -64,6 +64,7 @@ import PremiumActivationLogPage from "./pages/admin/PremiumActivationLog";
 import PremiumAuditListPage from "./pages/admin/PremiumAuditList";
 import WebhookAnomaliesPage from "./pages/admin/WebhookAnomalies";
 import PendingEmailsAdminPage from "./pages/admin/PendingEmails";
+import AmbassadorPayoutsPage from "./pages/admin/AmbassadorPayouts";
 import LiesAutrementHome from "./pages/lies/LiesAutrementHome";
 import LsfHome from "./pages/lies/LsfHome";
 import LsfTheme from "./pages/lies/LsfTheme";
@@ -174,6 +175,7 @@ const AnimatedRoutes = () => {
         <Route path="/admin/webhook-anomalies" element={<AdminRoute><PageTransition><WebhookAnomaliesPage /></PageTransition></AdminRoute>} />
         <Route path="/admin/pending-emails" element={<AdminRoute><PageTransition><PendingEmailsAdminPage /></PageTransition></AdminRoute>} />
         <Route path="/admin/communaute-moderation" element={<AdminRoute><PageTransition><CommunauteModeration /></PageTransition></AdminRoute>} />
+        <Route path="/admin/ambassador-payouts" element={<AdminRoute><PageTransition><AmbassadorPayoutsPage /></PageTransition></AdminRoute>} />
         <Route path="/lies-autrement" element={<PaidRoute><PageTransition><LiesAutrementHome /></PageTransition></PaidRoute>} />
         <Route path="/lies-autrement/lsf" element={<PaidRoute><PageTransition><LsfHome /></PageTransition></PaidRoute>} />
         <Route path="/lies-autrement/lsf/:themeSlug" element={<PaidRoute><PageTransition><LsfTheme /></PageTransition></PaidRoute>} />
