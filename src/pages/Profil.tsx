@@ -56,7 +56,7 @@ function ParentTypeCard() {
 }
 
 const Profil = () => {
-  const { user, loading, signOut } = useAuth();
+  const { user, loading, isAdmin, signOut } = useAuth();
   const navigate = useNavigate();
   const { isSupported, isSubscribed, subscribe, unsubscribe, loading: pushLoading } = usePushNotifications();
   const { startPayment, loading: paymentLoading } = useMolliePayment();
