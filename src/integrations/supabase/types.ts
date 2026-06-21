@@ -20,11 +20,14 @@ export type Database = {
           amount_cents: number
           created_at: string
           failure_reason: string | null
+          holder_name: string | null
+          iban_last4: string | null
           id: string
           paid_at: string | null
           referral_count: number
           scheduled_for: string | null
           sepa_batch_id: string | null
+          sepa_xml_path: string | null
           status: string
           updated_at: string
         }
@@ -33,11 +36,14 @@ export type Database = {
           amount_cents: number
           created_at?: string
           failure_reason?: string | null
+          holder_name?: string | null
+          iban_last4?: string | null
           id?: string
           paid_at?: string | null
           referral_count?: number
           scheduled_for?: string | null
           sepa_batch_id?: string | null
+          sepa_xml_path?: string | null
           status?: string
           updated_at?: string
         }
@@ -46,11 +52,14 @@ export type Database = {
           amount_cents?: number
           created_at?: string
           failure_reason?: string | null
+          holder_name?: string | null
+          iban_last4?: string | null
           id?: string
           paid_at?: string | null
           referral_count?: number
           scheduled_for?: string | null
           sepa_batch_id?: string | null
+          sepa_xml_path?: string | null
           status?: string
           updated_at?: string
         }
@@ -1389,10 +1398,12 @@ export type Database = {
       }
       ensure_ambassador_profile: { Args: { _user_id: string }; Returns: string }
       generate_referral_code: { Args: never; Returns: string }
+      get_batch_recipients_admin: { Args: { _batch_id: string }; Returns: Json }
       get_emergency_usage: { Args: never; Returns: Json }
       get_is_premium: { Args: { _user_id: string }; Returns: boolean }
       get_medical_record_by_token: { Args: { _token: string }; Returns: Json }
       get_my_ambassador_impact: { Args: never; Returns: Json }
+      get_payout_batch_admin: { Args: { _batch_id: string }; Returns: Json }
       get_premium_activation_log: {
         Args: {
           _from?: string
@@ -1423,6 +1434,7 @@ export type Database = {
         Returns: boolean
       }
       is_community_member: { Args: { _user_id: string }; Returns: boolean }
+      list_payout_batches_admin: { Args: never; Returns: Json }
       log_audit_anomaly: {
         Args: {
           _kind: string
@@ -1431,6 +1443,10 @@ export type Database = {
           _target_user_id: string
           _window_minutes?: number
         }
+        Returns: Json
+      }
+      mark_payout_batch_paid_admin: {
+        Args: { _batch_id: string }
         Returns: Json
       }
       move_to_dlq: {
@@ -1453,6 +1469,10 @@ export type Database = {
       regenerate_medical_token: { Args: never; Returns: Json }
       resolve_webhook_anomaly: {
         Args: { _anomaly_id: string; _new_status: string; _note?: string }
+        Returns: Json
+      }
+      set_my_iban: {
+        Args: { _holder_name: string; _iban: string }
         Returns: Json
       }
       upsert_user_progress: {
