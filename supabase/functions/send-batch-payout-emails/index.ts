@@ -51,6 +51,19 @@ Deno.serve(async (req) => {
     const { data: recipients, error } = await supabase.rpc('get_batch_recipients_admin', { _batch_id: batchId })
     if (error) throw error
 
+    const MONTHS_FR = [
+      'janvier', 'février', 'mars', 'avril', 'mai', 'juin',
+      'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre',
+    ]
+    const periodFromCreatedAt = (iso?: string | null): string => {
+      if (!iso) return ''
+      const d = new Date(iso)
+      if (isNaN(d.getTime())) return ''
+      // Les commissions virées correspondent au mois précédent la création du batch
+      const ref = new Date(d.getFullYear(), d.getMonth() - 1, 1)
+      return `validées en ${MONTHS_FR[ref.getMonth()]} ${ref.getFullYear()}`
+    }
+
     let sent = 0
     for (const r of (recipients ?? []) as any[]) {
       if (!r.email) continue
@@ -65,6 +78,8 @@ Deno.serve(async (req) => {
             amountEuros,
             ibanLast4: r.iban_last4,
             batchId,
+            periodLabel: periodFromCreatedAt(r.payout_created_at),
+            referralCode: r.referral_code,
           },
         },
       })

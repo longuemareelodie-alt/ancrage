@@ -10,9 +10,18 @@ interface Props {
   amountEuros?: string
   ibanLast4?: string
   batchId?: string
+  periodLabel?: string
+  referralCode?: string
 }
 
-const Email = ({ firstName, amountEuros = '0,00', ibanLast4 = '', batchId = '' }: Props) => (
+const Email = ({
+  firstName,
+  amountEuros = '0,00',
+  ibanLast4 = '',
+  batchId = '',
+  periodLabel = '',
+  referralCode = '',
+}: Props) => (
   <Html lang="fr" dir="ltr">
     <Head />
     <Preview>Ta contribution Eclosia a été virée 🌸</Preview>
@@ -29,18 +38,31 @@ const Email = ({ firstName, amountEuros = '0,00', ibanLast4 = '', batchId = '' }
         </Text>
 
         <Text style={text}>
-          Un grand merci pour ce que tu transmets autour de toi. Le virement de tes commissions
-          accompagnant les mamans rejointes via ton lien vient d'être effectué.
+          Un grand merci pour ce que tu transmets autour de toi. Le virement
+          de tes commissions{periodLabel ? ` ${periodLabel}` : ''} vient
+          d'être effectué.
         </Text>
 
         <Section style={detailBox}>
           <Text style={detailRow}><strong>Montant viré :</strong> {amountEuros} €</Text>
+          {periodLabel ? (
+            <Text style={detailRow}><strong>Période :</strong> {periodLabel}</Text>
+          ) : null}
           <Text style={detailRow}><strong>Compte crédité :</strong> IBAN ····{ibanLast4}</Text>
-          <Text style={detailRow}><strong>Référence :</strong> {batchId}</Text>
+          <Text style={detailRow}><strong>Référence du lot :</strong> {batchId}</Text>
+          {referralCode ? (
+            <Text style={detailRow}><strong>Ton code affilié :</strong> {referralCode}</Text>
+          ) : null}
         </Section>
 
         <Text style={text}>
-          Le virement apparaîtra sur ton compte sous 1 à 2 jours ouvrés (libellé : « Eclosia commission »).
+          Le virement apparaîtra sur ton compte sous 1 à 2 jours ouvrés
+          (libellé : « Eclosia commission »).
+        </Text>
+
+        <Text style={text}>
+          Tu peux retrouver l'historique complet de tes contributions dans ton
+          espace « Mon Impact ».
         </Text>
 
         <Text style={text}>
@@ -64,7 +86,9 @@ export const template = {
     firstName: 'Marie',
     amountEuros: '45,60',
     ibanLast4: '1234',
-    batchId: 'ECL-202601-A1B2C3D4',
+    batchId: 'ECL-202606-A1B2C3D4',
+    periodLabel: 'validées en juin 2026',
+    referralCode: 'ECL-A1B2C3',
   },
 } satisfies TemplateEntry
 

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Copy, Share2, ArrowLeft, Sparkles, Heart, CheckCircle2, Loader2 } from "lucide-react";
+import { Copy, Share2, ArrowLeft, Sparkles, Heart, CheckCircle2, Loader2, FileText } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { CURRENT_CONTRACT_VERSION, type ContractStatus } from "@/lib/ambassadorContract";
 
 type Tier = "graine" | "fleur" | "fondatrice";
 
@@ -51,18 +52,25 @@ const formatEuros = (cents: number) => `${(cents / 100).toFixed(2).replace(".", 
 
 export default function MonImpact() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [impact, setImpact] = useState<Impact | null>(null);
+  const [contract, setContract] = useState<ContractStatus | null>(null);
   const [loading, setLoading] = useState(true);
-  const [enrolling, setEnrolling] = useState(false);
 
   const load = async () => {
     setLoading(true);
-    const { data, error } = await supabase.rpc("get_my_ambassador_impact");
-    if (error) {
-      console.error(error);
+    const [impactRes, contractRes] = await Promise.all([
+      supabase.rpc("get_my_ambassador_impact"),
+      supabase.rpc("get_my_contract_status"),
+    ]);
+    if (impactRes.error) {
+      console.error(impactRes.error);
       toast.error("Impossible de charger ton impact.");
     } else {
-      setImpact(data as unknown as Impact);
+      setImpact(impactRes.data as unknown as Impact);
+    }
+    if (!contractRes.error) {
+      setContract(contractRes.data as unknown as ContractStatus);
     }
     setLoading(false);
   };
@@ -71,22 +79,10 @@ export default function MonImpact() {
     if (user) load();
   }, [user]);
 
-  const enroll = async () => {
-    if (!user) return;
-    setEnrolling(true);
-    const { error } = await supabase.rpc("ensure_ambassador_profile", { _user_id: user.id });
-    setEnrolling(false);
-    if (error) {
-      toast.error(
-        error.message?.includes("not premium")
-          ? "Le programme est réservé aux mamans Eclosia premium."
-          : "Une erreur est survenue.",
-      );
-      return;
-    }
-    toast.success("Bienvenue dans le cercle 🌱");
-    load();
-  };
+  const goToContract = () => navigate("/ambassadrice/contrat");
+
+  const contractOutdated =
+    contract?.accepted && contract.version !== CURRENT_CONTRACT_VERSION;
 
   const referralUrl =
     impact?.referral_code && typeof window !== "undefined"
@@ -149,9 +145,13 @@ export default function MonImpact() {
               Quand tu partages Eclosia avec une autre maman, tu lui ouvres une porte. Tu reçois
               aussi une part en reconnaissance de ce que tu transmets.
             </p>
-            <Button onClick={enroll} disabled={enrolling} size="lg" className="rounded-full">
-              {enrolling ? "Création…" : "Recevoir mon lien d'invitation"}
+            <Button onClick={goToContract} size="lg" className="rounded-full">
+              <FileText className="w-4 h-4 mr-2" />
+              Lire et accepter le contrat d'affiliation
             </Button>
+            <p className="text-xs text-muted-foreground mt-4">
+              L'activation se fait en 1 minute après acceptation du contrat.
+            </p>
           </motion.div>
         </div>
       </div>
@@ -183,6 +183,45 @@ export default function MonImpact() {
             Chaque maman que tu accompagnes compte vraiment.
           </p>
         </header>
+
+        {contractOutdated && (
+          <div className="rounded-2xl bg-amber-50 border border-amber-200 p-4 text-sm flex items-start gap-3">
+            <FileText className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <div className="font-medium text-foreground">
+                Le contrat d'affiliation a été mis à jour.
+              </div>
+              <div className="text-muted-foreground mt-1">
+                Merci de relire et accepter la nouvelle version pour continuer
+                à recevoir tes commissions.
+              </div>
+              <Button
+                size="sm"
+                variant="outline"
+                className="mt-3 rounded-full"
+                onClick={goToContract}
+              >
+                Mettre à jour mon contrat
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {contract?.accepted && !contractOutdated && (
+          <div className="text-xs text-muted-foreground text-center">
+            <Link
+              to="/ambassadrice/contrat"
+              className="inline-flex items-center gap-1 hover:text-foreground"
+            >
+              <FileText className="w-3 h-3" /> Contrat d'affiliation signé le{" "}
+              {contract.accepted_at
+                ? new Date(contract.accepted_at).toLocaleDateString("fr-FR")
+                : ""}
+            </Link>
+          </div>
+        )}
+
+
 
         {/* Carte cercle actuel */}
         <motion.section
