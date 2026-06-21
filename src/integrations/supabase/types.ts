@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      ambassador_contract_acceptances: {
+        Row: {
+          accepted_at: string
+          contract_text_hash: string | null
+          contract_version: string
+          created_at: string
+          full_name: string
+          id: string
+          ip_address: string | null
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          accepted_at?: string
+          contract_text_hash?: string | null
+          contract_version: string
+          created_at?: string
+          full_name: string
+          id?: string
+          ip_address?: string | null
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          accepted_at?: string
+          contract_text_hash?: string | null
+          contract_version?: string
+          created_at?: string
+          full_name?: string
+          id?: string
+          ip_address?: string | null
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       ambassador_payouts: {
         Row: {
           ambassador_user_id: string
@@ -1386,6 +1422,15 @@ export type Database = {
     }
     Functions: {
       _trigger_monthly_portraits: { Args: never; Returns: undefined }
+      accept_ambassador_contract: {
+        Args: {
+          _contract_hash?: string
+          _contract_version: string
+          _full_name: string
+          _user_agent?: string
+        }
+        Returns: Json
+      }
       award_badges: { Args: { _badge_keys: string[] }; Returns: undefined }
       cleanup_pending_account_emails: { Args: never; Returns: Json }
       delete_email: {
@@ -1403,6 +1448,7 @@ export type Database = {
       get_is_premium: { Args: { _user_id: string }; Returns: boolean }
       get_medical_record_by_token: { Args: { _token: string }; Returns: Json }
       get_my_ambassador_impact: { Args: never; Returns: Json }
+      get_my_contract_status: { Args: never; Returns: Json }
       get_payout_batch_admin: { Args: { _batch_id: string }; Returns: Json }
       get_premium_activation_log: {
         Args: {
