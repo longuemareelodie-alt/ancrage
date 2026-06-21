@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import SectionBlock from "@/components/SectionBlock";
 import CTAButton from "@/components/CTAButton";
 import { motion, AnimatePresence } from "framer-motion";
-import { LogOut, Plus, Trash2, Save, User, BookOpen, StickyNote, Lock, Pencil, Check, Bell, BellOff, Flame, Trophy, Download, Share, CreditCard, Wind, Hand, Sparkles, ChevronRight, AlertCircle, MessageCircle, Crown, HeartPulse, Brain } from "lucide-react";
+import { LogOut, Plus, Trash2, Save, User, BookOpen, StickyNote, Lock, Pencil, Check, Bell, BellOff, Flame, Trophy, Download, Share, CreditCard, Wind, Hand, Sparkles, ChevronRight, AlertCircle, MessageCircle, Crown, HeartPulse, Brain, Shield, Mail, Activity, Users, HandCoins } from "lucide-react";
 import { ActionStyle, ACTION_STYLE_LABELS, getActionStyle } from "@/lib/actionStyle";
 import { useParentType } from "@/hooks/useParentType";
 import { PARENT_TYPE_LABELS, type ParentType } from "@/lib/parentType";
@@ -56,7 +56,7 @@ function ParentTypeCard() {
 }
 
 const Profil = () => {
-  const { user, loading, signOut } = useAuth();
+  const { user, loading, isAdmin, signOut } = useAuth();
   const navigate = useNavigate();
   const { isSupported, isSubscribed, subscribe, unsubscribe, loading: pushLoading } = usePushNotifications();
   const { startPayment, loading: paymentLoading } = useMolliePayment();
@@ -616,6 +616,60 @@ const Profil = () => {
               <div className="mt-4">
                 <DataActions />
               </div>
+
+              {/* Section admin */}
+              {isAdmin && (
+                <div className="mt-6 rounded-2xl border border-border bg-card p-5 shadow-sm">
+                  <div className="mb-4 flex items-center gap-2">
+                    <Shield className="h-5 w-5 text-primary" />
+                    <h2 className="font-semibold text-foreground">Administration</h2>
+                  </div>
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    <Link
+                      to="/admin/ambassador-payouts"
+                      className="flex items-center gap-3 rounded-xl bg-secondary/40 p-3 transition-colors hover:bg-secondary"
+                    >
+                      <HandCoins className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-sm font-medium">Paiements ambassadrices</span>
+                    </Link>
+                    <Link
+                      to="/admin/communaute-moderation"
+                      className="flex items-center gap-3 rounded-xl bg-secondary/40 p-3 transition-colors hover:bg-secondary"
+                    >
+                      <Users className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-sm font-medium">Modération communauté</span>
+                    </Link>
+                    <Link
+                      to="/admin/premium-log"
+                      className="flex items-center gap-3 rounded-xl bg-secondary/40 p-3 transition-colors hover:bg-secondary"
+                    >
+                      <Activity className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-sm font-medium">Activations premium</span>
+                    </Link>
+                    <Link
+                      to="/admin/premium-audit"
+                      className="flex items-center gap-3 rounded-xl bg-secondary/40 p-3 transition-colors hover:bg-secondary"
+                    >
+                      <Activity className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-sm font-medium">Audit premium</span>
+                    </Link>
+                    <Link
+                      to="/admin/webhook-anomalies"
+                      className="flex items-center gap-3 rounded-xl bg-secondary/40 p-3 transition-colors hover:bg-secondary"
+                    >
+                      <AlertCircle className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-sm font-medium">Anomalies webhooks</span>
+                    </Link>
+                    <Link
+                      to="/admin/pending-emails"
+                      className="flex items-center gap-3 rounded-xl bg-secondary/40 p-3 transition-colors hover:bg-secondary"
+                    >
+                      <Mail className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-sm font-medium">Emails en attente</span>
+                    </Link>
+                  </div>
+                </div>
+              )}
             </motion.div>
           )}
 

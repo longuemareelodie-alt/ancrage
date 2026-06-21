@@ -15,6 +15,8 @@ interface AuthContextType {
   loading: boolean;
   /** True if the user is allowed into paid pages (premium or grandfathered). null while unknown. */
   isPaid: boolean | null;
+  /** True if the user has the admin role. null while unknown. */
+  isAdmin: boolean | null;
   /** Status of the eligibility check itself. */
   eligibilityPhase: EligibilityPhase;
   /** Force a re-check (e.g. after returning from payment). */
@@ -27,6 +29,7 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
   isPaid: null,
+  isAdmin: null,
   eligibilityPhase: "idle",
   refreshEligibility: async () => {},
   signOut: async () => {},
@@ -38,10 +41,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [isPaid, setIsPaid] = useState<boolean | null>(null);
+  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [eligibilityPhase, setEligibilityPhase] = useState<EligibilityPhase>("idle");
   const checkSeqRef = useRef(0);
+  const adminCheckSeqRef = useRef(0);
   // Remember which user ids we've already warned about so we don't spam logs.
   const loggedAnomaliesRef = useRef<Set<string>>(new Set());
+
+  const checkAdmin = useCallback(async (userId: string | null) => {
+    const seq = ++adminCheckSeqRef.current;
+    if (!userId) {
+      setIsAdmin(null);
+      return;
+    }
+    const { data, error } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", userId)
+      .eq("role", "admin")
+      .maybeSingle();
+    if (seq !== adminCheckSeqRef.current) return;
+    setIsAdmin(!error && !!data);
+  }, []);
 
   const checkEligibility = useCallback(async (userId: string | null) => {
     const seq = ++checkSeqRef.current;
@@ -102,10 +123,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setSession(nextSession);
         setAuthLoading(false);
         const uid = nextSession?.user?.id ?? null;
-        // Reset paid state immediately on auth change so old value never leaks across users.
+        // Reset states immediately on auth change so old value never leaks across users.
         setIsPaid(null);
+        setIsAdmin(null);
         setEligibilityPhase(uid ? "checking" : "idle");
         void checkEligibility(uid);
+        void checkAdmin(uid);
         if (nextSession?.user) {
           setTimeout(() => { void pullStyleFromRemote(); }, 0);
           setTimeout(() => { void pullParentTypeFromRemote(); }, 0);
@@ -119,6 +142,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const uid = initial?.user?.id ?? null;
       setEligibilityPhase(uid ? "checking" : "idle");
       void checkEligibility(uid);
+      void checkAdmin(uid);
       if (initial?.user) {
         setTimeout(() => { void pullStyleFromRemote(); }, 0);
         setTimeout(() => { void pullParentTypeFromRemote(); }, 0);
@@ -126,7 +150,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
 
     return () => subscription.unsubscribe();
-  }, [checkEligibility]);
+  }, [checkEligibility, checkAdmin]);
 
   const refreshEligibility = useCallback(async () => {
     await checkEligibility(session?.user?.id ?? null);
@@ -148,6 +172,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         user: session?.user ?? null,
         loading,
         isPaid,
+        isAdmin,
         eligibilityPhase,
         refreshEligibility,
         signOut,
