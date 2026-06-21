@@ -170,6 +170,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         user: session?.user ?? null,
         loading,
         isPaid,
+        isAdmin,
         eligibilityPhase,
         refreshEligibility,
         signOut,
