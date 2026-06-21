@@ -87,20 +87,41 @@ export default function AmbassadriceContrat() {
     <div className="min-h-screen bg-background pb-24">
       <div className="max-w-3xl mx-auto px-6 pt-8 space-y-6">
         <div className="flex items-center justify-between print:hidden">
-          <Link
-            to="/mon-impact"
-            className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground"
-          >
-            <ArrowLeft className="w-4 h-4" /> Retour
-          </Link>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => window.print()}
-            className="rounded-full"
-          >
-            <Printer className="w-4 h-4 mr-2" /> Imprimer / PDF
-          </Button>
+          <div className="flex items-center gap-3">
+            <Link
+              to="/dashboard"
+              className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground"
+            >
+              <Home className="w-4 h-4" /> Retour accueil
+            </Link>
+          </div>
+          <div className="flex items-center gap-3">
+            {alreadyCurrent ? (
+              <Link
+                to="/mon-impact"
+                className="inline-flex items-center gap-2 text-primary hover:text-primary-dark font-medium"
+              >
+                Aller plus loin <ArrowRight className="w-4 h-4" />
+              </Link>
+            ) : (
+              <button
+                onClick={() =>
+                  acceptSectionRef.current?.scrollIntoView({ behavior: "smooth" })
+                }
+                className="inline-flex items-center gap-2 text-primary hover:text-primary-dark font-medium"
+              >
+                Aller plus loin <ArrowRight className="w-4 h-4" />
+              </button>
+            )}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => window.print()}
+              className="rounded-full"
+            >
+              <Printer className="w-4 h-4 mr-2" /> Imprimer / PDF
+            </Button>
+          </div>
         </div>
 
         <header className="text-center">
