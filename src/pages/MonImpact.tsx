@@ -52,18 +52,25 @@ const formatEuros = (cents: number) => `${(cents / 100).toFixed(2).replace(".", 
 
 export default function MonImpact() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [impact, setImpact] = useState<Impact | null>(null);
+  const [contract, setContract] = useState<ContractStatus | null>(null);
   const [loading, setLoading] = useState(true);
-  const [enrolling, setEnrolling] = useState(false);
 
   const load = async () => {
     setLoading(true);
-    const { data, error } = await supabase.rpc("get_my_ambassador_impact");
-    if (error) {
-      console.error(error);
+    const [impactRes, contractRes] = await Promise.all([
+      supabase.rpc("get_my_ambassador_impact"),
+      supabase.rpc("get_my_contract_status"),
+    ]);
+    if (impactRes.error) {
+      console.error(impactRes.error);
       toast.error("Impossible de charger ton impact.");
     } else {
-      setImpact(data as unknown as Impact);
+      setImpact(impactRes.data as unknown as Impact);
+    }
+    if (!contractRes.error) {
+      setContract(contractRes.data as unknown as ContractStatus);
     }
     setLoading(false);
   };
@@ -72,22 +79,10 @@ export default function MonImpact() {
     if (user) load();
   }, [user]);
 
-  const enroll = async () => {
-    if (!user) return;
-    setEnrolling(true);
-    const { error } = await supabase.rpc("ensure_ambassador_profile", { _user_id: user.id });
-    setEnrolling(false);
-    if (error) {
-      toast.error(
-        error.message?.includes("not premium")
-          ? "Le programme est réservé aux mamans Eclosia premium."
-          : "Une erreur est survenue.",
-      );
-      return;
-    }
-    toast.success("Bienvenue dans le cercle 🌱");
-    load();
-  };
+  const goToContract = () => navigate("/ambassadrice/contrat");
+
+  const contractOutdated =
+    contract?.accepted && contract.version !== CURRENT_CONTRACT_VERSION;
 
   const referralUrl =
     impact?.referral_code && typeof window !== "undefined"
