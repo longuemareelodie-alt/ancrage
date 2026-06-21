@@ -124,6 +124,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const uid = initial?.user?.id ?? null;
       setEligibilityPhase(uid ? "checking" : "idle");
       void checkEligibility(uid);
+      void checkAdmin(uid);
       if (initial?.user) {
         setTimeout(() => { void pullStyleFromRemote(); }, 0);
         setTimeout(() => { void pullParentTypeFromRemote(); }, 0);
@@ -131,7 +132,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
 
     return () => subscription.unsubscribe();
-  }, [checkEligibility]);
+  }, [checkEligibility, checkAdmin]);
 
   const refreshEligibility = useCallback(async () => {
     await checkEligibility(session?.user?.id ?? null);
