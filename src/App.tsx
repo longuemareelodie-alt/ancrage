@@ -88,6 +88,7 @@ import PortraitTransformation from "./pages/PortraitTransformation";
 import LivreReconstruction from "./pages/LivreReconstruction";
 import FriseEvolution from "./pages/FriseEvolution";
 import MonImpact from "./pages/MonImpact";
+import AmbassadriceContrat from "./pages/AmbassadriceContrat";
 import { useEffect } from "react";
 import { captureReferralCodeFromUrl } from "@/lib/referralTracking";
 
