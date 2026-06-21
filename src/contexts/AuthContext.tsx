@@ -41,8 +41,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [isPaid, setIsPaid] = useState<boolean | null>(null);
+  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [eligibilityPhase, setEligibilityPhase] = useState<EligibilityPhase>("idle");
   const checkSeqRef = useRef(0);
+  const adminCheckSeqRef = useRef(0);
   // Remember which user ids we've already warned about so we don't spam logs.
   const loggedAnomaliesRef = useRef<Set<string>>(new Set());
 
