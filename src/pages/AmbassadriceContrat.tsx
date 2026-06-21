@@ -31,6 +31,7 @@ export default function AmbassadriceContrat() {
   const [fullName, setFullName] = useState("");
   const [accepted, setAccepted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const acceptSectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!user) return;
