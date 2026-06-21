@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Copy, Share2, ArrowLeft, Sparkles, Heart, CheckCircle2, Loader2 } from "lucide-react";
+import { Copy, Share2, ArrowLeft, Sparkles, Heart, CheckCircle2, Loader2, FileText } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { CURRENT_CONTRACT_VERSION, type ContractStatus } from "@/lib/ambassadorContract";
 
 type Tier = "graine" | "fleur" | "fondatrice";
 
