@@ -73,7 +73,7 @@ const Profil = () => {
   const [notes, setNotes] = useState<Note[]>([]);
   const [editingNote, setEditingNote] = useState<{ title: string; content: string } | null>(null);
   const [saving, setSaving] = useState(false);
-  const [activeTab, setActiveTab] = useState<"profil" | "parcours" | "notes" | "paiements">("profil");
+  const [activeTab, setActiveTab] = useState<"profil" | "parcours" | "notes" | "paiements" | "admin">("profil");
   const [editingName, setEditingName] = useState(false);
   const [nameValue, setNameValue] = useState("");
   const [savingName, setSavingName] = useState(false);
@@ -281,6 +281,7 @@ const Profil = () => {
           { key: "paiements" as const, icon: CreditCard, label: "Paiements", locked: false },
           { key: "parcours" as const, icon: BookOpen, label: "Parcours", locked: !profile?.is_premium },
           { key: "notes" as const, icon: StickyNote, label: "Notes", locked: !profile?.is_premium },
+          ...(isAdmin ? [{ key: "admin" as const, icon: Shield, label: "Admin", locked: false }] : []),
         ]).map((tab) => (
           <button
             key={tab.key}
@@ -786,6 +787,61 @@ const Profil = () => {
           {activeTab === "paiements" && (
             <motion.div key="paiements" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
               <PaymentHistory />
+            </motion.div>
+          )}
+
+          {activeTab === "admin" && (
+            <motion.div key="admin" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-4">
+              <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+                <div className="mb-4 flex items-center gap-2">
+                  <Shield className="h-5 w-5 text-primary" />
+                  <h2 className="font-semibold text-foreground">Administration</h2>
+                </div>
+                <div className="grid gap-2 sm:grid-cols-2">
+                  <Link
+                    to="/admin/ambassador-payouts"
+                    className="flex items-center gap-3 rounded-xl bg-secondary/40 p-3 transition-colors hover:bg-secondary"
+                  >
+                    <HandCoins className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm font-medium">Paiements ambassadrices</span>
+                  </Link>
+                  <Link
+                    to="/admin/communaute-moderation"
+                    className="flex items-center gap-3 rounded-xl bg-secondary/40 p-3 transition-colors hover:bg-secondary"
+                  >
+                    <Users className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm font-medium">Modération communauté</span>
+                  </Link>
+                  <Link
+                    to="/admin/premium-log"
+                    className="flex items-center gap-3 rounded-xl bg-secondary/40 p-3 transition-colors hover:bg-secondary"
+                  >
+                    <Activity className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm font-medium">Activations premium</span>
+                  </Link>
+                  <Link
+                    to="/admin/premium-audit"
+                    className="flex items-center gap-3 rounded-xl bg-secondary/40 p-3 transition-colors hover:bg-secondary"
+                  >
+                    <Activity className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm font-medium">Audit premium</span>
+                  </Link>
+                  <Link
+                    to="/admin/webhook-anomalies"
+                    className="flex items-center gap-3 rounded-xl bg-secondary/40 p-3 transition-colors hover:bg-secondary"
+                  >
+                    <AlertCircle className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm font-medium">Anomalies webhooks</span>
+                  </Link>
+                  <Link
+                    to="/admin/pending-emails"
+                    className="flex items-center gap-3 rounded-xl bg-secondary/40 p-3 transition-colors hover:bg-secondary"
+                  >
+                    <Mail className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm font-medium">Emails en attente</span>
+                  </Link>
+                </div>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
