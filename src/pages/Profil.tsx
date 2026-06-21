@@ -281,6 +281,7 @@ const Profil = () => {
           { key: "paiements" as const, icon: CreditCard, label: "Paiements", locked: false },
           { key: "parcours" as const, icon: BookOpen, label: "Parcours", locked: !profile?.is_premium },
           { key: "notes" as const, icon: StickyNote, label: "Notes", locked: !profile?.is_premium },
+          ...(isAdmin ? [{ key: "admin" as const, icon: Shield, label: "Admin", locked: false }] : []),
         ]).map((tab) => (
           <button
             key={tab.key}
