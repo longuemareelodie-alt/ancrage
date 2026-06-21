@@ -201,6 +201,7 @@ const AnimatedRoutes = () => {
         <Route path="/livre-reconstruction" element={<PaidRoute><PageTransition><LivreReconstruction /></PageTransition></PaidRoute>} />
         <Route path="/frise-evolution" element={<PaidRoute><PageTransition><FriseEvolution /></PageTransition></PaidRoute>} />
         <Route path="/mon-impact" element={<PaidRoute><PageTransition><MonImpact /></PageTransition></PaidRoute>} />
+        <Route path="/ambassadrice/contrat" element={<PaidRoute><PageTransition><AmbassadriceContrat /></PageTransition></PaidRoute>} />
         <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
           </Routes>
         </RoutesWrapper>
