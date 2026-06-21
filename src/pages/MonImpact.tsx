@@ -145,9 +145,13 @@ export default function MonImpact() {
               Quand tu partages Eclosia avec une autre maman, tu lui ouvres une porte. Tu reçois
               aussi une part en reconnaissance de ce que tu transmets.
             </p>
-            <Button onClick={enroll} disabled={enrolling} size="lg" className="rounded-full">
-              {enrolling ? "Création…" : "Recevoir mon lien d'invitation"}
+            <Button onClick={goToContract} size="lg" className="rounded-full">
+              <FileText className="w-4 h-4 mr-2" />
+              Lire et accepter le contrat d'affiliation
             </Button>
+            <p className="text-xs text-muted-foreground mt-4">
+              L'activation se fait en 1 minute après acceptation du contrat.
+            </p>
           </motion.div>
         </div>
       </div>
