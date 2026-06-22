@@ -71,6 +71,30 @@ export default function AmbassadriceContrat() {
       );
       return;
     }
+    // Envoi de l'email de bienvenue ambassadrice (best-effort)
+    try {
+      const referralCode = (data as any)?.referral_code as string | undefined;
+      const acceptedAtLabel = new Date().toLocaleDateString("fr-FR", {
+        day: "numeric", month: "long", year: "numeric",
+      });
+      if (user?.email) {
+        await supabase.functions.invoke("send-transactional-email", {
+          body: {
+            templateName: "ambassador-welcome",
+            recipientEmail: user.email,
+            idempotencyKey: `ambassador-welcome-${user.id}-${CURRENT_CONTRACT_VERSION}`,
+            templateData: {
+              firstName: fullName.trim().split(" ")[0],
+              referralCode,
+              contractVersion: CURRENT_CONTRACT_VERSION,
+              acceptedAt: acceptedAtLabel,
+            },
+          },
+        });
+      }
+    } catch (e) {
+      console.warn("[ambassador-welcome] email send failed", e);
+    }
     toast.success("Contrat accepté — bienvenue dans le cercle 🌱");
     setTimeout(() => navigate("/mon-impact"), 600);
   };
