@@ -15,6 +15,7 @@ import { template as adminPaymentNotification } from './admin-payment-notificati
 import { template as supportRequest } from './support-request.tsx'
 import { template as sepaBatchReady } from './sepa-batch-ready.tsx'
 import { template as ambassadorPayoutSent } from './ambassador-payout-sent.tsx'
+import { template as ambassadorWelcome } from './ambassador-welcome.tsx'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'welcome-premium': welcomePremium,
@@ -23,4 +24,5 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'support-request': supportRequest,
   'sepa-batch-ready': sepaBatchReady,
   'ambassador-payout-sent': ambassadorPayoutSent,
+  'ambassador-welcome': ambassadorWelcome,
 }
