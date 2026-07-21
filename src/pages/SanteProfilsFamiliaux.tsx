@@ -76,6 +76,7 @@ const SanteProfilsFamiliaux = () => {
   const [docs, setDocs] = useState<DocItem[]>([]);
   const [openId, setOpenId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [preview, setPreview] = useState<{ doc: DocItem; url: string } | null>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -190,6 +191,7 @@ const SanteProfilsFamiliaux = () => {
                 ])
               }
               userId={user!.id}
+              onPreview={(doc, url) => setPreview({ doc, url })}
             />
           ))}
 
@@ -207,6 +209,70 @@ const SanteProfilsFamiliaux = () => {
           )}
         </div>
       </SectionBlock>
+
+      {preview && (
+        <div
+          className="fixed inset-0 z-50 flex flex-col bg-black/80 backdrop-blur-sm"
+          onClick={() => setPreview(null)}
+        >
+          <div className="flex items-center justify-between gap-2 p-3 text-white">
+            <p className="truncate text-sm font-medium">{preview.doc.file_name}</p>
+            <div className="flex items-center gap-2">
+              <a
+                href={preview.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="rounded-lg bg-white/10 p-2 hover:bg-white/20"
+                aria-label="Télécharger"
+              >
+                <Download className="h-4 w-4" />
+              </a>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setPreview(null);
+                }}
+                className="rounded-lg bg-white/10 p-2 hover:bg-white/20"
+                aria-label="Fermer"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+          <div
+            className="flex flex-1 items-center justify-center overflow-auto p-3"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {preview.doc.mime_type?.startsWith("image/") ? (
+              <img
+                src={preview.url}
+                alt={preview.doc.file_name}
+                className="max-h-full max-w-full rounded-lg object-contain"
+              />
+            ) : preview.doc.mime_type === "application/pdf" ? (
+              <iframe
+                src={preview.url}
+                title={preview.doc.file_name}
+                className="h-full w-full rounded-lg bg-white"
+              />
+            ) : (
+              <div className="rounded-xl bg-white p-6 text-center text-sm">
+                <FileText className="mx-auto mb-2 h-8 w-8 text-muted-foreground" />
+                <p className="mb-3">Aperçu non disponible pour ce type de fichier.</p>
+                <a
+                  href={preview.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 rounded-lg bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground"
+                >
+                  <Download className="h-3.5 w-3.5" /> Télécharger
+                </a>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -221,6 +287,7 @@ const ProfileCard = ({
   onDelete,
   onDocsChange,
   userId,
+  onPreview,
 }: {
   profile: FamilyProfile;
   docs: DocItem[];
@@ -231,6 +298,7 @@ const ProfileCard = ({
   onDelete: () => void;
   onDocsChange: (next: DocItem[]) => void;
   userId: string;
+  onPreview: (doc: DocItem, url: string) => void;
 }) => {
   const fileRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
@@ -284,19 +352,13 @@ const ProfileCard = ({
   const openDoc = async (doc: DocItem) => {
     const { data, error } = await supabase.storage
       .from("family-medical-docs")
-      .createSignedUrl(doc.storage_path, 300, { download: doc.file_name });
+      .createSignedUrl(doc.storage_path, 300);
     if (error || !data?.signedUrl) {
       console.error("openDoc error", error);
       toast.error("Lien indisponible");
       return;
     }
-    const a = document.createElement("a");
-    a.href = data.signedUrl;
-    a.target = "_blank";
-    a.rel = "noopener noreferrer";
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
+    onPreview(doc, data.signedUrl);
   };
 
   const title =
