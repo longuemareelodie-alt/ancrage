@@ -95,6 +95,59 @@ Deno.serve(async (req) => {
         }
       }
     }
+
+    // ============ AGENDA EVENTS (24h before) ============
+    const todayStr = now.toISOString().slice(0, 10);
+    const tomorrow = new Date(now.getTime() + 24 * 3600 * 1000);
+    const tomorrowStr = tomorrow.toISOString().slice(0, 10);
+
+    const { data: events } = await supabase
+      .from("agenda_events")
+      .select("id, user_id, title, description, event_date, event_time, location")
+      .is("reminder_sent_at", null)
+      .in("event_date", [todayStr, tomorrowStr]);
+
+    for (const ev of events ?? []) {
+      // Compute event datetime; skip if more than 26h away or already past
+      const timePart = ev.event_time ? ev.event_time.slice(0, 5) : "09:00";
+      const eventAt = new Date(`${ev.event_date}T${timePart}:00`);
+      const hoursUntil = (eventAt.getTime() - now.getTime()) / 3600000;
+      if (hoursUntil < -1 || hoursUntil > 26) continue;
+
+      if (!(await userWantsReminders(supabase, ev.user_id))) {
+        await supabase.from("agenda_events").update({ reminder_sent_at: now.toISOString() }).eq("id", ev.id);
+        continue;
+      }
+      const ok = await sendAgendaReminder(supabase, ev, eventAt);
+      if (ok) {
+        await supabase.from("agenda_events").update({ reminder_sent_at: now.toISOString() }).eq("id", ev.id);
+        results.agenda++;
+      }
+    }
+
+    // ============ TO-DO (morning of due date) ============
+    // Only remind between 07:00 and 10:00 UTC on the due date
+    const hourUtc = now.getUTCHours();
+    if (hourUtc >= 7 && hourUtc <= 10) {
+      const { data: todos } = await supabase
+        .from("todo_items")
+        .select("id, user_id, title, priority, due_date")
+        .is("reminder_sent_at", null)
+        .eq("done", false)
+        .eq("due_date", todayStr);
+
+      for (const t of todos ?? []) {
+        if (!(await userWantsReminders(supabase, t.user_id))) {
+          await supabase.from("todo_items").update({ reminder_sent_at: now.toISOString() }).eq("id", t.id);
+          continue;
+        }
+        const ok = await sendTodoReminder(supabase, t);
+        if (ok) {
+          await supabase.from("todo_items").update({ reminder_sent_at: now.toISOString() }).eq("id", t.id);
+          results.todos++;
+        }
+      }
+    }
   } catch (e) {
     results.errors.push(String(e));
   }
