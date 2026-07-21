@@ -1,0 +1,1 @@
+ALTER TABLE public.medical_records ALTER COLUMN is_public SET DEFAULT false;
