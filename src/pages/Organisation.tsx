@@ -223,6 +223,7 @@ function TodoTab({ userId }: { userId: string }) {
   const [title, setTitle] = useState("");
   const [priority, setPriority] = useState("normal");
   const [dueDate, setDueDate] = useState("");
+  const [reminderOffset, setReminderOffset] = useState<number>(24);
 
   const load = async () => {
     const { data } = await supabase.from("todo_items").select("*").eq("user_id", userId).order("done").order("due_date", { nullsFirst: false }).order("created_at", { ascending: false });
@@ -232,13 +233,18 @@ function TodoTab({ userId }: { userId: string }) {
 
   const add = async () => {
     if (!title) return;
-    const { error } = await supabase.from("todo_items").insert({ user_id: userId, title, priority, due_date: dueDate || null });
+    const { error } = await supabase.from("todo_items").insert({ user_id: userId, title, priority, due_date: dueDate || null, reminder_offset_hours: reminderOffset });
     if (error) return toast.error(error.message);
-    setTitle(""); setDueDate(""); setPriority("normal");
+    setTitle(""); setDueDate(""); setPriority("normal"); setReminderOffset(24);
     load();
   };
   const toggle = async (t: Todo) => {
     await supabase.from("todo_items").update({ done: !t.done }).eq("id", t.id);
+    load();
+  };
+  const updateOffset = async (id: string, value: number) => {
+    await supabase.from("todo_items").update({ reminder_offset_hours: value, reminder_sent_at: null }).eq("id", id);
+    toast.success("Rappel mis à jour");
     load();
   };
   const remove = async (id: string) => {
