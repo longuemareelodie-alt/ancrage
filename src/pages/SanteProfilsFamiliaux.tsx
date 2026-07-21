@@ -287,6 +287,7 @@ const ProfileCard = ({
   onDelete,
   onDocsChange,
   userId,
+  onPreview,
 }: {
   profile: FamilyProfile;
   docs: DocItem[];
@@ -297,6 +298,7 @@ const ProfileCard = ({
   onDelete: () => void;
   onDocsChange: (next: DocItem[]) => void;
   userId: string;
+  onPreview: (doc: DocItem, url: string) => void;
 }) => {
   const fileRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
