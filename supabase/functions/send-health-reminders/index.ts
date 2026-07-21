@@ -162,6 +162,52 @@ async function getUserEmail(supabase: any, userId: string): Promise<string | nul
   return data?.email ?? null;
 }
 
+async function userWantsReminders(supabase: any, userId: string): Promise<boolean> {
+  const { data } = await supabase.from("profiles").select("reminders_enabled").eq("user_id", userId).single();
+  return data?.reminders_enabled !== false;
+}
+
+async function sendAgendaReminder(supabase: any, ev: any, eventAt: Date): Promise<boolean> {
+  const email = await getUserEmail(supabase, ev.user_id);
+  if (!email) return false;
+  const dateStr = eventAt.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
+  const timeStr = ev.event_time ? ev.event_time.slice(0, 5) : null;
+  const subject = `📅 Rappel : ${ev.title} demain`;
+  const html = `
+<div style="font-family: -apple-system, sans-serif; max-width: 500px; margin: 0 auto; padding: 24px; color: #333;">
+  <h1 style="color: #5b8def; font-size: 22px; margin-bottom: 16px;">C'est demain 💛</h1>
+  <div style="background: #f5f7fa; border-radius: 12px; padding: 20px; margin: 16px 0;">
+    <p style="margin: 0 0 8px; font-size: 18px; font-weight: 600;">${escapeHtml(ev.title)}</p>
+    <p style="margin: 0; font-size: 14px; color: #666;">📅 ${dateStr}${timeStr ? ` à ${timeStr}` : ""}</p>
+    ${ev.location ? `<p style="margin: 8px 0 0; font-size: 14px; color: #666;">📍 ${escapeHtml(ev.location)}</p>` : ""}
+    ${ev.description ? `<p style="margin: 12px 0 0; font-size: 14px; color: #555;">${escapeHtml(ev.description)}</p>` : ""}
+  </div>
+  <p style="font-size: 13px; color: #888;">Prends soin de toi 💗</p>
+</div>`;
+  const emailOk = await sendEmail(supabase, email, subject, html, `agenda-${ev.id}`);
+  await sendPush(supabase, ev.user_id, `📅 ${ev.title}`, `Demain${timeStr ? ` à ${timeStr}` : ""}${ev.location ? ` — ${ev.location}` : ""}`);
+  return emailOk;
+}
+
+async function sendTodoReminder(supabase: any, t: any): Promise<boolean> {
+  const email = await getUserEmail(supabase, t.user_id);
+  if (!email) return false;
+  const prio = t.priority === "haute" ? "🔴 Priorité haute" : t.priority === "basse" ? "Priorité basse" : "";
+  const subject = `✅ Rappel : ${t.title}`;
+  const html = `
+<div style="font-family: -apple-system, sans-serif; max-width: 500px; margin: 0 auto; padding: 24px; color: #333;">
+  <h1 style="color: #5b8def; font-size: 22px; margin-bottom: 16px;">À faire aujourd'hui 💛</h1>
+  <div style="background: #f5f7fa; border-radius: 12px; padding: 20px; margin: 16px 0;">
+    <p style="margin: 0 0 8px; font-size: 18px; font-weight: 600;">${escapeHtml(t.title)}</p>
+    ${prio ? `<p style="margin: 0; font-size: 14px; color: #666;">${prio}</p>` : ""}
+  </div>
+  <p style="font-size: 13px; color: #888;">Un pas à la fois 🌱</p>
+</div>`;
+  const emailOk = await sendEmail(supabase, email, subject, html, `todo-${t.id}`);
+  await sendPush(supabase, t.user_id, `✅ À faire aujourd'hui`, t.title);
+  return emailOk;
+}
+
 async function sendAppointmentReminder(supabase: any, apt: any, when: "24h" | "1h"): Promise<boolean> {
   const email = await getUserEmail(supabase, apt.user_id);
   if (!email) return false;
