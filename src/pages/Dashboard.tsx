@@ -15,6 +15,7 @@ import { useMolliePayment } from "@/hooks/useMolliePayment";
 import DiscoveryHint from "@/components/DiscoveryHint";
 import { PREMIUM_PRICE_SHORT } from "@/lib/premiumOffer";
 import KlarnaStatusIndicator from "@/components/KlarnaStatusIndicator";
+import CommandCenter from "@/components/CommandCenter";
 
 type MoodKey = "calm" | "ok" | "tense" | "overflow";
 const MOOD_OPTIONS: { key: MoodKey; emoji: string; label: string; adjust: number }[] = [
