@@ -227,6 +227,87 @@ export type Database = {
         }
         Relationships: []
       }
+      bills: {
+        Row: {
+          amount_cents: number
+          created_at: string
+          due_date: string
+          id: string
+          is_paid: boolean
+          label: string
+          notes: string | null
+          paid_at: string | null
+          reminder_enabled: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount_cents: number
+          created_at?: string
+          due_date: string
+          id?: string
+          is_paid?: boolean
+          label: string
+          notes?: string | null
+          paid_at?: string | null
+          reminder_enabled?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount_cents?: number
+          created_at?: string
+          due_date?: string
+          id?: string
+          is_paid?: boolean
+          label?: string
+          notes?: string | null
+          paid_at?: string | null
+          reminder_enabled?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      budget_entries: {
+        Row: {
+          amount_cents: number
+          category: string
+          created_at: string
+          id: string
+          kind: string
+          label: string
+          month: string | null
+          recurring: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount_cents: number
+          category: string
+          created_at?: string
+          id?: string
+          kind: string
+          label: string
+          month?: string | null
+          recurring?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount_cents?: number
+          category?: string
+          created_at?: string
+          id?: string
+          kind?: string
+          label?: string
+          month?: string | null
+          recurring?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       child_emotion_entries: {
         Row: {
           age_band: string
