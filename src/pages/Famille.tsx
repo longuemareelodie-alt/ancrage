@@ -48,7 +48,7 @@ interface Vaccination {
 interface Document {
   id: string;
   profile_id: string;
-  name: string;
+  file_name: string;
   category: string | null;
   storage_path: string;
   created_at: string;
