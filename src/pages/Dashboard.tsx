@@ -162,6 +162,8 @@ const Dashboard = () => {
 
           <ResumeBanner />
 
+          <CommandCenter />
+
           {/* Mini check-in : Je suis plutôt… */}
           <motion.section
             initial={{ opacity: 0, y: 15 }}
