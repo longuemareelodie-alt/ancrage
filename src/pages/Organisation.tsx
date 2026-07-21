@@ -199,6 +199,13 @@ function AgendaTab({ userId }: { userId: string }) {
                     {e.location && <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{e.location}</span>}
                   </div>
                   {e.description && <p className="text-xs text-[#4b5563] mt-1">{e.description}</p>}
+                  <div className="mt-2 flex items-center gap-2">
+                    <Bell className="w-3 h-3 text-[#6b7280]" />
+                    <Select value={String(e.reminder_offset_hours ?? 24)} onValueChange={(v) => updateOffset(e.id, Number(v))}>
+                      <SelectTrigger className="h-7 text-xs w-auto min-w-[140px]"><SelectValue /></SelectTrigger>
+                      <SelectContent>{AGENDA_OFFSETS.map((o) => <SelectItem key={o.value} value={String(o.value)}>{o.label}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </div>
                 </div>
                 <Button size="icon" variant="ghost" onClick={() => remove(e.id)}><Trash2 className="w-4 h-4" /></Button>
               </Card>
