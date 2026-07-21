@@ -1577,38 +1577,50 @@ export type Database = {
       }
       vault_documents: {
         Row: {
+          amount_cents: number | null
           category: string
           created_at: string
+          expiry_date: string | null
           id: string
+          is_favorite: boolean
           mime_type: string | null
           name: string
           notes: string | null
           size_bytes: number | null
           storage_path: string
+          tags: string[]
           updated_at: string
           user_id: string
         }
         Insert: {
+          amount_cents?: number | null
           category?: string
           created_at?: string
+          expiry_date?: string | null
           id?: string
+          is_favorite?: boolean
           mime_type?: string | null
           name: string
           notes?: string | null
           size_bytes?: number | null
           storage_path: string
+          tags?: string[]
           updated_at?: string
           user_id: string
         }
         Update: {
+          amount_cents?: number | null
           category?: string
           created_at?: string
+          expiry_date?: string | null
           id?: string
+          is_favorite?: boolean
           mime_type?: string | null
           name?: string
           notes?: string | null
           size_bytes?: number | null
           storage_path?: string
+          tags?: string[]
           updated_at?: string
           user_id?: string
         }
@@ -1631,6 +1643,39 @@ export type Database = {
           created_at?: string
           id?: string
           name?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      vault_secure_notes: {
+        Row: {
+          category: string
+          content: string
+          created_at: string
+          id: string
+          is_favorite: boolean
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category?: string
+          content: string
+          created_at?: string
+          id?: string
+          is_favorite?: boolean
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: string
+          content?: string
+          created_at?: string
+          id?: string
+          is_favorite?: boolean
+          title?: string
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
