@@ -315,7 +315,7 @@ Deno.serve(async (req) => {
     );
 
     let sent = 0;
-    const details: { userId: string; message: string; status: string }[] = [];
+    let failed = 0;
 
     for (const sub of subscriptions) {
       const profile = profileMap.get(sub.user_id) || {};
@@ -334,13 +334,10 @@ Deno.serve(async (req) => {
           JSON.stringify(notification),
           vapidPrivateKey,
         );
-        if (ok) sent++;
-        details.push({
-          status: ok ? "sent" : "failed",
-        });
+        if (ok) sent++; else failed++;
       } catch (err) {
         console.error("Push failed for", sub.endpoint, err);
-        details.push({ status: "error" });
+        failed++;
       }
     }
 
