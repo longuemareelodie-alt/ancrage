@@ -9,8 +9,9 @@ import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
-import { Calendar, CheckSquare, ShoppingCart, StickyNote, Plus, Trash2, Pin, MapPin, Clock } from "lucide-react";
+import { Calendar, CheckSquare, ShoppingCart, StickyNote, Plus, Trash2, Pin, MapPin, Clock, Bell } from "lucide-react";
 import { format, parseISO, isToday, isTomorrow, isPast } from "date-fns";
 import { fr } from "date-fns/locale";
 
