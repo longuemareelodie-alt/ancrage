@@ -272,6 +272,13 @@ function TodoTab({ userId }: { userId: string }) {
           </Select>
           <Input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
         </div>
+        <div className="flex items-center gap-2">
+          <Bell className="w-4 h-4 text-[#6b7280]" />
+          <Select value={String(reminderOffset)} onValueChange={(v) => setReminderOffset(Number(v))}>
+            <SelectTrigger className="flex-1"><SelectValue placeholder="Rappel" /></SelectTrigger>
+            <SelectContent>{TODO_OFFSETS.map((o) => <SelectItem key={o.value} value={String(o.value)}>Rappel : {o.label}</SelectItem>)}</SelectContent>
+          </Select>
+        </div>
       </Card>
 
       <p className="text-xs text-[#6b7280]">{activeCount} tâche{activeCount > 1 ? "s" : ""} en cours</p>
