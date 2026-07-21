@@ -96,23 +96,25 @@ Deno.serve(async (req) => {
       }
     }
 
-    // ============ AGENDA EVENTS (24h before) ============
+    // ============ AGENDA EVENTS (per-item offset) ============
+    // Fetch upcoming events over the next 7 days that haven't been reminded yet.
     const todayStr = now.toISOString().slice(0, 10);
-    const tomorrow = new Date(now.getTime() + 24 * 3600 * 1000);
-    const tomorrowStr = tomorrow.toISOString().slice(0, 10);
+    const in7Days = new Date(now.getTime() + 7 * 24 * 3600 * 1000).toISOString().slice(0, 10);
 
     const { data: events } = await supabase
       .from("agenda_events")
-      .select("id, user_id, title, description, event_date, event_time, location")
+      .select("id, user_id, title, description, event_date, event_time, location, reminder_offset_hours")
       .is("reminder_sent_at", null)
-      .in("event_date", [todayStr, tomorrowStr]);
+      .gte("event_date", todayStr)
+      .lte("event_date", in7Days);
 
     for (const ev of events ?? []) {
-      // Compute event datetime; skip if more than 26h away or already past
       const timePart = ev.event_time ? ev.event_time.slice(0, 5) : "09:00";
       const eventAt = new Date(`${ev.event_date}T${timePart}:00`);
       const hoursUntil = (eventAt.getTime() - now.getTime()) / 3600000;
-      if (hoursUntil < -1 || hoursUntil > 26) continue;
+      const offset = typeof ev.reminder_offset_hours === "number" ? ev.reminder_offset_hours : 24;
+      // Send once we've reached the offset window (hoursUntil <= offset) and event isn't more than 1h past.
+      if (hoursUntil > offset || hoursUntil < -1) continue;
 
       if (!(await userWantsReminders(supabase, ev.user_id))) {
         await supabase.from("agenda_events").update({ reminder_sent_at: now.toISOString() }).eq("id", ev.id);
@@ -125,27 +127,31 @@ Deno.serve(async (req) => {
       }
     }
 
-    // ============ TO-DO (morning of due date) ============
-    // Only remind between 07:00 and 10:00 UTC on the due date
-    const hourUtc = now.getUTCHours();
-    if (hourUtc >= 7 && hourUtc <= 10) {
-      const { data: todos } = await supabase
-        .from("todo_items")
-        .select("id, user_id, title, priority, due_date")
-        .is("reminder_sent_at", null)
-        .eq("done", false)
-        .eq("due_date", todayStr);
+    // ============ TO-DO (per-item offset, deadline = start of due_date) ============
+    const { data: todos } = await supabase
+      .from("todo_items")
+      .select("id, user_id, title, priority, due_date, reminder_offset_hours")
+      .is("reminder_sent_at", null)
+      .eq("done", false)
+      .not("due_date", "is", null)
+      .gte("due_date", new Date(now.getTime() - 24 * 3600 * 1000).toISOString().slice(0, 10))
+      .lte("due_date", in7Days);
 
-      for (const t of todos ?? []) {
-        if (!(await userWantsReminders(supabase, t.user_id))) {
-          await supabase.from("todo_items").update({ reminder_sent_at: now.toISOString() }).eq("id", t.id);
-          continue;
-        }
-        const ok = await sendTodoReminder(supabase, t);
-        if (ok) {
-          await supabase.from("todo_items").update({ reminder_sent_at: now.toISOString() }).eq("id", t.id);
-          results.todos++;
-        }
+    for (const t of todos ?? []) {
+      const dueAt = new Date(`${t.due_date}T09:00:00`);
+      const hoursUntil = (dueAt.getTime() - now.getTime()) / 3600000;
+      const offset = typeof t.reminder_offset_hours === "number" ? t.reminder_offset_hours : 24;
+      // Send when we've reached the offset window; keep sending up to 12h past deadline morning.
+      if (hoursUntil > offset || hoursUntil < -12) continue;
+
+      if (!(await userWantsReminders(supabase, t.user_id))) {
+        await supabase.from("todo_items").update({ reminder_sent_at: now.toISOString() }).eq("id", t.id);
+        continue;
+      }
+      const ok = await sendTodoReminder(supabase, t);
+      if (ok) {
+        await supabase.from("todo_items").update({ reminder_sent_at: now.toISOString() }).eq("id", t.id);
+        results.todos++;
       }
     }
   } catch (e) {
