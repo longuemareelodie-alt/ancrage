@@ -1,0 +1,161 @@
+{
+  "version": 1,
+  "sdk_version": "0.24.0",
+  "path": "/functions/v1/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://mpadkxqomykztvqrnmfv.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "eclosia-mcp",
+      "version": "0.1.0",
+      "title": "Eclosia"
+    },
+    "tools": [
+      {
+        "name": "get_my_profile",
+        "title": "Get my Eclosia profile",
+        "description": "Return the signed-in user's Eclosia profile: first name, email, plan, premium status, current streak.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_journal_entries",
+        "title": "List my journal entries",
+        "description": "Return the signed-in user's most recent private journal entries, newest first. Each row has the entry content and the writing mode/prompt it was written from.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "description": "How many entries to return (1-50, default 10)."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "create_journal_entry",
+        "title": "Create a journal entry",
+        "description": "Add a new private journal entry for the signed-in user. Use for reflections, feelings, or notes the user dictates.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "content": {
+              "type": "string",
+              "minLength": 1,
+              "description": "The journal entry text."
+            },
+            "mode": {
+              "type": "string",
+              "maxLength": 40,
+              "description": "Optional writing mode label (e.g. 'libre', 'guide')."
+            },
+            "prompt_key": {
+              "type": "string",
+              "maxLength": 80,
+              "description": "Optional identifier of the guided prompt used, if any."
+            }
+          },
+          "required": [
+            "content"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_emotion_checkins",
+        "title": "List my emotion check-ins",
+        "description": "Return the signed-in user's most recent daily emotion check-ins (which emotion, of what type), newest first.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "description": "How many check-ins to return (1-100, default 30)."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_transformation_portraits",
+        "title": "List my transformation portraits",
+        "description": "Return the signed-in user's monthly AI-generated transformation portraits, newest first. Each portrait describes what the user has overcome, what she is developing, her new strengths, and what she is becoming.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 24,
+              "description": "How many portraits to return (1-24, default 6)."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_my_ambassador_impact",
+        "title": "Get my ambassador impact",
+        "description": "Return the signed-in user's Eclosia ambassador stats: tier, referral code, commissions earned and pending, moms accompanied, next tier progress. Only meaningful if the user is enrolled as an ambassador.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}

@@ -89,6 +89,7 @@ import LivreReconstruction from "./pages/LivreReconstruction";
 import FriseEvolution from "./pages/FriseEvolution";
 import MonImpact from "./pages/MonImpact";
 import AmbassadriceContrat from "./pages/AmbassadriceContrat";
+import OAuthConsent from "./pages/OAuthConsent";
 import { useEffect } from "react";
 import { captureReferralCodeFromUrl } from "@/lib/referralTracking";
 
@@ -202,6 +203,7 @@ const AnimatedRoutes = () => {
         <Route path="/frise-evolution" element={<PaidRoute><PageTransition><FriseEvolution /></PageTransition></PaidRoute>} />
         <Route path="/mon-impact" element={<PaidRoute><PageTransition><MonImpact /></PageTransition></PaidRoute>} />
         <Route path="/ambassadrice/contrat" element={<PaidRoute><PageTransition><AmbassadriceContrat /></PageTransition></PaidRoute>} />
+        <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
         <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
           </Routes>
         </RoutesWrapper>
