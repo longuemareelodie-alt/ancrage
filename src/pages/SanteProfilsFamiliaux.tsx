@@ -352,19 +352,13 @@ const ProfileCard = ({
   const openDoc = async (doc: DocItem) => {
     const { data, error } = await supabase.storage
       .from("family-medical-docs")
-      .createSignedUrl(doc.storage_path, 300, { download: doc.file_name });
+      .createSignedUrl(doc.storage_path, 300);
     if (error || !data?.signedUrl) {
       console.error("openDoc error", error);
       toast.error("Lien indisponible");
       return;
     }
-    const a = document.createElement("a");
-    a.href = data.signedUrl;
-    a.target = "_blank";
-    a.rel = "noopener noreferrer";
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
+    onPreview(doc, data.signedUrl);
   };
 
   const title =
