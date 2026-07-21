@@ -792,6 +792,50 @@ export type Database = {
         }
         Relationships: []
       }
+      family_vaccinations: {
+        Row: {
+          created_at: string
+          date_given: string | null
+          id: string
+          next_due_date: string | null
+          notes: string | null
+          profile_id: string
+          updated_at: string
+          user_id: string
+          vaccine_name: string
+        }
+        Insert: {
+          created_at?: string
+          date_given?: string | null
+          id?: string
+          next_due_date?: string | null
+          notes?: string | null
+          profile_id: string
+          updated_at?: string
+          user_id: string
+          vaccine_name: string
+        }
+        Update: {
+          created_at?: string
+          date_given?: string | null
+          id?: string
+          next_due_date?: string | null
+          notes?: string | null
+          profile_id?: string
+          updated_at?: string
+          user_id?: string
+          vaccine_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "family_vaccinations_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "family_medical_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lsf_progress: {
         Row: {
           id: string
