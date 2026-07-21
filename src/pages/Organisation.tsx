@@ -43,6 +43,8 @@ export default function Organisation() {
           <p className="text-sm text-[#6b7280] mt-2">Ton quotidien, allégé et centralisé.</p>
         </header>
 
+        <RemindersToggle userId={user.id} />
+
         <Tabs defaultValue="agenda" className="w-full">
           <TabsList className="grid grid-cols-4 w-full mb-6 bg-white/60">
             <TabsTrigger value="agenda"><Calendar className="w-4 h-4 mr-1" />Agenda</TabsTrigger>
