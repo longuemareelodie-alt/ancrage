@@ -296,6 +296,15 @@ function TodoTab({ userId }: { userId: string }) {
                   {t.priority === "basse" && <Badge variant="outline" className="text-xs">Basse</Badge>}
                   {t.due_date && <span className={`text-xs ${overdue ? "text-red-600" : "text-[#6b7280]"}`}>{format(parseISO(t.due_date), "d MMM", { locale: fr })}</span>}
                 </div>
+                {t.due_date && !t.done && (
+                  <div className="mt-1 flex items-center gap-1">
+                    <Bell className="w-3 h-3 text-[#6b7280]" />
+                    <Select value={String(t.reminder_offset_hours ?? 24)} onValueChange={(v) => updateOffset(t.id, Number(v))}>
+                      <SelectTrigger className="h-6 text-xs w-auto min-w-[130px] px-2"><SelectValue /></SelectTrigger>
+                      <SelectContent>{TODO_OFFSETS.map((o) => <SelectItem key={o.value} value={String(o.value)}>{o.label}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </div>
+                )}
               </div>
               <Button size="icon" variant="ghost" onClick={() => remove(t.id)}><Trash2 className="w-4 h-4" /></Button>
             </Card>
