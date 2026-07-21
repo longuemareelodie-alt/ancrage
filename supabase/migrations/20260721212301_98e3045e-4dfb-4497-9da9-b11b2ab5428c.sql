@@ -1,0 +1,2 @@
+ALTER TABLE public.agenda_events ADD COLUMN IF NOT EXISTS reminder_offset_hours integer NOT NULL DEFAULT 24;
+ALTER TABLE public.todo_items ADD COLUMN IF NOT EXISTS reminder_offset_hours integer NOT NULL DEFAULT 24;

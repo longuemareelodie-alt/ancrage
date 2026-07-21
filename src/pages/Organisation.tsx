@@ -15,8 +15,23 @@ import { Calendar, CheckSquare, ShoppingCart, StickyNote, Plus, Trash2, Pin, Map
 import { format, parseISO, isToday, isTomorrow, isPast } from "date-fns";
 import { fr } from "date-fns/locale";
 
-type AgendaEvent = { id: string; title: string; description: string | null; event_date: string; event_time: string | null; location: string | null; category: string };
-type Todo = { id: string; title: string; done: boolean; priority: string; due_date: string | null; category: string };
+type AgendaEvent = { id: string; title: string; description: string | null; event_date: string; event_time: string | null; location: string | null; category: string; reminder_offset_hours: number };
+type Todo = { id: string; title: string; done: boolean; priority: string; due_date: string | null; category: string; reminder_offset_hours: number };
+
+const AGENDA_OFFSETS: { value: number; label: string }[] = [
+  { value: 1, label: "1h avant" },
+  { value: 3, label: "3h avant" },
+  { value: 12, label: "12h avant" },
+  { value: 24, label: "24h avant" },
+  { value: 48, label: "2 jours avant" },
+  { value: 72, label: "3 jours avant" },
+];
+const TODO_OFFSETS: { value: number; label: string }[] = [
+  { value: 0, label: "Le jour même" },
+  { value: 24, label: "1 jour avant" },
+  { value: 48, label: "2 jours avant" },
+  { value: 72, label: "3 jours avant" },
+];
 type ShopItem = { id: string; name: string; quantity: string | null; category: string; checked: boolean; list_name: string };
 type Note = { id: string; title: string | null; content: string; color: string; pinned: boolean; updated_at: string };
 
@@ -106,6 +121,7 @@ function AgendaTab({ userId }: { userId: string }) {
   const [location, setLocation] = useState("");
   const [category, setCategory] = useState("perso");
   const [description, setDescription] = useState("");
+  const [reminderOffset, setReminderOffset] = useState<number>(24);
 
   const load = async () => {
     const { data } = await supabase.from("agenda_events").select("*").eq("user_id", userId).order("event_date").order("event_time", { nullsFirst: true });
@@ -115,10 +131,15 @@ function AgendaTab({ userId }: { userId: string }) {
 
   const add = async () => {
     if (!title || !date) return toast.error("Titre et date requis");
-    const { error } = await supabase.from("agenda_events").insert({ user_id: userId, title, event_date: date, event_time: time || null, location: location || null, category, description: description || null });
+    const { error } = await supabase.from("agenda_events").insert({ user_id: userId, title, event_date: date, event_time: time || null, location: location || null, category, description: description || null, reminder_offset_hours: reminderOffset });
     if (error) return toast.error(error.message);
     toast.success("Événement ajouté");
-    setTitle(""); setDate(""); setTime(""); setLocation(""); setDescription("");
+    setTitle(""); setDate(""); setTime(""); setLocation(""); setDescription(""); setReminderOffset(24);
+    load();
+  };
+  const updateOffset = async (id: string, value: number) => {
+    await supabase.from("agenda_events").update({ reminder_offset_hours: value, reminder_sent_at: null }).eq("id", id);
+    toast.success("Rappel mis à jour");
     load();
   };
   const remove = async (id: string) => {
@@ -150,6 +171,13 @@ function AgendaTab({ userId }: { userId: string }) {
           <SelectTrigger><SelectValue /></SelectTrigger>
           <SelectContent>{EVENT_CATS.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
         </Select>
+        <div className="flex items-center gap-2">
+          <Bell className="w-4 h-4 text-[#6b7280]" />
+          <Select value={String(reminderOffset)} onValueChange={(v) => setReminderOffset(Number(v))}>
+            <SelectTrigger className="flex-1"><SelectValue placeholder="Rappel" /></SelectTrigger>
+            <SelectContent>{AGENDA_OFFSETS.map((o) => <SelectItem key={o.value} value={String(o.value)}>Rappel : {o.label}</SelectItem>)}</SelectContent>
+          </Select>
+        </div>
         <Textarea placeholder="Notes (optionnel)" value={description} onChange={(e) => setDescription(e.target.value)} rows={2} />
         <Button onClick={add} className="w-full"><Plus className="w-4 h-4 mr-1" />Ajouter</Button>
       </Card>
@@ -171,6 +199,13 @@ function AgendaTab({ userId }: { userId: string }) {
                     {e.location && <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{e.location}</span>}
                   </div>
                   {e.description && <p className="text-xs text-[#4b5563] mt-1">{e.description}</p>}
+                  <div className="mt-2 flex items-center gap-2">
+                    <Bell className="w-3 h-3 text-[#6b7280]" />
+                    <Select value={String(e.reminder_offset_hours ?? 24)} onValueChange={(v) => updateOffset(e.id, Number(v))}>
+                      <SelectTrigger className="h-7 text-xs w-auto min-w-[140px]"><SelectValue /></SelectTrigger>
+                      <SelectContent>{AGENDA_OFFSETS.map((o) => <SelectItem key={o.value} value={String(o.value)}>{o.label}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </div>
                 </div>
                 <Button size="icon" variant="ghost" onClick={() => remove(e.id)}><Trash2 className="w-4 h-4" /></Button>
               </Card>
@@ -188,6 +223,7 @@ function TodoTab({ userId }: { userId: string }) {
   const [title, setTitle] = useState("");
   const [priority, setPriority] = useState("normal");
   const [dueDate, setDueDate] = useState("");
+  const [reminderOffset, setReminderOffset] = useState<number>(24);
 
   const load = async () => {
     const { data } = await supabase.from("todo_items").select("*").eq("user_id", userId).order("done").order("due_date", { nullsFirst: false }).order("created_at", { ascending: false });
@@ -197,13 +233,18 @@ function TodoTab({ userId }: { userId: string }) {
 
   const add = async () => {
     if (!title) return;
-    const { error } = await supabase.from("todo_items").insert({ user_id: userId, title, priority, due_date: dueDate || null });
+    const { error } = await supabase.from("todo_items").insert({ user_id: userId, title, priority, due_date: dueDate || null, reminder_offset_hours: reminderOffset });
     if (error) return toast.error(error.message);
-    setTitle(""); setDueDate(""); setPriority("normal");
+    setTitle(""); setDueDate(""); setPriority("normal"); setReminderOffset(24);
     load();
   };
   const toggle = async (t: Todo) => {
     await supabase.from("todo_items").update({ done: !t.done }).eq("id", t.id);
+    load();
+  };
+  const updateOffset = async (id: string, value: number) => {
+    await supabase.from("todo_items").update({ reminder_offset_hours: value, reminder_sent_at: null }).eq("id", id);
+    toast.success("Rappel mis à jour");
     load();
   };
   const remove = async (id: string) => {
@@ -231,6 +272,13 @@ function TodoTab({ userId }: { userId: string }) {
           </Select>
           <Input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
         </div>
+        <div className="flex items-center gap-2">
+          <Bell className="w-4 h-4 text-[#6b7280]" />
+          <Select value={String(reminderOffset)} onValueChange={(v) => setReminderOffset(Number(v))}>
+            <SelectTrigger className="flex-1"><SelectValue placeholder="Rappel" /></SelectTrigger>
+            <SelectContent>{TODO_OFFSETS.map((o) => <SelectItem key={o.value} value={String(o.value)}>Rappel : {o.label}</SelectItem>)}</SelectContent>
+          </Select>
+        </div>
       </Card>
 
       <p className="text-xs text-[#6b7280]">{activeCount} tâche{activeCount > 1 ? "s" : ""} en cours</p>
@@ -248,6 +296,15 @@ function TodoTab({ userId }: { userId: string }) {
                   {t.priority === "basse" && <Badge variant="outline" className="text-xs">Basse</Badge>}
                   {t.due_date && <span className={`text-xs ${overdue ? "text-red-600" : "text-[#6b7280]"}`}>{format(parseISO(t.due_date), "d MMM", { locale: fr })}</span>}
                 </div>
+                {t.due_date && !t.done && (
+                  <div className="mt-1 flex items-center gap-1">
+                    <Bell className="w-3 h-3 text-[#6b7280]" />
+                    <Select value={String(t.reminder_offset_hours ?? 24)} onValueChange={(v) => updateOffset(t.id, Number(v))}>
+                      <SelectTrigger className="h-6 text-xs w-auto min-w-[130px] px-2"><SelectValue /></SelectTrigger>
+                      <SelectContent>{TODO_OFFSETS.map((o) => <SelectItem key={o.value} value={String(o.value)}>{o.label}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </div>
+                )}
               </div>
               <Button size="icon" variant="ghost" onClick={() => remove(t.id)}><Trash2 className="w-4 h-4" /></Button>
             </Card>

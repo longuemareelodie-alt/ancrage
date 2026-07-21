@@ -23,6 +23,7 @@ export type Database = {
           event_time: string | null
           id: string
           location: string | null
+          reminder_offset_hours: number
           reminder_sent_at: string | null
           title: string
           updated_at: string
@@ -36,6 +37,7 @@ export type Database = {
           event_time?: string | null
           id?: string
           location?: string | null
+          reminder_offset_hours?: number
           reminder_sent_at?: string | null
           title: string
           updated_at?: string
@@ -49,6 +51,7 @@ export type Database = {
           event_time?: string | null
           id?: string
           location?: string | null
+          reminder_offset_hours?: number
           reminder_sent_at?: string | null
           title?: string
           updated_at?: string
@@ -1403,6 +1406,7 @@ export type Database = {
           due_date: string | null
           id: string
           priority: string | null
+          reminder_offset_hours: number
           reminder_sent_at: string | null
           title: string
           updated_at: string
@@ -1415,6 +1419,7 @@ export type Database = {
           due_date?: string | null
           id?: string
           priority?: string | null
+          reminder_offset_hours?: number
           reminder_sent_at?: string | null
           title: string
           updated_at?: string
@@ -1427,6 +1432,7 @@ export type Database = {
           due_date?: string | null
           id?: string
           priority?: string | null
+          reminder_offset_hours?: number
           reminder_sent_at?: string | null
           title?: string
           updated_at?: string
