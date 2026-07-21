@@ -545,7 +545,7 @@ function ProfileDetail({
                 documents.slice(0, 5).map((d) => (
                   <button key={d.id} onClick={() => openDoc(d)} className="flex items-center gap-2 w-full py-1.5 border-b last:border-0 text-sm text-left hover:text-primary">
                     <FileText className="h-4 w-4 text-muted-foreground" />
-                    <span className="flex-1 truncate">{d.name}</span>
+                    <span className="flex-1 truncate">{d.file_name}</span>
                     <span className="text-xs text-muted-foreground">{format(new Date(d.created_at), "d MMM", { locale: fr })}</span>
                   </button>
                 ))
