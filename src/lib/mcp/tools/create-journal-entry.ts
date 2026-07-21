@@ -20,23 +20,34 @@ export default defineTool({
     "Add a new private journal entry for the signed-in user. Use for reflections, feelings, or notes the user dictates.",
   inputSchema: {
     content: z.string().trim().min(1).describe("The journal entry text."),
-    mood: z
+    mode: z
       .string()
       .trim()
       .max(40)
       .optional()
-      .describe("Optional short mood label (e.g. 'calme', 'tendue')."),
+      .describe("Optional writing mode label (e.g. 'libre', 'guide')."),
+    prompt_key: z
+      .string()
+      .trim()
+      .max(80)
+      .optional()
+      .describe("Optional identifier of the guided prompt used, if any."),
   },
   annotations: { readOnlyHint: false, destructiveHint: false, openWorldHint: false },
-  handler: async ({ content, mood }, ctx) => {
+  handler: async ({ content, mode, prompt_key }, ctx) => {
     if (!ctx.isAuthenticated()) {
       return { content: [{ type: "text", text: "Not authenticated" }], isError: true };
     }
     const supabase = supabaseForUser(ctx);
     const { data, error } = await supabase
       .from("private_journal_entries")
-      .insert({ user_id: ctx.getUserId(), content, mood: mood ?? null })
-      .select("id, created_at, content, mood")
+      .insert({
+        user_id: ctx.getUserId(),
+        content,
+        mode: mode ?? null,
+        prompt_key: prompt_key ?? null,
+      })
+      .select("id, created_at, content, mode, prompt_key")
       .maybeSingle();
     if (error) {
       return { content: [{ type: "text", text: error.message }], isError: true };

@@ -35,7 +35,7 @@
       {
         "name": "list_journal_entries",
         "title": "List my journal entries",
-        "description": "Return the signed-in user's most recent private journal entries, newest first.",
+        "description": "Return the signed-in user's most recent private journal entries, newest first. Each row has the entry content and the writing mode/prompt it was written from.",
         "annotations": {
           "readOnlyHint": true,
           "idempotentHint": true,
@@ -73,10 +73,15 @@
               "minLength": 1,
               "description": "The journal entry text."
             },
-            "mood": {
+            "mode": {
               "type": "string",
               "maxLength": 40,
-              "description": "Optional short mood label (e.g. 'calme', 'tendue')."
+              "description": "Optional writing mode label (e.g. 'libre', 'guide')."
+            },
+            "prompt_key": {
+              "type": "string",
+              "maxLength": 80,
+              "description": "Optional identifier of the guided prompt used, if any."
             }
           },
           "required": [
@@ -90,7 +95,7 @@
       {
         "name": "list_emotion_checkins",
         "title": "List my emotion check-ins",
-        "description": "Return the signed-in user's most recent emotion check-ins (mood, intensity, notes), newest first.",
+        "description": "Return the signed-in user's most recent daily emotion check-ins (which emotion, of what type), newest first.",
         "annotations": {
           "readOnlyHint": true,
           "idempotentHint": true,
@@ -114,7 +119,7 @@
       {
         "name": "list_transformation_portraits",
         "title": "List my transformation portraits",
-        "description": "Return the signed-in user's monthly transformation portraits (AI-generated reflection of their journey), newest first.",
+        "description": "Return the signed-in user's monthly AI-generated transformation portraits, newest first. Each portrait describes what the user has overcome, what she is developing, her new strengths, and what she is becoming.",
         "annotations": {
           "readOnlyHint": true,
           "idempotentHint": true,

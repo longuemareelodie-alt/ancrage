@@ -17,7 +17,7 @@ export default defineTool({
   name: "list_journal_entries",
   title: "List my journal entries",
   description:
-    "Return the signed-in user's most recent private journal entries, newest first.",
+    "Return the signed-in user's most recent private journal entries, newest first. Each row has the entry content and the writing mode/prompt it was written from.",
   inputSchema: {
     limit: z
       .number()
@@ -35,7 +35,7 @@ export default defineTool({
     const supabase = supabaseForUser(ctx);
     const { data, error } = await supabase
       .from("private_journal_entries")
-      .select("id, created_at, content, mood, tags")
+      .select("id, created_at, content, mode, prompt_key")
       .eq("user_id", ctx.getUserId())
       .order("created_at", { ascending: false })
       .limit(limit ?? 10);

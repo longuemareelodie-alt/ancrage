@@ -57,7 +57,7 @@ function supabaseForUser2(ctx) {
 var list_journal_entries_default = defineTool2({
   name: "list_journal_entries",
   title: "List my journal entries",
-  description: "Return the signed-in user's most recent private journal entries, newest first.",
+  description: "Return the signed-in user's most recent private journal entries, newest first. Each row has the entry content and the writing mode/prompt it was written from.",
   inputSchema: {
     limit: z.number().int().min(1).max(50).optional().describe("How many entries to return (1-50, default 10).")
   },
@@ -67,7 +67,7 @@ var list_journal_entries_default = defineTool2({
       return { content: [{ type: "text", text: "Not authenticated" }], isError: true };
     }
     const supabase = supabaseForUser2(ctx);
-    const { data, error } = await supabase.from("private_journal_entries").select("id, created_at, content, mood, tags").eq("user_id", ctx.getUserId()).order("created_at", { ascending: false }).limit(limit ?? 10);
+    const { data, error } = await supabase.from("private_journal_entries").select("id, created_at, content, mode, prompt_key").eq("user_id", ctx.getUserId()).order("created_at", { ascending: false }).limit(limit ?? 10);
     if (error) {
       return { content: [{ type: "text", text: error.message }], isError: true };
     }
@@ -98,15 +98,21 @@ var create_journal_entry_default = defineTool3({
   description: "Add a new private journal entry for the signed-in user. Use for reflections, feelings, or notes the user dictates.",
   inputSchema: {
     content: z2.string().trim().min(1).describe("The journal entry text."),
-    mood: z2.string().trim().max(40).optional().describe("Optional short mood label (e.g. 'calme', 'tendue').")
+    mode: z2.string().trim().max(40).optional().describe("Optional writing mode label (e.g. 'libre', 'guide')."),
+    prompt_key: z2.string().trim().max(80).optional().describe("Optional identifier of the guided prompt used, if any.")
   },
   annotations: { readOnlyHint: false, destructiveHint: false, openWorldHint: false },
-  handler: async ({ content, mood }, ctx) => {
+  handler: async ({ content, mode, prompt_key }, ctx) => {
     if (!ctx.isAuthenticated()) {
       return { content: [{ type: "text", text: "Not authenticated" }], isError: true };
     }
     const supabase = supabaseForUser3(ctx);
-    const { data, error } = await supabase.from("private_journal_entries").insert({ user_id: ctx.getUserId(), content, mood: mood ?? null }).select("id, created_at, content, mood").maybeSingle();
+    const { data, error } = await supabase.from("private_journal_entries").insert({
+      user_id: ctx.getUserId(),
+      content,
+      mode: mode ?? null,
+      prompt_key: prompt_key ?? null
+    }).select("id, created_at, content, mode, prompt_key").maybeSingle();
     if (error) {
       return { content: [{ type: "text", text: error.message }], isError: true };
     }
@@ -134,7 +140,7 @@ function supabaseForUser4(ctx) {
 var list_emotion_checkins_default = defineTool4({
   name: "list_emotion_checkins",
   title: "List my emotion check-ins",
-  description: "Return the signed-in user's most recent emotion check-ins (mood, intensity, notes), newest first.",
+  description: "Return the signed-in user's most recent daily emotion check-ins (which emotion, of what type), newest first.",
   inputSchema: {
     limit: z3.number().int().min(1).max(100).optional().describe("How many check-ins to return (1-100, default 30).")
   },
@@ -144,7 +150,7 @@ var list_emotion_checkins_default = defineTool4({
       return { content: [{ type: "text", text: "Not authenticated" }], isError: true };
     }
     const supabase = supabaseForUser4(ctx);
-    const { data, error } = await supabase.from("emotion_checkins").select("id, created_at, emotion, intensity, note").eq("user_id", ctx.getUserId()).order("created_at", { ascending: false }).limit(limit ?? 30);
+    const { data, error } = await supabase.from("emotion_checkins").select("id, created_at, emotion, emotion_type").eq("user_id", ctx.getUserId()).order("created_at", { ascending: false }).limit(limit ?? 30);
     if (error) {
       return { content: [{ type: "text", text: error.message }], isError: true };
     }
@@ -172,7 +178,7 @@ function supabaseForUser5(ctx) {
 var list_transformation_portraits_default = defineTool5({
   name: "list_transformation_portraits",
   title: "List my transformation portraits",
-  description: "Return the signed-in user's monthly transformation portraits (AI-generated reflection of their journey), newest first.",
+  description: "Return the signed-in user's monthly AI-generated transformation portraits, newest first. Each portrait describes what the user has overcome, what she is developing, her new strengths, and what she is becoming.",
   inputSchema: {
     limit: z4.number().int().min(1).max(24).optional().describe("How many portraits to return (1-24, default 6).")
   },
@@ -182,7 +188,9 @@ var list_transformation_portraits_default = defineTool5({
       return { content: [{ type: "text", text: "Not authenticated" }], isError: true };
     }
     const supabase = supabaseForUser5(ctx);
-    const { data, error } = await supabase.from("transformation_portraits").select("id, created_at, period_start, period_end, summary, insights").eq("user_id", ctx.getUserId()).order("created_at", { ascending: false }).limit(limit ?? 6);
+    const { data, error } = await supabase.from("transformation_portraits").select(
+      "id, year, month, overcome, developing, new_strengths, becoming, entry_count, created_at"
+    ).eq("user_id", ctx.getUserId()).order("year", { ascending: false }).order("month", { ascending: false }).limit(limit ?? 6);
     if (error) {
       return { content: [{ type: "text", text: error.message }], isError: true };
     }

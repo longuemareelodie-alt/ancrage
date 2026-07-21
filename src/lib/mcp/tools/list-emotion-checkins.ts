@@ -17,7 +17,7 @@ export default defineTool({
   name: "list_emotion_checkins",
   title: "List my emotion check-ins",
   description:
-    "Return the signed-in user's most recent emotion check-ins (mood, intensity, notes), newest first.",
+    "Return the signed-in user's most recent daily emotion check-ins (which emotion, of what type), newest first.",
   inputSchema: {
     limit: z
       .number()
@@ -35,7 +35,7 @@ export default defineTool({
     const supabase = supabaseForUser(ctx);
     const { data, error } = await supabase
       .from("emotion_checkins")
-      .select("id, created_at, emotion, intensity, note")
+      .select("id, created_at, emotion, emotion_type")
       .eq("user_id", ctx.getUserId())
       .order("created_at", { ascending: false })
       .limit(limit ?? 30);

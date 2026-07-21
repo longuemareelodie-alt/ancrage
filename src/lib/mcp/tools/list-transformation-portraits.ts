@@ -17,7 +17,7 @@ export default defineTool({
   name: "list_transformation_portraits",
   title: "List my transformation portraits",
   description:
-    "Return the signed-in user's monthly transformation portraits (AI-generated reflection of their journey), newest first.",
+    "Return the signed-in user's monthly AI-generated transformation portraits, newest first. Each portrait describes what the user has overcome, what she is developing, her new strengths, and what she is becoming.",
   inputSchema: {
     limit: z
       .number()
@@ -35,9 +35,12 @@ export default defineTool({
     const supabase = supabaseForUser(ctx);
     const { data, error } = await supabase
       .from("transformation_portraits")
-      .select("id, created_at, period_start, period_end, summary, insights")
+      .select(
+        "id, year, month, overcome, developing, new_strengths, becoming, entry_count, created_at",
+      )
       .eq("user_id", ctx.getUserId())
-      .order("created_at", { ascending: false })
+      .order("year", { ascending: false })
+      .order("month", { ascending: false })
       .limit(limit ?? 6);
     if (error) {
       return { content: [{ type: "text", text: error.message }], isError: true };
