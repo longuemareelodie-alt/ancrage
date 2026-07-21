@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      agenda_events: {
+        Row: {
+          category: string | null
+          created_at: string
+          description: string | null
+          event_date: string
+          event_time: string | null
+          id: string
+          location: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          event_date: string
+          event_time?: string | null
+          id?: string
+          location?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          event_date?: string
+          event_time?: string | null
+          id?: string
+          location?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       ambassador_contract_acceptances: {
         Row: {
           accepted_at: string
@@ -936,6 +975,39 @@ export type Database = {
         }
         Relationships: []
       }
+      organisation_notes: {
+        Row: {
+          color: string | null
+          content: string
+          created_at: string
+          id: string
+          pinned: boolean
+          title: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          color?: string | null
+          content?: string
+          created_at?: string
+          id?: string
+          pinned?: boolean
+          title?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          color?: string | null
+          content?: string
+          created_at?: string
+          id?: string
+          pinned?: boolean
+          title?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       pending_account_emails: {
         Row: {
           attempts: number
@@ -1140,6 +1212,42 @@ export type Database = {
         }
         Relationships: []
       }
+      shopping_items: {
+        Row: {
+          category: string | null
+          checked: boolean
+          created_at: string
+          id: string
+          list_name: string | null
+          name: string
+          quantity: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category?: string | null
+          checked?: boolean
+          created_at?: string
+          id?: string
+          list_name?: string | null
+          name: string
+          quantity?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: string | null
+          checked?: boolean
+          created_at?: string
+          id?: string
+          list_name?: string | null
+          name?: string
+          quantity?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       speech_progress: {
         Row: {
           created_at: string
@@ -1278,6 +1386,42 @@ export type Database = {
           id?: string
           metadata?: Json | null
           reason?: string
+        }
+        Relationships: []
+      }
+      todo_items: {
+        Row: {
+          category: string | null
+          created_at: string
+          done: boolean
+          due_date: string | null
+          id: string
+          priority: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          done?: boolean
+          due_date?: string | null
+          id?: string
+          priority?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          done?: boolean
+          due_date?: string | null
+          id?: string
+          priority?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
