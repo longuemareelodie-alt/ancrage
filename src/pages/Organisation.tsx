@@ -171,6 +171,13 @@ function AgendaTab({ userId }: { userId: string }) {
           <SelectTrigger><SelectValue /></SelectTrigger>
           <SelectContent>{EVENT_CATS.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
         </Select>
+        <div className="flex items-center gap-2">
+          <Bell className="w-4 h-4 text-[#6b7280]" />
+          <Select value={String(reminderOffset)} onValueChange={(v) => setReminderOffset(Number(v))}>
+            <SelectTrigger className="flex-1"><SelectValue placeholder="Rappel" /></SelectTrigger>
+            <SelectContent>{AGENDA_OFFSETS.map((o) => <SelectItem key={o.value} value={String(o.value)}>Rappel : {o.label}</SelectItem>)}</SelectContent>
+          </Select>
+        </div>
         <Textarea placeholder="Notes (optionnel)" value={description} onChange={(e) => setDescription(e.target.value)} rows={2} />
         <Button onClick={add} className="w-full"><Plus className="w-4 h-4 mr-1" />Ajouter</Button>
       </Card>
