@@ -76,6 +76,7 @@ const SanteProfilsFamiliaux = () => {
   const [docs, setDocs] = useState<DocItem[]>([]);
   const [openId, setOpenId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [preview, setPreview] = useState<{ doc: DocItem; url: string } | null>(null);
 
   useEffect(() => {
     if (!user) return;
