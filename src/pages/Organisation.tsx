@@ -15,8 +15,23 @@ import { Calendar, CheckSquare, ShoppingCart, StickyNote, Plus, Trash2, Pin, Map
 import { format, parseISO, isToday, isTomorrow, isPast } from "date-fns";
 import { fr } from "date-fns/locale";
 
-type AgendaEvent = { id: string; title: string; description: string | null; event_date: string; event_time: string | null; location: string | null; category: string };
-type Todo = { id: string; title: string; done: boolean; priority: string; due_date: string | null; category: string };
+type AgendaEvent = { id: string; title: string; description: string | null; event_date: string; event_time: string | null; location: string | null; category: string; reminder_offset_hours: number };
+type Todo = { id: string; title: string; done: boolean; priority: string; due_date: string | null; category: string; reminder_offset_hours: number };
+
+const AGENDA_OFFSETS: { value: number; label: string }[] = [
+  { value: 1, label: "1h avant" },
+  { value: 3, label: "3h avant" },
+  { value: 12, label: "12h avant" },
+  { value: 24, label: "24h avant" },
+  { value: 48, label: "2 jours avant" },
+  { value: 72, label: "3 jours avant" },
+];
+const TODO_OFFSETS: { value: number; label: string }[] = [
+  { value: 0, label: "Le jour même" },
+  { value: 24, label: "1 jour avant" },
+  { value: 48, label: "2 jours avant" },
+  { value: 72, label: "3 jours avant" },
+];
 type ShopItem = { id: string; name: string; quantity: string | null; category: string; checked: boolean; list_name: string };
 type Note = { id: string; title: string | null; content: string; color: string; pinned: boolean; updated_at: string };
 
