@@ -247,9 +247,34 @@ function buildNotification(ctx: UserContext): { title: string; body: string; url
 }
 
 // ─── Main handler ───
+function callerIsServiceRole(authHeader: string | null): boolean {
+  if (!authHeader) return false
+  const token = authHeader.replace(/^Bearer\s+/i, "");
+  // Fast path: exact match against the service role key
+  if (token === Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")) return true;
+  const parts = token.split(".");
+  if (parts.length < 2) return false;
+  try {
+    const b64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+    const padded = b64 + "=".repeat((4 - (b64.length % 4)) % 4);
+    const payload = JSON.parse(atob(padded));
+    return payload.role === "service_role";
+  } catch {
+    return false;
+  }
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
+  }
+
+  // Restrict to internal callers only (cron job + server-side edge functions).
+  if (!callerIsServiceRole(req.headers.get("Authorization"))) {
+    return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      status: 401,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   }
 
   try {
@@ -311,17 +336,16 @@ Deno.serve(async (req) => {
         );
         if (ok) sent++;
         details.push({
-          userId: sub.user_id,
-          message: notification.body.slice(0, 60),
           status: ok ? "sent" : "failed",
         });
       } catch (err) {
         console.error("Push failed for", sub.endpoint, err);
-        details.push({ userId: sub.user_id, message: notification.body.slice(0, 60), status: "error" });
+        details.push({ status: "error" });
       }
     }
 
-    return new Response(JSON.stringify({ sent, total: subscriptions.length, details }), {
+    // Do not echo user IDs back to callers; keep response minimal.
+    return new Response(JSON.stringify({ sent, total: subscriptions.length }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (err) {
