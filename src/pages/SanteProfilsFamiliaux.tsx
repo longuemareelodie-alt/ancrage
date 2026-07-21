@@ -191,6 +191,7 @@ const SanteProfilsFamiliaux = () => {
                 ])
               }
               userId={user!.id}
+              onPreview={(doc, url) => setPreview({ doc, url })}
             />
           ))}
 
