@@ -121,6 +121,7 @@ function AgendaTab({ userId }: { userId: string }) {
   const [location, setLocation] = useState("");
   const [category, setCategory] = useState("perso");
   const [description, setDescription] = useState("");
+  const [reminderOffset, setReminderOffset] = useState<number>(24);
 
   const load = async () => {
     const { data } = await supabase.from("agenda_events").select("*").eq("user_id", userId).order("event_date").order("event_time", { nullsFirst: true });
@@ -130,10 +131,15 @@ function AgendaTab({ userId }: { userId: string }) {
 
   const add = async () => {
     if (!title || !date) return toast.error("Titre et date requis");
-    const { error } = await supabase.from("agenda_events").insert({ user_id: userId, title, event_date: date, event_time: time || null, location: location || null, category, description: description || null });
+    const { error } = await supabase.from("agenda_events").insert({ user_id: userId, title, event_date: date, event_time: time || null, location: location || null, category, description: description || null, reminder_offset_hours: reminderOffset });
     if (error) return toast.error(error.message);
     toast.success("Événement ajouté");
-    setTitle(""); setDate(""); setTime(""); setLocation(""); setDescription("");
+    setTitle(""); setDate(""); setTime(""); setLocation(""); setDescription(""); setReminderOffset(24);
+    load();
+  };
+  const updateOffset = async (id: string, value: number) => {
+    await supabase.from("agenda_events").update({ reminder_offset_hours: value, reminder_sent_at: null }).eq("id", id);
+    toast.success("Rappel mis à jour");
     load();
   };
   const remove = async (id: string) => {
