@@ -14,7 +14,7 @@ Deno.serve(async (req) => {
   const supabase = createClient(supabaseUrl, serviceKey);
 
   const now = new Date();
-  const results = { appointments_24h: 0, appointments_1h: 0, medications: 0, errors: [] as string[] };
+  const results = { appointments_24h: 0, appointments_1h: 0, medications: 0, agenda: 0, todos: 0, errors: [] as string[] };
 
   try {
     // ============ APPOINTMENTS ============
@@ -95,6 +95,59 @@ Deno.serve(async (req) => {
         }
       }
     }
+
+    // ============ AGENDA EVENTS (24h before) ============
+    const todayStr = now.toISOString().slice(0, 10);
+    const tomorrow = new Date(now.getTime() + 24 * 3600 * 1000);
+    const tomorrowStr = tomorrow.toISOString().slice(0, 10);
+
+    const { data: events } = await supabase
+      .from("agenda_events")
+      .select("id, user_id, title, description, event_date, event_time, location")
+      .is("reminder_sent_at", null)
+      .in("event_date", [todayStr, tomorrowStr]);
+
+    for (const ev of events ?? []) {
+      // Compute event datetime; skip if more than 26h away or already past
+      const timePart = ev.event_time ? ev.event_time.slice(0, 5) : "09:00";
+      const eventAt = new Date(`${ev.event_date}T${timePart}:00`);
+      const hoursUntil = (eventAt.getTime() - now.getTime()) / 3600000;
+      if (hoursUntil < -1 || hoursUntil > 26) continue;
+
+      if (!(await userWantsReminders(supabase, ev.user_id))) {
+        await supabase.from("agenda_events").update({ reminder_sent_at: now.toISOString() }).eq("id", ev.id);
+        continue;
+      }
+      const ok = await sendAgendaReminder(supabase, ev, eventAt);
+      if (ok) {
+        await supabase.from("agenda_events").update({ reminder_sent_at: now.toISOString() }).eq("id", ev.id);
+        results.agenda++;
+      }
+    }
+
+    // ============ TO-DO (morning of due date) ============
+    // Only remind between 07:00 and 10:00 UTC on the due date
+    const hourUtc = now.getUTCHours();
+    if (hourUtc >= 7 && hourUtc <= 10) {
+      const { data: todos } = await supabase
+        .from("todo_items")
+        .select("id, user_id, title, priority, due_date")
+        .is("reminder_sent_at", null)
+        .eq("done", false)
+        .eq("due_date", todayStr);
+
+      for (const t of todos ?? []) {
+        if (!(await userWantsReminders(supabase, t.user_id))) {
+          await supabase.from("todo_items").update({ reminder_sent_at: now.toISOString() }).eq("id", t.id);
+          continue;
+        }
+        const ok = await sendTodoReminder(supabase, t);
+        if (ok) {
+          await supabase.from("todo_items").update({ reminder_sent_at: now.toISOString() }).eq("id", t.id);
+          results.todos++;
+        }
+      }
+    }
   } catch (e) {
     results.errors.push(String(e));
   }
@@ -107,6 +160,52 @@ Deno.serve(async (req) => {
 async function getUserEmail(supabase: any, userId: string): Promise<string | null> {
   const { data } = await supabase.from("profiles").select("email, first_name").eq("user_id", userId).single();
   return data?.email ?? null;
+}
+
+async function userWantsReminders(supabase: any, userId: string): Promise<boolean> {
+  const { data } = await supabase.from("profiles").select("reminders_enabled").eq("user_id", userId).single();
+  return data?.reminders_enabled !== false;
+}
+
+async function sendAgendaReminder(supabase: any, ev: any, eventAt: Date): Promise<boolean> {
+  const email = await getUserEmail(supabase, ev.user_id);
+  if (!email) return false;
+  const dateStr = eventAt.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
+  const timeStr = ev.event_time ? ev.event_time.slice(0, 5) : null;
+  const subject = `📅 Rappel : ${ev.title} demain`;
+  const html = `
+<div style="font-family: -apple-system, sans-serif; max-width: 500px; margin: 0 auto; padding: 24px; color: #333;">
+  <h1 style="color: #5b8def; font-size: 22px; margin-bottom: 16px;">C'est demain 💛</h1>
+  <div style="background: #f5f7fa; border-radius: 12px; padding: 20px; margin: 16px 0;">
+    <p style="margin: 0 0 8px; font-size: 18px; font-weight: 600;">${escapeHtml(ev.title)}</p>
+    <p style="margin: 0; font-size: 14px; color: #666;">📅 ${dateStr}${timeStr ? ` à ${timeStr}` : ""}</p>
+    ${ev.location ? `<p style="margin: 8px 0 0; font-size: 14px; color: #666;">📍 ${escapeHtml(ev.location)}</p>` : ""}
+    ${ev.description ? `<p style="margin: 12px 0 0; font-size: 14px; color: #555;">${escapeHtml(ev.description)}</p>` : ""}
+  </div>
+  <p style="font-size: 13px; color: #888;">Prends soin de toi 💗</p>
+</div>`;
+  const emailOk = await sendEmail(supabase, email, subject, html, `agenda-${ev.id}`);
+  await sendPush(supabase, ev.user_id, `📅 ${ev.title}`, `Demain${timeStr ? ` à ${timeStr}` : ""}${ev.location ? ` — ${ev.location}` : ""}`);
+  return emailOk;
+}
+
+async function sendTodoReminder(supabase: any, t: any): Promise<boolean> {
+  const email = await getUserEmail(supabase, t.user_id);
+  if (!email) return false;
+  const prio = t.priority === "haute" ? "🔴 Priorité haute" : t.priority === "basse" ? "Priorité basse" : "";
+  const subject = `✅ Rappel : ${t.title}`;
+  const html = `
+<div style="font-family: -apple-system, sans-serif; max-width: 500px; margin: 0 auto; padding: 24px; color: #333;">
+  <h1 style="color: #5b8def; font-size: 22px; margin-bottom: 16px;">À faire aujourd'hui 💛</h1>
+  <div style="background: #f5f7fa; border-radius: 12px; padding: 20px; margin: 16px 0;">
+    <p style="margin: 0 0 8px; font-size: 18px; font-weight: 600;">${escapeHtml(t.title)}</p>
+    ${prio ? `<p style="margin: 0; font-size: 14px; color: #666;">${prio}</p>` : ""}
+  </div>
+  <p style="font-size: 13px; color: #888;">Un pas à la fois 🌱</p>
+</div>`;
+  const emailOk = await sendEmail(supabase, email, subject, html, `todo-${t.id}`);
+  await sendPush(supabase, t.user_id, `✅ À faire aujourd'hui`, t.title);
+  return emailOk;
 }
 
 async function sendAppointmentReminder(supabase: any, apt: any, when: "24h" | "1h"): Promise<boolean> {

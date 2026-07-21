@@ -9,8 +9,9 @@ import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
-import { Calendar, CheckSquare, ShoppingCart, StickyNote, Plus, Trash2, Pin, MapPin, Clock } from "lucide-react";
+import { Calendar, CheckSquare, ShoppingCart, StickyNote, Plus, Trash2, Pin, MapPin, Clock, Bell } from "lucide-react";
 import { format, parseISO, isToday, isTomorrow, isPast } from "date-fns";
 import { fr } from "date-fns/locale";
 
@@ -42,6 +43,8 @@ export default function Organisation() {
           <p className="text-sm text-[#6b7280] mt-2">Ton quotidien, allégé et centralisé.</p>
         </header>
 
+        <RemindersToggle userId={user.id} />
+
         <Tabs defaultValue="agenda" className="w-full">
           <TabsList className="grid grid-cols-4 w-full mb-6 bg-white/60">
             <TabsTrigger value="agenda"><Calendar className="w-4 h-4 mr-1" />Agenda</TabsTrigger>
@@ -57,6 +60,40 @@ export default function Organisation() {
         </Tabs>
       </div>
     </div>
+  );
+}
+
+/* ---------------- REMINDERS TOGGLE ---------------- */
+function RemindersToggle({ userId }: { userId: string }) {
+  const [enabled, setEnabled] = useState(true);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    supabase.from("profiles").select("reminders_enabled").eq("user_id", userId).single().then(({ data }) => {
+      setEnabled(data?.reminders_enabled !== false);
+      setLoading(false);
+    });
+  }, [userId]);
+
+  const toggle = async (v: boolean) => {
+    setEnabled(v);
+    const { error } = await supabase.from("profiles").update({ reminders_enabled: v }).eq("user_id", userId);
+    if (error) { toast.error("Impossible de mettre à jour"); setEnabled(!v); return; }
+    toast.success(v ? "Rappels activés 🔔" : "Rappels désactivés");
+  };
+
+  if (loading) return null;
+  return (
+    <Card className="p-4 mb-4 bg-white/80 flex items-center justify-between">
+      <div className="flex items-center gap-3">
+        <Bell className="w-5 h-5 text-[#5b8def]" />
+        <div>
+          <p className="text-sm font-medium">Rappels par e-mail & notifications</p>
+          <p className="text-xs text-[#6b7280]">Événements : la veille · Tâches : le matin de l'échéance</p>
+        </div>
+      </div>
+      <Switch checked={enabled} onCheckedChange={toggle} />
+    </Card>
   );
 }
 

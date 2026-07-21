@@ -23,6 +23,7 @@ export type Database = {
           event_time: string | null
           id: string
           location: string | null
+          reminder_sent_at: string | null
           title: string
           updated_at: string
           user_id: string
@@ -35,6 +36,7 @@ export type Database = {
           event_time?: string | null
           id?: string
           location?: string | null
+          reminder_sent_at?: string | null
           title: string
           updated_at?: string
           user_id: string
@@ -47,6 +49,7 @@ export type Database = {
           event_time?: string | null
           id?: string
           location?: string | null
+          reminder_sent_at?: string | null
           title?: string
           updated_at?: string
           user_id?: string
@@ -1142,6 +1145,7 @@ export type Database = {
           plan_type: string
           preferred_style: string | null
           preferred_style_synced_at: string | null
+          reminders_enabled: boolean
           updated_at: string
           user_id: string
         }
@@ -1161,6 +1165,7 @@ export type Database = {
           plan_type?: string
           preferred_style?: string | null
           preferred_style_synced_at?: string | null
+          reminders_enabled?: boolean
           updated_at?: string
           user_id: string
         }
@@ -1180,6 +1185,7 @@ export type Database = {
           plan_type?: string
           preferred_style?: string | null
           preferred_style_synced_at?: string | null
+          reminders_enabled?: boolean
           updated_at?: string
           user_id?: string
         }
@@ -1397,6 +1403,7 @@ export type Database = {
           due_date: string | null
           id: string
           priority: string | null
+          reminder_sent_at: string | null
           title: string
           updated_at: string
           user_id: string
@@ -1408,6 +1415,7 @@ export type Database = {
           due_date?: string | null
           id?: string
           priority?: string | null
+          reminder_sent_at?: string | null
           title: string
           updated_at?: string
           user_id: string
@@ -1419,6 +1427,7 @@ export type Database = {
           due_date?: string | null
           id?: string
           priority?: string | null
+          reminder_sent_at?: string | null
           title?: string
           updated_at?: string
           user_id?: string
