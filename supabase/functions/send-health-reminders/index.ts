@@ -14,7 +14,7 @@ Deno.serve(async (req) => {
   const supabase = createClient(supabaseUrl, serviceKey);
 
   const now = new Date();
-  const results = { appointments_24h: 0, appointments_1h: 0, medications: 0, errors: [] as string[] };
+  const results = { appointments_24h: 0, appointments_1h: 0, medications: 0, agenda: 0, todos: 0, errors: [] as string[] };
 
   try {
     // ============ APPOINTMENTS ============
