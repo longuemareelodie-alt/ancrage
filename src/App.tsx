@@ -92,6 +92,11 @@ import AmbassadriceContrat from "./pages/AmbassadriceContrat";
 import OAuthConsent from "./pages/OAuthConsent";
 import { useEffect } from "react";
 import { captureReferralCodeFromUrl } from "@/lib/referralTracking";
+import Budget from "./pages/Budget";
+import Coffre from "./pages/Coffre";
+import Organisation from "./pages/Organisation";
+import Statistiques from "./pages/Statistiques";
+import Famille from "./pages/Famille";
 
 const queryClient = new QueryClient();
 
@@ -203,6 +208,11 @@ const AnimatedRoutes = () => {
         <Route path="/frise-evolution" element={<PaidRoute><PageTransition><FriseEvolution /></PageTransition></PaidRoute>} />
         <Route path="/mon-impact" element={<PaidRoute><PageTransition><MonImpact /></PageTransition></PaidRoute>} />
         <Route path="/ambassadrice/contrat" element={<PaidRoute><PageTransition><AmbassadriceContrat /></PageTransition></PaidRoute>} />
+        <Route path="/budget" element={<PaidRoute><PageTransition><Budget /></PageTransition></PaidRoute>} />
+        <Route path="/coffre" element={<PaidRoute><PageTransition><Coffre /></PageTransition></PaidRoute>} />
+        <Route path="/organisation" element={<PaidRoute><PageTransition><Organisation /></PageTransition></PaidRoute>} />
+        <Route path="/statistiques" element={<PaidRoute><PageTransition><Statistiques /></PageTransition></PaidRoute>} />
+        <Route path="/famille" element={<PaidRoute><PageTransition><Famille /></PageTransition></PaidRoute>} />
         <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
         <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
           </Routes>
