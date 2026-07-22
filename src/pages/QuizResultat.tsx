@@ -13,9 +13,11 @@ import {
   HeartPulse,
   Clock,
   Home as HomeIcon,
+  Download,
 } from "lucide-react";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
 import { PREMIUM_PRICE_LONG } from "@/lib/premiumOffer";
+import { exportQuizResultPdf } from "@/lib/exportQuizResultPdf";
 import Footer from "@/components/Footer";
 
 type ModuleReco = {
@@ -248,6 +250,23 @@ const QuizResultat = () => {
 
           {/* Secondary actions */}
           <div className="mt-8 flex flex-col items-center gap-3 text-sm">
+            <button
+              type="button"
+              onClick={() =>
+                exportQuizResultPdf({
+                  firstName: firstName || undefined,
+                  badge: verdict.badge,
+                  headline: headline,
+                  message: verdict.message,
+                  modules: modules.map((m) => ({ title: m.title, desc: m.desc })),
+                  priceLabel: `ANCRAGE — accès à vie · ${PREMIUM_PRICE_LONG}`,
+                })
+              }
+              className="inline-flex items-center gap-1.5 text-primary-dark underline underline-offset-4 hover:text-primary"
+            >
+              <Download className="h-3.5 w-3.5" />
+              Télécharger mon résultat en PDF
+            </button>
             <Link
               to="/#quiz"
               className="inline-flex items-center gap-1.5 text-muted-foreground underline underline-offset-4 hover:text-foreground"
