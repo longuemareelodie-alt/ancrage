@@ -249,9 +249,17 @@ export default function OrdonnancesProfil() {
                           </div>
                           {o.notes && <p className="mt-2 text-xs text-muted-foreground line-clamp-2">{o.notes}</p>}
                         </div>
-                        <Button variant="ghost" size="sm" onClick={() => openPreview(o)}>
-                          <Eye className="h-4 w-4" />
-                        </Button>
+                        <div className="flex items-center gap-1 shrink-0">
+                          <Button variant="ghost" size="icon" onClick={() => openPreview(o)} title="Ouvrir">
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="icon" onClick={() => downloadFile(o)} title="Télécharger">
+                            <Download className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="icon" onClick={() => openShare(o)} title="Partager">
+                            <Share2 className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
