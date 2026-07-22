@@ -31,16 +31,18 @@ const getSessionId = (): string => {
 export async function trackQuizEvent(payload: QuizEventPayload): Promise<void> {
   try {
     const { data: userData } = await supabase.auth.getUser();
-    await supabase.from("quiz_events").insert({
-      event_type: payload.eventType,
-      score: payload.score ?? null,
-      max_score: payload.maxScore ?? null,
-      verdict_badge: payload.verdictBadge ?? null,
-      first_name: payload.firstName?.slice(0, 40) ?? null,
-      session_id: getSessionId(),
-      user_id: userData.user?.id ?? null,
-      metadata: payload.metadata ?? null,
-    });
+    await supabase.from("quiz_events").insert([
+      {
+        event_type: payload.eventType,
+        score: payload.score ?? undefined,
+        max_score: payload.maxScore ?? undefined,
+        verdict_badge: payload.verdictBadge ?? undefined,
+        first_name: payload.firstName?.slice(0, 40) ?? undefined,
+        session_id: getSessionId(),
+        user_id: userData.user?.id ?? undefined,
+        metadata: (payload.metadata ?? undefined) as never,
+      },
+    ]);
   } catch {
     // Silent fail — tracking must never block the user flow
   }
