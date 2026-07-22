@@ -85,13 +85,15 @@ const getVerdict = (score: number) => {
 const OuJenSuisQuiz = () => {
   const { startPayment, loading } = useMolliePayment();
   const navigate = useNavigate();
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(-1);
+  const [firstName, setFirstName] = useState("");
   const [answers, setAnswers] = useState<number[]>([]);
 
   const done = step >= QUESTIONS.length;
   const total = answers.reduce((a, b) => a + b, 0);
   const verdict = done ? getVerdict(total) : null;
-  const progress = (step / QUESTIONS.length) * 100;
+  const progress = step < 0 ? 0 : (step / QUESTIONS.length) * 100;
+  const started = step >= 0 && !done;
 
   const pick = (score: number) => {
     const next = [...answers, score];
@@ -100,20 +102,63 @@ const OuJenSuisQuiz = () => {
     setStep(nextStep);
     if (nextStep >= QUESTIONS.length) {
       const finalScore = next.reduce((a, b) => a + b, 0);
-      navigate(`/quiz-resultat?score=${finalScore}&max=${MAX_SCORE}`);
+      const nameParam = firstName.trim()
+        ? `&name=${encodeURIComponent(firstName.trim().slice(0, 40))}`
+        : "";
+      navigate(`/quiz-resultat?score=${finalScore}&max=${MAX_SCORE}${nameParam}`);
     }
   };
 
   const reset = () => {
     setAnswers([]);
-    setStep(0);
+    setStep(-1);
+    setFirstName("");
   };
 
 
   return (
     <div className="mx-auto max-w-2xl">
       <div className="rounded-[2rem] border border-primary/20 bg-card p-7 shadow-soft-lg md:p-10">
-        {!done && (
+        {step === -1 && (
+          <div>
+            <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-primary-dark">
+              <Sparkles className="h-3.5 w-3.5" />
+              <span>Mini-quiz · 2 minutes</span>
+            </div>
+            <h3 className="mt-4 font-serif text-2xl leading-snug text-night md:text-3xl">
+              Avant de commencer, comment tu t'appelles ?
+            </h3>
+            <p className="mt-3 text-sm leading-relaxed text-foreground/70">
+              Ton prénom rend le résultat plus personnel. Il reste sur ton appareil.
+            </p>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                setStep(0);
+              }}
+              className="mt-6 space-y-3"
+            >
+              <input
+                type="text"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                maxLength={40}
+                placeholder="Ton prénom (facultatif)"
+                autoComplete="given-name"
+                className="w-full rounded-2xl border border-border bg-background px-5 py-4 text-[15px] text-foreground outline-none transition-all focus:border-primary/60 focus:shadow-soft"
+              />
+              <button
+                type="submit"
+                className="flex w-full items-center justify-center gap-2 rounded-2xl bg-primary px-6 py-4 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 transition-transform hover:scale-[1.02] active:scale-[0.98]"
+              >
+                Commencer le quiz
+                <ArrowRight className="h-4 w-4" />
+              </button>
+            </form>
+          </div>
+        )}
+
+        {started && (
           <>
             <div className="flex items-center justify-between text-[11px] font-semibold uppercase tracking-[0.22em] text-primary-dark">
               <span>Question {step + 1} / {QUESTIONS.length}</span>

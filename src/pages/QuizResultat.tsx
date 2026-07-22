@@ -117,9 +117,20 @@ const QuizResultat = () => {
 
   const score = Number(params.get("score") ?? 0);
   const max = Number(params.get("max") ?? 100);
+  const rawName = (params.get("name") ?? "").trim().slice(0, 40);
+  const firstName = rawName
+    ? rawName.charAt(0).toUpperCase() + rawName.slice(1)
+    : "";
   const pct = max > 0 ? Math.min(1, Math.max(0, score / max)) : 0;
   const verdict = useMemo(() => getVerdict(pct), [pct]);
   const modules = verdict.moduleKeys.map((k) => ALL_MODULES[k]);
+
+  const headline = firstName
+    ? `${firstName}, ${verdict.headline.charAt(0).toLowerCase()}${verdict.headline.slice(1)}`
+    : verdict.headline;
+  const intro = firstName
+    ? `${firstName}, ce que tu vas lire n'est pas un hasard — c'est ce que tes réponses racontent.`
+    : null;
 
   return (
     <div className="min-h-screen bg-background">
@@ -136,9 +147,14 @@ const QuizResultat = () => {
               <Sparkles className="h-3.5 w-3.5" />
               {verdict.badge}
             </div>
+            {intro && (
+              <p className="mt-6 font-serif text-lg italic text-primary-dark md:text-xl">
+                {intro}
+              </p>
+            )}
             <h1 className="mt-6 font-serif text-[clamp(2rem,5vw,3.25rem)] leading-tight text-night">
               <span className="relative inline-block">
-                {verdict.headline}
+                {headline}
                 <HandUnderline />
               </span>
             </h1>
