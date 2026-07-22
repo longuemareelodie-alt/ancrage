@@ -85,13 +85,15 @@ const getVerdict = (score: number) => {
 const OuJenSuisQuiz = () => {
   const { startPayment, loading } = useMolliePayment();
   const navigate = useNavigate();
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(-1);
+  const [firstName, setFirstName] = useState("");
   const [answers, setAnswers] = useState<number[]>([]);
 
   const done = step >= QUESTIONS.length;
   const total = answers.reduce((a, b) => a + b, 0);
   const verdict = done ? getVerdict(total) : null;
-  const progress = (step / QUESTIONS.length) * 100;
+  const progress = step < 0 ? 0 : (step / QUESTIONS.length) * 100;
+  const started = step >= 0 && !done;
 
   const pick = (score: number) => {
     const next = [...answers, score];
@@ -100,13 +102,17 @@ const OuJenSuisQuiz = () => {
     setStep(nextStep);
     if (nextStep >= QUESTIONS.length) {
       const finalScore = next.reduce((a, b) => a + b, 0);
-      navigate(`/quiz-resultat?score=${finalScore}&max=${MAX_SCORE}`);
+      const nameParam = firstName.trim()
+        ? `&name=${encodeURIComponent(firstName.trim().slice(0, 40))}`
+        : "";
+      navigate(`/quiz-resultat?score=${finalScore}&max=${MAX_SCORE}${nameParam}`);
     }
   };
 
   const reset = () => {
     setAnswers([]);
-    setStep(0);
+    setStep(-1);
+    setFirstName("");
   };
 
 
