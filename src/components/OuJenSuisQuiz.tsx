@@ -84,6 +84,7 @@ const getVerdict = (score: number) => {
 
 const OuJenSuisQuiz = () => {
   const { startPayment, loading } = useMolliePayment();
+  const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<number[]>([]);
 
@@ -93,14 +94,21 @@ const OuJenSuisQuiz = () => {
   const progress = (step / QUESTIONS.length) * 100;
 
   const pick = (score: number) => {
-    setAnswers((a) => [...a, score]);
-    setStep((s) => s + 1);
+    const next = [...answers, score];
+    setAnswers(next);
+    const nextStep = step + 1;
+    setStep(nextStep);
+    if (nextStep >= QUESTIONS.length) {
+      const finalScore = next.reduce((a, b) => a + b, 0);
+      navigate(`/quiz-resultat?score=${finalScore}&max=${MAX_SCORE}`);
+    }
   };
 
   const reset = () => {
     setAnswers([]);
     setStep(0);
   };
+
 
   return (
     <div className="mx-auto max-w-2xl">
