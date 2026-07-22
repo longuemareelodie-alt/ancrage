@@ -20,6 +20,7 @@ import RestartTourButton from "@/components/RestartTourButton";
 import DiscoveryBadge from "@/components/DiscoveryBadge";
 import { DiscoveryProvider } from "@/contexts/DiscoveryContext";
 import Index from "./pages/Index";
+import QuizResultat from "./pages/QuizResultat";
 import Dashboard from "./pages/Dashboard";
 import Emotions from "./pages/Emotions";
 import EmotionDetail from "./pages/EmotionDetail";
