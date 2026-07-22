@@ -219,7 +219,14 @@ export default function Famille() {
                             onClick={(e) => e.stopPropagation()}
                             className="inline-flex items-center gap-1 text-[11px] font-medium text-primary hover:underline"
                           >
-                            <FileText className="h-3 w-3" /> Documents & ordonnances
+                            <FileText className="h-3 w-3" /> Documents
+                          </Link>
+                          <Link
+                            to={`/famille/${p.id}/ordonnances`}
+                            onClick={(e) => e.stopPropagation()}
+                            className="inline-flex items-center gap-1 text-[11px] font-medium text-primary hover:underline"
+                          >
+                            <Pill className="h-3 w-3" /> Ordonnances
                           </Link>
                         </div>
 
