@@ -13,9 +13,11 @@ import {
   HeartPulse,
   Clock,
   Home as HomeIcon,
+  Download,
 } from "lucide-react";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
 import { PREMIUM_PRICE_LONG } from "@/lib/premiumOffer";
+import { exportQuizResultPdf } from "@/lib/exportQuizResultPdf";
 import Footer from "@/components/Footer";
 
 type ModuleReco = {
