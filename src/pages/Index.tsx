@@ -1,5 +1,6 @@
 import Footer from "@/components/Footer";
 import HomeFAQ from "@/components/HomeFAQ";
+import OuJenSuisQuiz from "@/components/OuJenSuisQuiz";
 import { Fragment, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Menu, X, Heart, Check } from "lucide-react";
@@ -636,7 +637,30 @@ const Index = () => {
         </motion.div>
       </Section>
 
+      {/* QUIZ — Où j'en suis maintenant ? */}
+      <Section id="quiz" className="!pt-8 !pb-4 md:!pt-12">
+        <motion.div {...fadeUp} className="mx-auto max-w-3xl text-center">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-primary-dark">
+            2 minutes pour toi
+          </p>
+          <h2 className="mt-4 font-serif text-[clamp(2rem,4.5vw,3rem)] leading-tight text-night">
+            Où j'en suis{" "}
+            <span className="relative inline-block">
+              maintenant ?
+              <HandUnderline />
+            </span>
+          </h2>
+          <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-foreground/75">
+            5 questions honnêtes. Une réponse claire. Aucune inscription.
+          </p>
+        </motion.div>
+        <motion.div {...fadeUp} className="mt-10">
+          <OuJenSuisQuiz />
+        </motion.div>
+      </Section>
+
       {/* AVANT / APRÈS — Essayer seule vs. avec Eclosia */}
+
       <Section className="!pt-8 !pb-4 md:!pt-12">
         <motion.div {...fadeUp} className="mx-auto max-w-5xl">
           <div className="text-center">
