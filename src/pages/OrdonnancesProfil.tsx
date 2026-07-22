@@ -51,6 +51,12 @@ export default function OrdonnancesProfil() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<"all" | Status>("all");
   const [preview, setPreview] = useState<{ url: string; mime: string; name: string } | null>(null);
+  const [shareFor, setShareFor] = useState<Ordonnance | null>(null);
+  const [shareDuration, setShareDuration] = useState<string>("3600");
+  const [shareUrl, setShareUrl] = useState<string | null>(null);
+  const [shareExpiresAt, setShareExpiresAt] = useState<Date | null>(null);
+  const [shareLoading, setShareLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const load = async () => {
     if (!user || !profileId) return;
