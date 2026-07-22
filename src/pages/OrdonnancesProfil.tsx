@@ -282,6 +282,57 @@ export default function OrdonnancesProfil() {
           )}
         </DialogContent>
       </Dialog>
+
+      <Dialog open={!!shareFor} onOpenChange={(o) => !o && setShareFor(null)}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2"><Share2 className="h-4 w-4" /> Partager l'ordonnance</DialogTitle>
+            <DialogDescription className="text-xs">
+              Un lien sécurisé et limité dans le temps sera généré. Toute personne disposant du lien pourra consulter le fichier jusqu'à son expiration.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div className="text-sm">
+              <span className="text-muted-foreground">Fichier : </span>
+              <span className="font-medium">{shareFor?.file_name}</span>
+            </div>
+            <div>
+              <label className="text-xs font-medium text-muted-foreground mb-1 block">Durée de validité</label>
+              <Select value={shareDuration} onValueChange={(v) => { setShareDuration(v); setShareUrl(null); }}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="900">15 minutes</SelectItem>
+                  <SelectItem value="3600">1 heure</SelectItem>
+                  <SelectItem value="21600">6 heures</SelectItem>
+                  <SelectItem value="86400">24 heures</SelectItem>
+                  <SelectItem value="259200">3 jours</SelectItem>
+                  <SelectItem value="604800">7 jours</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            {shareUrl && shareExpiresAt && (
+              <div className="rounded-lg border bg-muted/40 p-3 space-y-2">
+                <div className="flex gap-2">
+                  <Input readOnly value={shareUrl} className="text-xs" onFocus={(e) => e.currentTarget.select()} />
+                  <Button variant="outline" size="icon" onClick={copyShareUrl} title="Copier">
+                    {copied ? <Check className="h-4 w-4 text-emerald-600" /> : <Copy className="h-4 w-4" />}
+                  </Button>
+                </div>
+                <p className="text-[11px] text-muted-foreground inline-flex items-center gap-1">
+                  <Clock className="h-3 w-3" /> Expire {formatDistanceToNow(shareExpiresAt, { locale: fr, addSuffix: true })}
+                  {" · "}{format(shareExpiresAt, "d MMM yyyy 'à' HH:mm", { locale: fr })}
+                </p>
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setShareFor(null)}>Fermer</Button>
+            <Button onClick={generateShareLink} disabled={shareLoading}>
+              {shareLoading ? "Génération…" : shareUrl ? "Régénérer" : "Générer le lien"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
