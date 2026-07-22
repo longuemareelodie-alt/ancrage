@@ -101,6 +101,60 @@ export default function OrdonnancesProfil() {
     setPreview({ url: data.signedUrl, mime: o.mime_type, name: o.file_name });
   };
 
+  const downloadFile = async (o: Ordonnance) => {
+    const { data, error } = await supabase.storage
+      .from("family-medical-docs")
+      .createSignedUrl(o.storage_path, 60, { download: o.file_name });
+    if (error || !data?.signedUrl) {
+      toast.error("Téléchargement impossible");
+      return;
+    }
+    const a = document.createElement("a");
+    a.href = data.signedUrl;
+    a.download = o.file_name;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  };
+
+  const openShare = (o: Ordonnance) => {
+    setShareFor(o);
+    setShareUrl(null);
+    setShareExpiresAt(null);
+    setShareDuration("3600");
+    setCopied(false);
+  };
+
+  const generateShareLink = async () => {
+    if (!shareFor) return;
+    setShareLoading(true);
+    const seconds = parseInt(shareDuration, 10);
+    const { data, error } = await supabase.storage
+      .from("family-medical-docs")
+      .createSignedUrl(shareFor.storage_path, seconds);
+    setShareLoading(false);
+    if (error || !data?.signedUrl) {
+      toast.error("Impossible de générer le lien de partage");
+      return;
+    }
+    setShareUrl(data.signedUrl);
+    setShareExpiresAt(new Date(Date.now() + seconds * 1000));
+    toast.success("Lien de partage généré");
+  };
+
+  const copyShareUrl = async () => {
+    if (!shareUrl) return;
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+      toast.success("Lien copié");
+    } catch {
+      toast.error("Copie impossible");
+    }
+  };
+
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/30 pb-24">
       <div className="mx-auto max-w-3xl px-4 pt-6">
