@@ -128,6 +128,17 @@ const QuizResultat = () => {
   const verdict = useMemo(() => getVerdict(pct), [pct]);
   const modules = verdict.moduleKeys.map((k) => ALL_MODULES[k]);
 
+  useEffect(() => {
+    trackQuizEvent({
+      eventType: "result_view",
+      score,
+      maxScore: max,
+      verdictBadge: verdict.badge,
+      firstName: firstName || undefined,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const headline = firstName
     ? `${firstName}, ${verdict.headline.charAt(0).toLowerCase()}${verdict.headline.slice(1)}`
     : verdict.headline;
