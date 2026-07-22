@@ -551,54 +551,89 @@ const Index = () => {
         </motion.div>
       </Section>
 
-      {/* TOUT CE QUI EST INCLUS */}
-      <Section id="inclus" className="!pt-12 md:!pt-20 !pb-8">
+      {/* LES 9 ESPACES D'ECLOSIA */}
+      <Section id="modules" className="!pt-12 md:!pt-20 !pb-4">
         <motion.div {...fadeUp} className="mx-auto max-w-3xl text-center">
           <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-primary-dark">
-            Ce que tu reçois
+            Ton espace complet
           </p>
           <h2 className="mt-4 font-serif text-[clamp(2rem,4.5vw,3rem)] leading-tight text-night">
-            Tout ce qui est inclus dans Eclosia{" "}
+            9 espaces pensés pour{" "}
             <span className="relative inline-block">
-              🌿
+              te soulager.
+              <HandUnderline />
             </span>
           </h2>
           <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-foreground/75">
-            Eclosia n'est pas une simple ressource.
-            <br />
-            C'est un espace conçu pour accompagner les mamans qui portent beaucoup trop seules.
+            Une seule app pour tout ce que tu portes. Plus besoin de jongler entre 10 outils, carnets, tableurs et post-it.
           </p>
         </motion.div>
-        <motion.ul
+        <motion.div
           {...fadeUp}
-          className="mx-auto mt-12 grid max-w-4xl gap-3 sm:grid-cols-2 lg:grid-cols-3"
+          className="mx-auto mt-12 grid max-w-5xl gap-4 sm:grid-cols-2 lg:grid-cols-3"
         >
           {[
-            "Séances d'ancrage et de régulation émotionnelle",
-            "Journal personnel privé",
-            "Outils pour retrouver des repères quand tout déborde",
-            "Espace santé familial",
-            "Profils médicaux des enfants et de la famille",
-            "Suivi des traitements et médicaments",
-            "Fiches médicales d'urgence",
-            "Outils de gestion des crises",
-            "Ressources TSA, TDAH, DYS et besoins spécifiques",
-            "Activités adaptées pour les enfants",
-            "Parcours d'initiation à la LSF",
-            "Espace ressources pour les familles atypiques",
-            "Communauté bienveillante",
-            "Futures mises à jour incluses",
-            "Présence humaine si besoin",
-          ].map((item) => (
-            <li
-              key={item}
-              className="flex items-start gap-3 rounded-2xl border border-border/60 bg-card/70 p-4 text-sm leading-relaxed text-foreground/85 shadow-soft-lg/0 transition-all duration-300 hover:-translate-y-0.5 hover:bg-card"
+            { e: "🌱", t: "Ancrage émotionnel", d: "Check-ins, régulation, séances quand tout déborde." },
+            { e: "📖", t: "Journal intelligent", d: "L'IA se souvient de toi et te renvoie ce que tu ne vois plus." },
+            { e: "🌸", t: "Portrait mensuel", d: "Ton reflet écrit chaque mois. Le chemin devient visible." },
+            { e: "🕰️", t: "Frise d'Évolution", d: "Avant. Tempête. Aujourd'hui. Ton parcours en un regard." },
+            { e: "📕", t: "Livre de Reconstruction", d: "Ton histoire compilée mois par mois. Exportable en PDF." },
+            { e: "💰", t: "Budget complet", d: "Revenus, dépenses, factures, reste à vivre, alertes." },
+            { e: "🔐", t: "Coffre-fort", d: "Documents, IBAN, contrats, notes sensibles chiffrées." },
+            { e: "🗓️", t: "Organisation", d: "Agenda, to-do, courses, notes — avec rappels intelligents." },
+            { e: "❤️‍🩹", t: "Santé & Famille", d: "Carnets médicaux, ordonnances, rappels, fiche d'urgence." },
+          ].map((m) => (
+            <div
+              key={m.t}
+              className="rounded-[1.75rem] border border-border/60 bg-card p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-soft-lg"
             >
-              <span className="mt-0.5 text-base leading-none" aria-hidden>🌿</span>
-              <span>{item}</span>
-            </li>
+              <div className="text-2xl">{m.e}</div>
+              <h3 className="mt-4 font-serif text-lg text-night">{m.t}</h3>
+              <p className="mt-1.5 text-sm leading-relaxed text-foreground/70">{m.d}</p>
+            </div>
           ))}
-        </motion.ul>
+        </motion.div>
+        <motion.p
+          {...fadeUp}
+          className="mx-auto mt-10 max-w-2xl text-center text-sm italic leading-relaxed text-foreground/70 md:text-base"
+        >
+          + Ressources TSA/TDAH/DYS, activités adaptées, initiation LSF, communauté, mises à jour à vie et présence humaine si besoin.
+        </motion.p>
+      </Section>
+
+      {/* C'EST FAIT POUR TOI SI */}
+      <Section className="!pt-8 !pb-4 md:!pt-12">
+        <motion.div {...fadeUp} className="mx-auto max-w-3xl">
+          <div className="rounded-[2rem] border border-primary/20 bg-secondary/40 p-8 md:p-12">
+            <p className="text-center text-[11px] font-semibold uppercase tracking-[0.28em] text-primary-dark">
+              C'est fait pour toi si
+            </p>
+            <h2 className="mt-4 text-center font-serif text-[clamp(1.75rem,3.5vw,2.25rem)] leading-tight text-night">
+              Tu vas te reconnaître ligne après ligne.
+            </h2>
+            <ul className="mx-auto mt-8 max-w-2xl space-y-3.5">
+              {[
+                "Tu as traversé quelque chose que peu de gens comprennent, et tu ne sais plus qui tu es devenue.",
+                "Tu portes la charge mentale, les papiers, la santé, le budget, l'agenda — pour tout le monde, seule.",
+                "Tu oublies parce que c'est trop, et tu culpabilises d'oublier.",
+                "Ton cerveau tourne à 23h et t'empêche de dormir.",
+                "Tu as testé 10 apps, 3 carnets, des tableurs — rien ne tient dans le temps.",
+                "Tu veux un seul endroit calme où déposer ta vie, sans abonnement qui tombe chaque mois.",
+                "Tu veux voir noir sur blanc le chemin que tu parcours, pas juste tenir.",
+              ].map((line) => (
+                <li key={line} className="flex items-start gap-3 text-[15px] leading-relaxed text-foreground/85">
+                  <span className="mt-1 flex h-5 w-5 flex-none items-center justify-center rounded-full bg-primary/15 text-primary">
+                    <Check className="h-3 w-3" strokeWidth={3} />
+                  </span>
+                  <span>{line}</span>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-8 text-center font-serif text-lg italic text-primary-dark md:text-xl">
+              Si tu as coché ne serait-ce que 3 lignes — Eclosia est fait pour toi.
+            </p>
+          </div>
+        </motion.div>
       </Section>
 
       {/* APERÇU INTÉRIEUR */}
