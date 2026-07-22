@@ -60,6 +60,7 @@ import CalmeEnClair from "./pages/CalmeEnClair";
 import PackSanteFamilial from "./pages/PackSanteFamilial";
 import CarnetMedical from "./pages/CarnetMedical";
 import DocumentsProfil from "./pages/DocumentsProfil";
+import OrdonnancesProfil from "./pages/OrdonnancesProfil";
 
 import ChargeMentale from "./pages/ChargeMentale";
 import Danger from "./pages/Danger";
