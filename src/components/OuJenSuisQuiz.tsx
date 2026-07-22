@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Sparkles, RotateCcw } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
 import { PREMIUM_PRICE_LONG } from "@/lib/premiumOffer";
 
