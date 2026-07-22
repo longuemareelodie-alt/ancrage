@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Sparkles, RotateCcw } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
 import { PREMIUM_PRICE_LONG } from "@/lib/premiumOffer";
 
@@ -83,6 +84,7 @@ const getVerdict = (score: number) => {
 
 const OuJenSuisQuiz = () => {
   const { startPayment, loading } = useMolliePayment();
+  const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<number[]>([]);
 
@@ -92,14 +94,21 @@ const OuJenSuisQuiz = () => {
   const progress = (step / QUESTIONS.length) * 100;
 
   const pick = (score: number) => {
-    setAnswers((a) => [...a, score]);
-    setStep((s) => s + 1);
+    const next = [...answers, score];
+    setAnswers(next);
+    const nextStep = step + 1;
+    setStep(nextStep);
+    if (nextStep >= QUESTIONS.length) {
+      const finalScore = next.reduce((a, b) => a + b, 0);
+      navigate(`/quiz-resultat?score=${finalScore}&max=${MAX_SCORE}`);
+    }
   };
 
   const reset = () => {
     setAnswers([]);
     setStep(0);
   };
+
 
   return (
     <div className="mx-auto max-w-2xl">

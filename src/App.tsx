@@ -20,6 +20,7 @@ import RestartTourButton from "@/components/RestartTourButton";
 import DiscoveryBadge from "@/components/DiscoveryBadge";
 import { DiscoveryProvider } from "@/contexts/DiscoveryContext";
 import Index from "./pages/Index";
+import QuizResultat from "./pages/QuizResultat";
 import Dashboard from "./pages/Dashboard";
 import Emotions from "./pages/Emotions";
 import EmotionDetail from "./pages/EmotionDetail";
@@ -142,6 +143,7 @@ const AnimatedRoutes = () => {
         <RoutesWrapper key={location.pathname}>
           <Routes location={location}>
         <Route path="/" element={<PageTransition><Index /></PageTransition>} />
+        <Route path="/quiz-resultat" element={<PageTransition><QuizResultat /></PageTransition>} />
         <Route path="/dashboard" element={<PaidRoute><PageTransition><Dashboard /></PageTransition></PaidRoute>} />
         <Route path="/calme" element={<PaidRoute><PageTransition><CalmeEnClair /></PageTransition></PaidRoute>} />
         <Route path="/emotions" element={<PaidRoute><PageTransition><Emotions /></PageTransition></PaidRoute>} />
