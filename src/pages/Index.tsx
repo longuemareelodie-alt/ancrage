@@ -636,7 +636,94 @@ const Index = () => {
         </motion.div>
       </Section>
 
+      {/* AVANT / APRÈS — Essayer seule vs. avec Eclosia */}
+      <Section className="!pt-8 !pb-4 md:!pt-12">
+        <motion.div {...fadeUp} className="mx-auto max-w-5xl">
+          <div className="text-center">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-primary-dark">
+              Le vrai choix
+            </p>
+            <h2 className="mt-4 font-serif text-[clamp(2rem,4.5vw,3rem)] leading-tight text-night">
+              Continuer seule.{" "}
+              <span className="relative inline-block">
+                Ou t'ancrer.
+                <HandUnderline />
+              </span>
+            </h2>
+            <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-foreground/75">
+              Ce qui change vraiment quand tu arrêtes de tout porter dans ta tête.
+            </p>
+          </div>
+
+          <div className="mx-auto mt-12 grid max-w-4xl gap-5 md:grid-cols-2 md:gap-6">
+            {/* AVANT — sans Eclosia */}
+            <div className="rounded-[1.75rem] border border-border/60 bg-card/60 p-7 md:p-8">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-foreground/50">
+                Sans Eclosia
+              </p>
+              <h3 className="mt-3 font-serif text-2xl text-night/80">Continuer seule</h3>
+              <ul className="mt-6 space-y-3.5">
+                {[
+                  "Tout tourne dans ta tête, tu oublies, tu culpabilises.",
+                  "10 apps, 3 carnets, des post-it — rien ne tient.",
+                  "Les papiers santé sont éparpillés, tu paniques aux RDV.",
+                  "Le budget file, tu ne sais pas où.",
+                  "Tu n'as aucune trace du chemin parcouru.",
+                  "Tu attends que ça passe. Ça ne passe pas.",
+                ].map((line) => (
+                  <li
+                    key={line}
+                    className="flex items-start gap-3 text-[15px] leading-relaxed text-foreground/70"
+                  >
+                    <span className="mt-1 flex h-5 w-5 flex-none items-center justify-center rounded-full bg-foreground/10 text-foreground/50">
+                      <X className="h-3 w-3" strokeWidth={3} />
+                    </span>
+                    <span>{line}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* APRÈS — avec Eclosia */}
+            <div className="relative rounded-[1.75rem] border-2 border-primary/40 bg-secondary/50 p-7 shadow-soft-lg md:p-8">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-primary-foreground">
+                Avec Eclosia
+              </div>
+              <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-primary-dark">
+                Ancrage à vie
+              </p>
+              <h3 className="mt-3 font-serif text-2xl text-night">T'ancrer, pour de bon</h3>
+              <ul className="mt-6 space-y-3.5">
+                {[
+                  "Tu déposes ce que tu portes. Ton cerveau respire enfin.",
+                  "Une seule app calme. Tout est à sa place, pour la vie.",
+                  "Carnet médical, ordonnances, urgences — accessibles en 3 secondes.",
+                  "Budget clair, factures rappelées, reste à vivre visible.",
+                  "Ta frise et ton livre montrent noir sur blanc le chemin parcouru.",
+                  "Tu avances. Tu te reconnais. Tu redeviens toi.",
+                ].map((line) => (
+                  <li
+                    key={line}
+                    className="flex items-start gap-3 text-[15px] leading-relaxed text-foreground/90"
+                  >
+                    <span className="mt-1 flex h-5 w-5 flex-none items-center justify-center rounded-full bg-primary/20 text-primary">
+                      <Check className="h-3 w-3" strokeWidth={3} />
+                    </span>
+                    <span>{line}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          <p className="mx-auto mt-10 max-w-2xl text-center font-serif text-lg italic leading-relaxed text-primary-dark md:text-xl">
+            {PREMIUM_PRICE_SHORT} une fois. Zéro abonnement. À vie.
+          </p>
+        </motion.div>
+      </Section>
+
       {/* APERÇU INTÉRIEUR */}
+
       <Section className="!pt-8 !pb-12 md:!pt-12 md:!pb-16">
         <motion.div {...fadeUp} className="mx-auto max-w-5xl">
           <div className="text-center">
