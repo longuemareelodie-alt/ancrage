@@ -692,9 +692,15 @@ export type Database = {
         Row: {
           category: string
           created_at: string
+          doc_type: string
+          doctor_name: string | null
+          expiry_date: string | null
           file_name: string
           id: string
+          is_favorite: boolean
+          issued_date: string | null
           mime_type: string
+          notes: string | null
           profile_id: string
           size_bytes: number
           storage_path: string
@@ -703,9 +709,15 @@ export type Database = {
         Insert: {
           category?: string
           created_at?: string
+          doc_type?: string
+          doctor_name?: string | null
+          expiry_date?: string | null
           file_name: string
           id?: string
+          is_favorite?: boolean
+          issued_date?: string | null
           mime_type?: string
+          notes?: string | null
           profile_id: string
           size_bytes?: number
           storage_path: string
@@ -714,9 +726,15 @@ export type Database = {
         Update: {
           category?: string
           created_at?: string
+          doc_type?: string
+          doctor_name?: string | null
+          expiry_date?: string | null
           file_name?: string
           id?: string
+          is_favorite?: boolean
+          issued_date?: string | null
           mime_type?: string
+          notes?: string | null
           profile_id?: string
           size_bytes?: number
           storage_path?: string
