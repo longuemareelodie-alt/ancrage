@@ -89,7 +89,7 @@ const Index = () => {
 
   const navLinks = [
     { href: "#pour-toi", label: "Pour toi" },
-    { href: "#quotidien", label: "Le quotidien" },
+    { href: "#modules", label: "Ce que tu reçois" },
     { href: "#familles", label: "Liés autrement" },
     { href: "#offre", label: "Tarif" },
     { href: "#faq", label: "FAQ" },
