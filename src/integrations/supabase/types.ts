@@ -1336,6 +1336,45 @@ export type Database = {
         }
         Relationships: []
       }
+      quiz_events: {
+        Row: {
+          created_at: string
+          event_type: string
+          first_name: string | null
+          id: string
+          max_score: number | null
+          metadata: Json | null
+          score: number | null
+          session_id: string | null
+          user_id: string | null
+          verdict_badge: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_type: string
+          first_name?: string | null
+          id?: string
+          max_score?: number | null
+          metadata?: Json | null
+          score?: number | null
+          session_id?: string | null
+          user_id?: string | null
+          verdict_badge?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_type?: string
+          first_name?: string | null
+          id?: string
+          max_score?: number | null
+          metadata?: Json | null
+          score?: number | null
+          session_id?: string | null
+          user_id?: string | null
+          verdict_badge?: string | null
+        }
+        Relationships: []
+      }
       shopping_items: {
         Row: {
           category: string | null

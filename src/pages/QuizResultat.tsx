@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -18,6 +18,7 @@ import {
 import { useMolliePayment } from "@/hooks/useMolliePayment";
 import { PREMIUM_PRICE_LONG } from "@/lib/premiumOffer";
 import { exportQuizResultPdf } from "@/lib/exportQuizResultPdf";
+import { trackQuizEvent } from "@/lib/quizTracking";
 import Footer from "@/components/Footer";
 
 type ModuleReco = {
@@ -126,6 +127,17 @@ const QuizResultat = () => {
   const pct = max > 0 ? Math.min(1, Math.max(0, score / max)) : 0;
   const verdict = useMemo(() => getVerdict(pct), [pct]);
   const modules = verdict.moduleKeys.map((k) => ALL_MODULES[k]);
+
+  useEffect(() => {
+    trackQuizEvent({
+      eventType: "result_view",
+      score,
+      maxScore: max,
+      verdictBadge: verdict.badge,
+      firstName: firstName || undefined,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const headline = firstName
     ? `${firstName}, ${verdict.headline.charAt(0).toLowerCase()}${verdict.headline.slice(1)}`
@@ -239,7 +251,17 @@ const QuizResultat = () => {
 
             <button
               type="button"
-              onClick={() => startPayment()}
+              onClick={() => {
+                trackQuizEvent({
+                  eventType: "cta_click",
+                  score,
+                  maxScore: max,
+                  verdictBadge: verdict.badge,
+                  firstName: firstName || undefined,
+                  metadata: { location: "quiz_result_primary_cta" },
+                });
+                startPayment();
+              }}
               disabled={loading}
               className="mt-8 flex w-full items-center justify-center gap-2 rounded-2xl bg-primary px-6 py-4 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 transition-transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60"
             >
@@ -252,7 +274,14 @@ const QuizResultat = () => {
           <div className="mt-8 flex flex-col items-center gap-3 text-sm">
             <button
               type="button"
-              onClick={() =>
+              onClick={() => {
+                trackQuizEvent({
+                  eventType: "pdf_download",
+                  score,
+                  maxScore: max,
+                  verdictBadge: verdict.badge,
+                  firstName: firstName || undefined,
+                });
                 exportQuizResultPdf({
                   firstName: firstName || undefined,
                   badge: verdict.badge,
@@ -260,8 +289,8 @@ const QuizResultat = () => {
                   message: verdict.message,
                   modules: modules.map((m) => ({ title: m.title, desc: m.desc })),
                   priceLabel: `ANCRAGE — accès à vie · ${PREMIUM_PRICE_LONG}`,
-                })
-              }
+                });
+              }}
               className="inline-flex items-center gap-1.5 text-primary-dark underline underline-offset-4 hover:text-primary"
             >
               <Download className="h-3.5 w-3.5" />
