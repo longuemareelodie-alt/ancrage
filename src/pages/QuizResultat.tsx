@@ -18,6 +18,7 @@ import {
 import { useMolliePayment } from "@/hooks/useMolliePayment";
 import { PREMIUM_PRICE_LONG } from "@/lib/premiumOffer";
 import { exportQuizResultPdf } from "@/lib/exportQuizResultPdf";
+import { trackQuizEvent } from "@/lib/quizTracking";
 import Footer from "@/components/Footer";
 
 type ModuleReco = {
