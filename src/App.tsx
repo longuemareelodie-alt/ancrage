@@ -217,6 +217,7 @@ const AnimatedRoutes = () => {
         <Route path="/statistiques" element={<PaidRoute><PageTransition><Statistiques /></PageTransition></PaidRoute>} />
         <Route path="/famille" element={<PaidRoute><PageTransition><Famille /></PageTransition></PaidRoute>} />
         <Route path="/famille/:profileId/carnet" element={<PaidRoute><PageTransition><CarnetMedical /></PageTransition></PaidRoute>} />
+        <Route path="/famille/:profileId/documents" element={<PaidRoute><PageTransition><DocumentsProfil /></PageTransition></PaidRoute>} />
         <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
         <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
           </Routes>
