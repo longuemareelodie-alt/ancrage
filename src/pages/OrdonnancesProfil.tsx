@@ -1,14 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, Pill, Calendar, CheckCircle2, Clock, AlertTriangle, Eye, Stethoscope, FileText } from "lucide-react";
+import { ArrowLeft, Pill, Calendar, CheckCircle2, Clock, AlertTriangle, Eye, Stethoscope, FileText, Download, Share2, Copy, Check } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { format, differenceInDays, parseISO } from "date-fns";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { format, differenceInDays, parseISO, formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import { toast } from "sonner";
 
@@ -49,6 +51,12 @@ export default function OrdonnancesProfil() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<"all" | Status>("all");
   const [preview, setPreview] = useState<{ url: string; mime: string; name: string } | null>(null);
+  const [shareFor, setShareFor] = useState<Ordonnance | null>(null);
+  const [shareDuration, setShareDuration] = useState<string>("3600");
+  const [shareUrl, setShareUrl] = useState<string | null>(null);
+  const [shareExpiresAt, setShareExpiresAt] = useState<Date | null>(null);
+  const [shareLoading, setShareLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const load = async () => {
     if (!user || !profileId) return;
@@ -92,6 +100,60 @@ export default function OrdonnancesProfil() {
     }
     setPreview({ url: data.signedUrl, mime: o.mime_type, name: o.file_name });
   };
+
+  const downloadFile = async (o: Ordonnance) => {
+    const { data, error } = await supabase.storage
+      .from("family-medical-docs")
+      .createSignedUrl(o.storage_path, 60, { download: o.file_name });
+    if (error || !data?.signedUrl) {
+      toast.error("Téléchargement impossible");
+      return;
+    }
+    const a = document.createElement("a");
+    a.href = data.signedUrl;
+    a.download = o.file_name;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  };
+
+  const openShare = (o: Ordonnance) => {
+    setShareFor(o);
+    setShareUrl(null);
+    setShareExpiresAt(null);
+    setShareDuration("3600");
+    setCopied(false);
+  };
+
+  const generateShareLink = async () => {
+    if (!shareFor) return;
+    setShareLoading(true);
+    const seconds = parseInt(shareDuration, 10);
+    const { data, error } = await supabase.storage
+      .from("family-medical-docs")
+      .createSignedUrl(shareFor.storage_path, seconds);
+    setShareLoading(false);
+    if (error || !data?.signedUrl) {
+      toast.error("Impossible de générer le lien de partage");
+      return;
+    }
+    setShareUrl(data.signedUrl);
+    setShareExpiresAt(new Date(Date.now() + seconds * 1000));
+    toast.success("Lien de partage généré");
+  };
+
+  const copyShareUrl = async () => {
+    if (!shareUrl) return;
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+      toast.success("Lien copié");
+    } catch {
+      toast.error("Copie impossible");
+    }
+  };
+
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/30 pb-24">
@@ -187,9 +249,17 @@ export default function OrdonnancesProfil() {
                           </div>
                           {o.notes && <p className="mt-2 text-xs text-muted-foreground line-clamp-2">{o.notes}</p>}
                         </div>
-                        <Button variant="ghost" size="sm" onClick={() => openPreview(o)}>
-                          <Eye className="h-4 w-4" />
-                        </Button>
+                        <div className="flex items-center gap-1 shrink-0">
+                          <Button variant="ghost" size="icon" onClick={() => openPreview(o)} title="Ouvrir">
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="icon" onClick={() => downloadFile(o)} title="Télécharger">
+                            <Download className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="icon" onClick={() => openShare(o)} title="Partager">
+                            <Share2 className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
@@ -210,6 +280,57 @@ export default function OrdonnancesProfil() {
               <iframe src={preview.url} title={preview.name} className="w-full h-[70vh] rounded border" />
             )
           )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!shareFor} onOpenChange={(o) => !o && setShareFor(null)}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2"><Share2 className="h-4 w-4" /> Partager l'ordonnance</DialogTitle>
+            <DialogDescription className="text-xs">
+              Un lien sécurisé et limité dans le temps sera généré. Toute personne disposant du lien pourra consulter le fichier jusqu'à son expiration.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div className="text-sm">
+              <span className="text-muted-foreground">Fichier : </span>
+              <span className="font-medium">{shareFor?.file_name}</span>
+            </div>
+            <div>
+              <label className="text-xs font-medium text-muted-foreground mb-1 block">Durée de validité</label>
+              <Select value={shareDuration} onValueChange={(v) => { setShareDuration(v); setShareUrl(null); }}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="900">15 minutes</SelectItem>
+                  <SelectItem value="3600">1 heure</SelectItem>
+                  <SelectItem value="21600">6 heures</SelectItem>
+                  <SelectItem value="86400">24 heures</SelectItem>
+                  <SelectItem value="259200">3 jours</SelectItem>
+                  <SelectItem value="604800">7 jours</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            {shareUrl && shareExpiresAt && (
+              <div className="rounded-lg border bg-muted/40 p-3 space-y-2">
+                <div className="flex gap-2">
+                  <Input readOnly value={shareUrl} className="text-xs" onFocus={(e) => e.currentTarget.select()} />
+                  <Button variant="outline" size="icon" onClick={copyShareUrl} title="Copier">
+                    {copied ? <Check className="h-4 w-4 text-emerald-600" /> : <Copy className="h-4 w-4" />}
+                  </Button>
+                </div>
+                <p className="text-[11px] text-muted-foreground inline-flex items-center gap-1">
+                  <Clock className="h-3 w-3" /> Expire {formatDistanceToNow(shareExpiresAt, { locale: fr, addSuffix: true })}
+                  {" · "}{format(shareExpiresAt, "d MMM yyyy 'à' HH:mm", { locale: fr })}
+                </p>
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setShareFor(null)}>Fermer</Button>
+            <Button onClick={generateShareLink} disabled={shareLoading}>
+              {shareLoading ? "Génération…" : shareUrl ? "Régénérer" : "Générer le lien"}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
