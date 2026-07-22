@@ -732,6 +732,59 @@ export type Database = {
           },
         ]
       }
+      family_medical_events: {
+        Row: {
+          created_at: string
+          description: string | null
+          document_id: string | null
+          event_date: string
+          event_type: string
+          id: string
+          location: string | null
+          practitioner: string | null
+          profile_id: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          document_id?: string | null
+          event_date: string
+          event_type?: string
+          id?: string
+          location?: string | null
+          practitioner?: string | null
+          profile_id: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          document_id?: string | null
+          event_date?: string
+          event_type?: string
+          id?: string
+          location?: string | null
+          practitioner?: string | null
+          profile_id?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "family_medical_events_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "family_medical_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       family_medical_profiles: {
         Row: {
           allergies: string

@@ -206,6 +206,13 @@ export default function Famille() {
                           <Chip icon={Syringe} tone="sage" label={`${nbVaccines} vaccin${nbVaccines > 1 ? "s" : ""}`} />
                           <Chip icon={FileText} tone="sand" label={`${nbDocs} doc${nbDocs > 1 ? "s" : ""}`} />
                         </div>
+                        <Link
+                          to={`/famille/${p.id}/carnet`}
+                          onClick={(e) => e.stopPropagation()}
+                          className="mt-3 inline-flex items-center gap-1 text-[11px] font-medium text-primary hover:underline"
+                        >
+                          <Stethoscope className="h-3 w-3" /> Ouvrir le carnet médical
+                        </Link>
                       </div>
                       <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0 mt-1" />
                     </div>

@@ -58,6 +58,7 @@ import SanteRessources from "./pages/SanteRessources";
 import FicheUrgencePublique from "./pages/FicheUrgencePublique";
 import CalmeEnClair from "./pages/CalmeEnClair";
 import PackSanteFamilial from "./pages/PackSanteFamilial";
+import CarnetMedical from "./pages/CarnetMedical";
 import ChargeMentale from "./pages/ChargeMentale";
 import Danger from "./pages/Danger";
 import PremiumActivationLogPage from "./pages/admin/PremiumActivationLog";
@@ -213,6 +214,7 @@ const AnimatedRoutes = () => {
         <Route path="/organisation" element={<PaidRoute><PageTransition><Organisation /></PageTransition></PaidRoute>} />
         <Route path="/statistiques" element={<PaidRoute><PageTransition><Statistiques /></PageTransition></PaidRoute>} />
         <Route path="/famille" element={<PaidRoute><PageTransition><Famille /></PageTransition></PaidRoute>} />
+        <Route path="/famille/:profileId/carnet" element={<PaidRoute><PageTransition><CarnetMedical /></PageTransition></PaidRoute>} />
         <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
         <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
           </Routes>
