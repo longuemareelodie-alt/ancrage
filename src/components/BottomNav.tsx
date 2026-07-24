@@ -39,6 +39,7 @@ const BottomNav = () => {
     { to: "/coffre", label: "Coffre-fort", icon: FolderLock, emoji: "📂" },
     { to: "/budget", label: "Budget", icon: Wallet, emoji: "💰" },
     { to: "/organisation", label: "Organisation", icon: CalendarDays, emoji: "📅" },
+    { to: "/lies-autrement", label: "Liés autrement", icon: Handshake, emoji: "🤝" },
     { to: "/statistiques", label: "Statistiques", icon: BarChart3, emoji: "📊" },
     { to: "/profil", label: "Profil", icon: User, emoji: "👤" },
   ];
