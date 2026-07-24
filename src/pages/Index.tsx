@@ -17,6 +17,19 @@ import {
   HeartHandshake,
   Menu,
   X,
+  CalendarDays,
+  ListChecks,
+  ShoppingCart,
+  NotebookPen,
+  Bell,
+  BookHeart,
+  BookOpen,
+  BarChart3,
+  RefreshCw,
+  Star,
+  Quote,
+  Wallet,
+  Stars,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
