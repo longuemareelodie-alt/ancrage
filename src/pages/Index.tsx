@@ -622,27 +622,33 @@ const Fondatrice = ({ onCTA, loading }: { onCTA: () => void; loading: boolean })
         </h2>
         <div className="mt-6 space-y-4 text-[15px] leading-relaxed text-foreground/80">
           <p>
-            En tant que maman, j'ai compris à quel point la charge mentale
-            pouvait devenir écrasante.
+            Il y a eu ce matin où je me suis assise dans la voiture, incapable
+            de démarrer. J'avais oublié un rendez-vous chez la pédiatre. Encore.
+            Le carnet de santé était resté dans l'autre sac. Le traitement du
+            petit, je ne savais plus s'il l'avait pris.
           </p>
           <p>
-            J'ai vu les dizaines d'applications. Les papiers éparpillés. Les
-            rendez-vous oubliés. Les listes partout.
+            Ce n'était pas un manque d'amour. C'était trop d'informations,
+            trop de fenêtres ouvertes dans ma tête, trop de post-it, trop
+            d'applis qui ne se parlaient pas.
           </p>
           <p>
-            Je rêvais d'un seul endroit capable de simplifier réellement le
-            quotidien.
+            Je cherchais un endroit où tout serait posé — les traitements, les
+            rendez-vous, les documents, les émotions, le budget, les
+            ressources sur la neuroatypie de nos enfants. Il n'existait pas.
           </p>
           <p className="font-medium text-night">
-            Alors j'ai créé Eclosia. Pas pour rendre les parents parfaits.
-            Mais pour les aider à respirer un peu.
+            Alors je l'ai construit. Eclosia n'est pas née d'une idée
+            marketing. Elle est née d'un besoin réel, celui d'une maman qui
+            n'en pouvait plus de tout porter dans sa tête.
           </p>
         </div>
         <div className="mt-8">
           <PrimaryCTA onClick={onCTA} disabled={loading}>
-            Rejoindre Eclosia
+            Découvrir Eclosia
           </PrimaryCTA>
         </div>
+
       </motion.div>
     </div>
   </Section>
