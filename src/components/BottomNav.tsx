@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import { Home, Heart, Wallet, HeartPulse, Grid3x3, Users, FolderLock, CalendarDays, BarChart3, User } from "lucide-react";
+import { Home, Heart, Wallet, HeartPulse, Grid3x3, Users, FolderLock, CalendarDays, BarChart3, User, Handshake } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 
@@ -39,6 +39,7 @@ const BottomNav = () => {
     { to: "/coffre", label: "Coffre-fort", icon: FolderLock, emoji: "📂" },
     { to: "/budget", label: "Budget", icon: Wallet, emoji: "💰" },
     { to: "/organisation", label: "Organisation", icon: CalendarDays, emoji: "📅" },
+    { to: "/lies-autrement", label: "Liés autrement", icon: Handshake, emoji: "🤝" },
     { to: "/statistiques", label: "Statistiques", icon: BarChart3, emoji: "📊" },
     { to: "/profil", label: "Profil", icon: User, emoji: "👤" },
   ];

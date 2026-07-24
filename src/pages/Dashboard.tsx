@@ -391,6 +391,28 @@ const Dashboard = () => {
             </motion.div>
           )}
 
+          {/* Liés autrement — module bienveillance neuroatypie */}
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.52 }}
+          >
+            <Link
+              to="/lies-autrement"
+              className="flex w-full items-center gap-4 rounded-2xl bg-gradient-to-r from-primary/10 via-secondary/15 to-accent/15 border border-primary/15 p-5 text-left shadow-soft transition-transform hover:scale-[1.02] active:scale-[0.98]"
+            >
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-lg">
+                🤝
+              </div>
+              <div>
+                <p className="text-sm font-bold">Liés autrement</p>
+                <p className="text-xs text-muted-foreground">
+                  LSF, activités, ressources et communauté neuroatypie.
+                </p>
+              </div>
+            </Link>
+          </motion.div>
+
           {/* History link for paying users */}
           {isPremium && (
             <motion.div
