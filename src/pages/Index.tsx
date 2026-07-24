@@ -996,7 +996,10 @@ const Index = () => {
         <Transformations />
         <Immersive />
         <Fondatrice onCTA={onCTA} loading={loading} />
+        <Inclus />
+        <Temoignages />
         <Unique />
+        <PreTarif />
         <Tarif onCTA={onCTA} loading={loading} />
         <div id="faq">
           <HomeFAQ />
