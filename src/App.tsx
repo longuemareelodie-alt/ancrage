@@ -145,6 +145,8 @@ const AnimatedRoutes = () => {
         <RoutesWrapper key={location.pathname}>
           <Routes location={location}>
         <Route path="/" element={<PageTransition><Index /></PageTransition>} />
+        <Route path="/devenir-ambassadrice" element={<PageTransition><DevenirAmbassadrice /></PageTransition>} />
+
         <Route path="/quiz-resultat" element={<PageTransition><QuizResultat /></PageTransition>} />
         <Route path="/dashboard" element={<PaidRoute><PageTransition><Dashboard /></PageTransition></PaidRoute>} />
         <Route path="/calme" element={<PaidRoute><PageTransition><CalmeEnClair /></PageTransition></PaidRoute>} />
