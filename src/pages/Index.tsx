@@ -1,7 +1,15 @@
 import Footer from "@/components/Footer";
 import HomeFAQ from "@/components/HomeFAQ";
+import KlarnaPayButton from "@/components/KlarnaPayButton";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+
 import {
   ArrowRight,
   Heart,
