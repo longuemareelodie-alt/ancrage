@@ -1,7 +1,15 @@
 import Footer from "@/components/Footer";
 import HomeFAQ from "@/components/HomeFAQ";
+import KlarnaPayButton from "@/components/KlarnaPayButton";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+
 import {
   ArrowRight,
   Heart,
@@ -622,25 +630,28 @@ const Fondatrice = ({ onCTA, loading }: { onCTA: () => void; loading: boolean })
         </h2>
         <div className="mt-6 space-y-4 text-[15px] leading-relaxed text-foreground/80">
           <p>
-            Il y a eu ce matin où je me suis assise dans la voiture, incapable
-            de démarrer. J'avais oublié un rendez-vous chez la pédiatre. Encore.
-            Le carnet de santé était resté dans l'autre sac. Le traitement du
-            petit, je ne savais plus s'il l'avait pris.
+            Il y a eu un moment où j'ai réalisé que ma tête était devenue un
+            deuxième agenda.
           </p>
           <p>
-            Ce n'était pas un manque d'amour. C'était trop d'informations,
-            trop de fenêtres ouvertes dans ma tête, trop de post-it, trop
-            d'applis qui ne se parlaient pas.
+            Les rendez-vous. Les dossiers. Les traitements. Les documents. Les
+            émotions. Les listes. Les démarches. Tout était dans ma tête.
           </p>
           <p>
-            Je cherchais un endroit où tout serait posé — les traitements, les
-            rendez-vous, les documents, les émotions, le budget, les
-            ressources sur la neuroatypie de nos enfants. Il n'existait pas.
+            Et plus j'essayais de tout retenir, plus j'avais l'impression de
+            porter seule toute la charge mentale de notre famille.
           </p>
+          <p>
+            Je ne cherchais pas une nouvelle application. Je cherchais
+            simplement un endroit où enfin déposer tout ce que je portais
+            chaque jour. Un endroit où retrouver facilement les informations
+            importantes. Un endroit qui m'aiderait à respirer un peu.
+          </p>
+          <p>Cet endroit n'existait pas. Alors je l'ai créé.</p>
           <p className="font-medium text-night">
-            Alors je l'ai construit. Eclosia n'est pas née d'une idée
-            marketing. Elle est née d'un besoin réel, celui d'une maman qui
-            n'en pouvait plus de tout porter dans sa tête.
+            Eclosia n'est pas née d'une idée marketing. Elle est née d'un
+            besoin réel. Celui d'une maman qui voulait arrêter de tout porter
+            seule.
           </p>
         </div>
         <div className="mt-8">
@@ -653,6 +664,7 @@ const Fondatrice = ({ onCTA, loading }: { onCTA: () => void; loading: boolean })
     </div>
   </Section>
 );
+
 
 /* ---------------------- Ce qui est inclus dans Eclosia ---------------- */
 
@@ -775,10 +787,15 @@ const Temoignages = () => {
           ))}
         </div>
         <h2 className="mt-4 font-serif text-[clamp(1.75rem,4vw,3rem)] leading-[1.1] tracking-tight text-night">
-          Ce que disent
+          Les premiers retours
           <br />
-          <span className="italic text-primary-dark">les premières familles.</span>
+          <span className="italic text-primary-dark">arriveront bientôt.</span>
         </h2>
+        <p className="mx-auto mt-6 max-w-xl text-[15px] leading-relaxed text-muted-foreground">
+          Les premières familles découvrent actuellement Eclosia. Les premiers
+          témoignages arriveront très bientôt. Je préfère partager de vrais
+          retours d'expérience plutôt que d'en inventer.
+        </p>
       </motion.div>
 
       <div className="mt-14 grid gap-5 md:grid-cols-3">
@@ -793,7 +810,7 @@ const Temoignages = () => {
           >
             <Quote className="h-6 w-6 text-primary/40" />
             <p className="mt-5 min-h-[7rem] font-serif text-[15px] italic leading-relaxed text-muted-foreground/70">
-              Témoignage à venir
+              Un vrai témoignage prendra bientôt sa place ici.
             </p>
             <div className="mt-6 flex items-center gap-3 border-t border-border/50 pt-4">
               <div className="h-9 w-9 rounded-full bg-primary/15" />
@@ -802,13 +819,10 @@ const Temoignages = () => {
           </motion.article>
         ))}
       </div>
-
-      <p className="mx-auto mt-10 max-w-md text-center text-xs uppercase tracking-[0.2em] text-muted-foreground">
-        Les vrais retours des premières utilisatrices apparaîtront ici.
-      </p>
     </Section>
   );
 };
+
 
 /* -------------------------- Réassurance -------------------------------- */
 
@@ -951,11 +965,18 @@ const Tarif = ({ onCTA, loading }: { onCTA: () => void; loading: boolean }) => (
         incluses.
       </p>
 
-      <div className="mt-10 flex justify-center">
+      <div className="mt-10 flex flex-col items-center gap-3">
         <PrimaryCTA onClick={onCTA} disabled={loading}>
           Découvrir Eclosia
         </PrimaryCTA>
+        <div className="w-full max-w-xs">
+          <KlarnaPayButton className="w-full rounded-full border border-primary/30 bg-background px-6 py-3 text-sm font-medium text-primary-dark transition-colors hover:bg-primary/5" />
+        </div>
+        <p className="text-[11px] text-muted-foreground">
+          Ou paie en plusieurs fois avec Klarna
+        </p>
       </div>
+
 
       <ul className="mx-auto mt-10 grid max-w-lg gap-2.5 sm:grid-cols-2">
         {[
@@ -980,6 +1001,151 @@ const Tarif = ({ onCTA, loading }: { onCTA: () => void; loading: boolean }) => (
 );
 
 
+/* ---------------------- Ce que tu retrouveras -------------------------- */
+
+const Serenite = () => {
+  const items = [
+    "Tu chercheras moins.",
+    "Tu centraliseras enfin toutes les informations importantes.",
+    "Tu retrouveras plus facilement ce dont tu as besoin.",
+    "Tu auras un espace qui pense avec toi.",
+    "Tu respireras un peu plus chaque jour.",
+  ];
+  return (
+    <Section id="serenite">
+      <motion.div {...fadeUp} className="mx-auto max-w-2xl text-center">
+        <Eyebrow>Ce que tu retrouveras</Eyebrow>
+        <h2 className="mt-4 font-serif text-[clamp(1.75rem,4vw,3rem)] leading-[1.1] tracking-tight text-night">
+          Ce que tu retrouveras
+          <br />
+          <span className="italic text-primary-dark">avec Eclosia.</span>
+        </h2>
+        <p className="mt-6 text-[15px] leading-relaxed text-muted-foreground">
+          Tu ne retrouveras pas seulement des outils. Tu retrouveras surtout un
+          peu plus de sérénité.
+        </p>
+      </motion.div>
+      <div className="mx-auto mt-14 grid max-w-3xl gap-3 sm:grid-cols-2">
+        {items.map((t, i) => (
+          <motion.div
+            key={t}
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.6, delay: i * 0.06 }}
+            className="flex items-start gap-3 rounded-2xl border border-border/60 bg-card px-5 py-4"
+          >
+            <span className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-primary/15">
+              <Check className="h-3.5 w-3.5 text-primary-dark" />
+            </span>
+            <p className="text-[14.5px] leading-relaxed text-foreground/85">{t}</p>
+          </motion.div>
+        ))}
+      </div>
+    </Section>
+  );
+};
+
+/* ------------------ Pourquoi un paiement unique ----------------------- */
+
+const PaiementUniqueCard = () => (
+  <section className="px-6 py-16 md:py-24">
+    <motion.div
+      {...fadeUp}
+      className="mx-auto max-w-2xl overflow-hidden rounded-[2rem] border border-border/60 bg-card p-8 text-center md:p-12"
+    >
+      <Eyebrow>Notre engagement</Eyebrow>
+      <h2 className="mt-4 font-serif text-[clamp(1.5rem,3.5vw,2.25rem)] leading-tight text-night">
+        Pourquoi un paiement unique ?
+      </h2>
+      <div className="mt-6 space-y-4 text-[15px] leading-relaxed text-foreground/80">
+        <p>
+          La plupart des applications demandent un abonnement tous les mois.
+          J'ai fait un choix différent.
+        </p>
+        <p>
+          Tu achètes Eclosia une seule fois. Toutes les futures mises à jour
+          sont incluses. Aucun abonnement. Aucun renouvellement.
+        </p>
+        <p className="font-medium text-night">
+          Eclosia évoluera avec toi et avec ta famille.
+        </p>
+      </div>
+    </motion.div>
+  </section>
+);
+
+/* ---------------------- Ambassadeur teaser ---------------------------- */
+
+const AmbassadeurTeaser = () => (
+  <Section id="ambassadeur" className="bg-card">
+    <motion.div {...fadeUp} className="mx-auto max-w-2xl text-center">
+      <Eyebrow>Programme ambassadrice</Eyebrow>
+      <h2 className="mt-4 font-serif text-[clamp(1.75rem,4vw,3rem)] leading-[1.1] tracking-tight text-night">
+        Faire découvrir Eclosia
+        <br />
+        <span className="italic text-primary-dark">peut aussi te remercier.</span>
+      </h2>
+      <div className="mt-6 space-y-4 text-[15px] leading-relaxed text-muted-foreground">
+        <p>
+          Certaines familles utilisent simplement Eclosia. D'autres choisissent
+          aussi d'en parler autour d'elles.
+        </p>
+        <p>
+          Si tu souhaites partager un outil qui t'aide réellement, tu peux
+          rejoindre gratuitement notre programme ambassadrice. Tu recevras un
+          lien personnel. Lorsque quelqu'un découvre Eclosia grâce à toi, tu
+          reçois une commission.
+        </p>
+        <p className="font-medium text-night">
+          L'objectif reste d'aider d'autres familles. Jamais de vendre à tout
+          prix.
+        </p>
+      </div>
+      <div className="mt-8">
+        <Link
+          to="/devenir-ambassadrice"
+          className="group inline-flex items-center justify-center gap-2 rounded-full border border-border/70 bg-background px-7 py-3.5 text-sm font-medium text-foreground transition-all duration-300 hover:border-primary/40 hover:bg-card"
+        >
+          Découvrir le programme ambassadrice
+          <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
+        </Link>
+      </div>
+    </motion.div>
+  </Section>
+);
+
+/* ------------------------------ FAQ extras ---------------------------- */
+
+const FaqExtras = () => (
+  <section className="px-6 pb-12">
+    <div className="mx-auto max-w-2xl">
+      <Accordion type="single" collapsible className="w-full">
+        <AccordionItem value="paiement-unique">
+          <AccordionTrigger className="text-left text-sm font-semibold md:text-base">
+            Pourquoi un paiement unique ?
+          </AccordionTrigger>
+          <AccordionContent className="text-sm leading-relaxed text-muted-foreground">
+            Je voulais créer un outil qui accompagne les familles pendant des
+            années sans leur ajouter un abonnement de plus.
+          </AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="recommander">
+          <AccordionTrigger className="text-left text-sm font-semibold md:text-base">
+            Peut-on recommander Eclosia ?
+          </AccordionTrigger>
+          <AccordionContent className="text-sm leading-relaxed text-muted-foreground">
+            Oui. Si Eclosia t'aide réellement, tu peux rejoindre gratuitement
+            notre programme ambassadrice et recevoir une commission lorsque des
+            familles découvrent Eclosia grâce à toi. Aucune obligation. Tu peux
+            simplement utiliser Eclosia sans participer au programme.
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
+    </div>
+  </section>
+);
+
 /* ------------------------------- Page --------------------------------- */
 
 const Index = () => {
@@ -993,21 +1159,27 @@ const Index = () => {
         <Hero onCTA={onCTA} loading={loading} />
         <Quotidien />
         <Presentation />
+        <Serenite />
         <Transformations />
         <Immersive />
         <Fondatrice onCTA={onCTA} loading={loading} />
         <Inclus />
         <Temoignages />
         <Unique />
+        <PaiementUniqueCard />
         <PreTarif />
         <Tarif onCTA={onCTA} loading={loading} />
+        <AmbassadeurTeaser />
         <div id="faq">
           <HomeFAQ />
+          <FaqExtras />
         </div>
       </main>
       <Footer />
     </div>
   );
 };
+
+
 
 export default Index;

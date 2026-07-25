@@ -94,6 +94,8 @@ import LivreReconstruction from "./pages/LivreReconstruction";
 import FriseEvolution from "./pages/FriseEvolution";
 import MonImpact from "./pages/MonImpact";
 import AmbassadriceContrat from "./pages/AmbassadriceContrat";
+import DevenirAmbassadrice from "./pages/DevenirAmbassadrice";
+
 import OAuthConsent from "./pages/OAuthConsent";
 import { useEffect } from "react";
 import { captureReferralCodeFromUrl } from "@/lib/referralTracking";
@@ -143,6 +145,8 @@ const AnimatedRoutes = () => {
         <RoutesWrapper key={location.pathname}>
           <Routes location={location}>
         <Route path="/" element={<PageTransition><Index /></PageTransition>} />
+        <Route path="/devenir-ambassadrice" element={<PageTransition><DevenirAmbassadrice /></PageTransition>} />
+
         <Route path="/quiz-resultat" element={<PageTransition><QuizResultat /></PageTransition>} />
         <Route path="/dashboard" element={<PaidRoute><PageTransition><Dashboard /></PageTransition></PaidRoute>} />
         <Route path="/calme" element={<PaidRoute><PageTransition><CalmeEnClair /></PageTransition></PaidRoute>} />
