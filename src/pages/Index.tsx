@@ -622,25 +622,28 @@ const Fondatrice = ({ onCTA, loading }: { onCTA: () => void; loading: boolean })
         </h2>
         <div className="mt-6 space-y-4 text-[15px] leading-relaxed text-foreground/80">
           <p>
-            Il y a eu ce matin où je me suis assise dans la voiture, incapable
-            de démarrer. J'avais oublié un rendez-vous chez la pédiatre. Encore.
-            Le carnet de santé était resté dans l'autre sac. Le traitement du
-            petit, je ne savais plus s'il l'avait pris.
+            Il y a eu un moment où j'ai réalisé que ma tête était devenue un
+            deuxième agenda.
           </p>
           <p>
-            Ce n'était pas un manque d'amour. C'était trop d'informations,
-            trop de fenêtres ouvertes dans ma tête, trop de post-it, trop
-            d'applis qui ne se parlaient pas.
+            Les rendez-vous. Les dossiers. Les traitements. Les documents. Les
+            émotions. Les listes. Les démarches. Tout était dans ma tête.
           </p>
           <p>
-            Je cherchais un endroit où tout serait posé — les traitements, les
-            rendez-vous, les documents, les émotions, le budget, les
-            ressources sur la neuroatypie de nos enfants. Il n'existait pas.
+            Et plus j'essayais de tout retenir, plus j'avais l'impression de
+            porter seule toute la charge mentale de notre famille.
           </p>
+          <p>
+            Je ne cherchais pas une nouvelle application. Je cherchais
+            simplement un endroit où enfin déposer tout ce que je portais
+            chaque jour. Un endroit où retrouver facilement les informations
+            importantes. Un endroit qui m'aiderait à respirer un peu.
+          </p>
+          <p>Cet endroit n'existait pas. Alors je l'ai créé.</p>
           <p className="font-medium text-night">
-            Alors je l'ai construit. Eclosia n'est pas née d'une idée
-            marketing. Elle est née d'un besoin réel, celui d'une maman qui
-            n'en pouvait plus de tout porter dans sa tête.
+            Eclosia n'est pas née d'une idée marketing. Elle est née d'un
+            besoin réel. Celui d'une maman qui voulait arrêter de tout porter
+            seule.
           </p>
         </div>
         <div className="mt-8">
@@ -653,6 +656,7 @@ const Fondatrice = ({ onCTA, loading }: { onCTA: () => void; loading: boolean })
     </div>
   </Section>
 );
+
 
 /* ---------------------- Ce qui est inclus dans Eclosia ---------------- */
 
