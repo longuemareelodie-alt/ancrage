@@ -779,10 +779,15 @@ const Temoignages = () => {
           ))}
         </div>
         <h2 className="mt-4 font-serif text-[clamp(1.75rem,4vw,3rem)] leading-[1.1] tracking-tight text-night">
-          Ce que disent
+          Les premiers retours
           <br />
-          <span className="italic text-primary-dark">les premières familles.</span>
+          <span className="italic text-primary-dark">arriveront bientôt.</span>
         </h2>
+        <p className="mx-auto mt-6 max-w-xl text-[15px] leading-relaxed text-muted-foreground">
+          Les premières familles découvrent actuellement Eclosia. Les premiers
+          témoignages arriveront très bientôt. Je préfère partager de vrais
+          retours d'expérience plutôt que d'en inventer.
+        </p>
       </motion.div>
 
       <div className="mt-14 grid gap-5 md:grid-cols-3">
@@ -797,7 +802,7 @@ const Temoignages = () => {
           >
             <Quote className="h-6 w-6 text-primary/40" />
             <p className="mt-5 min-h-[7rem] font-serif text-[15px] italic leading-relaxed text-muted-foreground/70">
-              Témoignage à venir
+              Un vrai témoignage prendra bientôt sa place ici.
             </p>
             <div className="mt-6 flex items-center gap-3 border-t border-border/50 pt-4">
               <div className="h-9 w-9 rounded-full bg-primary/15" />
@@ -806,13 +811,10 @@ const Temoignages = () => {
           </motion.article>
         ))}
       </div>
-
-      <p className="mx-auto mt-10 max-w-md text-center text-xs uppercase tracking-[0.2em] text-muted-foreground">
-        Les vrais retours des premières utilisatrices apparaîtront ici.
-      </p>
     </Section>
   );
 };
+
 
 /* -------------------------- Réassurance -------------------------------- */
 
