@@ -965,11 +965,18 @@ const Tarif = ({ onCTA, loading }: { onCTA: () => void; loading: boolean }) => (
         incluses.
       </p>
 
-      <div className="mt-10 flex justify-center">
+      <div className="mt-10 flex flex-col items-center gap-3">
         <PrimaryCTA onClick={onCTA} disabled={loading}>
           Découvrir Eclosia
         </PrimaryCTA>
+        <div className="w-full max-w-xs">
+          <KlarnaPayButton className="w-full rounded-full border border-primary/30 bg-background px-6 py-3 text-sm font-medium text-primary-dark transition-colors hover:bg-primary/5" />
+        </div>
+        <p className="text-[11px] text-muted-foreground">
+          Ou paie en plusieurs fois avec Klarna
+        </p>
       </div>
+
 
       <ul className="mx-auto mt-10 grid max-w-lg gap-2.5 sm:grid-cols-2">
         {[
