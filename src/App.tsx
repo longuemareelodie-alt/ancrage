@@ -94,6 +94,8 @@ import LivreReconstruction from "./pages/LivreReconstruction";
 import FriseEvolution from "./pages/FriseEvolution";
 import MonImpact from "./pages/MonImpact";
 import AmbassadriceContrat from "./pages/AmbassadriceContrat";
+import DevenirAmbassadrice from "./pages/DevenirAmbassadrice";
+
 import OAuthConsent from "./pages/OAuthConsent";
 import { useEffect } from "react";
 import { captureReferralCodeFromUrl } from "@/lib/referralTracking";
