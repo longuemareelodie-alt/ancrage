@@ -1,91 +1,312 @@
+# Eclosia — Refonte complète de l'expérience
 
-# Programme Ambassadrices Eclosia
+## 1. Diagnostic de l'existant
 
-Une cliente premium devient automatiquement ambassadrice. Elle reçoit un lien unique. Chaque maman qu'elle aide à rejoindre Eclosia est comptée et déclenche une commission, validée 14 jours après le paiement (le temps qu'un remboursement ne soit plus possible).
+L'app compte aujourd'hui ~70 routes accumulées par couches successives. Trois problèmes structurels :
 
-## Vocabulaire (impact, jamais commercial)
+**Doublons réels identifiés dans le code**
+- `/ancrage/*` (layout + palette + nav dédiés) duplique `/dashboard`, `/famille`, `/coffre`, `/profil`. Deux applications cohabitent.
+- `/signes` et `/lies-autrement/signes-nouveaux` pointent sur le même composant.
+- `/emotions`, `/checkin`, `/historique`, `/comprendre`, `/avancer`, `/parcours`, `/calme` = 7 routes pour un seul geste : « je note comment je vais et je reçois de l'aide ».
+- `/sante/profils-familiaux` et `/famille` gèrent tous les deux des profils de personnes.
+- `/sante/ressources` et `/lies-autrement/ressources` = deux annuaires de ressources.
+- `/portrait-transformation`, `/frise-evolution`, `/livre-reconstruction`, `/statistiques` = 4 vues rétrospectives séparées.
+- Pages marketing internes exposées à l'utilisateur connecté : `/aller-plus-loin`, `/comparaison`, `/pack-sante-familial`, `/charge-mentale`, `/quiz-resultat`.
 
-- Pas de "ventes" → **"mamans accompagnées"**
-- Pas de "commission" → **"contribution reçue"** (mais on garde "commission" en interne BDD)
-- Pas de "niveau / palier commercial" → **"cercle"** : 🌱 Graine · 🌸 Fleur · 💛 Fondatrice
-- Pas de "filleule" → **"maman recommandée"**
-- Le tableau s'appelle **"Mon Impact"**
+**Problème de modèle mental**
+La nav actuelle est organisée par *objets* (émotions, budget, coffre) et non par *besoins*. L'utilisatrice doit traduire son besoin en nom de module.
 
-## Les trois cercles (acquis à vie, jamais de retour en arrière)
+**Problème d'entrée quotidienne**
+Rien ne donne une raison de revenir demain. Le dashboard est un annuaire de widgets, pas un compagnon.
 
-| Cercle | Mamans accompagnées | Part reversée |
+---
+
+## 2. Nouvelle architecture — 5 hubs + 1 geste
+
+Principe : **5 onglets maximum**, chacun répondant à un besoin exprimable en une phrase par un parent épuisé. La communauté et l'affiliation ne sont pas des onglets (usage occasionnel) mais vivent dans le hub Moi et le profil.
+
+```text
+                    ┌─────────────────────┐
+                    │      AUJOURD'HUI    │  ← écran d'ouverture
+                    │  (Accueil vivant)   │
+                    └──────────┬──────────┘
+                               │
+   ┌──────────┬────────────┬───┴────┬────────────┬──────────┐
+   │   Moi    │  Famille   │Autonomie│ Organiser  │Ressources│
+   └──────────┴────────────┴─────────┴────────────┴──────────┘
+                               │
+                        (bouton central +)
+                     geste rapide contextuel
+```
+
+### Navigation principale (bottom bar, 5 items + action centrale)
+
+| Onglet | Question à laquelle il répond | Route |
 |---|---|---|
-| 🌱 Graine | 0 à 4 | 20 % |
-| 🌸 Fleur | 5 à 14 | 25 % |
-| 💛 Fondatrice | 15 et + | 30 % |
+| Aujourd'hui | « Qu'est-ce qui compte maintenant ? » | `/aujourdhui` |
+| Moi | « Comment je vais, moi ? » | `/moi` |
+| Famille | « Où sont les infos de mes enfants ? » | `/famille` |
+| Autonomie | « Comment je l'aide à faire seul ? » | `/autonomie` |
+| Plus | Organisation + Ressources + Communauté + Réglages | `/plus` |
 
-Le passage de cercle est automatique dès que le seuil est franchi par une commission **validée** (pas seulement en attente).
+Le bouton central **+** (flottant, au-dessus de la barre) ouvre une feuille de 4 gestes rapides : *Noter une émotion · Ajouter un rendez-vous · Déposer un document · Écrire au journal*. C'est la réponse directe à « limiter le nombre de clics » : les 4 actions les plus fréquentes sont à 2 taps depuis n'importe quel écran.
 
-## Parcours utilisateur
+---
 
-1. **Activation** : dès qu'une utilisatrice devient premium, son profil reçoit un `referral_code` unique (ex. `ECL-MARIE-7F2A`) et un lien `https://eclosiia.lovable.app/?ref=ECL-MARIE-7F2A`.
-2. **Partage** : depuis "Mon Impact", elle copie son lien, partage par WhatsApp / Instagram / mail (boutons de partage natifs).
-3. **Attribution** : quand quelqu'un visite avec `?ref=CODE`, on stocke le code en cookie 30 jours + localStorage. Au moment du paiement Mollie, on rattache la commande au code.
-4. **Création commission** : webhook Mollie marque la commission `pending`, montant = part du cercle × prix payé.
-5. **Validation** : un cron quotidien passe les commissions `pending` de + de 14 jours en `validated` → met à jour le compteur du cercle et déclenche éventuellement un passage de cercle.
-6. **Tableau de bord "Mon Impact"** affiche : mamans accompagnées · cercle actuel · part actuelle · total reversé (validé) · en attente · progression vers le prochain cercle.
+## 3. Sitemap complet
 
-## Versement automatique — décision à prendre
+```text
+PUBLIC
+  /                        Landing (conservée telle quelle)
+  /devenir-ambassadrice
+  /auth  /reset-password  /set-password  /activation-compte
+  /paywall
+  /cgv  /confidentialite  /mentions-legales
+  /fiche-urgence/:token    partage public fiche médicale
+  /unsubscribe
 
-Tu as choisi "versement automatique". Mollie permet les **payouts** vers ton propre compte, mais **pas vers les comptes des ambassadrices** sans passer par Mollie Connect (offre marchande, KYC par ambassadrice, IBAN vérifié, contrat). C'est lourd à déployer.
+APP (connecté + payant)
+  /aujourdhui                        ← nouvel écran racine
+  ├─ (redirection depuis /dashboard)
 
-Je propose une **approche hybride réaliste** qui reste "automatique" du point de vue de l'ambassadrice :
+  /moi
+  ├─ /moi/emotions                   fusionne emotions + checkin + emotion/:id
+  ├─ /moi/journal                    fusionne journal + comment-tu-te-sens (adulte)
+  ├─ /moi/apaisement                 fusionne calme + urgence + comprendre + avancer
+  └─ /moi/chemin                     fusionne frise + livre + portrait + statistiques + historique
+       ?vue=frise|livre|portraits|chiffres
 
-- L'ambassadrice renseigne son IBAN + nom dans son profil (chiffré côté BDD).
-- Dès qu'une commission est validée, elle est ajoutée à son solde "disponible".
-- Le 1er de chaque mois, un cron génère automatiquement un **ordre de virement** (CSV SEPA) pour toutes les ambassadrices avec solde ≥ 20 €, te l'envoie par mail, et marque les commissions `paid`. Tu fais l'import dans ta banque (1 clic, format standard SEPA XML).
-- Côté ambassadrice c'est invisible : elle voit "versement programmé le X" puis "versé le Y".
+  /famille
+  ├─ /famille/:profileId             fiche unifiée d'un membre
+  │    ?onglet=infos|sante|documents|ordonnances|urgence
+  ├─ /famille/contacts               nouveau : médecins, école, aidants
+  └─ /famille/coffre                 coffre-fort foyer (ex /coffre)
 
-Si tu veux **vrai versement 100 % automatique sans toi**, il faut activer Mollie Connect (ou Stripe Connect) : prévoir 2-3 semaines de dev en plus, KYC obligatoire pour chaque ambassadrice, et frais Mollie par transfert. Je peux le faire dans une 2e phase.
+  /autonomie
+  ├─ /autonomie/routines
+  ├─ /autonomie/emploi-du-temps      pictogrammes visuels
+  ├─ /autonomie/recompenses
+  ├─ /autonomie/histoires-sociales
+  ├─ /autonomie/checklists
+  ├─ /autonomie/crise                ex /lies-autrement/crise
+  ├─ /autonomie/emotions-enfant      ex /comment-tu-te-sens (version enfant)
+  └─ /autonomie/studio               génération de supports PDF (+ emplacement IA)
 
-**Cette première version livre tout sauf le déclenchement bancaire — je te demanderai confirmation sur l'approche SEPA avant de l'implémenter.**
+  /organisation
+  ├─ /organisation/calendrier        fusionne organisation + sante/rendez-vous
+  ├─ /organisation/taches
+  ├─ /organisation/rappels           médicaments + factures + renouvellements
+  └─ /organisation/budget
 
-## Implémentation technique
+  /ressources
+  ├─ /ressources/neuroatypie         ex lies-autrement/ressources (troubles)
+  ├─ /ressources/lsf                 + /lsf/:theme + flashcards
+  ├─ /ressources/activites
+  └─ /ressources/annuaire            fusionne sante/ressources (numéros utiles FR)
 
-### Base de données (nouvelles tables)
+  /communaute
+  ├─ /communaute/echanges            ex lies-autrement/communaute
+  └─ /communaute/defis               nouveau
 
-- `ambassador_profiles` : `user_id` (PK), `referral_code` unique, `current_tier` (graine/fleur/fondatrice), `validated_referrals_count`, `iban_encrypted`, `iban_holder_name`, `joined_at`
-- `ambassador_referrals` : `id`, `ambassador_user_id`, `referred_user_id`, `referral_code_used`, `payment_id` (Mollie), `amount_paid_cents`, `commission_rate`, `commission_cents`, `status` (pending/validated/paid/refunded), `validated_at`, `paid_at`, `created_at`
-- `ambassador_payouts` : `id`, `ambassador_user_id`, `amount_cents`, `referral_ids` (array), `sepa_batch_id`, `status` (scheduled/sent/failed), `created_at`, `paid_at`
+  /profil
+  ├─ /profil/reglages                fusionne parametres + profil/style
+  ├─ /profil/impact                  ambassadrice (ex /mon-impact)
+  └─ /profil/impact/contrat
 
-RLS : chaque ambassadrice voit uniquement ses propres lignes. Service role pour webhooks et cron. Admin peut tout voir.
+ADMIN  /admin/* (inchangé)
+```
 
-### Fonctions edge (Supabase)
+### Redirections à mettre en place (aucun lien cassé, aucun signet perdu)
 
-- `create-ambassador-profile` : déclenchée à l'activation premium → génère code unique.
-- Modif `mollie-webhook` : si payment metadata contient `ref_code`, crée une ligne `ambassador_referrals` en `pending`.
-- `validate-ambassador-referrals` (cron quotidien) : passe en `validated` les `pending` de + de 14 jours, met à jour le compteur et le cercle.
-- `generate-monthly-payouts` (cron mensuel, 1er du mois) : crée les `ambassador_payouts`, génère SEPA XML, envoie par mail à l'admin.
-- `get-ambassador-dashboard` : retourne toutes les stats agrégées pour "Mon Impact".
+`/dashboard`→`/aujourdhui` · `/emotions`,`/checkin`→`/moi/emotions` · `/historique`,`/statistiques`,`/frise-evolution`,`/livre-reconstruction`,`/portrait-transformation`→`/moi/chemin` · `/calme`,`/urgence`,`/comprendre`,`/avancer`,`/parcours`→`/moi/apaisement` · `/coffre`→`/famille/coffre` · `/sante/*`→`/famille/:id?onglet=…` · `/lies-autrement/*`→ hub correspondant · `/ancrage/*`→ équivalent app principale · `/signes`→`/ressources/lsf` · `/budget`→`/organisation/budget` · `/mon-impact`→`/profil/impact`
 
-### Frontend
+---
 
-- **Capture du `?ref=`** : nouveau hook `useReferralTracking` dans `App.tsx`, lit `searchParams`, stocke en cookie 30j.
-- **Envoi au paiement** : modif `useMolliePayment` pour passer le code en metadata Mollie.
-- **Page `/mon-impact`** (nouvelle route protégée) : affiche les 5 stats + lien + boutons partage + barre de progression vers prochain cercle + IBAN form + historique des mamans recommandées (anonymisé : "Une maman t'a rejoint le X").
-- **Lien dans le Dashboard** : carte "🌱 Mon Impact" visible uniquement pour les ambassadrices (= tous les premium).
-- **Page admin `/admin/ambassadrices`** : vue d'ensemble, validations manuelles si besoin, déclenchement payout.
+## 4. Écrans supprimés / fusionnés
 
-### Design
+**À supprimer purement**
+- Tout l'espace `/ancrage/*` (6 écrans) — doublon complet avec sa propre palette, source d'incohérence visuelle.
+- `/signes` (alias redondant).
+- `/aller-plus-loin`, `/comparaison`, `/pack-sante-familial`, `/charge-mentale` en tant que routes app — contenu marketing, à replier dans la landing.
+- `/post-flow`, `/danger` — remplacés par l'écran d'apaisement unifié.
 
-Cohérent avec l'existant : palette rose/sauge, polices Playfair + sans-serif body, cartes `rounded-[2rem]` avec `bg-card`, `shadow-soft`. Les trois cercles avec un dégradé doux (vert tendre → rose → ambre). Animations légères (framer-motion déjà utilisé).
+**À fusionner**
+| Avant | Après |
+|---|---|
+| emotions + emotion/:x + checkin | `/moi/emotions` (une page, historique inline) |
+| calme + urgence + comprendre + avancer + parcours + danger | `/moi/apaisement` |
+| frise + livre + portrait + statistiques + historique | `/moi/chemin` (4 vues, un sélecteur) |
+| famille + sante/profils-familiaux + carnet + documents + ordonnances + fiche-medicale | `/famille/:id` (fiche à onglets) |
+| organisation + sante/rendez-vous + sante/medicaments | `/organisation/calendrier` + `/organisation/rappels` |
+| sante/ressources + lies-autrement/ressources | `/ressources/annuaire` + `/ressources/neuroatypie` |
+| parametres + profil + profil/style | `/profil` |
 
-## Découpage en livraisons
+**Bilan : ~70 routes → ~34 routes**, dont 5 hubs.
 
-1. **Migration BDD** + RLS + GRANT — j'envoie pour ton approbation en premier.
-2. **Tracking referral frontend + intégration paiement Mollie + webhook**.
-3. **Page "Mon Impact"** complète + carte dashboard.
-4. **Crons de validation** (J+14) **et de payout mensuel**.
-5. **Page admin** + tests.
+---
 
-## Questions ouvertes avant de coder
+## 5. Wireframes
 
-1. Confirme l'approche SEPA mensuelle (vs Mollie Connect plus tard) ?
-2. Seuil minimum de versement : **20 €** ok ou autre montant ?
-3. Le code referral : généré (`ECL-XXXX`) ou laisser la maman choisir son code personnalisé ?
-4. Pour une maman qui s'inscrit via un lien puis ne paie qu'1 mois après : on attribue toujours la commission ? (J'ai prévu cookie 30j — confirme.)
+### Aujourd'hui — l'écran qui donne envie de revenir
+```text
+┌──────────────────────────────────────┐
+│  Bonjour Marie                   ⚙   │  ← salutation selon l'heure
+│  Jeudi 30 juillet                    │
+│                                      │
+│  ┌────────────────────────────────┐  │
+│  │  Comment tu te sens ?          │  │  ← carte respirante, 1 tap
+│  │   😌   🙂   😐   😞   😩       │  │     Le seul geste demandé.
+│  └────────────────────────────────┘  │
+│                                      │
+│  À VENIR AUJOURD'HUI                 │
+│  ● 14h30  Orthophoniste — Léa       │
+│  ● 18h00  Médicament du soir        │
+│                                      │
+│  ┌──────────┐  ┌──────────┐         │
+│  │ Routine  │  │ Journal  │         │  ← 2 raccourcis appris
+│  │ du soir  │  │ 3 j. 🔥  │         │     du comportement réel
+│  └──────────┘  └──────────┘         │
+│                                      │
+│  « Tu n'as pas à tout tenir. »       │  ← respiration éditoriale
+│                                      │
+├──────────────────────────────────────┤
+│ 🏠   ❤️    ⊕    👨‍👩‍👧   ⋯          │
+└──────────────────────────────────────┘
+```
+Règle : maximum 5 blocs, jamais de scroll infini. Si rien n'est prévu, l'écran le dit avec douceur (« Rien de prévu aujourd'hui. Profite. ») plutôt que d'afficher des cases vides.
+
+### Hub type (Moi / Famille / Autonomie)
+```text
+┌──────────────────────────────────────┐
+│  Moi                                 │  ← titre large, serif
+│  Ton espace, à ton rythme.           │
+│                                      │
+│  ┌────────────────────────────────┐  │
+│  │ ❤️  Mes émotions               │  │
+│  │    Dernière note : hier         │ →│
+│  └────────────────────────────────┘  │
+│  ┌────────────────────────────────┐  │
+│  │ ✍️  Mon journal                │  │
+│  │    12 entrées                   │ →│
+│  └────────────────────────────────┘  │
+│  ┌────────────────────────────────┐  │
+│  │ 🌙  M'apaiser maintenant       │  │
+│  └────────────────────────────────┘  │
+│  ┌────────────────────────────────┐  │
+│  │ 🕰️  Mon chemin                 │  │
+│  └────────────────────────────────┘  │
+└──────────────────────────────────────┘
+```
+Chaque carte affiche **une donnée vivante** (dernière activité, compteur) — c'est ce qui distingue un hub premium d'un menu.
+
+### Fiche membre — `/famille/:id`
+```text
+┌──────────────────────────────────────┐
+│  ←   Léa, 7 ans                  ⋯   │
+│      TSA · TDAH                      │
+│  ┌────┬──────┬───────────┬────────┐  │
+│  │Infos│Santé│ Documents │Urgence│  │  ← onglets, pas de re-navigation
+│  └────┴──────┴───────────┴────────┘  │
+│                                      │
+│  PROCHAIN RENDEZ-VOUS                │
+│  14h30 · Orthophoniste               │
+│                                      │
+│  TRAITEMENTS EN COURS            (2) │
+│  ...                                 │
+│  ORDONNANCES                     (5) │
+│  ...                                 │
+└──────────────────────────────────────┘
+```
+Tout ce qui concerne une personne est **à un seul endroit**. Aujourd'hui c'est éclaté sur 5 routes.
+
+### Studio d'autonomie
+```text
+┌──────────────────────────────────────┐
+│  Créer un support                    │
+│  Pour : [ Léa ▾ ]                    │
+│                                      │
+│  ┌────────┐ ┌────────┐ ┌────────┐   │
+│  │Routine │ │Emploi  │ │Histoire│   │
+│  │        │ │du temps│ │sociale │   │
+│  └────────┘ └────────┘ └────────┘   │
+│  ┌────────┐ ┌────────┐ ┌────────┐   │
+│  │Récomp. │ │Check-  │ │  ✨    │   │
+│  │        │ │list    │ │ Aide IA│   │  ← emplacement réservé
+│  └────────┘ └────────┘ └────────┘   │
+│                                      │
+│  MES SUPPORTS                        │
+│  📄 Routine du matin — Léa      ⤓   │
+└──────────────────────────────────────┘
+```
+Emplacement IA prévu dès maintenant (carte désactivée « Bientôt »), sans dépendance technique.
+
+---
+
+## 6. Parcours utilisateur idéal
+
+**Jour 1 (onboarding, 90 secondes)** — Prénom → « Qui est concerné ? » (création du 1er profil enfant + trouble) → « Qu'est-ce qui te pèse le plus en ce moment ? » (3 choix) → l'app pré-remplit Aujourd'hui avec 2 actions pertinentes. Aucun tour guidé de 12 étapes.
+
+**Jour type (30 secondes)** — Ouvre → tape une humeur → voit ses 2 rendez-vous → referme. C'est tout, et c'est suffisant pour créer l'habitude.
+
+**Moment de crise (3 secondes)** — Un accès permanent à « M'apaiser » depuis le bouton +, disponible sur tous les écrans. Aucune recherche.
+
+**Semaine 2** — Une notification douce hebdomadaire : « Ta semaine en 3 lignes » → renvoie vers `/moi/chemin`.
+
+---
+
+## 7. Système visuel unifié
+
+- **Palette** : fond ivoire chaud, sauge comme couleur d'accent unique, encre sombre adoucie. Une seule teinte d'accent par hub (Moi = blush, Famille = sauge, Autonomie = sable, Organisation = ciel, Ressources = neutre) — appliquée uniquement à l'icône et aux états actifs, jamais aux fonds pleins.
+- **Espace** : padding de section 24px minimum, respiration verticale 32px entre blocs. Aucun écran dense.
+- **Cartes** : rayon 20px, bordure 1px très claire, ombre quasi nulle, élévation au tap uniquement.
+- **Typographie** : serif pour les titres de hub (voix humaine), sans-serif pour tout le reste. 3 tailles seulement.
+- **Icônes** : Lucide, trait 1.75, une seule famille — suppression des emojis en navigation (ils cassent la cohérence premium), conservés seulement dans les contenus destinés aux enfants.
+- **Animations** : fondu + translation 8px, 350ms, courbe douce. Jamais de rebond. Respect de `prefers-reduced-motion`.
+- **Tous les hubs partagent un composant `HubShell` unique** — c'est ce qui garantit l'uniformité des écrans sur la durée.
+
+---
+
+## 8. Améliorations UX supplémentaires
+
+1. **États vides rédigés** : chaque écran vide dit quoi faire en une phrase chaleureuse.
+2. **Reprise contextuelle** : l'app se souvient du dernier écran et le propose dans Aujourd'hui.
+3. **Recherche unique** (Plus → 🔍) : cherche dans documents, profils, journal, ressources. Un seul champ pour tout.
+4. **Aucun paywall dans l'app** : l'accès étant à vie, les cadenas actuels dans `/sante` disparaissent une fois payant.
+5. **Mode hors-ligne** pour la fiche d'urgence et les routines (déjà un service worker en place).
+6. **Notifications** : maximum 1 par jour, jamais culpabilisantes.
+
+---
+
+## 9. Évolutions futures que l'architecture accueille sans refonte
+
+- Assistant IA : s'insère comme 6e carte du Studio + bouton dans le journal.
+- Partage co-parent / AESH : onglet supplémentaire sur la fiche membre.
+- Suivi scolaire (PPS, GEVA-Sco) : sous-section de Famille.
+- Défis communautaires : déjà prévu dans `/communaute/defis`.
+- Version enfant (tablette) : `/autonomie` en plein écran, sans nav parent.
+
+---
+
+## 10. Plan de mise en œuvre (technique)
+
+**Étape 1 — Fondations** : créer `HubShell`, `HubCard`, `AppShell` (nav 5 onglets + bouton +) ; ajouter les tokens de couleur par hub dans `index.css`.
+
+**Étape 2 — Nouvelle nav & Aujourd'hui** : remplacer `BottomNav`, créer `/aujourdhui` à partir du contenu de `Dashboard.tsx`.
+
+**Étape 3 — Hubs** : créer les 6 pages hub, qui pointent d'abord vers les pages existantes (aucune régression fonctionnelle).
+
+**Étape 4 — Fusions** : `/moi/chemin` à onglets, `/famille/:id` à onglets, `/moi/apaisement`, `/moi/emotions`.
+
+**Étape 5 — Nettoyage** : redirections dans `App.tsx`, suppression d'`/ancrage/*` et des alias, mise à jour du sitemap.
+
+**Étape 6 — Autonomie** : Studio + routines + emplois du temps + récompenses (le seul vrai nouveau développement).
+
+Chaque étape est livrable indépendamment et laisse l'app fonctionnelle.
+
+---
+
+## Question avant de démarrer
+
+L'étape 6 (Studio d'autonomie, routines, emplois du temps visuels, histoires sociales, récompenses, check-lists) représente un module entièrement nouveau avec sa propre base de données. Le reste (étapes 1 à 5) est une réorganisation de l'existant.
+
+Dis-moi si je commence par les étapes 1 à 5 (refonte de l'expérience sur l'existant, résultat visible immédiatement) ou si tu veux que le Studio d'autonomie soit inclus dans la même livraison.
