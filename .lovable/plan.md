@@ -1,312 +1,234 @@
-# Eclosia — Refonte complète de l'expérience
+# Eclosia V2 — Architecture produit pour les 10 prochaines années
 
-## 1. Diagnostic de l'existant
+## 1. Critique honnête de l'existant
 
-L'app compte aujourd'hui ~70 routes accumulées par couches successives. Trois problèmes structurels :
+**Ce qui est redondant (à fusionner)**
+- 8 routes pour un seul geste émotionnel : `/emotions`, `/emotion/:x`, `/checkin`, `/historique`, `/calme`, `/comprendre`, `/avancer`, `/parcours`. Une utilisatrice épuisée ne choisit pas entre « Comprendre » et « Avancer ».
+- 4 vues rétrospectives séparées : `/portrait-transformation`, `/frise-evolution`, `/livre-reconstruction`, `/statistiques`. Même donnée, 4 lectures.
+- Deux annuaires de ressources : `/sante/ressources` et `/lies-autrement/ressources`.
+- Deux gestions de personnes : `/famille` et `/sante/profils-familiaux`.
+- Deux entrées « urgence » : `/urgence` et `/danger`.
+- `/signes` = alias de `/lies-autrement/signes-nouveaux`.
 
-**Doublons réels identifiés dans le code**
-- `/ancrage/*` (layout + palette + nav dédiés) duplique `/dashboard`, `/famille`, `/coffre`, `/profil`. Deux applications cohabitent.
-- `/signes` et `/lies-autrement/signes-nouveaux` pointent sur le même composant.
-- `/emotions`, `/checkin`, `/historique`, `/comprendre`, `/avancer`, `/parcours`, `/calme` = 7 routes pour un seul geste : « je note comment je vais et je reçois de l'aide ».
-- `/sante/profils-familiaux` et `/famille` gèrent tous les deux des profils de personnes.
-- `/sante/ressources` et `/lies-autrement/ressources` = deux annuaires de ressources.
-- `/portrait-transformation`, `/frise-evolution`, `/livre-reconstruction`, `/statistiques` = 4 vues rétrospectives séparées.
-- Pages marketing internes exposées à l'utilisateur connecté : `/aller-plus-loin`, `/comparaison`, `/pack-sante-familial`, `/charge-mentale`, `/quiz-resultat`.
+**Ce qui est mal placé**
+- Tout l'espace `/lies-autrement/*` : c'est un ancien produit devenu préfixe technique. Le nom ne dit rien à personne. Son journal appartient à Moi, sa LSF/activités aux Ressources, sa crise à Autonomie, sa communauté à Plus.
+- Pages commerciales accessibles à une cliente déjà payante : `/aller-plus-loin`, `/comparaison`, `/pack-sante-familial`, `/charge-mentale`, `/quiz-resultat`. Vendre à quelqu'un qui a payé érode la confiance.
+- `/profil`, `/profil/style`, `/parametres` : trois écrans pour un seul.
 
-**Problème de modèle mental**
-La nav actuelle est organisée par *objets* (émotions, budget, coffre) et non par *besoins*. L'utilisatrice doit traduire son besoin en nom de module.
+**Ce qui est inutile**
+- `/post-flow`, `/danger`, `/parcours` : écrans de transition sans contenu propre.
+- Le paywall interne dans `/sante` alors que l'accès est à vie.
+- Les emojis dans la navigation : ils cassent la perception premium.
 
-**Problème d'entrée quotidienne**
-Rien ne donne une raison de revenir demain. Le dashboard est un annuaire de widgets, pas un compagnon.
+**Ce qui manque (et qui compte vraiment)**
+- Un enfant n'est pas un « profil de santé » : ni préférences, ni sensibilités, ni centres d'intérêt, ni contacts (école, orthophoniste, AESH). C'est le manque le plus grave : Eclosia gère des dossiers, pas des enfants.
+- Aucun support visuel : routines, emplois du temps, histoires sociales, récompenses. C'est le cœur du besoin neuroatypique quotidien.
+- Aucune raison de revenir demain : l'accueil est un annuaire de widgets.
+- Aucune notion de professionnel ni de second parent.
 
 ---
 
-## 2. Nouvelle architecture — 5 hubs + 1 geste
+## 2. Le principe fondateur de la V2
 
-Principe : **5 onglets maximum**, chacun répondant à un besoin exprimable en une phrase par un parent épuisé. La communauté et l'affiliation ne sont pas des onglets (usage occasionnel) mais vivent dans le hub Moi et le profil.
+Une seule règle d'architecture : **un écran = une intention.**
+
+- **Aujourd'hui** = ce dont j'ai besoin maintenant
+- **Moi** = comment je vais, moi
+- **Famille** = tout sur une personne, au même endroit
+- **Autonomie** = ce que je crée pour mon enfant
+- **Plus** = ce que j'ouvre une fois par mois
+
+Le bouton **+** porte toute la création. Conséquence directe : aucun hub n'a besoin de bouton « ajouter », donc aucun écran n'est encombré.
 
 ```text
-                    ┌─────────────────────┐
-                    │      AUJOURD'HUI    │  ← écran d'ouverture
-                    │  (Accueil vivant)   │
-                    └──────────┬──────────┘
-                               │
-   ┌──────────┬────────────┬───┴────┬────────────┬──────────┐
-   │   Moi    │  Famille   │Autonomie│ Organiser  │Ressources│
-   └──────────┴────────────┴─────────┴────────────┴──────────┘
-                               │
-                        (bouton central +)
-                     geste rapide contextuel
+                    ┌──────────────────┐
+                    │    AUJOURD'HUI   │  cockpit adaptatif
+                    └────────┬─────────┘
+      ┌───────┬──────────┬───┴───┬───────────┬────────┐
+      │  Moi  │ Famille  │   +   │ Autonomie │  Plus  │
+      └───────┴──────────┴───────┴───────────┴────────┘
 ```
-
-### Navigation principale (bottom bar, 5 items + action centrale)
-
-| Onglet | Question à laquelle il répond | Route |
-|---|---|---|
-| Aujourd'hui | « Qu'est-ce qui compte maintenant ? » | `/aujourdhui` |
-| Moi | « Comment je vais, moi ? » | `/moi` |
-| Famille | « Où sont les infos de mes enfants ? » | `/famille` |
-| Autonomie | « Comment je l'aide à faire seul ? » | `/autonomie` |
-| Plus | Organisation + Ressources + Communauté + Réglages | `/plus` |
-
-Le bouton central **+** (flottant, au-dessus de la barre) ouvre une feuille de 4 gestes rapides : *Noter une émotion · Ajouter un rendez-vous · Déposer un document · Écrire au journal*. C'est la réponse directe à « limiter le nombre de clics » : les 4 actions les plus fréquentes sont à 2 taps depuis n'importe quel écran.
 
 ---
 
-## 3. Sitemap complet
+## 3. Sitemap V2
 
 ```text
 PUBLIC
-  /                        Landing (conservée telle quelle)
+  /                       landing
   /devenir-ambassadrice
-  /auth  /reset-password  /set-password  /activation-compte
-  /paywall
-  /cgv  /confidentialite  /mentions-legales
-  /fiche-urgence/:token    partage public fiche médicale
-  /unsubscribe
+  /auth /reset-password /set-password /activation-compte
+  /paywall /payment-*
+  /cgv /confidentialite /mentions-legales
+  /fiche-urgence/:token   /unsubscribe
 
-APP (connecté + payant)
-  /aujourdhui                        ← nouvel écran racine
-  ├─ (redirection depuis /dashboard)
+APP
+  /aujourdhui                       cockpit
 
-  /moi
-  ├─ /moi/emotions                   fusionne emotions + checkin + emotion/:id
-  ├─ /moi/journal                    fusionne journal + comment-tu-te-sens (adulte)
-  ├─ /moi/apaisement                 fusionne calme + urgence + comprendre + avancer
-  └─ /moi/chemin                     fusionne frise + livre + portrait + statistiques + historique
-       ?vue=frise|livre|portraits|chiffres
+  /moi                              hub, progression émotionnelle en tête
+  ├─ /moi/emotions                  note + historique + conseil (fusionne 4 routes)
+  ├─ /moi/journal                   journal + prompts
+  ├─ /moi/apaisement                exercices + mode survie + urgence
+  ├─ /moi/chemin?vue=frise|portraits|livre|chiffres
+  └─ /moi/objectifs                 nouveau : objectifs + réussites
 
-  /famille
-  ├─ /famille/:profileId             fiche unifiée d'un membre
-  │    ?onglet=infos|sante|documents|ordonnances|urgence
-  ├─ /famille/contacts               nouveau : médecins, école, aidants
-  └─ /famille/coffre                 coffre-fort foyer (ex /coffre)
+  /famille                          sélecteur d'enfants (avatars)
+  ├─ /famille/:childId?onglet=apercu|profil|sante|documents|contacts|supports|historique
+  └─ /famille/coffre                coffre-fort du foyer
 
-  /autonomie
-  ├─ /autonomie/routines
-  ├─ /autonomie/emploi-du-temps      pictogrammes visuels
-  ├─ /autonomie/recompenses
-  ├─ /autonomie/histoires-sociales
-  ├─ /autonomie/checklists
-  ├─ /autonomie/crise                ex /lies-autrement/crise
-  ├─ /autonomie/emotions-enfant      ex /comment-tu-te-sens (version enfant)
-  └─ /autonomie/studio               génération de supports PDF (+ emplacement IA)
+  /autonomie                        Studio
+  ├─ /autonomie/creer/:type         routine|checklist|emploi-du-temps|histoire|recompenses|cartes
+  ├─ /autonomie/support/:id         édition + aperçu imprimable
+  ├─ /autonomie/bibliotheque        modèles prêts à l'emploi
+  └─ /autonomie/crise               protocole de crise enfant
 
-  /organisation
-  ├─ /organisation/calendrier        fusionne organisation + sante/rendez-vous
-  ├─ /organisation/taches
-  ├─ /organisation/rappels           médicaments + factures + renouvellements
-  └─ /organisation/budget
+  /plus
+  ├─ /plus/organisation             calendrier + tâches + rappels
+  ├─ /plus/budget
+  ├─ /plus/courses
+  ├─ /plus/sante                    vue transversale (tous les membres)
+  ├─ /plus/ressources               neuroatypie · LSF · activités · annuaire
+  ├─ /plus/communaute
+  ├─ /plus/profil                   profil + réglages + style + support
+  └─ /plus/impact                   ambassadrice
 
-  /ressources
-  ├─ /ressources/neuroatypie         ex lies-autrement/ressources (troubles)
-  ├─ /ressources/lsf                 + /lsf/:theme + flashcards
-  ├─ /ressources/activites
-  └─ /ressources/annuaire            fusionne sante/ressources (numéros utiles FR)
-
-  /communaute
-  ├─ /communaute/echanges            ex lies-autrement/communaute
-  └─ /communaute/defis               nouveau
-
-  /profil
-  ├─ /profil/reglages                fusionne parametres + profil/style
-  ├─ /profil/impact                  ambassadrice (ex /mon-impact)
-  └─ /profil/impact/contrat
-
-ADMIN  /admin/* (inchangé)
+ADMIN /admin/*
 ```
 
-### Redirections à mettre en place (aucun lien cassé, aucun signet perdu)
-
-`/dashboard`→`/aujourdhui` · `/emotions`,`/checkin`→`/moi/emotions` · `/historique`,`/statistiques`,`/frise-evolution`,`/livre-reconstruction`,`/portrait-transformation`→`/moi/chemin` · `/calme`,`/urgence`,`/comprendre`,`/avancer`,`/parcours`→`/moi/apaisement` · `/coffre`→`/famille/coffre` · `/sante/*`→`/famille/:id?onglet=…` · `/lies-autrement/*`→ hub correspondant · `/ancrage/*`→ équivalent app principale · `/signes`→`/ressources/lsf` · `/budget`→`/organisation/budget` · `/mon-impact`→`/profil/impact`
+**Bilan : ~70 routes → 28.** Toutes les anciennes URL sont redirigées, aucun signet perdu.
 
 ---
 
-## 4. Écrans supprimés / fusionnés
+## 4. Wireframes
 
-**À supprimer purement**
-- Tout l'espace `/ancrage/*` (6 écrans) — doublon complet avec sa propre palette, source d'incohérence visuelle.
-- `/signes` (alias redondant).
-- `/aller-plus-loin`, `/comparaison`, `/pack-sante-familial`, `/charge-mentale` en tant que routes app — contenu marketing, à replier dans la landing.
-- `/post-flow`, `/danger` — remplacés par l'écran d'apaisement unifié.
+### Aujourd'hui — cockpit adaptatif
+```text
+┌────────────────────────────────────┐
+│ Bonjour Marie              ⚙       │
+│ Vendredi 31 juillet                │
+│                                    │
+│ ┌────────────────────────────────┐ │
+│ │ Comment tu te sens ?           │ │ 1 tap, le seul geste demandé
+│ │  ○   ○   ○   ○   ○             │ │
+│ └────────────────────────────────┘ │
+│                                    │
+│ MAINTENANT                         │
+│ 14h30  Orthophoniste · Léa         │ n'apparaît que si existe
+│ 18h00  Traitement du soir          │
+│                                    │
+│ ┌──────────────┐ ┌──────────────┐  │
+│ │ Reprendre    │ │ Respirer     │  │ 2 cartes max, choisies
+│ │ Routine soir │ │ 3 min        │  │ par le contexte
+│ └──────────────┘ └──────────────┘  │
+│                                    │
+│ Cette semaine  ▓▓▓▓▓░░  5/7 jours  │
+│                                    │
+│ « Tu n'as pas à tout tenir. »      │
+└────────────────────────────────────┘
+```
+Justification : jamais plus de 5 blocs, jamais de bloc vide. Les 15 informations possibles vivent dans un moteur de priorité qui n'en affiche que 4 ou 5 — ce qui est urgent, en retard, ou en cours. Un cockpit qui affiche tout n'est plus un cockpit.
 
-**À fusionner**
-| Avant | Après |
+### Famille — sélecteur puis fiche unique
+```text
+┌────────────────────────────────────┐        ┌────────────────────────────────────┐
+│ Ma famille                         │        │ ←  Léa, 7 ans            ⋯         │
+│                                    │        │    TSA · TDAH                      │
+│  (◍)    (◍)    (◍)    ⊕            │  →     │ Aperçu Profil Santé Docs Contacts  │
+│  Léa   Tom   Maman  Ajouter        │        │ ─────                              │
+│                                    │        │ PROCHAIN RDV   14h30 Orthophoniste │
+│ ─ Léa ──────────────────────────── │        │ TRAITEMENTS (2)                    │
+│ Prochain RDV · 2 traitements       │        │ SENSIBILITÉS  bruit, lumière       │
+│ Routine du soir en cours           │        │ CE QUI L'APAISE  eau, comptage     │
+└────────────────────────────────────┘        │ SUPPORTS (3)   routine, EDT        │
+                                              └────────────────────────────────────┘
+```
+Justification : aujourd'hui les infos d'un enfant sont éclatées sur 5 routes. Un parent pense « Léa », pas « ordonnances ». Le bandeau d'avatars rend le passage d'un enfant à l'autre instantané.
+
+### Autonomie — Studio
+```text
+┌────────────────────────────────────┐
+│ Studio                             │
+│ Pour  [ Léa ▾ ]                    │
+│                                    │
+│ ┌──────┐ ┌──────┐ ┌──────┐         │
+│ │Routine││Check-││Emploi│          │
+│ │      ││list  ││du tps│           │
+│ └──────┘ └──────┘ └──────┘         │
+│ ┌──────┐ ┌──────┐ ┌──────┐         │
+│ │Hist. ││Récom-││Cartes│           │
+│ │soc.  ││penses││visu. │           │
+│ └──────┘ └──────┘ └──────┘         │
+│ ┌────────────────────────────────┐ │
+│ │ ✦ Créer avec l'assistant       │ │ emplacement IA, prêt
+│ │   Bientôt                      │ │
+│ └────────────────────────────────┘ │
+│ MES SUPPORTS                       │
+│ Routine du matin · Léa      ⤓ 🖨   │
+└────────────────────────────────────┘
+```
+
+### Bouton + — feuille contextuelle
+```text
+┌────────────────────────────────────┐
+│ Que souhaites-tu faire ?           │
+│ ── Suggéré maintenant ──           │  soir → routine du soir en tête
+│ ○ Noter une émotion                │  contexte /famille/:id → l'enfant
+│ ○ Reprendre la routine du soir     │  est présélectionné
+│ ── Créer ──                        │
+│ ○ Rendez-vous  ○ Document          │
+│ ○ Routine      ○ Checklist         │
+│ ○ Histoire sociale ○ Récompenses   │
+└────────────────────────────────────┘
+```
+Justification : 10 actions listées à plat = une nouvelle charge cognitive. Deux suggestions contextuelles en tête, le reste replié.
+
+---
+
+## 5. Parcours utilisateur idéal
+
+- **Jour 1 (90 s)** — prénom → premier enfant (prénom, âge, diagnostic optionnel) → « qu'est-ce qui pèse le plus ? » → Aujourd'hui déjà pré-rempli avec 2 actions utiles. Pas de tour guidé.
+- **Jour type (30 s)** — ouvre, tape une humeur, voit ses 2 échéances, referme.
+- **Crise (3 s)** — Apaisement accessible depuis le + sur tous les écrans.
+- **Dimanche (5 min)** — prépare la semaine : un support imprimé au Studio.
+- **Semaine 4** — « Ta transformation en 3 lignes » → `/moi/chemin`.
+
+---
+
+## 6. Système visuel
+
+Fond ivoire chaud, encre adoucie, sauge en accent unique. Une teinte par espace, appliquée à l'icône et aux états actifs seulement. Cartes rayon 20px, bordure 1px, ombre quasi nulle. Serif pour les titres d'espace, sans-serif ailleurs, 3 tailles. Icônes Lucide trait 1.75, zéro emoji en navigation. Transitions fondu + 8px, 350ms, `prefers-reduced-motion` respecté. Tous les hubs passent par `HubShell` — c'est ce qui garantit l'uniformité dans le temps.
+
+---
+
+## 7. Ce que l'architecture accueille sans refonte
+
+| Évolution | Point d'entrée déjà prévu |
 |---|---|
-| emotions + emotion/:x + checkin | `/moi/emotions` (une page, historique inline) |
-| calme + urgence + comprendre + avancer + parcours + danger | `/moi/apaisement` |
-| frise + livre + portrait + statistiques + historique | `/moi/chemin` (4 vues, un sélecteur) |
-| famille + sante/profils-familiaux + carnet + documents + ordonnances + fiche-medicale | `/famille/:id` (fiche à onglets) |
-| organisation + sante/rendez-vous + sante/medicaments | `/organisation/calendrier` + `/organisation/rappels` |
-| sante/ressources + lies-autrement/ressources | `/ressources/annuaire` + `/ressources/neuroatypie` |
-| parametres + profil + profil/style | `/profil` |
-
-**Bilan : ~70 routes → ~34 routes**, dont 5 hubs.
+| IA | carte Studio + assistant journal, sans nouvelle route |
+| Professionnels | rôle `professional` + onglet Partage sur `/famille/:id` |
+| Second parent | foyer partagé, la fiche enfant est déjà l'unité de partage |
+| Suivi scolaire (PPS, GEVA-Sco) | onglet supplémentaire sur la fiche enfant |
+| Nouveaux modules | entrée dans `/plus`, jamais dans la barre |
 
 ---
 
-## 5. Wireframes
+## 8. Mise en œuvre (technique)
 
-### Aujourd'hui — l'écran qui donne envie de revenir
-```text
-┌──────────────────────────────────────┐
-│  Bonjour Marie                   ⚙   │  ← salutation selon l'heure
-│  Jeudi 30 juillet                    │
-│                                      │
-│  ┌────────────────────────────────┐  │
-│  │  Comment tu te sens ?          │  │  ← carte respirante, 1 tap
-│  │   😌   🙂   😐   😞   😩       │  │     Le seul geste demandé.
-│  └────────────────────────────────┘  │
-│                                      │
-│  À VENIR AUJOURD'HUI                 │
-│  ● 14h30  Orthophoniste — Léa       │
-│  ● 18h00  Médicament du soir        │
-│                                      │
-│  ┌──────────┐  ┌──────────┐         │
-│  │ Routine  │  │ Journal  │         │  ← 2 raccourcis appris
-│  │ du soir  │  │ 3 j. 🔥  │         │     du comportement réel
-│  └──────────┘  └──────────┘         │
-│                                      │
-│  « Tu n'as pas à tout tenir. »       │  ← respiration éditoriale
-│                                      │
-├──────────────────────────────────────┤
-│ 🏠   ❤️    ⊕    👨‍👩‍👧   ⋯          │
-└──────────────────────────────────────┘
-```
-Règle : maximum 5 blocs, jamais de scroll infini. Si rien n'est prévu, l'écran le dit avec douceur (« Rien de prévu aujourd'hui. Profite. ») plutôt que d'afficher des cases vides.
+1. **Fondations** — moteur de priorité `useTodayFeed`, `+` contextuel, tokens par espace.
+2. **Aujourd'hui** — cockpit adaptatif à la place du dashboard-annuaire.
+3. **Famille** — table `child_profiles` enrichie (préférences, sensibilités, apaisants, intérêts) + `child_contacts` ; fiche à onglets ; sélecteur d'avatars.
+4. **Moi** — fusion emotions/checkin/historique/comprendre/avancer ; `/moi/objectifs`.
+5. **Autonomie** — tables `supports`, `support_items`, `reward_boards` ; 6 créateurs + aperçu imprimable + bibliothèque de modèles.
+6. **Plus** — regroupement organisation/budget/courses/santé/ressources/communauté/profil.
+7. **Nettoyage** — 28 routes, redirections exhaustives, suppression de `/lies-autrement/*` et des pages commerciales internes.
 
-### Hub type (Moi / Famille / Autonomie)
-```text
-┌──────────────────────────────────────┐
-│  Moi                                 │  ← titre large, serif
-│  Ton espace, à ton rythme.           │
-│                                      │
-│  ┌────────────────────────────────┐  │
-│  │ ❤️  Mes émotions               │  │
-│  │    Dernière note : hier         │ →│
-│  └────────────────────────────────┘  │
-│  ┌────────────────────────────────┐  │
-│  │ ✍️  Mon journal                │  │
-│  │    12 entrées                   │ →│
-│  └────────────────────────────────┘  │
-│  ┌────────────────────────────────┐  │
-│  │ 🌙  M'apaiser maintenant       │  │
-│  └────────────────────────────────┘  │
-│  ┌────────────────────────────────┐  │
-│  │ 🕰️  Mon chemin                 │  │
-│  └────────────────────────────────┘  │
-└──────────────────────────────────────┘
-```
-Chaque carte affiche **une donnée vivante** (dernière activité, compteur) — c'est ce qui distingue un hub premium d'un menu.
-
-### Fiche membre — `/famille/:id`
-```text
-┌──────────────────────────────────────┐
-│  ←   Léa, 7 ans                  ⋯   │
-│      TSA · TDAH                      │
-│  ┌────┬──────┬───────────┬────────┐  │
-│  │Infos│Santé│ Documents │Urgence│  │  ← onglets, pas de re-navigation
-│  └────┴──────┴───────────┴────────┘  │
-│                                      │
-│  PROCHAIN RENDEZ-VOUS                │
-│  14h30 · Orthophoniste               │
-│                                      │
-│  TRAITEMENTS EN COURS            (2) │
-│  ...                                 │
-│  ORDONNANCES                     (5) │
-│  ...                                 │
-└──────────────────────────────────────┘
-```
-Tout ce qui concerne une personne est **à un seul endroit**. Aujourd'hui c'est éclaté sur 5 routes.
-
-### Studio d'autonomie
-```text
-┌──────────────────────────────────────┐
-│  Créer un support                    │
-│  Pour : [ Léa ▾ ]                    │
-│                                      │
-│  ┌────────┐ ┌────────┐ ┌────────┐   │
-│  │Routine │ │Emploi  │ │Histoire│   │
-│  │        │ │du temps│ │sociale │   │
-│  └────────┘ └────────┘ └────────┘   │
-│  ┌────────┐ ┌────────┐ ┌────────┐   │
-│  │Récomp. │ │Check-  │ │  ✨    │   │
-│  │        │ │list    │ │ Aide IA│   │  ← emplacement réservé
-│  └────────┘ └────────┘ └────────┘   │
-│                                      │
-│  MES SUPPORTS                        │
-│  📄 Routine du matin — Léa      ⤓   │
-└──────────────────────────────────────┘
-```
-Emplacement IA prévu dès maintenant (carte désactivée « Bientôt »), sans dépendance technique.
+Chaque étape est livrable seule et laisse l'app fonctionnelle.
 
 ---
 
-## 6. Parcours utilisateur idéal
+## Décision à prendre
 
-**Jour 1 (onboarding, 90 secondes)** — Prénom → « Qui est concerné ? » (création du 1er profil enfant + trouble) → « Qu'est-ce qui te pèse le plus en ce moment ? » (3 choix) → l'app pré-remplit Aujourd'hui avec 2 actions pertinentes. Aucun tour guidé de 12 étapes.
+Les étapes 1, 2, 4, 6, 7 réorganisent l'existant sans nouvelle base de données — visible immédiatement.
+Les étapes 3 (fiche enfant enrichie) et 5 (Studio d'Autonomie) créent de nouvelles tables et de vrais nouveaux écrans : c'est le plus gros du travail, et c'est aussi ce qui différenciera Eclosia.
 
-**Jour type (30 secondes)** — Ouvre → tape une humeur → voit ses 2 rendez-vous → referme. C'est tout, et c'est suffisant pour créer l'habitude.
-
-**Moment de crise (3 secondes)** — Un accès permanent à « M'apaiser » depuis le bouton +, disponible sur tous les écrans. Aucune recherche.
-
-**Semaine 2** — Une notification douce hebdomadaire : « Ta semaine en 3 lignes » → renvoie vers `/moi/chemin`.
-
----
-
-## 7. Système visuel unifié
-
-- **Palette** : fond ivoire chaud, sauge comme couleur d'accent unique, encre sombre adoucie. Une seule teinte d'accent par hub (Moi = blush, Famille = sauge, Autonomie = sable, Organisation = ciel, Ressources = neutre) — appliquée uniquement à l'icône et aux états actifs, jamais aux fonds pleins.
-- **Espace** : padding de section 24px minimum, respiration verticale 32px entre blocs. Aucun écran dense.
-- **Cartes** : rayon 20px, bordure 1px très claire, ombre quasi nulle, élévation au tap uniquement.
-- **Typographie** : serif pour les titres de hub (voix humaine), sans-serif pour tout le reste. 3 tailles seulement.
-- **Icônes** : Lucide, trait 1.75, une seule famille — suppression des emojis en navigation (ils cassent la cohérence premium), conservés seulement dans les contenus destinés aux enfants.
-- **Animations** : fondu + translation 8px, 350ms, courbe douce. Jamais de rebond. Respect de `prefers-reduced-motion`.
-- **Tous les hubs partagent un composant `HubShell` unique** — c'est ce qui garantit l'uniformité des écrans sur la durée.
-
----
-
-## 8. Améliorations UX supplémentaires
-
-1. **États vides rédigés** : chaque écran vide dit quoi faire en une phrase chaleureuse.
-2. **Reprise contextuelle** : l'app se souvient du dernier écran et le propose dans Aujourd'hui.
-3. **Recherche unique** (Plus → 🔍) : cherche dans documents, profils, journal, ressources. Un seul champ pour tout.
-4. **Aucun paywall dans l'app** : l'accès étant à vie, les cadenas actuels dans `/sante` disparaissent une fois payant.
-5. **Mode hors-ligne** pour la fiche d'urgence et les routines (déjà un service worker en place).
-6. **Notifications** : maximum 1 par jour, jamais culpabilisantes.
-
----
-
-## 9. Évolutions futures que l'architecture accueille sans refonte
-
-- Assistant IA : s'insère comme 6e carte du Studio + bouton dans le journal.
-- Partage co-parent / AESH : onglet supplémentaire sur la fiche membre.
-- Suivi scolaire (PPS, GEVA-Sco) : sous-section de Famille.
-- Défis communautaires : déjà prévu dans `/communaute/defis`.
-- Version enfant (tablette) : `/autonomie` en plein écran, sans nav parent.
-
----
-
-## 10. Plan de mise en œuvre (technique)
-
-**Étape 1 — Fondations** : créer `HubShell`, `HubCard`, `AppShell` (nav 5 onglets + bouton +) ; ajouter les tokens de couleur par hub dans `index.css`.
-
-**Étape 2 — Nouvelle nav & Aujourd'hui** : remplacer `BottomNav`, créer `/aujourdhui` à partir du contenu de `Dashboard.tsx`.
-
-**Étape 3 — Hubs** : créer les 6 pages hub, qui pointent d'abord vers les pages existantes (aucune régression fonctionnelle).
-
-**Étape 4 — Fusions** : `/moi/chemin` à onglets, `/famille/:id` à onglets, `/moi/apaisement`, `/moi/emotions`.
-
-**Étape 5 — Nettoyage** : redirections dans `App.tsx`, suppression d'`/ancrage/*` et des alias, mise à jour du sitemap.
-
-**Étape 6 — Autonomie** : Studio + routines + emplois du temps + récompenses (le seul vrai nouveau développement).
-
-Chaque étape est livrable indépendamment et laisse l'app fonctionnelle.
-
----
-
-## Question avant de démarrer
-
-L'étape 6 (Studio d'autonomie, routines, emplois du temps visuels, histoires sociales, récompenses, check-lists) représente un module entièrement nouveau avec sa propre base de données. Le reste (étapes 1 à 5) est une réorganisation de l'existant.
-
-Dis-moi si je commence par les étapes 1 à 5 (refonte de l'expérience sur l'existant, résultat visible immédiatement) ou si tu veux que le Studio d'autonomie soit inclus dans la même livraison.
+Dis-moi si je livre d'abord la réorganisation (1-2-4-6-7) ou si j'attaque directement Famille + Studio.
