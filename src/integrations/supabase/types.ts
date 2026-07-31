@@ -272,6 +272,50 @@ export type Database = {
         }
         Relationships: []
       }
+      autonomy_supports: {
+        Row: {
+          content: Json
+          created_at: string
+          description: string | null
+          id: string
+          profile_id: string | null
+          support_type: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content?: Json
+          created_at?: string
+          description?: string | null
+          id?: string
+          profile_id?: string | null
+          support_type: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: Json
+          created_at?: string
+          description?: string | null
+          id?: string
+          profile_id?: string | null
+          support_type?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "autonomy_supports_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "family_medical_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bills: {
         Row: {
           amount_cents: number
@@ -352,6 +396,53 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      child_contacts: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          name: string
+          notes: string | null
+          phone: string | null
+          profile_id: string
+          role: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          phone?: string | null
+          profile_id: string
+          role?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          profile_id?: string
+          role?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "child_contacts_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "family_medical_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       child_emotion_entries: {
         Row: {
@@ -806,58 +897,76 @@ export type Database = {
       family_medical_profiles: {
         Row: {
           allergies: string
+          avatar_url: string | null
           birth_date: string | null
           blood_type: string
           created_at: string
           current_treatments: string
           diagnoses: string
+          diagnosis_tags: string[]
           doctor_name: string
           doctor_phone: string
           emergency_contact_name: string
           emergency_contact_phone: string
           first_name: string
           id: string
+          interests: string[]
           medical_history: string
           notes: string
+          preferences: string
           relation: string
+          sensitivities: string[]
+          soothers: string[]
           updated_at: string
           user_id: string
         }
         Insert: {
           allergies?: string
+          avatar_url?: string | null
           birth_date?: string | null
           blood_type?: string
           created_at?: string
           current_treatments?: string
           diagnoses?: string
+          diagnosis_tags?: string[]
           doctor_name?: string
           doctor_phone?: string
           emergency_contact_name?: string
           emergency_contact_phone?: string
           first_name?: string
           id?: string
+          interests?: string[]
           medical_history?: string
           notes?: string
+          preferences?: string
           relation?: string
+          sensitivities?: string[]
+          soothers?: string[]
           updated_at?: string
           user_id: string
         }
         Update: {
           allergies?: string
+          avatar_url?: string | null
           birth_date?: string | null
           blood_type?: string
           created_at?: string
           current_treatments?: string
           diagnoses?: string
+          diagnosis_tags?: string[]
           doctor_name?: string
           doctor_phone?: string
           emergency_contact_name?: string
           emergency_contact_phone?: string
           first_name?: string
           id?: string
+          interests?: string[]
           medical_history?: string
           notes?: string
+          preferences?: string
           relation?: string
+          sensitivities?: string[]
+          soothers?: string[]
           updated_at?: string
           user_id?: string
         }
@@ -1177,6 +1286,39 @@ export type Database = {
           template_name?: string
           updated_at?: string
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      personal_goals: {
+        Row: {
+          achieved_at: string | null
+          created_at: string
+          done: boolean
+          id: string
+          kind: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          achieved_at?: string | null
+          created_at?: string
+          done?: boolean
+          id?: string
+          kind?: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          achieved_at?: string | null
+          created_at?: string
+          done?: boolean
+          id?: string
+          kind?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
