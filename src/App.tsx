@@ -105,6 +105,13 @@ import Coffre from "./pages/Coffre";
 import Organisation from "./pages/Organisation";
 import Statistiques from "./pages/Statistiques";
 import Famille from "./pages/Famille";
+import Aujourdhui from "./pages/Aujourdhui";
+import MoiEmotions from "./pages/moi/MoiEmotions";
+import MoiObjectifs from "./pages/moi/MoiObjectifs";
+import FicheMembre from "./pages/famille/FicheMembre";
+import StudioHome from "./pages/autonomie/StudioHome";
+import SupportEditor from "./pages/autonomie/SupportEditor";
+import Bibliotheque from "./pages/autonomie/Bibliotheque";
 
 const queryClient = new QueryClient();
 
@@ -153,12 +160,12 @@ const AnimatedRoutes = () => {
         <Route path="/calme" element={<PaidRoute><PageTransition><CalmeEnClair /></PageTransition></PaidRoute>} />
         <Route path="/emotions" element={<PaidRoute><PageTransition><Emotions /></PageTransition></PaidRoute>} />
         <Route path="/emotion/:emotion" element={<PaidRoute><PageTransition><EmotionDetail /></PageTransition></PaidRoute>} />
-        <Route path="/checkin" element={<PageTransition><Checkin /></PageTransition>} />
-        <Route path="/historique" element={<PaidRoute><PageTransition><Historique /></PageTransition></PaidRoute>} />
+        
+        
         <Route path="/comprendre" element={<PaidRoute><PageTransition><Comprendre /></PageTransition></PaidRoute>} />
         <Route path="/avancer" element={<PaidRoute><PageTransition><Avancer /></PageTransition></PaidRoute>} />
         <Route path="/aller-plus-loin" element={<PageTransition><AllerPlusLoin /></PageTransition>} />
-        <Route path="/parcours" element={<PaidRoute><PageTransition><Parcours /></PageTransition></PaidRoute>} />
+        
         
         <Route path="/post-flow" element={<ProtectedRoute><PageTransition><PostFlow /></PageTransition></ProtectedRoute>} />
         <Route path="/paywall" element={<PageTransition><Paywall /></PageTransition>} />
@@ -179,7 +186,7 @@ const AnimatedRoutes = () => {
         <Route path="/confidentialite" element={<PageTransition><Confidentialite /></PageTransition>} />
         <Route path="/mentions-legales" element={<PageTransition><MentionsLegales /></PageTransition>} />
         <Route path="/urgence" element={<PaidRoute><PageTransition><Emergency /></PageTransition></PaidRoute>} />
-        <Route path="/danger" element={<PageTransition><Danger /></PageTransition>} />
+        
         <Route path="/sante" element={<PaidRoute><PageTransition><Sante /></PageTransition></PaidRoute>} />
         <Route path="/sante/rendez-vous" element={<PaidRoute><PageTransition><SanteRendezVous /></PageTransition></PaidRoute>} />
         <Route path="/sante/medicaments" element={<PaidRoute><PageTransition><SanteMedicaments /></PageTransition></PaidRoute>} />
@@ -214,28 +221,47 @@ const AnimatedRoutes = () => {
         <Route path="/ancrage/profil" element={<Navigate to="/profil" replace />} />
 
         {/* Hubs — needs-based architecture */}
-        <Route path="/aujourdhui" element={<PaidRoute><PageTransition><Dashboard /></PageTransition></PaidRoute>} />
+        <Route path="/aujourdhui" element={<PaidRoute><PageTransition><Aujourdhui /></PageTransition></PaidRoute>} />
         <Route path="/moi" element={<PaidRoute><PageTransition><Moi /></PageTransition></PaidRoute>} />
         <Route path="/moi/apaisement" element={<PaidRoute><PageTransition><MoiApaisement /></PageTransition></PaidRoute>} />
         <Route path="/moi/chemin" element={<PaidRoute><PageTransition><MoiChemin /></PageTransition></PaidRoute>} />
-        <Route path="/moi/emotions" element={<Navigate to="/emotions" replace />} />
+        <Route path="/moi/emotions" element={<PaidRoute><PageTransition><MoiEmotions /></PageTransition></PaidRoute>} />
+        <Route path="/moi/objectifs" element={<PaidRoute><PageTransition><MoiObjectifs /></PageTransition></PaidRoute>} />
         <Route path="/moi/journal" element={<Navigate to="/lies-autrement/journal" replace />} />
+        <Route path="/parcours" element={<Navigate to="/moi/apaisement" replace />} />
+        <Route path="/danger" element={<Navigate to="/moi/apaisement" replace />} />
         <Route path="/autonomie" element={<PaidRoute><PageTransition><Autonomie /></PageTransition></PaidRoute>} />
-        <Route path="/autonomie/studio" element={<PaidRoute><PageTransition><AutonomieStudio /></PageTransition></PaidRoute>} />
+        <Route path="/autonomie/studio" element={<PaidRoute><PageTransition><StudioHome /></PageTransition></PaidRoute>} />
+        <Route path="/autonomie/bibliotheque" element={<PaidRoute><PageTransition><Bibliotheque /></PageTransition></PaidRoute>} />
+        <Route path="/autonomie/support/:supportId" element={<PaidRoute><PageTransition><SupportEditor /></PageTransition></PaidRoute>} />
+        <Route path="/autonomie/crise" element={<Navigate to="/lies-autrement/crise" replace />} />
         <Route path="/ressources" element={<PaidRoute><PageTransition><Ressources /></PageTransition></PaidRoute>} />
         <Route path="/plus" element={<PaidRoute><PageTransition><PlusHub /></PageTransition></PaidRoute>} />
+        <Route path="/plus/organisation" element={<Navigate to="/organisation" replace />} />
+        <Route path="/plus/budget" element={<Navigate to="/budget" replace />} />
+        <Route path="/plus/courses" element={<Navigate to="/organisation" replace />} />
+        <Route path="/plus/sante" element={<Navigate to="/sante" replace />} />
+        <Route path="/plus/ressources" element={<Navigate to="/ressources" replace />} />
+        <Route path="/plus/communaute" element={<Navigate to="/lies-autrement/communaute" replace />} />
+        <Route path="/plus/profil" element={<Navigate to="/profil" replace />} />
+        <Route path="/plus/impact" element={<Navigate to="/mon-impact" replace />} />
+        <Route path="/checkin" element={<Navigate to="/moi/emotions" replace />} />
+        <Route path="/historique" element={<PaidRoute><PageTransition><Historique /></PageTransition></PaidRoute>} />
+        <Route path="/statistiques" element={<PaidRoute><PageTransition><Statistiques /></PageTransition></PaidRoute>} />
+        <Route path="/frise-evolution" element={<PaidRoute><PageTransition><FriseEvolution /></PageTransition></PaidRoute>} />
 
         <Route path="/portrait-transformation" element={<PaidRoute><PageTransition><PortraitTransformation /></PageTransition></PaidRoute>} />
         <Route path="/livre-reconstruction" element={<PaidRoute><PageTransition><LivreReconstruction /></PageTransition></PaidRoute>} />
-        <Route path="/frise-evolution" element={<PaidRoute><PageTransition><FriseEvolution /></PageTransition></PaidRoute>} />
+        
         <Route path="/mon-impact" element={<PaidRoute><PageTransition><MonImpact /></PageTransition></PaidRoute>} />
         <Route path="/ambassadrice/contrat" element={<PaidRoute><PageTransition><AmbassadriceContrat /></PageTransition></PaidRoute>} />
         <Route path="/budget" element={<PaidRoute><PageTransition><Budget /></PageTransition></PaidRoute>} />
         <Route path="/coffre" element={<Navigate to="/famille/coffre" replace />} />
         <Route path="/organisation" element={<PaidRoute><PageTransition><Organisation /></PageTransition></PaidRoute>} />
-        <Route path="/statistiques" element={<PaidRoute><PageTransition><Statistiques /></PageTransition></PaidRoute>} />
+        
         <Route path="/famille" element={<PaidRoute><PageTransition><Famille /></PageTransition></PaidRoute>} />
         <Route path="/famille/coffre" element={<PaidRoute><PageTransition><Coffre /></PageTransition></PaidRoute>} />
+        <Route path="/famille/:profileId" element={<PaidRoute><PageTransition><FicheMembre /></PageTransition></PaidRoute>} />
 
         <Route path="/famille/:profileId/carnet" element={<PaidRoute><PageTransition><CarnetMedical /></PageTransition></PaidRoute>} />
         <Route path="/famille/:profileId/documents" element={<PaidRoute><PageTransition><DocumentsProfil /></PageTransition></PaidRoute>} />

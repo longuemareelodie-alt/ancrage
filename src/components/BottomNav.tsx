@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { NavLink, useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   Home,
   Heart,
@@ -10,13 +10,22 @@ import {
   CalendarPlus,
   FileUp,
   PenLine,
+  Repeat,
+  ListChecks,
+  BookHeart,
+  Star,
+  Moon,
+  LucideIcon,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 
+type Action = { to: string; label: string; icon: LucideIcon };
+
 /**
- * Primary navigation: 5 needs-based hubs + one central quick-action button.
- * Designed for minimal cognitive load — never more than five destinations.
+ * Navigation principale : 5 espaces + un bouton central de création.
+ * Le « + » porte toute la création de l'app — c'est pour cela qu'aucun hub
+ * n'a besoin de son propre bouton « ajouter ».
  */
 const BottomNav = () => {
   const { user, loading, isPaid } = useAuth();
@@ -45,21 +54,45 @@ const BottomNav = () => {
     { to: "/plus", label: "Plus", icon: MoreHorizontal },
   ];
 
-  const quickActions = [
-    { to: "/emotions", label: "Noter une émotion", icon: Heart },
-    { to: "/organisation", label: "Ajouter un rendez-vous", icon: CalendarPlus },
+  // Le menu de création est contextuel : deux suggestions en tête selon
+  // l'heure et l'écran courant, le reste replié dessous.
+  const hour = new Date().getHours();
+  const path = location.pathname;
+
+  const suggested: Action[] = [];
+  if (path.startsWith("/famille")) {
+    suggested.push({ to: "/famille", label: "Ajouter une information enfant", icon: Users });
+    suggested.push({ to: "/autonomie/studio", label: "Créer un support pour lui", icon: Repeat });
+  } else if (path.startsWith("/autonomie")) {
+    suggested.push({ to: "/autonomie/studio", label: "Créer un support", icon: Repeat });
+    suggested.push({ to: "/autonomie/bibliotheque", label: "Partir d'un modèle", icon: ListChecks });
+  } else if (hour >= 20 || hour < 7) {
+    suggested.push({ to: "/moi/apaisement", label: "M'apaiser maintenant", icon: Moon });
+    suggested.push({ to: "/moi/journal", label: "Écrire dans mon journal", icon: PenLine });
+  } else {
+    suggested.push({ to: "/moi/emotions", label: "Noter une émotion", icon: Heart });
+    suggested.push({ to: "/plus/organisation", label: "Ajouter un rendez-vous", icon: CalendarPlus });
+  }
+
+  const creations: Action[] = [
+    { to: "/moi/emotions", label: "Noter une émotion", icon: Heart },
+    { to: "/moi/journal", label: "Écrire dans mon journal", icon: PenLine },
+    { to: "/plus/organisation", label: "Ajouter un rendez-vous", icon: CalendarPlus },
     { to: "/famille/coffre", label: "Déposer un document", icon: FileUp },
-    { to: "/lies-autrement/journal", label: "Écrire au journal", icon: PenLine },
-  ];
+    { to: "/autonomie/studio", label: "Créer une routine", icon: Repeat },
+    { to: "/autonomie/studio", label: "Créer une check-list", icon: ListChecks },
+    { to: "/autonomie/bibliotheque", label: "Créer une histoire sociale", icon: BookHeart },
+    { to: "/autonomie/studio", label: "Créer un tableau de récompenses", icon: Star },
+  ].filter((a) => !suggested.some((s) => s.label === a.label));
 
   const tabClass = ({ isActive }: { isActive: boolean }) =>
     `flex flex-col items-center justify-center gap-1 rounded-xl py-1.5 text-[10px] font-medium transition-colors ${
       isActive ? "text-primary-dark" : "text-muted-foreground hover:text-foreground"
     }`;
 
-  const renderTab = (item: { to: string; label: string; icon: typeof Home }) => (
+  const renderTab = (item: { to: string; label: string; icon: LucideIcon }) => (
     <li key={item.to} className="flex-1">
-      <NavLink to={item.to} end className={tabClass}>
+      <NavLink to={item.to} className={tabClass}>
         {({ isActive }) => (
           <>
             <item.icon
@@ -71,6 +104,22 @@ const BottomNav = () => {
         )}
       </NavLink>
     </li>
+  );
+
+  const renderAction = (a: Action, key: string) => (
+    <button
+      key={key}
+      onClick={() => {
+        setOpen(false);
+        navigate(a.to);
+      }}
+      className="flex w-full items-center gap-4 rounded-[20px] border border-border/70 bg-card px-5 py-3.5 text-left transition-all active:scale-[0.99]"
+    >
+      <span className="flex h-9 w-9 items-center justify-center rounded-2xl bg-secondary/60">
+        <a.icon className="h-[17px] w-[17px]" strokeWidth={1.75} />
+      </span>
+      <span className="text-sm font-medium text-foreground">{a.label}</span>
+    </button>
   );
 
   return (
@@ -87,7 +136,7 @@ const BottomNav = () => {
             <button
               type="button"
               onClick={() => setOpen(true)}
-              aria-label="Actions rapides"
+              aria-label="Créer"
               className="-mt-7 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-[0_12px_28px_-12px_hsl(var(--foreground)/0.45)] transition-transform active:scale-95"
             >
               <Plus className="h-6 w-6" strokeWidth={2} />
@@ -99,29 +148,22 @@ const BottomNav = () => {
       </nav>
 
       <Sheet open={open} onOpenChange={setOpen}>
-        <SheetContent side="bottom" className="rounded-t-3xl">
+        <SheetContent side="bottom" className="max-h-[85vh] overflow-y-auto rounded-t-3xl">
           <SheetHeader className="mb-4">
             <SheetTitle className="text-left font-serif text-2xl">
-              Que veux-tu faire ?
+              Que souhaites-tu faire ?
             </SheetTitle>
           </SheetHeader>
-          <div className="space-y-2 pb-8">
-            {quickActions.map((a) => (
-              <button
-                key={a.to}
-                onClick={() => {
-                  setOpen(false);
-                  navigate(a.to);
-                }}
-                className="flex w-full items-center gap-4 rounded-[20px] border border-border/70 bg-card px-5 py-4 text-left transition-all active:scale-[0.99]"
-              >
-                <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-secondary/60">
-                  <a.icon className="h-[18px] w-[18px]" strokeWidth={1.75} />
-                </span>
-                <span className="text-sm font-medium text-foreground">{a.label}</span>
-              </button>
-            ))}
-          </div>
+
+          <p className="pb-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+            Suggéré maintenant
+          </p>
+          <div className="space-y-2">{suggested.map((a, i) => renderAction(a, "s" + i))}</div>
+
+          <p className="pb-2 pt-6 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+            Créer
+          </p>
+          <div className="space-y-2 pb-8">{creations.map((a, i) => renderAction(a, "c" + i))}</div>
         </SheetContent>
       </Sheet>
     </>

@@ -10,11 +10,11 @@ const Autonomie = () => (
     <HubCard
       to="/autonomie/studio"
       icon={Wand2}
-      title="Studio d'autonomie"
+      title="Studio"
       desc="Créer routines, emplois du temps visuels, récompenses, check-lists."
     />
     <HubCard
-      to="/lies-autrement/crise"
+      to="/autonomie/crise"
       icon={ShieldAlert}
       title="Gérer une crise"
       desc="Étapes claires, à la maison ou dehors."

@@ -1,11 +1,11 @@
-import { Heart, PenLine, Moon, Clock } from "lucide-react";
+import { Heart, PenLine, Moon, Clock, Target } from "lucide-react";
 import HubShell from "@/components/hub/HubShell";
 import HubCard from "@/components/hub/HubCard";
 
 const Moi = () => (
   <HubShell title="Moi" subtitle="Ton espace, à ton rythme. Rien à rattraper ici.">
     <HubCard
-      to="/emotions"
+      to="/moi/emotions"
       icon={Heart}
       title="Mes émotions"
       desc="Noter comment tu vas, en un geste."
@@ -27,6 +27,12 @@ const Moi = () => (
       icon={Clock}
       title="Mon chemin"
       desc="Frise, livre de reconstruction, portraits, repères."
+    />
+    <HubCard
+      to="/moi/objectifs"
+      icon={Target}
+      title="Objectifs & réussites"
+      desc="Ce que tu veux, ce que tu as déjà réussi."
     />
   </HubShell>
 );
