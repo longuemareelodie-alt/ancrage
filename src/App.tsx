@@ -228,6 +228,8 @@ const AnimatedRoutes = () => {
         <Route path="/moi/emotions" element={<PaidRoute><PageTransition><MoiEmotions /></PageTransition></PaidRoute>} />
         <Route path="/moi/objectifs" element={<PaidRoute><PageTransition><MoiObjectifs /></PageTransition></PaidRoute>} />
         <Route path="/moi/journal" element={<Navigate to="/lies-autrement/journal" replace />} />
+        <Route path="/parcours" element={<Navigate to="/moi/apaisement" replace />} />
+        <Route path="/danger" element={<Navigate to="/moi/apaisement" replace />} />
         <Route path="/autonomie" element={<PaidRoute><PageTransition><Autonomie /></PageTransition></PaidRoute>} />
         <Route path="/autonomie/studio" element={<PaidRoute><PageTransition><StudioHome /></PageTransition></PaidRoute>} />
         <Route path="/autonomie/bibliotheque" element={<PaidRoute><PageTransition><Bibliotheque /></PageTransition></PaidRoute>} />
@@ -244,11 +246,9 @@ const AnimatedRoutes = () => {
         <Route path="/plus/profil" element={<Navigate to="/profil" replace />} />
         <Route path="/plus/impact" element={<Navigate to="/mon-impact" replace />} />
         <Route path="/checkin" element={<Navigate to="/moi/emotions" replace />} />
-        <Route path="/historique" element={<Navigate to="/moi/chemin" replace />} />
-        <Route path="/statistiques" element={<Navigate to="/moi/chemin?vue=chiffres" replace />} />
-        <Route path="/frise-evolution" element={<Navigate to="/moi/chemin?vue=frise" replace />} />
-        <Route path="/parcours" element={<Navigate to="/moi/apaisement" replace />} />
-        <Route path="/danger" element={<Navigate to="/moi/apaisement" replace />} />
+        <Route path="/historique" element={<PaidRoute><PageTransition><Historique /></PageTransition></PaidRoute>} />
+        <Route path="/statistiques" element={<PaidRoute><PageTransition><Statistiques /></PageTransition></PaidRoute>} />
+        <Route path="/frise-evolution" element={<PaidRoute><PageTransition><FriseEvolution /></PageTransition></PaidRoute>} />
 
         <Route path="/portrait-transformation" element={<PaidRoute><PageTransition><PortraitTransformation /></PageTransition></PaidRoute>} />
         <Route path="/livre-reconstruction" element={<PaidRoute><PageTransition><LivreReconstruction /></PageTransition></PaidRoute>} />
