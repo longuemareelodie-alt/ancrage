@@ -15,7 +15,14 @@ import {
   BookHeart,
   Star,
   Moon,
+  Target,
+  Syringe,
+  Pill,
+  Grid3x3,
+  Sparkles,
+  Wallet,
   LucideIcon,
+
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
