@@ -112,6 +112,8 @@ import FicheMembre from "./pages/famille/FicheMembre";
 import StudioHome from "./pages/autonomie/StudioHome";
 import SupportEditor from "./pages/autonomie/SupportEditor";
 import Bibliotheque from "./pages/autonomie/Bibliotheque";
+import Assistant from "./pages/autonomie/Assistant";
+
 
 const queryClient = new QueryClient();
 
