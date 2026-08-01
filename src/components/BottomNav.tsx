@@ -15,7 +15,14 @@ import {
   BookHeart,
   Star,
   Moon,
+  Target,
+  Syringe,
+  Pill,
+  Grid3x3,
+  Sparkles,
+  Wallet,
   LucideIcon,
+
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -54,36 +61,69 @@ const BottomNav = () => {
     { to: "/plus", label: "Plus", icon: MoreHorizontal },
   ];
 
-  // Le menu de création est contextuel : deux suggestions en tête selon
-  // l'heure et l'écran courant, le reste replié dessous.
-  const hour = new Date().getHours();
+  // Le menu de création est contextuel : il propose exactement ce que l'on
+  // vient faire depuis l'onglet où l'on se trouve.
   const path = location.pathname;
 
-  const suggested: Action[] = [];
-  if (path.startsWith("/famille")) {
-    suggested.push({ to: "/famille", label: "Ajouter une information enfant", icon: Users });
-    suggested.push({ to: "/autonomie/studio", label: "Créer un support pour lui", icon: Repeat });
-  } else if (path.startsWith("/autonomie")) {
-    suggested.push({ to: "/autonomie/studio", label: "Créer un support", icon: Repeat });
-    suggested.push({ to: "/autonomie/bibliotheque", label: "Partir d'un modèle", icon: ListChecks });
-  } else if (hour >= 20 || hour < 7) {
-    suggested.push({ to: "/moi/apaisement", label: "M'apaiser maintenant", icon: Moon });
-    suggested.push({ to: "/moi/journal", label: "Écrire dans mon journal", icon: PenLine });
-  } else {
-    suggested.push({ to: "/moi/emotions", label: "Noter une émotion", icon: Heart });
-    suggested.push({ to: "/plus/organisation", label: "Ajouter un rendez-vous", icon: CalendarPlus });
-  }
+  const MENUS: { match: string; title: string; actions: Action[] }[] = [
+    {
+      match: "/moi",
+      title: "Pour toi",
+      actions: [
+        { to: "/moi/emotions", label: "Noter une émotion", icon: Heart },
+        { to: "/moi/journal", label: "Écrire dans mon journal", icon: PenLine },
+        { to: "/moi/objectifs", label: "Ajouter un objectif", icon: Target },
+        { to: "/moi/apaisement", label: "Exercice d'apaisement", icon: Moon },
+      ],
+    },
+    {
+      match: "/famille",
+      title: "Pour ta famille",
+      actions: [
+        { to: "/famille", label: "Ajouter une information enfant", icon: Users },
+        { to: "/famille/coffre", label: "Scanner un document", icon: FileUp },
+        { to: "/sante/fiche", label: "Ajouter un vaccin", icon: Syringe },
+        { to: "/sante/medicaments", label: "Ajouter un traitement", icon: Pill },
+      ],
+    },
+    {
+      match: "/autonomie",
+      title: "Créer un support",
+      actions: [
+        { to: "/autonomie/studio", label: "Nouvelle routine", icon: Repeat },
+        { to: "/autonomie/studio", label: "Nouvelle check-list", icon: ListChecks },
+        { to: "/autonomie/studio", label: "Nouvelle histoire sociale", icon: BookHeart },
+        { to: "/autonomie/studio", label: "Nouvelle carte visuelle", icon: Grid3x3 },
+        { to: "/autonomie/studio", label: "Nouveau tableau de récompenses", icon: Star },
+        { to: "/autonomie/assistant", label: "Demander à l'assistant", icon: Sparkles },
+      ],
+    },
+    {
+      match: "/plus",
+      title: "Tous les raccourcis",
+      actions: [
+        { to: "/moi/emotions", label: "Noter une émotion", icon: Heart },
+        { to: "/moi/journal", label: "Écrire dans mon journal", icon: PenLine },
+        { to: "/plus/organisation", label: "Ajouter un rendez-vous", icon: CalendarPlus },
+        { to: "/plus/budget", label: "Ajouter une dépense", icon: Wallet },
+        { to: "/famille/coffre", label: "Déposer un document", icon: FileUp },
+        { to: "/autonomie/studio", label: "Créer un support", icon: Repeat },
+      ],
+    },
+  ];
 
-  const creations: Action[] = [
-    { to: "/moi/emotions", label: "Noter une émotion", icon: Heart },
-    { to: "/moi/journal", label: "Écrire dans mon journal", icon: PenLine },
-    { to: "/plus/organisation", label: "Ajouter un rendez-vous", icon: CalendarPlus },
-    { to: "/famille/coffre", label: "Déposer un document", icon: FileUp },
-    { to: "/autonomie/studio", label: "Créer une routine", icon: Repeat },
-    { to: "/autonomie/studio", label: "Créer une check-list", icon: ListChecks },
-    { to: "/autonomie/bibliotheque", label: "Créer une histoire sociale", icon: BookHeart },
-    { to: "/autonomie/studio", label: "Créer un tableau de récompenses", icon: Star },
-  ].filter((a) => !suggested.some((s) => s.label === a.label));
+  const fallback = {
+    title: "Que souhaites-tu faire ?",
+    actions: [
+      { to: "/moi/emotions", label: "Noter une émotion", icon: Heart },
+      { to: "/moi/journal", label: "Écrire dans mon journal", icon: PenLine },
+      { to: "/plus/organisation", label: "Ajouter un rendez-vous", icon: CalendarPlus },
+      { to: "/famille/coffre", label: "Déposer un document", icon: FileUp },
+    ] as Action[],
+  };
+
+  const menu = MENUS.find((m) => path.startsWith(m.match)) ?? fallback;
+
 
   const tabClass = ({ isActive }: { isActive: boolean }) =>
     `flex flex-col items-center justify-center gap-1 rounded-xl py-1.5 text-[10px] font-medium transition-colors ${
@@ -150,20 +190,13 @@ const BottomNav = () => {
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent side="bottom" className="max-h-[85vh] overflow-y-auto rounded-t-3xl">
           <SheetHeader className="mb-4">
-            <SheetTitle className="text-left font-serif text-2xl">
-              Que souhaites-tu faire ?
-            </SheetTitle>
+            <SheetTitle className="text-left font-serif text-2xl">{menu.title}</SheetTitle>
           </SheetHeader>
 
-          <p className="pb-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-            Suggéré maintenant
-          </p>
-          <div className="space-y-2">{suggested.map((a, i) => renderAction(a, "s" + i))}</div>
+          <div className="space-y-2 pb-8">
+            {menu.actions.map((a, i) => renderAction(a, "a" + i))}
+          </div>
 
-          <p className="pb-2 pt-6 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-            Créer
-          </p>
-          <div className="space-y-2 pb-8">{creations.map((a, i) => renderAction(a, "c" + i))}</div>
         </SheetContent>
       </Sheet>
     </>

@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import HubShell from "@/components/hub/HubShell";
 import { SUPPORT_ORDER, SUPPORT_TYPES } from "@/data/supportTemplates";
+import { motion } from "framer-motion";
 import { Sparkles, ChevronRight, Library, Printer } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
@@ -10,8 +11,8 @@ type Support = { id: string; title: string; support_type: string; profile_id: st
 type Profile = { id: string; first_name: string };
 
 /**
- * Le Studio est le cœur d'Autonomie : on crée, on imprime, on recommence.
- * Le sélecteur d'enfant est en haut car un support n'existe jamais « en général ».
+ * Le Studio est le cœur d'Autonomie : on crée vite, on imprime, on recommence.
+ * Ordre volontaire : créer → reprendre → s'inspirer → tout retrouver.
  */
 const StudioHome = () => {
   const navigate = useNavigate();
@@ -62,6 +63,7 @@ const StudioHome = () => {
   };
 
   const nameFor = (id: string | null) => profiles.find((p) => p.id === id)?.first_name;
+  const recent = supports.slice(0, 3);
 
   return (
     <HubShell title="Studio" subtitle="Crée un support, imprime-le, colle-le sur le frigo.">
@@ -82,57 +84,97 @@ const StudioHome = () => {
         </div>
       )}
 
-      <div className="grid grid-cols-2 gap-3 pt-2 sm:grid-cols-3">
-        {SUPPORT_ORDER.map((type) => {
+      {/* Assistant : la voie la plus rapide vers un support prêt */}
+      <Link
+        to="/autonomie/assistant"
+        className="flex items-center gap-4 rounded-[24px] border border-primary/30 bg-primary/5 px-5 py-5 transition-all active:scale-[0.99]"
+      >
+        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary/15">
+          <Sparkles className="h-[18px] w-[18px] text-primary-dark" strokeWidth={1.75} />
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block text-sm font-semibold text-foreground">Assistant Éclosia</span>
+          <span className="mt-0.5 block text-xs leading-relaxed text-muted-foreground">
+            Décris la situation, le support se crée pour toi.
+          </span>
+        </span>
+        <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" strokeWidth={1.75} />
+      </Link>
+
+      {/* Créer rapidement */}
+      <p className="pb-1 pt-4 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+        Créer rapidement
+      </p>
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+        {SUPPORT_ORDER.map((type, i) => {
           const def = SUPPORT_TYPES[type];
           return (
-            <button
+            <motion.button
               key={type}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: i * 0.04, ease: [0.22, 1, 0.36, 1] }}
               onClick={() => create(type)}
               className="flex flex-col items-start gap-2 rounded-[20px] border border-border/70 bg-card px-4 py-5 text-left transition-all hover:border-primary/40 active:scale-[0.98]"
             >
               <def.icon className="h-5 w-5 text-foreground" strokeWidth={1.75} />
               <span className="text-sm font-semibold text-foreground">{def.label}</span>
               <span className="text-[11px] leading-snug text-muted-foreground">{def.desc}</span>
-            </button>
+            </motion.button>
           );
         })}
       </div>
 
+      {/* Derniers supports utilisés */}
+      {recent.length > 0 && (
+        <>
+          <p className="pb-1 pt-6 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+            Derniers supports
+          </p>
+          {recent.map((s) => (
+            <Link
+              key={s.id}
+              to={"/autonomie/support/" + s.id}
+              className="flex items-center gap-4 rounded-[20px] border border-border/70 bg-card px-5 py-4"
+            >
+              <Printer className="h-4 w-4 shrink-0 text-muted-foreground" strokeWidth={1.75} />
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-sm font-semibold text-foreground">{s.title}</span>
+                <span className="mt-0.5 block text-xs text-muted-foreground">
+                  {SUPPORT_TYPES[s.support_type as keyof typeof SUPPORT_TYPES]?.label ?? s.support_type}
+                  {nameFor(s.profile_id) ? " · " + nameFor(s.profile_id) : ""}
+                </span>
+              </span>
+              <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" strokeWidth={1.75} />
+            </Link>
+          ))}
+        </>
+      )}
+
+      {/* Tous les modèles */}
       <Link
         to="/autonomie/bibliotheque"
-        className="mt-2 flex items-center gap-4 rounded-[20px] border border-border/70 bg-card px-5 py-4"
+        className="mt-4 flex items-center gap-4 rounded-[20px] border border-border/70 bg-card px-5 py-4"
       >
         <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-secondary/60">
           <Library className="h-[18px] w-[18px]" strokeWidth={1.75} />
         </span>
         <span className="min-w-0 flex-1">
-          <span className="block text-sm font-semibold text-foreground">Modèles prêts à l'emploi</span>
+          <span className="block text-sm font-semibold text-foreground">Tous les modèles</span>
           <span className="mt-0.5 block text-xs text-muted-foreground">
-            Ne pars jamais d'une page blanche.
+            Classés par catégories. Ne pars jamais d'une page blanche.
           </span>
         </span>
         <ChevronRight className="h-4 w-4 text-muted-foreground" strokeWidth={1.75} />
       </Link>
 
-      <div className="flex items-center gap-4 rounded-[20px] border border-dashed border-border bg-card/50 px-5 py-4">
-        <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-secondary/40">
-          <Sparkles className="h-[18px] w-[18px] text-muted-foreground" strokeWidth={1.75} />
-        </span>
-        <span className="min-w-0 flex-1">
-          <span className="block text-sm font-semibold text-foreground">Créer avec l'assistant</span>
-          <span className="mt-0.5 block text-xs text-muted-foreground">
-            Bientôt : décris la situation, le support se rédige.
-          </span>
-        </span>
-      </div>
-
-      {supports.length > 0 && (
+      {/* Mes supports */}
+      {supports.length > recent.length && (
         <>
           <p className="pb-1 pt-6 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
             Mes supports
           </p>
-          {supports.map((s) => (
+          {supports.slice(3).map((s) => (
             <Link
               key={s.id}
               to={"/autonomie/support/" + s.id}

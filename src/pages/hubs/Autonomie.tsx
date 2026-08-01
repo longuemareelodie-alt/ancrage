@@ -8,11 +8,18 @@ const Autonomie = () => (
     subtitle="Des supports concrets pour l'aider à faire seul, à son rythme."
   >
     <HubCard
+      to="/autonomie/assistant"
+      icon={Sparkles}
+      title="Assistant Éclosia"
+      desc="Décris une situation, les supports se créent pour toi."
+    />
+    <HubCard
       to="/autonomie/studio"
       icon={Wand2}
       title="Studio"
       desc="Créer routines, emplois du temps visuels, récompenses, check-lists."
     />
+
     <HubCard
       to="/autonomie/crise"
       icon={ShieldAlert}

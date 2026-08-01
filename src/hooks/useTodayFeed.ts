@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 export type FeedItem = {
@@ -11,21 +11,48 @@ export type FeedItem = {
   urgent?: boolean;
 };
 
+export type KidItem = {
+  id: string;
+  name: string;
+  action: string;
+  to: string;
+};
+
 export type TodaySnapshot = {
   loading: boolean;
   firstName: string;
   streak: number;
   lastEmotion: string | null;
   checkedInToday: boolean;
-  /** Échéances du jour, triées par heure puis par urgence. Max 4. */
+  /** Score de calme 0–100, calculé sur les derniers check-ins. */
+  calmScore: number | null;
+  /** Écart en points avec la veille (null si pas de repère). */
+  calmDelta: number | null;
+  /** Échéances du jour, triées par heure puis par urgence. Max 3. */
   now: FeedItem[];
-  /** Deux propositions contextuelles seulement. */
-  suggestions: { label: string; desc: string; to: string }[];
+  /** Enfants ayant une action aujourd'hui — jamais toute la famille. */
+  kids: KidItem[];
   weekDays: number;
   budgetLeftCents: number | null;
+  reload: () => void;
 };
 
 const HHMM = (value: string) => value.slice(0, 5);
+
+/** Valeur de calme associée à chaque humeur (0 = tempête, 100 = sereine). */
+const MOOD_SCORE: Record<string, number> = {
+  submergee: 15,
+  epuisee: 30,
+  stable: 60,
+  apaisee: 82,
+  fiere: 92,
+};
+
+const scoreOf = (emotion: string, type: string | null) =>
+  MOOD_SCORE[emotion] ?? (type === "positive" ? 72 : 32);
+
+const avg = (values: number[]) =>
+  values.length ? Math.round(values.reduce((s, v) => s + v, 0) / values.length) : null;
 
 /**
  * Moteur de priorité du cockpit « Aujourd'hui ».
@@ -35,14 +62,18 @@ const HHMM = (value: string) => value.slice(0, 5);
  * Un cockpit qui affiche tout n'est plus un cockpit.
  */
 export function useTodayFeed(): TodaySnapshot {
-  const [snap, setSnap] = useState<TodaySnapshot>({
+  const [tick, setTick] = useState(0);
+  const reload = useCallback(() => setTick((t) => t + 1), []);
+  const [snap, setSnap] = useState<Omit<TodaySnapshot, "reload">>({
     loading: true,
     firstName: "",
     streak: 0,
     lastEmotion: null,
     checkedInToday: false,
+    calmScore: null,
+    calmDelta: null,
     now: [],
-    suggestions: [],
+    kids: [],
     weekDays: 0,
     budgetLeftCents: null,
   });
@@ -60,9 +91,11 @@ export function useTodayFeed(): TodaySnapshot {
 
       const today = new Date();
       const iso = today.toISOString().slice(0, 10);
+      const yIso = new Date(Date.now() - 864e5).toISOString().slice(0, 10);
       const dayStart = new Date(iso + "T00:00:00").toISOString();
       const dayEnd = new Date(iso + "T23:59:59").toISOString();
       const weekAgo = new Date(Date.now() - 6 * 864e5).toISOString();
+      const twoWeeksAgo = new Date(Date.now() - 13 * 864e5).toISOString();
       const monthStart = iso.slice(0, 8) + "01";
       const soon = new Date(Date.now() + 3 * 864e5).toISOString().slice(0, 10);
 
@@ -76,6 +109,7 @@ export function useTodayFeed(): TodaySnapshot {
         checkins,
         supports,
         budget,
+        children,
       ] = await Promise.all([
         supabase.from("profiles").select("first_name, current_streak, last_emotion, last_checkin_date").eq("user_id", uid).maybeSingle(),
         supabase.from("appointments").select("id, title, appointment_at, location").gte("appointment_at", dayStart).lte("appointment_at", dayEnd).order("appointment_at"),
@@ -83,9 +117,10 @@ export function useTodayFeed(): TodaySnapshot {
         supabase.from("medications").select("id, name, dosage, schedule_times").eq("active", true),
         supabase.from("todo_items").select("id, title, due_date, priority").eq("done", false).lte("due_date", iso).order("due_date"),
         supabase.from("bills").select("id, label, amount_cents, due_date").eq("is_paid", false).lte("due_date", soon).order("due_date"),
-        supabase.from("emotion_checkins").select("created_at, emotion").gte("created_at", weekAgo).order("created_at", { ascending: false }),
-        supabase.from("autonomy_supports").select("id, title, support_type").order("updated_at", { ascending: false }).limit(1),
+        supabase.from("emotion_checkins").select("created_at, emotion, emotion_type").gte("created_at", twoWeeksAgo).order("created_at", { ascending: false }),
+        supabase.from("autonomy_supports").select("id, title, support_type, profile_id").order("updated_at", { ascending: false }),
         supabase.from("budget_entries").select("kind, amount_cents, month, recurring"),
+        supabase.from("family_medical_profiles").select("id, first_name").order("created_at"),
       ]);
 
       if (cancelled) return;
@@ -156,23 +191,36 @@ export function useTodayFeed(): TodaySnapshot {
 
       const rows = checkins.data ?? [];
       const checkedInToday = rows.some((r) => r.created_at.slice(0, 10) === iso);
-      const weekDays = new Set(rows.map((r) => r.created_at.slice(0, 10))).size;
+      const weekDays = new Set(
+        rows.filter((r) => r.created_at >= weekAgo).map((r) => r.created_at.slice(0, 10)),
+      ).size;
 
-      // Deux suggestions maximum, choisies par le contexte (heure, dernier geste).
-      const hour = today.getHours();
-      const suggestions: TodaySnapshot["suggestions"] = [];
-      const support = supports.data?.[0];
-      if (support && hour >= 16) {
-        suggestions.push({ label: "Reprendre " + support.title, desc: "Support d'autonomie", to: "/autonomie/support/" + support.id });
-      }
-      if (hour >= 20 || hour < 7) {
-        suggestions.push({ label: "M'apaiser", desc: "3 minutes, tout de suite", to: "/moi/apaisement" });
-      } else {
-        suggestions.push({ label: "Écrire deux lignes", desc: "Journal, 100 % privé", to: "/moi/journal" });
-      }
-      if (suggestions.length < 2) {
-        suggestions.push({ label: "Mon chemin", desc: "Voir où j'en suis", to: "/moi/chemin" });
-      }
+      // Score de calme : aujourd'hui si possible, sinon les derniers jours connus.
+      const scoreFor = (dayIso: string) =>
+        avg(
+          rows
+            .filter((r) => r.created_at.slice(0, 10) === dayIso)
+            .map((r) => scoreOf(r.emotion, r.emotion_type)),
+        );
+      const todayScore = scoreFor(iso);
+      const recentScore =
+        todayScore ?? avg(rows.slice(0, 3).map((r) => scoreOf(r.emotion, r.emotion_type)));
+      const refScore = scoreFor(yIso);
+      const calmScore = recentScore;
+      const calmDelta =
+        todayScore !== null && refScore !== null ? todayScore - refScore : null;
+
+      // Enfants concernés aujourd'hui : uniquement ceux qui ont un support actif.
+      const kidNames = new Map((children.data ?? []).map((c) => [c.id, c.first_name]));
+      const seen = new Set<string>();
+      const kids: KidItem[] = [];
+      (supports.data ?? []).forEach((s) => {
+        if (!s.profile_id || seen.has(s.profile_id)) return;
+        const name = kidNames.get(s.profile_id);
+        if (!name) return;
+        seen.add(s.profile_id);
+        kids.push({ id: s.profile_id, name, action: s.title, to: "/autonomie/support/" + s.id });
+      });
 
       let budgetLeftCents: number | null = null;
       const bRows = budget.data ?? [];
@@ -189,8 +237,10 @@ export function useTodayFeed(): TodaySnapshot {
         streak: profile.data?.current_streak ?? 0,
         lastEmotion: profile.data?.last_emotion ?? null,
         checkedInToday,
-        now: now.slice(0, 4),
-        suggestions: suggestions.slice(0, 2),
+        calmScore,
+        calmDelta,
+        now: now.slice(0, 3),
+        kids: kids.slice(0, 2),
         weekDays,
         budgetLeftCents,
       });
@@ -200,7 +250,7 @@ export function useTodayFeed(): TodaySnapshot {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [tick]);
 
-  return snap;
+  return { ...snap, reload };
 }
