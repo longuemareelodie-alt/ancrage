@@ -183,20 +183,13 @@ const BottomNav = () => {
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent side="bottom" className="max-h-[85vh] overflow-y-auto rounded-t-3xl">
           <SheetHeader className="mb-4">
-            <SheetTitle className="text-left font-serif text-2xl">
-              Que souhaites-tu faire ?
-            </SheetTitle>
+            <SheetTitle className="text-left font-serif text-2xl">{menu.title}</SheetTitle>
           </SheetHeader>
 
-          <p className="pb-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-            Suggéré maintenant
-          </p>
-          <div className="space-y-2">{suggested.map((a, i) => renderAction(a, "s" + i))}</div>
+          <div className="space-y-2 pb-8">
+            {menu.actions.map((a, i) => renderAction(a, "a" + i))}
+          </div>
 
-          <p className="pb-2 pt-6 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-            Créer
-          </p>
-          <div className="space-y-2 pb-8">{creations.map((a, i) => renderAction(a, "c" + i))}</div>
         </SheetContent>
       </Sheet>
     </>
