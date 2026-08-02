@@ -20,6 +20,7 @@ import RestartTourButton from "@/components/RestartTourButton";
 import DiscoveryBadge from "@/components/DiscoveryBadge";
 import { DiscoveryProvider } from "@/contexts/DiscoveryContext";
 import Index from "./pages/Index";
+import RechercheGlobale from "./pages/RechercheGlobale";
 import QuizResultat from "./pages/QuizResultat";
 import Dashboard from "./pages/Dashboard";
 import Emotions from "./pages/Emotions";
@@ -242,6 +243,7 @@ const AnimatedRoutes = () => {
         <Route path="/autonomie/support/:supportId" element={<PaidRoute><PageTransition><SupportEditor /></PageTransition></PaidRoute>} />
         <Route path="/autonomie/crise" element={<Navigate to="/lies-autrement/crise" replace />} />
         <Route path="/ressources" element={<PaidRoute><PageTransition><Ressources /></PageTransition></PaidRoute>} />
+        <Route path="/recherche" element={<PaidRoute><PageTransition><RechercheGlobale /></PageTransition></PaidRoute>} />
         <Route path="/plus" element={<PaidRoute><PageTransition><PlusHub /></PageTransition></PaidRoute>} />
         <Route path="/plus/organisation" element={<Navigate to="/organisation" replace />} />
         <Route path="/plus/budget" element={<Navigate to="/budget" replace />} />
