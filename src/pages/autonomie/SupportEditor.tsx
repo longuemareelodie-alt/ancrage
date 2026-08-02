@@ -17,6 +17,8 @@ import {
   Archive,
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { describePersonalisation, softHaptic } from "@/lib/supportPersonalisation";
+import { readCachedSupport } from "@/lib/supportsCache";
 
 
 type Profile = { id: string; first_name: string };
@@ -34,19 +36,32 @@ const SupportEditor = () => {
   const [saving, setSaving] = useState(false);
   const [favorite, setFavorite] = useState(false);
   const [format, setFormat] = useState<PdfFormat>("a4");
+  const [perso, setPerso] = useState<Record<string, string>>({});
 
   useEffect(() => {
     (async () => {
       const [{ data }, { data: p }] = await Promise.all([
         supabase
           .from("autonomy_supports")
-          .select("title, support_type, content, profile_id, is_favorite")
+          .select("title, support_type, content, profile_id, is_favorite, personalisation")
           .eq("id", supportId!)
           .maybeSingle(),
         supabase.from("family_medical_profiles").select("id, first_name").order("created_at"),
       ]);
       setProfiles(p ?? []);
+      if (!data) {
+        // Hors ligne : on repart de la copie locale plutôt que d'afficher une page vide.
+        const cached = readCachedSupport(supportId!);
+        if (cached) {
+          setTitle(cached.title);
+          setType(cached.support_type as SupportType);
+          setProfileId(cached.profile_id);
+          setFavorite(Boolean(cached.is_favorite));
+          setItems(cached.content?.items?.length ? cached.content.items : [{ label: "" }]);
+        }
+      }
       if (data) {
+        setPerso((data.personalisation as Record<string, string>) ?? {});
         setTitle(data.title);
         setType(data.support_type as SupportType);
         setProfileId(data.profile_id);
@@ -68,6 +83,7 @@ const SupportEditor = () => {
       .update({ title: title.trim() || def.label, content: { items: clean }, profile_id: profileId })
       .eq("id", supportId!);
     setSaving(false);
+    if (!error) softHaptic();
     toast({
       description: error ? "Enregistrement impossible." : "Support enregistré.",
       variant: error ? "destructive" : undefined,
@@ -128,6 +144,29 @@ const SupportEditor = () => {
   };
 
 
+  /** Impression : on note l'usage pour faire remonter les supports les plus utilisés. */
+  const printPdf = async () => {
+    exportSupportPdf({
+      title: title.trim() || def.label,
+      type,
+      childName,
+      subtitle: describePersonalisation(perso as never),
+      items: items.filter((i) => i.label.trim()),
+      format,
+    });
+    softHaptic([10, 40, 10]);
+    toast({ description: "Ton support est prêt à imprimer 🌸" });
+    const { data } = await supabase
+      .from("autonomy_supports")
+      .select("use_count")
+      .eq("id", supportId!)
+      .maybeSingle();
+    await supabase
+      .from("autonomy_supports")
+      .update({ use_count: (data?.use_count ?? 0) + 1, last_used_at: new Date().toISOString() })
+      .eq("id", supportId!);
+  };
+
   const move = (index: number, dir: -1 | 1) => {
     const next = [...items];
     const target = index + dir;
@@ -153,6 +192,12 @@ const SupportEditor = () => {
       >
         <ArrowLeft className="h-3.5 w-3.5" strokeWidth={2} /> Studio
       </button>
+
+      {describePersonalisation(perso as never) && (
+        <p className="pb-1 text-[11px] font-medium text-muted-foreground">
+          {describePersonalisation(perso as never)}
+        </p>
+      )}
 
       <div className="space-y-3 rounded-[20px] border border-border/70 bg-card px-5 py-5">
         <Input
@@ -250,15 +295,7 @@ const SupportEditor = () => {
         </Button>
         <Button
           variant="secondary"
-          onClick={() =>
-            exportSupportPdf({
-              title: title.trim() || def.label,
-              type,
-              childName,
-              items: items.filter((i) => i.label.trim()),
-              format,
-            })
-          }
+          onClick={printPdf}
         >
           <Printer className="mr-2 h-4 w-4" strokeWidth={1.75} /> PDF
         </Button>

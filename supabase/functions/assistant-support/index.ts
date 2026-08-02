@@ -37,6 +37,11 @@ Types disponibles (utilise exactement ces identifiants) :
 
 Règles :
 - Tu parles au parent avec "tu", ton doux, jamais culpabilisant, jamais médical.
+- L'intro annonce ce que tu proposes et pourquoi, en une ou deux phrases, comme une personne : "Je pense qu'une histoire sociale accompagnée d'une routine visuelle pourrait l'aider."
+- Tu choisis toi-même les types les plus utiles : le parent ne doit jamais avoir à choisir.
+- Tu adaptes la longueur des phrases et le vocabulaire à l'âge et au niveau de langage indiqués. Si l'enfant n'a pas encore de mots, privilégie les cartes visuelles et les étapes très courtes.
+- Tu tiens compte des sensibilités, des intérêts et de ce qui l'apaise quand ces informations sont fournies.
+- Tu évites de reproposer un support déjà existant : si un titre proche existe déjà, propose autre chose ou un angle différent.
 - Les phrases destinées à l'enfant sont très courtes, concrètes, positives.
 - 4 à 8 éléments par support.
 - Aucun diagnostic, aucun conseil médical.
@@ -48,6 +53,7 @@ const URGENT_HINT = `Contexte : le parent est en pleine difficulté, maintenant.
 - L'intro fait une seule phrase, rassurante, sans consigne longue.
 - Commence par un support de retour au calme ou de communication immédiate (cartes, routine de calme).
 - Les phrases sont encore plus courtes que d'habitude.`;
+
 
 
 Deno.serve(async (req) => {
@@ -65,13 +71,55 @@ Deno.serve(async (req) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return json({ error: "Unauthorized" }, 401);
 
-    const { situation, childName, urgent } = await req.json();
+    const { situation, childName, urgent, childId, personalisation } = await req.json();
     if (!situation || typeof situation !== "string" || situation.trim().length < 5) {
       return json({ error: "invalid_input", message: "Décris la situation en quelques mots." }, 400);
     }
 
     const lovableKey = Deno.env.get("LOVABLE_API_KEY");
     if (!lovableKey) return json({ error: "LOVABLE_API_KEY missing" }, 500);
+
+    // Contexte enfant + supports déjà créés : l'assistant ne repropose pas la même chose.
+    const [profileRes, existingRes] = await Promise.all([
+      childId && typeof childId === "string"
+        ? supabase
+          .from("family_medical_profiles")
+          .select("first_name, birth_date, diagnosis_tags, interests, sensitivities, soothers, preferences")
+          .eq("id", childId)
+          .maybeSingle()
+        : Promise.resolve({ data: null }),
+      supabase
+        .from("autonomy_supports")
+        .select("title, support_type")
+        .eq("archived", false)
+        .order("updated_at", { ascending: false })
+        .limit(15),
+    ]);
+
+    const child = profileRes.data as Record<string, unknown> | null;
+    const list = (v: unknown) => (Array.isArray(v) && v.length ? (v as string[]).join(", ") : "");
+    const existing = (existingRes.data ?? [])
+      .map((s: { title: string; support_type: string }) => `${s.title} (${s.support_type})`)
+      .join(" ; ");
+
+    const p = (personalisation ?? {}) as Record<string, string>;
+    const context = [
+      `Situation : ${situation.slice(0, 800)}`,
+      childName || child?.first_name ? `Prénom de l'enfant : ${childName ?? child?.first_name}` : "",
+      p.ageBand ? `Âge : ${p.ageBand}` : child?.birth_date ? `Né(e) le : ${child.birth_date}` : "",
+      p.language ? `Niveau de langage : ${p.language}` : "",
+      p.objective ? `Objectif du parent : ${p.objective}` : "",
+      p.context ? `Moment concerné : ${p.context}` : "",
+      list(child?.sensitivities) ? `Sensibilités : ${list(child?.sensitivities)}` : "",
+      list(child?.interests) ? `Ce qu'il aime : ${list(child?.interests)}` : "",
+      list(child?.soothers) ? `Ce qui l'apaise : ${list(child?.soothers)}` : "",
+      typeof child?.preferences === "string" && child.preferences
+        ? `Préférences : ${String(child.preferences).slice(0, 300)}`
+        : "",
+      existing ? `Supports déjà créés (à ne pas reproduire) : ${existing.slice(0, 600)}` : "",
+    ]
+      .filter(Boolean)
+      .join("\n");
 
     const aiRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -84,13 +132,9 @@ Deno.serve(async (req) => {
         response_format: { type: "json_object" },
         messages: [
           { role: "system", content: urgent === true ? `${SYSTEM}\n\n${URGENT_HINT}` : SYSTEM },
-          {
-            role: "user",
-            content: `Situation : ${situation.slice(0, 800)}${
-              childName ? `\nPrénom de l'enfant : ${childName}` : ""
-            }`,
-          },
+          { role: "user", content: context },
         ],
+
       }),
     });
 

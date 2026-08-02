@@ -117,6 +117,7 @@ import Bibliotheque from "./pages/autonomie/Bibliotheque";
 import MesSupports from "./pages/autonomie/MesSupports";
 
 import Assistant from "./pages/autonomie/Assistant";
+import GenerateurPdf from "./pages/autonomie/GenerateurPdf";
 
 
 const queryClient = new QueryClient();
@@ -240,6 +241,7 @@ const AnimatedRoutes = () => {
         <Route path="/autonomie" element={<PaidRoute><PageTransition><Autonomie /></PageTransition></PaidRoute>} />
         <Route path="/autonomie/studio" element={<PaidRoute><PageTransition><StudioHome /></PageTransition></PaidRoute>} />
         <Route path="/autonomie/bibliotheque" element={<PaidRoute><PageTransition><Bibliotheque /></PageTransition></PaidRoute>} />
+        <Route path="/autonomie/pdf" element={<PaidRoute><PageTransition><GenerateurPdf /></PageTransition></PaidRoute>} />
         <Route path="/autonomie/mes-supports" element={<PaidRoute><PageTransition><MesSupports /></PageTransition></PaidRoute>} />
 
         <Route path="/autonomie/assistant" element={<PaidRoute><PageTransition><Assistant /></PageTransition></PaidRoute>} />

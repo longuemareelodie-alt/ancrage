@@ -3,39 +3,51 @@ import { SUPPORT_TYPES, SupportItem, SupportType } from "@/data/supportTemplates
 
 export type PdfFormat = "a4" | "a5";
 
-type Meta = {
+export type SupportSheet = {
   title: string;
   type: SupportType;
   childName?: string;
   items: SupportItem[];
-  format?: PdfFormat;
+  subtitle?: string;
 };
 
-/**
- * Export imprimable d'un support d'autonomie.
- * A4 ou A5, marges généreuses, gros caractères : la feuille doit rester lisible
- * quand elle est affichée sur un frigo, à hauteur d'enfant. Aucun filigrane.
- */
-export function exportSupportPdf({ title, type, childName, items, format = "a4" }: Meta) {
-  const doc = new jsPDF({ unit: "mm", format });
+type Meta = SupportSheet & { format?: PdfFormat };
+
+type Geometry = { W: number; H: number; M: number; k: number; bottom: number };
+
+const geometry = (format: PdfFormat): Geometry => {
   const W = format === "a4" ? 210 : 148;
   const H = format === "a4" ? 297 : 210;
   const M = format === "a4" ? 18 : 13;
-  const k = format === "a4" ? 1 : 0.72; // facteur d'échelle typographique
-  const bottom = H - M;
-  const def = SUPPORT_TYPES[type];
+  return { W, H, M, k: format === "a4" ? 1 : 0.72, bottom: H - M };
+};
+
+/**
+ * Dessine une feuille de support à partir de `y`, et renvoie le `y` final.
+ * Sans filigrane, sans élément d'interface : la page doit rester lisible
+ * quand elle est affichée sur un frigo, à hauteur d'enfant.
+ */
+function drawSheet(doc: jsPDF, sheet: SupportSheet, g: Geometry, startY: number): number {
+  const { W, M, k, bottom } = g;
+  const def = SUPPORT_TYPES[sheet.type];
+  let y = startY;
 
   doc.setFont("helvetica", "bold");
   doc.setFontSize(24 * k);
-  doc.text(title, M, M + 10 * k);
+  doc.setTextColor(30);
+  doc.text(sheet.title, M, y);
 
   doc.setFont("helvetica", "normal");
   doc.setFontSize(11 * k);
   doc.setTextColor(120);
-  doc.text([def.label, childName].filter(Boolean).join(" · "), M, M + 18 * k);
+  doc.text(
+    [def?.label ?? sheet.type, sheet.childName, sheet.subtitle].filter(Boolean).join(" · "),
+    M,
+    y + 8 * k,
+  );
   doc.setTextColor(30);
 
-  let y = M + 32 * k;
+  y += 22 * k;
 
   const newPageIfNeeded = (h: number) => {
     if (y + h > bottom) {
@@ -43,6 +55,8 @@ export function exportSupportPdf({ title, type, childName, items, format = "a4" 
       y = M + 10 * k;
     }
   };
+
+  const { type, items } = sheet;
 
   if (type === "cartes") {
     const cols = 2;
@@ -115,6 +129,66 @@ export function exportSupportPdf({ title, type, childName, items, format = "a4" 
     });
   }
 
-  const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-  doc.save(`${slug || "support"}-${format}.pdf`);
+  return y;
+}
+
+const slugify = (s: string) =>
+  s
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+
+/** Export imprimable d'un support d'autonomie, en A4 ou A5. */
+export function exportSupportPdf({ format = "a4", ...sheet }: Meta) {
+  const doc = new jsPDF({ unit: "mm", format });
+  const g = geometry(format);
+  drawSheet(doc, sheet, g, g.M + 10 * g.k);
+  doc.save(`${slugify(sheet.title) || "support"}-${format}.pdf`);
+}
+
+/**
+ * Fusionne plusieurs supports dans un seul document imprimable :
+ * une feuille par support, avec une page de garde quand il y en a plusieurs.
+ */
+export function exportMergedSupportsPdf(
+  sheets: SupportSheet[],
+  options: { format?: PdfFormat; docTitle?: string; childName?: string } = {},
+) {
+  if (!sheets.length) return;
+  const format = options.format ?? "a4";
+  const doc = new jsPDF({ unit: "mm", format });
+  const g = geometry(format);
+  const { M, k, W, H } = g;
+  const title = options.docTitle?.trim() || "Mes supports";
+
+  if (sheets.length > 1) {
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(30 * k);
+    doc.setTextColor(30);
+    doc.text(title, M, H / 2 - 10 * k, { maxWidth: W - M * 2 });
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(12 * k);
+    doc.setTextColor(120);
+    doc.text(
+      [options.childName, `${sheets.length} supports`].filter(Boolean).join(" · "),
+      M,
+      H / 2 + 2 * k,
+    );
+    doc.setFontSize(10 * k);
+    let ly = H / 2 + 16 * k;
+    sheets.forEach((s, i) => {
+      doc.text(`${i + 1}. ${s.title}`, M, ly, { maxWidth: W - M * 2 });
+      ly += 7 * k;
+    });
+    doc.setTextColor(30);
+  }
+
+  sheets.forEach((sheet, i) => {
+    if (i > 0 || sheets.length > 1) doc.addPage();
+    drawSheet(doc, sheet, g, M + 10 * k);
+  });
+
+  doc.save(`${slugify(title) || "supports"}-${format}.pdf`);
 }

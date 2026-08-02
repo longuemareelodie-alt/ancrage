@@ -280,11 +280,14 @@ export type Database = {
           description: string | null
           id: string
           is_favorite: boolean
+          last_used_at: string | null
+          personalisation: Json
           profile_id: string | null
           support_type: string
           tags: string[]
           title: string
           updated_at: string
+          use_count: number
           user_id: string
         }
         Insert: {
@@ -294,11 +297,14 @@ export type Database = {
           description?: string | null
           id?: string
           is_favorite?: boolean
+          last_used_at?: string | null
+          personalisation?: Json
           profile_id?: string | null
           support_type: string
           tags?: string[]
           title: string
           updated_at?: string
+          use_count?: number
           user_id: string
         }
         Update: {
@@ -308,11 +314,14 @@ export type Database = {
           description?: string | null
           id?: string
           is_favorite?: boolean
+          last_used_at?: string | null
+          personalisation?: Json
           profile_id?: string | null
           support_type?: string
           tags?: string[]
           title?: string
           updated_at?: string
+          use_count?: number
           user_id?: string
         }
         Relationships: [
