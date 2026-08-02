@@ -89,7 +89,11 @@ const CommunautePage = () => {
     if (tab === "free") q = q.eq("kind", "free_post");
     if (tab === "qa") q = q.eq("kind", "question");
     const { data } = await q;
-    if (data) setPosts(data);
+    if (data) {
+      setPosts(data);
+      const map = await fetchCommunityAuthors(data.map((p) => p.author_id));
+      setAuthors(map);
+    }
   };
   useEffect(() => {
     loadPosts();
