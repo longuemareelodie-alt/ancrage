@@ -148,7 +148,7 @@ export default function Famille() {
               <p className="text-xs text-amber-800/80 dark:text-amber-300/80">
                 {upcomingVaccines.slice(0, 3).map((x) => {
                   const p = profiles.find((pp) => pp.id === x.v.profile_id);
-                  const label = x.days < 0 ? `en retard ${Math.abs(x.days)}j` : `dans ${x.days}j`;
+                  const label = x.days < 0 ? `à prévoir depuis ${Math.abs(x.days)}j` : `dans ${x.days}j`;
                   return `${p?.first_name || "?"} · ${x.v.vaccine_name} (${label})`;
                 }).join(" · ")}
               </p>
