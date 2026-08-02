@@ -106,6 +106,7 @@ import Organisation from "./pages/Organisation";
 import Statistiques from "./pages/Statistiques";
 import Famille from "./pages/Famille";
 import Aujourdhui from "./pages/Aujourdhui";
+import Onboarding from "./pages/Onboarding";
 import MoiEmotions from "./pages/moi/MoiEmotions";
 import MoiObjectifs from "./pages/moi/MoiObjectifs";
 import FicheMembre from "./pages/famille/FicheMembre";
@@ -223,6 +224,7 @@ const AnimatedRoutes = () => {
         <Route path="/ancrage/profil" element={<Navigate to="/profil" replace />} />
 
         {/* Hubs — needs-based architecture */}
+        <Route path="/bienvenue" element={<ProtectedRoute><PageTransition><Onboarding /></PageTransition></ProtectedRoute>} />
         <Route path="/aujourdhui" element={<PaidRoute><PageTransition><Aujourdhui /></PageTransition></PaidRoute>} />
         <Route path="/moi" element={<PaidRoute><PageTransition><Moi /></PageTransition></PaidRoute>} />
         <Route path="/moi/apaisement" element={<PaidRoute><PageTransition><MoiApaisement /></PageTransition></PaidRoute>} />

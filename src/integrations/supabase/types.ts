@@ -1390,6 +1390,10 @@ export type Database = {
       }
       profiles: {
         Row: {
+          address_custom: string | null
+          address_style: string | null
+          caregiver_role: string | null
+          challenges: string[]
           created_at: string
           current_streak: number
           email: string | null
@@ -1400,6 +1404,7 @@ export type Database = {
           last_checkin_date: string | null
           last_emotion: string | null
           longest_streak: number
+          onboarding_completed_at: string | null
           parent_type: string | null
           parent_type_synced_at: string | null
           plan_type: string
@@ -1410,6 +1415,10 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          address_custom?: string | null
+          address_style?: string | null
+          caregiver_role?: string | null
+          challenges?: string[]
           created_at?: string
           current_streak?: number
           email?: string | null
@@ -1420,6 +1429,7 @@ export type Database = {
           last_checkin_date?: string | null
           last_emotion?: string | null
           longest_streak?: number
+          onboarding_completed_at?: string | null
           parent_type?: string | null
           parent_type_synced_at?: string | null
           plan_type?: string
@@ -1430,6 +1440,10 @@ export type Database = {
           user_id: string
         }
         Update: {
+          address_custom?: string | null
+          address_style?: string | null
+          caregiver_role?: string | null
+          challenges?: string[]
           created_at?: string
           current_streak?: number
           email?: string | null
@@ -1440,6 +1454,7 @@ export type Database = {
           last_checkin_date?: string | null
           last_emotion?: string | null
           longest_streak?: number
+          onboarding_completed_at?: string | null
           parent_type?: string | null
           parent_type_synced_at?: string | null
           plan_type?: string
