@@ -797,6 +797,51 @@ export type Database = {
         }
         Relationships: []
       }
+      family_invitations: {
+        Row: {
+          accepted_at: string | null
+          accepted_by: string | null
+          created_at: string
+          email: string
+          expires_at: string
+          id: string
+          inviter_user_id: string
+          personal_note: string | null
+          role: string
+          status: string
+          token: string
+          updated_at: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          accepted_by?: string | null
+          created_at?: string
+          email: string
+          expires_at?: string
+          id?: string
+          inviter_user_id: string
+          personal_note?: string | null
+          role: string
+          status?: string
+          token: string
+          updated_at?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          accepted_by?: string | null
+          created_at?: string
+          email?: string
+          expires_at?: string
+          id?: string
+          inviter_user_id?: string
+          personal_note?: string | null
+          role?: string
+          status?: string
+          token?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       family_medical_documents: {
         Row: {
           category: string
@@ -2147,6 +2192,10 @@ export type Database = {
         Returns: Json
       }
       cleanup_pending_account_emails: { Args: never; Returns: Json }
+      create_family_invitation: {
+        Args: { _email: string; _note?: string; _role: string }
+        Returns: Json
+      }
       delete_email: {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
@@ -2160,6 +2209,10 @@ export type Database = {
       generate_referral_code: { Args: never; Returns: string }
       get_batch_recipients_admin: { Args: { _batch_id: string }; Returns: Json }
       get_emergency_usage: { Args: never; Returns: Json }
+      get_family_invitation_by_token: {
+        Args: { _token: string }
+        Returns: Json
+      }
       get_founding_offer: { Args: never; Returns: Json }
       get_is_premium: { Args: { _user_id: string }; Returns: boolean }
       get_medical_record_by_token: { Args: { _token: string }; Returns: Json }
@@ -2234,6 +2287,7 @@ export type Database = {
         Args: { _anomaly_id: string; _new_status: string; _note?: string }
         Returns: Json
       }
+      revoke_family_invitation: { Args: { _id: string }; Returns: Json }
       set_my_iban: {
         Args: { _holder_name: string; _iban: string }
         Returns: Json
