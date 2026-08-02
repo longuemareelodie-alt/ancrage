@@ -240,6 +240,8 @@ const AnimatedRoutes = () => {
         <Route path="/autonomie" element={<PaidRoute><PageTransition><Autonomie /></PageTransition></PaidRoute>} />
         <Route path="/autonomie/studio" element={<PaidRoute><PageTransition><StudioHome /></PageTransition></PaidRoute>} />
         <Route path="/autonomie/bibliotheque" element={<PaidRoute><PageTransition><Bibliotheque /></PageTransition></PaidRoute>} />
+        <Route path="/autonomie/mes-supports" element={<PaidRoute><PageTransition><MesSupports /></PageTransition></PaidRoute>} />
+
         <Route path="/autonomie/assistant" element={<PaidRoute><PageTransition><Assistant /></PageTransition></PaidRoute>} />
 
         <Route path="/autonomie/support/:supportId" element={<PaidRoute><PageTransition><SupportEditor /></PageTransition></PaidRoute>} />
