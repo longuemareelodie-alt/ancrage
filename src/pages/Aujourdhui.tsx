@@ -17,6 +17,8 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useTodayFeed } from "@/hooks/useTodayFeed";
+import { useWidgetSync } from "@/hooks/useWidgetSync";
+
 import { useProgressStats } from "@/hooks/useProgressStats";
 import { toast } from "@/hooks/use-toast";
 import { getCachedAddressLabel, hasCompletedOnboarding } from "@/lib/onboarding";

@@ -23,4 +23,8 @@ if (shouldDisableDecorativeMotion()) {
 
 createRoot(document.getElementById("root")!).render(<App />);
 
+// Ambiance native (barre de statut, splash) — sans effet dans un navigateur.
+void initNativeShell();
+
+
 
