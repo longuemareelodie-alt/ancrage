@@ -224,6 +224,7 @@ const AnimatedRoutes = () => {
         <Route path="/ancrage/profil" element={<Navigate to="/profil" replace />} />
 
         {/* Hubs — needs-based architecture */}
+        <Route path="/bienvenue" element={<ProtectedRoute><PageTransition><Onboarding /></PageTransition></ProtectedRoute>} />
         <Route path="/aujourdhui" element={<PaidRoute><PageTransition><Aujourdhui /></PageTransition></PaidRoute>} />
         <Route path="/moi" element={<PaidRoute><PageTransition><Moi /></PageTransition></PaidRoute>} />
         <Route path="/moi/apaisement" element={<PaidRoute><PageTransition><MoiApaisement /></PageTransition></PaidRoute>} />
