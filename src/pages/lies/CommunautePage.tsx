@@ -44,6 +44,7 @@ const CommunautePage = () => {
   const [threads, setThreads] = useState<Thread[]>([]);
   const [activeThread, setActiveThread] = useState<string | null>(null);
   const [posts, setPosts] = useState<Post[]>([]);
+  const [authors, setAuthors] = useState<CommunityAuthorMap>({});
   const [body, setBody] = useState("");
 
   // Membership check
