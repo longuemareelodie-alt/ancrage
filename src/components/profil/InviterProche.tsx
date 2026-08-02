@@ -265,20 +265,13 @@ const InviterProche = ({ firstName }: { firstName?: string | null }) => {
                 </div>
                 <div className="flex flex-shrink-0 items-center gap-1">
                   {status === "pending" && (
-                    <>
-                      <button
-                        onClick={() => copy(invitationUrl(""))}
-                        className="hidden"
-                        aria-hidden
-                      />
-                      <button
-                        onClick={() => cancel(inv)}
-                        className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-muted"
-                        aria-label="Annuler l'invitation"
-                      >
-                        <X className="h-3.5 w-3.5" />
-                      </button>
-                    </>
+                    <button
+                      onClick={() => cancel(inv)}
+                      className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-muted"
+                      aria-label="Annuler l'invitation"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
                   )}
                   {status === "accepted" && (
                     <Check className="h-4 w-4 text-primary" />
