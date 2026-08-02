@@ -2,18 +2,18 @@ import React from "react";
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, interpolate } from "remotion";
 import { Kicker, WordsReveal } from "../components/Type";
 import { body } from "../fonts";
-import { NIGHT, CARD, ROSE_DARK } from "../theme";
+import { NIGHT, CARD, ROSE_DARK, GOLD } from "../theme";
 
-const SPACES: { icon: string; label: string; note: string }[] = [
-  { icon: "🏠", label: "Aujourd'hui", note: "Ta journée en un regard" },
-  { icon: "❤️", label: "Moi", note: "Émotions, journal, respiration" },
-  { icon: "👨‍👩‍👧", label: "Famille", note: "Profils, écoles, suivis" },
-  { icon: "🌱", label: "Autonomie", note: "Supports sur mesure" },
-  { icon: "📅", label: "Organisation", note: "Calendrier partagé" },
-  { icon: "💛", label: "Santé", note: "Carnet & ordonnances" },
-  { icon: "🔐", label: "Coffre-fort", note: "Documents en sécurité" },
-  { icon: "💶", label: "Budget", note: "Factures et rappels" },
-  { icon: "🤝", label: "Communauté", note: "Sans jugement" },
+const SPACES: { tint: string; label: string; note: string }[] = [
+  { tint: ROSE_DARK, label: "Aujourd'hui", note: "Ta journée en un regard" },
+  { tint: ROSE_DARK, label: "Moi", note: "Émotions, journal, respiration" },
+  { tint: NIGHT, label: "Famille", note: "Profils, écoles, suivis" },
+  { tint: GOLD, label: "Autonomie", note: "Supports sur mesure" },
+  { tint: NIGHT, label: "Organisation", note: "Calendrier partagé" },
+  { tint: ROSE_DARK, label: "Santé", note: "Carnet & ordonnances" },
+  { tint: NIGHT, label: "Coffre-fort", note: "Documents en sécurité" },
+  { tint: GOLD, label: "Budget", note: "Factures et rappels" },
+  { tint: ROSE_DARK, label: "Communauté", note: "Sans jugement" },
 ];
 
 /** Panorama des espaces : grille de cartes qui se posent en cascade. */
@@ -67,7 +67,15 @@ export const SceneSpaces: React.FC = () => {
                 boxShadow: `0 32px 64px -40px ${NIGHT}55`,
               }}
             >
-              <div style={{ fontSize: 34, lineHeight: 1 }}>{s.icon}</div>
+              <div
+                style={{
+                  width: 34,
+                  height: 34,
+                  borderRadius: 12,
+                  backgroundColor: `${s.tint}22`,
+                  border: `1px solid ${s.tint}55`,
+                }}
+              />
               <div
                 style={{
                   fontFamily: body,
