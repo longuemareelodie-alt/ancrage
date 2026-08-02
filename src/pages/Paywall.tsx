@@ -34,7 +34,19 @@ const Paywall = () => {
   const PROMO_CATALOG: Record<string, { discountCents: number; label: string }> = {
     ANCRAGE15: { discountCents: 1500, label: "Ancrage15" },
   };
-  const BASE_PRICE_CENTS = PREMIUM_PRICE_CENTS;
+  // Le tarif du moment vient de la base (paliers Familles Fondatrices).
+  // Tant qu'on ne l'a pas, on affiche le tarif plein : jamais moins par erreur.
+  const [foundingCents, setFoundingCents] = useState<number | null>(null);
+  useEffect(() => {
+    let alive = true;
+    fetchFoundingOffer().then((o) => {
+      if (alive && o) setFoundingCents(o.priceCents);
+    });
+    return () => {
+      alive = false;
+    };
+  }, []);
+  const BASE_PRICE_CENTS = foundingCents ?? PREMIUM_PRICE_CENTS;
   const [promoInput, setPromoInput] = useState("");
   const [appliedPromo, setAppliedPromo] = useState<string | null>(null);
   const [promoError, setPromoError] = useState<string | null>(null);
