@@ -63,7 +63,7 @@ const SupportEditor = () => {
         setProfileId(data.profile_id);
         setFavorite(Boolean(data.is_favorite));
         const content = data.content as { items?: SupportItem[] } | null;
-        setItems(content?.items?.length ? content.items : [{ label: "" }]);
+        setItems(withRowKeys(content?.items?.length ? content.items : [{ label: "" }]));
       }
       setLoading(false);
     })();
