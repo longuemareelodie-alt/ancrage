@@ -26,7 +26,7 @@ const SupportEditor = () => {
   const [loading, setLoading] = useState(true);
   const [title, setTitle] = useState("");
   const [type, setType] = useState<SupportType>("routine");
-  const [items, setItems] = useState<SupportItem[]>([]);
+  const [items, setItems] = useState<SupportRow[]>([]);
   const [profileId, setProfileId] = useState<string | null>(null);
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [saving, setSaving] = useState(false);
