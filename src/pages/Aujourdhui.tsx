@@ -10,27 +10,31 @@ import {
   Receipt,
   Moon,
   Sprout,
+  PenLine,
+  Heart,
   ArrowUpRight,
   ArrowDownRight,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useTodayFeed } from "@/hooks/useTodayFeed";
+import { useProgressStats } from "@/hooks/useProgressStats";
 import { toast } from "@/hooks/use-toast";
 import { getCachedAddressLabel, hasCompletedOnboarding } from "@/lib/onboarding";
 
 /**
- * « Aujourd'hui » — le tableau de bord.
+ * « Aujourd'hui » — le cockpit d'Éclosia.
  *
- * En moins de cinq secondes : comment je vais, ce qui compte aujourd'hui,
- * deux gestes possibles. Aucun bloc vide n'est affiché.
+ * Il répond à une seule question : que dois-je faire aujourd'hui ?
+ * Jamais plus, jamais moins. Aucun bloc vide n'est affiché.
  */
 
 const MOODS = [
-  { id: "submergee", type: "negative" as const, label: "Submergée" },
-  { id: "epuisee", type: "negative" as const, label: "Épuisée" },
-  { id: "stable", type: "positive" as const, label: "Ça va" },
-  { id: "apaisee", type: "positive" as const, label: "Apaisée" },
-  { id: "fiere", type: "positive" as const, label: "Fière" },
+  { id: "stable", type: "positive" as const, emoji: "😊", label: "Ça va" },
+  { id: "neutre", type: "positive" as const, emoji: "😐", label: "Bof" },
+  { id: "submergee", type: "negative" as const, emoji: "😢", label: "Submergée" },
+  { id: "epuisee", type: "negative" as const, emoji: "😴", label: "Épuisée" },
+  { id: "enervee", type: "negative" as const, emoji: "😤", label: "Énervée" },
+  { id: "anxieuse", type: "negative" as const, emoji: "😰", label: "Anxieuse" },
 ];
 
 const KIND_ICON = {
@@ -42,22 +46,32 @@ const KIND_ICON = {
   document: Receipt,
 };
 
+/** Phrases douces, jamais culpabilisantes — une par jour, en rotation. */
+const DAILY_PHRASES = [
+  "Aujourd'hui aussi, un petit pas suffit.",
+  "Tu fais déjà de ton mieux, et c'est assez.",
+  "Tu peux poser ce que tu portes, un instant.",
+  "Rien n'est en retard ici. Tout peut attendre demain.",
+  "Respire. Le reste peut attendre deux minutes.",
+  "Ce que tu tiens est lourd. Tu le tiens quand même.",
+  "Un jour à la fois. C'est déjà beaucoup.",
+];
+
+const QUOTES = [
+  "Tu fais déjà beaucoup.",
+  "Tu n'as pas à tout tenir.",
+  "Avancer doucement, c'est avancer.",
+  "Ta douceur compte, aussi pour toi.",
+];
+
+const dayIndex = () => Math.floor(Date.now() / 86_400_000);
+
 const greeting = () => {
   const h = new Date().getHours();
   if (h < 6) return "Cette nuit";
   if (h < 12) return "Bonjour";
   if (h < 18) return "Bel après-midi";
   return "Bonsoir";
-};
-
-/** Phrase bienveillante — jamais culpabilisante, adaptée au moment. */
-const kindPhrase = (calm: number | null) => {
-  const h = new Date().getHours();
-  if (calm !== null && calm < 40) return "Un pas à la fois. Ça suffit largement.";
-  if (calm !== null && calm >= 75) return "Quelque chose s'apaise. Garde ce rythme.";
-  if (h < 12) return "Aujourd'hui aussi, tu fais déjà de ton mieux.";
-  if (h < 18) return "Tu peux poser ce que tu portes, un instant.";
-  return "La journée se referme. Tu as tenu.";
 };
 
 const calmLabel = (calm: number) => {
@@ -69,6 +83,7 @@ const calmLabel = (calm: number) => {
 
 const Aujourdhui = () => {
   const feed = useTodayFeed();
+  const progress = useProgressStats();
   const navigate = useNavigate();
   const [savedMood, setSavedMood] = useState<string | null>(null);
 
@@ -86,8 +101,13 @@ const Aujourdhui = () => {
     month: "long",
   });
 
+  const phrase = DAILY_PHRASES[dayIndex() % DAILY_PHRASES.length];
+  const quote = QUOTES[dayIndex() % QUOTES.length];
+
   const saveMood = async (mood: (typeof MOODS)[number]) => {
     setSavedMood(mood.id);
+    // Retour haptique discret quand l'appareil le permet.
+    navigator.vibrate?.(12);
     const { data: auth } = await supabase.auth.getUser();
     const uid = auth.user?.id;
     if (!uid) return;
@@ -117,20 +137,18 @@ const Aujourdhui = () => {
   return (
     <div className="min-h-screen bg-background">
       <div className="mx-auto w-full max-w-lg px-6 pb-10 pt-10">
-        {/* 1 — Bonjour + phrase bienveillante */}
+        {/* 1 — Salutation + phrase du jour */}
         <motion.header {...fade(0)} className="mb-8 flex items-start justify-between gap-4">
           <div className="min-w-0">
             <h1 className="font-serif text-3xl text-foreground">
               {greeting()}
-              {addressLabel ? ` ${addressLabel}` : ""} 👋
+              {addressLabel ? ` ${addressLabel}` : ""} 🌸
             </h1>
-            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              {kindPhrase(calm)}
-            </p>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{phrase}</p>
             <p className="mt-1 text-xs capitalize text-muted-foreground/70">{dateLabel}</p>
           </div>
           <Link
-            to="/plus/profil"
+            to="/parametres"
             aria-label="Réglages"
             className="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border/70 text-muted-foreground"
           >
@@ -138,7 +156,7 @@ const Aujourdhui = () => {
           </Link>
         </motion.header>
 
-        {/* 2 — Score émotionnel, ou le seul geste demandé */}
+        {/* 2 — Émotion : une seule pression suffit */}
         <motion.section
           {...fade(1)}
           className="rounded-[24px] border border-border/70 bg-card px-6 py-6"
@@ -190,16 +208,20 @@ const Aujourdhui = () => {
             </div>
           ) : (
             <>
-              <p className="text-sm font-semibold text-foreground">Comment tu te sens ?</p>
-              <div className="mt-4 flex items-stretch justify-between gap-2">
+              <p className="text-sm font-semibold text-foreground">
+                Comment te sens-tu aujourd'hui ?
+              </p>
+              <div className="mt-4 grid grid-cols-6 gap-2">
                 {MOODS.map((m) => (
-                  <button
+                  <motion.button
                     key={m.id}
                     onClick={() => saveMood(m)}
-                    className="flex-1 rounded-2xl border border-border/60 bg-secondary/30 px-1 py-3 text-[11px] font-medium text-foreground transition-all hover:border-primary/40 active:scale-95"
+                    whileTap={{ scale: 0.88 }}
+                    aria-label={m.label}
+                    className="flex flex-col items-center gap-1 rounded-2xl border border-border/60 bg-secondary/30 py-3 transition-colors hover:border-primary/40"
                   >
-                    {m.label}
-                  </button>
+                    <span className="text-xl leading-none">{m.emoji}</span>
+                  </motion.button>
                 ))}
               </div>
             </>
@@ -241,40 +263,58 @@ const Aujourdhui = () => {
             </ul>
           ) : (
             <p className="rounded-[20px] border border-dashed border-border bg-card/50 px-5 py-6 text-center text-sm text-muted-foreground">
-              Aujourd'hui est léger 🌸
+              Aujourd'hui est une journée légère 🌸
             </p>
           )}
         </motion.section>
 
-        {/* 4 — Agir maintenant : toujours visible */}
-        <motion.section {...fade(3)} className="mt-8 grid grid-cols-2 gap-3">
-          <Link
-            to="/moi/apaisement"
-            className="flex flex-col gap-3 rounded-[24px] border border-border/70 bg-card px-5 py-6 transition-all active:scale-[0.98]"
-          >
-            <Moon className="h-5 w-5 text-foreground" strokeWidth={1.75} />
-            <span>
-              <span className="block text-sm font-semibold text-foreground">M'apaiser</span>
-              <span className="mt-0.5 block text-xs text-muted-foreground">3 minutes, maintenant</span>
-            </span>
-          </Link>
-          <Link
-            to="/moi/chemin"
-            className="flex flex-col gap-3 rounded-[24px] border border-border/70 bg-card px-5 py-6 transition-all active:scale-[0.98]"
-          >
-            <Sprout className="h-5 w-5 text-foreground" strokeWidth={1.75} />
-            <span>
-              <span className="block text-sm font-semibold text-foreground">Mon chemin</span>
-              <span className="mt-0.5 block text-xs text-muted-foreground">Voir où j'en suis</span>
-            </span>
-          </Link>
+        {/* 4 — Accès rapides : deux gestes forts, puis deux discrets */}
+        <motion.section {...fade(3)} className="mt-8">
+          <div className="grid grid-cols-2 gap-3">
+            <Link
+              to="/moi/apaisement"
+              className="flex flex-col gap-3 rounded-[24px] border border-border/70 bg-card px-5 py-6 transition-all active:scale-[0.98]"
+            >
+              <Moon className="h-5 w-5 text-foreground" strokeWidth={1.75} />
+              <span>
+                <span className="block text-sm font-semibold text-foreground">M'apaiser</span>
+                <span className="mt-0.5 block text-xs text-muted-foreground">3 minutes, maintenant</span>
+              </span>
+            </Link>
+            <Link
+              to="/autonomie/studio"
+              className="flex flex-col gap-3 rounded-[24px] border border-border/70 bg-card px-5 py-6 transition-all active:scale-[0.98]"
+            >
+              <Sprout className="h-5 w-5 text-foreground" strokeWidth={1.75} />
+              <span>
+                <span className="block text-sm font-semibold text-foreground">Créer un support</span>
+                <span className="mt-0.5 block text-xs text-muted-foreground">Routine, histoire, cartes</span>
+              </span>
+            </Link>
+          </div>
+          <div className="mt-3 grid grid-cols-2 gap-3">
+            <Link
+              to="/lies-autrement/journal"
+              className="flex items-center gap-2.5 rounded-[20px] border border-border/70 bg-card/60 px-4 py-3.5 text-sm text-foreground transition-all active:scale-[0.98]"
+            >
+              <PenLine className="h-4 w-4 text-muted-foreground" strokeWidth={1.75} />
+              Journal
+            </Link>
+            <Link
+              to="/moi/chemin"
+              className="flex items-center gap-2.5 rounded-[20px] border border-border/70 bg-card/60 px-4 py-3.5 text-sm text-foreground transition-all active:scale-[0.98]"
+            >
+              <Heart className="h-4 w-4 text-muted-foreground" strokeWidth={1.75} />
+              Mon chemin
+            </Link>
+          </div>
         </motion.section>
 
         {/* 5 — Enfants concernés aujourd'hui uniquement */}
         {feed.kids.length > 0 && (
           <motion.section {...fade(4)} className="mt-8">
             <p className="pb-3 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-              Aujourd'hui pour eux
+              Mes enfants aujourd'hui
             </p>
             <ul className="space-y-2">
               {feed.kids.map((k) => (
@@ -298,12 +338,28 @@ const Aujourdhui = () => {
           </motion.section>
         )}
 
-        {/* 6 — Respiration éditoriale */}
+        {/* 6 — Progression : trois repères doux, jamais de statistique anxiogène */}
+        <motion.section {...fade(5)} className="mt-8 flex items-center justify-between gap-2 rounded-[20px] border border-border/60 bg-card/50 px-5 py-4">
+          {[
+            { value: progress.days, label: progress.days > 1 ? "jours ici" : "jour ici" },
+            { value: progress.supports, label: "supports" },
+            { value: progress.goals, label: "réussites" },
+          ].map((s) => (
+            <span key={s.label} className="flex-1 text-center">
+              <span className="block text-lg font-semibold tabular-nums text-foreground">
+                {s.value}
+              </span>
+              <span className="mt-0.5 block text-[11px] text-muted-foreground">{s.label}</span>
+            </span>
+          ))}
+        </motion.section>
+
+        {/* 7 — Respiration éditoriale */}
         <motion.p
-          {...fade(5)}
+          {...fade(6)}
           className="mt-10 text-center font-serif text-base italic text-muted-foreground"
         >
-          « Tu n'as pas à tout tenir. »
+          « {quote} »
         </motion.p>
       </div>
     </div>
