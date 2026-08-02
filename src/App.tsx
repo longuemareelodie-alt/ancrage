@@ -15,6 +15,8 @@ import TopNav from "@/components/TopNav";
 import ScrollToHash from "@/components/ScrollToHash";
 import { RouteTransitionProvider } from "@/components/RouteTransition";
 import SplashScreen from "@/components/SplashScreen";
+import GentleCelebration from "@/components/GentleCelebration";
+import MesBadges from "@/pages/moi/MesBadges";
 
 
 import GuidedTour from "@/components/GuidedTour";
@@ -241,6 +243,7 @@ const AnimatedRoutes = () => {
         <Route path="/moi/chemin" element={<PaidRoute><PageTransition><MoiChemin /></PageTransition></PaidRoute>} />
         <Route path="/moi/emotions" element={<PaidRoute><PageTransition><MoiEmotions /></PageTransition></PaidRoute>} />
         <Route path="/moi/objectifs" element={<PaidRoute><PageTransition><MoiObjectifs /></PageTransition></PaidRoute>} />
+        <Route path="/moi/badges" element={<PaidRoute><PageTransition><MesBadges /></PageTransition></PaidRoute>} />
         <Route path="/moi/journal" element={<Navigate to="/lies-autrement/journal" replace />} />
         <Route path="/parcours" element={<Navigate to="/moi/apaisement" replace />} />
         <Route path="/danger" element={<Navigate to="/moi/apaisement" replace />} />
@@ -305,6 +308,7 @@ const App = () => (
           <SplashScreen />
           <Toaster />
           <Sonner />
+          <GentleCelebration />
 
           <BrowserRouter>
             <ReferralCapture />
