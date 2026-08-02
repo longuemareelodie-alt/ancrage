@@ -190,6 +190,155 @@ async function convertRawToP8(raw: Uint8Array): Promise<ArrayBuffer> {
   return result.buffer;
 }
 
+// ─── Préférences parent : contrôle total, jamais d'interruption inutile ───
+interface NotificationPrefs {
+  routine_reminders: boolean;
+  emotion_reminders: boolean;
+  morning_time: string;
+  evening_time: string;
+  quiet_start: string;
+  quiet_end: string;
+  timezone: string;
+  max_per_day: number;
+  last_sent_at: string | null;
+  sent_today: number;
+  sent_today_date: string | null;
+}
+
+const DEFAULT_PREFS: NotificationPrefs = {
+  routine_reminders: true,
+  emotion_reminders: true,
+  morning_time: "08:30",
+  evening_time: "20:30",
+  quiet_start: "21:30",
+  quiet_end: "07:30",
+  timezone: "Europe/Paris",
+  max_per_day: 2,
+  last_sent_at: null,
+  sent_today: 0,
+  sent_today_date: null,
+};
+
+/** Écart minimal entre deux notifications, quoi qu'il arrive (heures). */
+const MIN_GAP_HOURS = 5;
+/** Tolérance autour de l'heure choisie (minutes). */
+const WINDOW_MINUTES = 60;
+
+function toMinutes(hhmm: string): number {
+  const [h, m] = hhmm.split(":");
+  return Number(h) * 60 + Number(m ?? 0);
+}
+
+/** Heure locale du parent (minutes depuis minuit) + date locale ISO. */
+function localNow(timezone: string): { minutes: number; date: string } {
+  const now = new Date();
+  let parts: Intl.DateTimeFormatPart[];
+  try {
+    parts = new Intl.DateTimeFormat("en-CA", {
+      timeZone: timezone,
+      hour12: false,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    }).formatToParts(now);
+  } catch {
+    parts = new Intl.DateTimeFormat("en-CA", {
+      timeZone: "UTC",
+      hour12: false,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    }).formatToParts(now);
+  }
+  const get = (t: string) => parts.find((p) => p.type === t)?.value ?? "00";
+  const hour = get("hour") === "24" ? "00" : get("hour");
+  return {
+    minutes: Number(hour) * 60 + Number(get("minute")),
+    date: `${get("year")}-${get("month")}-${get("day")}`,
+  };
+}
+
+/** Plage de silence, y compris quand elle passe minuit (21h30 → 7h30). */
+function inQuietHours(minutes: number, start: string, end: string): boolean {
+  const s = toMinutes(start);
+  const e = toMinutes(end);
+  return s <= e ? minutes >= s && minutes < e : minutes >= s || minutes < e;
+}
+
+/**
+ * Décide si on a le droit d'envoyer maintenant.
+ * On préfère TOUJOURS ne rien envoyer plutôt que déranger au mauvais moment.
+ */
+function shouldSend(
+  prefs: NotificationPrefs,
+  type: "morning" | "evening",
+): { ok: boolean; reason?: string } {
+  if (!prefs.routine_reminders && !prefs.emotion_reminders) {
+    return { ok: false, reason: "all_disabled" };
+  }
+  if (prefs.max_per_day <= 0) return { ok: false, reason: "max_per_day_zero" };
+
+  const { minutes, date } = localNow(prefs.timezone);
+
+  if (inQuietHours(minutes, prefs.quiet_start, prefs.quiet_end)) {
+    return { ok: false, reason: "quiet_hours" };
+  }
+
+  const target = toMinutes(type === "evening" ? prefs.evening_time : prefs.morning_time);
+  if (Math.abs(minutes - target) > WINDOW_MINUTES) {
+    return { ok: false, reason: "outside_window" };
+  }
+
+  const usedToday = prefs.sent_today_date === date ? prefs.sent_today : 0;
+  if (usedToday >= prefs.max_per_day) return { ok: false, reason: "daily_cap" };
+
+  if (prefs.last_sent_at) {
+    const gapHours = (Date.now() - new Date(prefs.last_sent_at).getTime()) / 3_600_000;
+    if (gapHours < MIN_GAP_HOURS) return { ok: false, reason: "too_soon" };
+  }
+
+  return { ok: true };
+}
+
+// ─── Messages doux : routines & émotion du jour ───
+// Jamais « tu as oublié », jamais « tu es en retard ».
+const routineReminders = [
+  "💛 Tu peux reprendre cette routine quand tu seras prête.",
+  "🌸 Une petite étape aujourd'hui suffit.",
+  "✨ La routine est là quand tu veux, sans pression.",
+  "💛 Tu fais déjà beaucoup. La routine t'attend, tranquillement.",
+];
+
+const emotionReminders = [
+  "🌸 Comment tu te sens, là, maintenant ?",
+  "💛 Deux mots sur ton humeur, si tu en as envie.",
+  "✨ Tu peux déposer ton émotion du jour en 10 secondes.",
+  "🌸 Rien à réussir : juste nommer ce que tu ressens.",
+];
+
+/** Choisit le rappel selon ce que le parent a activé. */
+function buildGentleNotification(
+  prefs: NotificationPrefs,
+  type: "morning" | "evening",
+): { title: string; body: string; url: string } | null {
+  const kinds: Array<"routine" | "emotion"> = [];
+  if (prefs.routine_reminders) kinds.push("routine");
+  if (prefs.emotion_reminders) kinds.push("emotion");
+  if (!kinds.length) return null;
+
+  // Le matin on propose la routine, le soir l'émotion — si les deux sont actifs.
+  const preferred = type === "morning" ? "routine" : "emotion";
+  const kind = kinds.includes(preferred) ? preferred : kinds[0];
+
+  return kind === "routine"
+    ? { title: "Éclosia", body: pick(routineReminders), url: "/aujourdhui" }
+    : { title: "Éclosia", body: pick(emotionReminders), url: "/checkin" };
+}
+
 // ─── Determine user context & pick message ───
 interface UserContext {
   isPremium: boolean;
@@ -197,6 +346,7 @@ interface UserContext {
   lastCheckinDate: string | null;
   type: "morning" | "evening";
 }
+
 
 function buildNotification(ctx: UserContext): { title: string; body: string; url: string } {
   const now = new Date();
