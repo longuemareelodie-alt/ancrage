@@ -32,13 +32,15 @@ const SupportEditor = () => {
   const [profileId, setProfileId] = useState<string | null>(null);
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [saving, setSaving] = useState(false);
+  const [favorite, setFavorite] = useState(false);
+  const [format, setFormat] = useState<PdfFormat>("a4");
 
   useEffect(() => {
     (async () => {
       const [{ data }, { data: p }] = await Promise.all([
         supabase
           .from("autonomy_supports")
-          .select("title, support_type, content, profile_id")
+          .select("title, support_type, content, profile_id, is_favorite")
           .eq("id", supportId!)
           .maybeSingle(),
         supabase.from("family_medical_profiles").select("id, first_name").order("created_at"),
@@ -48,6 +50,7 @@ const SupportEditor = () => {
         setTitle(data.title);
         setType(data.support_type as SupportType);
         setProfileId(data.profile_id);
+        setFavorite(Boolean(data.is_favorite));
         const content = data.content as { items?: SupportItem[] } | null;
         setItems(content?.items?.length ? content.items : [{ label: "" }]);
       }
@@ -71,10 +74,59 @@ const SupportEditor = () => {
     });
   };
 
+  const toggleFavorite = async () => {
+    const next = !favorite;
+    setFavorite(next);
+    const { error } = await supabase
+      .from("autonomy_supports")
+      .update({ is_favorite: next })
+      .eq("id", supportId!);
+    if (error) {
+      setFavorite(!next);
+      toast({ description: "Impossible de mettre à jour.", variant: "destructive" });
+    }
+  };
+
+  const duplicate = async () => {
+    const { data: auth } = await supabase.auth.getUser();
+    const uid = auth.user?.id;
+    if (!uid) return;
+    const { data, error } = await supabase
+      .from("autonomy_supports")
+      .insert({
+        user_id: uid,
+        profile_id: profileId,
+        support_type: type,
+        title: (title.trim() || def.label) + " (copie)",
+        content: { items: items.filter((i) => i.label.trim()) },
+      })
+      .select("id")
+      .single();
+    if (error || !data) {
+      toast({ description: "Impossible de dupliquer.", variant: "destructive" });
+      return;
+    }
+    navigate("/autonomie/support/" + data.id);
+  };
+
+  const archive = async () => {
+    const { error } = await supabase
+      .from("autonomy_supports")
+      .update({ archived: true })
+      .eq("id", supportId!);
+    if (error) {
+      toast({ description: "Impossible de ranger ce support.", variant: "destructive" });
+      return;
+    }
+    toast({ description: "Rangé. Tu le retrouveras dans Mes supports." });
+    navigate("/autonomie/mes-supports");
+  };
+
   const remove = async () => {
     await supabase.from("autonomy_supports").delete().eq("id", supportId!);
     navigate("/autonomie/studio");
   };
+
 
   const move = (index: number, dir: -1 | 1) => {
     const next = [...items];
