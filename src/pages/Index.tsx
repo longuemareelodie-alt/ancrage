@@ -42,6 +42,8 @@ import {
 import { Link } from "react-router-dom";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
 import { PREMIUM_PRICE_SHORT } from "@/lib/premiumOffer";
+import FoundingPrice from "@/components/FoundingPrice";
+import FoundingFamiliesBanner from "@/components/FoundingFamiliesBanner";
 import heroPhoto from "@/assets/hero-fondatrice.png.asset.json";
 import journalShot from "@/assets/showcase/journal.jpg.asset.json";
 import portraitShot from "@/assets/showcase/portrait.jpg.asset.json";
