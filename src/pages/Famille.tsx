@@ -594,7 +594,7 @@ function ProfileDetail({
                           {v.next_due_date && (
                             <> · <span className={tone}>
                               Rappel {format(new Date(v.next_due_date), "d MMM yyyy", { locale: fr })}
-                              {daysLeft != null && (daysLeft < 0 ? ` (retard ${Math.abs(daysLeft)}j)` : ` (dans ${daysLeft}j)`)}
+                              {daysLeft != null && (daysLeft < 0 ? ` (à prévoir depuis ${Math.abs(daysLeft)}j)` : ` (dans ${daysLeft}j)`)}
                             </span></>
                           )}
                         </p>

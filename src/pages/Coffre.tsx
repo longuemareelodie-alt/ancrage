@@ -263,7 +263,7 @@ export default function Coffre() {
               </p>
               <p className="text-xs text-amber-800/80 dark:text-amber-300/80">
                 {expiringSoon.slice(0, 3).map((x) =>
-                  `${x.doc.name} (${x.days < 0 ? `en retard ${Math.abs(x.days)}j` : `dans ${x.days}j`})`
+                  `${x.doc.name} (${x.days < 0 ? `à renouveler depuis ${Math.abs(x.days)}j` : `dans ${x.days}j`})`
                 ).join(" · ")}
               </p>
             </div>
@@ -590,7 +590,7 @@ function DocEditDialog({ doc, onClose, onSaved }: { doc: Doc | null; onClose: ()
           </div>
           <div>
             <Label>Étiquettes (séparées par des virgules)</Label>
-            <Input value={tags} onChange={(e) => setTags(e.target.value)} placeholder="Ex : urgent, 2026, CIC" />
+            <Input value={tags} onChange={(e) => setTags(e.target.value)} placeholder="Ex : 2026, CIC" />
           </div>
           <div>
             <Label>Notes</Label>
