@@ -85,7 +85,9 @@ const calmLabel = (calm: number) => {
 
 const Aujourdhui = () => {
   const feed = useTodayFeed();
+  useWidgetSync(feed);
   const progress = useProgressStats();
+
   const navigate = useNavigate();
   const [savedMood, setSavedMood] = useState<string | null>(null);
 
