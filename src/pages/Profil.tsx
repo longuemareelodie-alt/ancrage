@@ -27,6 +27,7 @@ import { useMolliePayment } from "@/hooks/useMolliePayment";
 import DiscoveryToggle from "@/components/DiscoveryToggle";
 import GuidedTourSettings from "@/components/GuidedTourSettings";
 import FoundingBadge from "@/components/FoundingBadge";
+import InviterProche from "@/components/profil/InviterProche";
 interface Note {
   id: string;
   title: string;
@@ -305,6 +306,7 @@ const Profil = () => {
           {activeTab === "profil" && (
             <motion.div key="profil" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-4">
               <GuidedTourSettings />
+              <InviterProche firstName={profile?.first_name} />
               <div className="space-y-4 rounded-xl bg-card p-5 shadow-sm">
                 <div>
                   <p className="text-xs font-medium text-muted-foreground">Prénom</p>

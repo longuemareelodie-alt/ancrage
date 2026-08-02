@@ -21,6 +21,7 @@ import DiscoveryBadge from "@/components/DiscoveryBadge";
 import { DiscoveryProvider } from "@/contexts/DiscoveryContext";
 import Index from "./pages/Index";
 import RechercheGlobale from "./pages/RechercheGlobale";
+import Invitation from "./pages/Invitation";
 import QuizResultat from "./pages/QuizResultat";
 import Dashboard from "./pages/Dashboard";
 import Emotions from "./pages/Emotions";
@@ -180,6 +181,7 @@ const AnimatedRoutes = () => {
         <Route path="/charge-mentale" element={<PageTransition><ChargeMentale /></PageTransition>} />
         <Route path="/comparaison" element={<PageTransition><Comparison /></PageTransition>} />
         <Route path="/auth" element={<PageTransition><Auth /></PageTransition>} />
+        <Route path="/invitation" element={<PageTransition><Invitation /></PageTransition>} />
         <Route path="/payment-success" element={<PageTransition><PaymentSuccess /></PageTransition>} />
         <Route path="/payment-pending" element={<PageTransition><PaymentPending /></PageTransition>} />
         <Route path="/payment-canceled" element={<PageTransition><PaymentCanceled /></PageTransition>} />
