@@ -27,6 +27,7 @@ import { useMolliePayment } from "@/hooks/useMolliePayment";
 import DiscoveryToggle from "@/components/DiscoveryToggle";
 import GuidedTourSettings from "@/components/GuidedTourSettings";
 import FoundingBadge from "@/components/FoundingBadge";
+import InviterProche from "@/components/profil/InviterProche";
 interface Note {
   id: string;
   title: string;
