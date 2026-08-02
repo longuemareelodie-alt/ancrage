@@ -148,5 +148,5 @@ export async function fetchInvitationByToken(token: string): Promise<InvitationP
     _token: token,
   });
   if (error) return { found: false };
-  return (data ?? { found: false }) as InvitationPreview;
+  return (data ?? { found: false }) as unknown as InvitationPreview;
 }
