@@ -2,16 +2,15 @@ import { motion } from "framer-motion";
 import { PlayCircle } from "lucide-react";
 import { Eyebrow, Section, SectionTitle, fadeUp } from "./primitives";
 import dashboardShot from "@/assets/showcase/dashboard.jpg.asset.json";
+import demoVideo from "@/assets/video/eclosia-demo.mp4.asset.json";
 
 /**
  * Démonstration.
- * Dès qu'une vidéo de 60 à 90 s est déposée dans le projet, on renseigne
- * DEMO_VIDEO_URL (et éventuellement DEMO_POSTER_URL) : la section affiche
- * alors le lecteur. Tant qu'elle n'existe pas, on montre honnêtement le
- * déroulé de la visite guidée plutôt qu'un lecteur vide.
+ * Vidéo courte (19 s) : une visite calme et rythmée d'Éclosia.
  */
-export const DEMO_VIDEO_URL = "";
+export const DEMO_VIDEO_URL = demoVideo.url;
 const DEMO_POSTER_URL = dashboardShot.url;
+
 
 const STEPS = [
   "Ouverture d'Éclosia",
