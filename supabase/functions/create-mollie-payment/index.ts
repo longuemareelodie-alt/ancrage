@@ -264,7 +264,9 @@ Deno.serve(async (req) => {
         base_price_cents: basePriceCents,
         discount_cents: discountCents,
         final_cents: finalCents,
-        promo_code: promo ? normalizedPromo : null,
+        promo_code: !foundingApplied && promo ? normalizedPromo : null,
+        founding_tier: foundingApplied ? foundingTier : null,
+
         method_forced: forceMethod ?? null,
         ref_code: referralCode,
       },
