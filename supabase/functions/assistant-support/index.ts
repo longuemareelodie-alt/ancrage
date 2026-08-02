@@ -65,7 +65,7 @@ Deno.serve(async (req) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return json({ error: "Unauthorized" }, 401);
 
-    const { situation, childName } = await req.json();
+    const { situation, childName, urgent } = await req.json();
     if (!situation || typeof situation !== "string" || situation.trim().length < 5) {
       return json({ error: "invalid_input", message: "Décris la situation en quelques mots." }, 400);
     }
