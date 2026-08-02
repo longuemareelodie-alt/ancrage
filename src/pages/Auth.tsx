@@ -5,6 +5,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { motion } from "framer-motion";
 import { PREMIUM_SCOPE_LABEL } from "@/lib/premiumOffer";
+import {
+  fetchInvitationByToken,
+  rememberPendingInvitation,
+  roleLabel,
+} from "@/lib/familyInvitations";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -20,6 +25,25 @@ const Auth = () => {
 
   const redirectTo = searchParams.get("redirect") || "/dashboard";
   const action = searchParams.get("action");
+  const invitationToken = searchParams.get("invitation");
+  const [invitationHint, setInvitationHint] = useState<string | null>(null);
+
+  // Invitation reçue : on prépare le terrain (adresse préremplie, jeton gardé)
+  useEffect(() => {
+    if (!invitationToken) return;
+    rememberPendingInvitation(invitationToken);
+    let active = true;
+    fetchInvitationByToken(invitationToken).then((inv) => {
+      if (!active || !inv.found || inv.status !== "pending") return;
+      if (inv.invited_email) setEmail(inv.invited_email);
+      setInvitationHint(
+        `${inv.inviter_first_name ? `${inv.inviter_first_name} t'a invité·e` : "Tu as été invité·e"} en tant que ${roleLabel(inv.role ?? "").toLowerCase()}. Connecte-toi avec cette adresse pour rattacher l'invitation.`,
+      );
+    });
+    return () => {
+      active = false;
+    };
+  }, [invitationToken]);
 
   useEffect(() => {
     if (user) {
@@ -61,6 +85,12 @@ const Auth = () => {
             {isForgot ? t("auth.subtitle_forgot") : t("auth.subtitle_login")}
           </p>
         </div>
+
+        {invitationHint && (
+          <div className="rounded-xl border border-primary/20 bg-primary/5 p-3 text-xs leading-relaxed text-foreground/80">
+            {invitationHint}
+          </div>
+        )}
 
         {error && <div className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive">{error}</div>}
         {info && <div className="rounded-lg bg-primary/10 p-3 text-sm text-primary">{info}</div>}
