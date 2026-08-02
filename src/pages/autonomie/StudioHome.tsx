@@ -3,8 +3,25 @@ import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import HubShell from "@/components/hub/HubShell";
-import { SUPPORT_ORDER, SUPPORT_TYPES } from "@/data/supportTemplates";
-import { Sparkles, ChevronRight, Library, Printer, Star, ShieldAlert } from "lucide-react";
+import { SUPPORT_ORDER, SUPPORT_TYPES, SupportType } from "@/data/supportTemplates";
+import PersonalisationSheet from "@/components/autonomie/PersonalisationSheet";
+import {
+  loadPersonalisation,
+  Personalisation,
+  savePersonalisation,
+  softHaptic,
+} from "@/lib/supportPersonalisation";
+import { cacheSupports, isOffline, readCachedSupports } from "@/lib/supportsCache";
+import {
+  Sparkles,
+  ChevronRight,
+  Library,
+  Printer,
+  Star,
+  ShieldAlert,
+  FileText,
+  WifiOff,
+} from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 type Support = {
@@ -17,35 +34,48 @@ type Support = {
 type Profile = { id: string; first_name: string };
 
 /**
- * Le Studio répond à une seule question : « qu'est-ce que tu veux faire, là, maintenant ? »
+ * Le Studio répond à une seule question : « qu'est-ce que tu veux créer aujourd'hui ? »
  * Ordre volontaire : aider tout de suite → laisser l'assistant faire → créer soi-même → retrouver.
  */
 const StudioHome = () => {
   const navigate = useNavigate();
   const [profiles, setProfiles] = useState<Profile[]>([]);
-  const [childId, setChildId] = useState<string>("");
   const [supports, setSupports] = useState<Support[]>([]);
   const [creating, setCreating] = useState(false);
+  const [pending, setPending] = useState<SupportType | null>(null);
+  const [perso, setPerso] = useState<Personalisation>(loadPersonalisation);
+  const [offline, setOffline] = useState(isOffline());
 
   useEffect(() => {
+    const cached = readCachedSupports();
+    if (cached.length) setSupports(cached.filter((s) => !s.archived).slice(0, 4) as Support[]);
     (async () => {
       const [{ data: p }, { data: s }] = await Promise.all([
         supabase.from("family_medical_profiles").select("id, first_name").order("created_at"),
         supabase
           .from("autonomy_supports")
-          .select("id, title, support_type, profile_id, is_favorite")
-          .eq("archived", false)
+          .select(
+            "id, title, support_type, profile_id, is_favorite, archived, updated_at, use_count, content",
+          )
           .order("updated_at", { ascending: false })
-          .limit(4),
+          .limit(60),
       ]);
       setProfiles(p ?? []);
-      setSupports(s ?? []);
-      if (p?.length) setChildId(p[0].id);
+      if (s) {
+        cacheSupports(s as never);
+        setSupports((s as unknown as (Support & { archived: boolean })[])
+          .filter((x) => !x.archived)
+          .slice(0, 4));
+      }
+      setOffline(isOffline());
+      if (p?.length && !loadPersonalisation().childId) {
+        setPerso((prev) => ({ ...prev, childId: p[0].id }));
+      }
     })();
   }, []);
 
-  const create = async (type: string) => {
-    if (creating) return;
+  const create = async (p: Personalisation) => {
+    if (creating || !pending) return;
     setCreating(true);
     const { data: auth } = await supabase.auth.getUser();
     const uid = auth.user?.id;
@@ -53,15 +83,23 @@ const StudioHome = () => {
       setCreating(false);
       return;
     }
-    const def = SUPPORT_TYPES[type as keyof typeof SUPPORT_TYPES];
+    savePersonalisation(p);
+    setPerso(p);
+    const def = SUPPORT_TYPES[pending];
     const { data, error } = await supabase
       .from("autonomy_supports")
       .insert({
         user_id: uid,
-        profile_id: childId || null,
-        support_type: type,
+        profile_id: p.childId || null,
+        support_type: pending,
         title: def.label,
         content: { items: [{ label: "" }] },
+        personalisation: {
+          ageBand: p.ageBand,
+          language: p.language,
+          objective: p.objective,
+          context: p.context,
+        },
       })
       .select("id")
       .single();
@@ -70,27 +108,22 @@ const StudioHome = () => {
       toast({ description: "Impossible de créer ce support.", variant: "destructive" });
       return;
     }
+    setPending(null);
+    softHaptic([10, 40, 10]);
+    toast({ description: "Ton support est prêt 🌸" });
     navigate("/autonomie/support/" + data.id);
   };
 
   const nameFor = (id: string | null) => profiles.find((p) => p.id === id)?.first_name;
 
   return (
-    <HubShell title="Studio" subtitle="Que souhaites-tu faire aujourd'hui ?">
-      {profiles.length > 0 && (
-        <div className="flex items-center gap-3 rounded-[20px] border border-border/70 bg-card px-5 py-3">
-          <span className="text-xs font-medium text-muted-foreground">Pour</span>
-          <select
-            value={childId}
-            onChange={(e) => setChildId(e.target.value)}
-            className="flex-1 bg-transparent text-sm font-semibold text-foreground outline-none"
-          >
-            {profiles.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.first_name}
-              </option>
-            ))}
-          </select>
+    <HubShell title="Studio" subtitle="Que souhaites-tu créer aujourd'hui ?">
+      {offline && (
+        <div className="flex items-center gap-3 rounded-[20px] border border-border/70 bg-card px-5 py-3.5">
+          <WifiOff className="h-4 w-4 shrink-0 text-muted-foreground" strokeWidth={1.75} />
+          <p className="text-xs leading-relaxed text-muted-foreground">
+            Hors ligne. Tes supports déjà créés restent consultables et imprimables.
+          </p>
         </div>
       )}
 
@@ -124,7 +157,7 @@ const StudioHome = () => {
         <span className="min-w-0 flex-1">
           <span className="block text-sm font-semibold text-foreground">Assistant Éclosia</span>
           <span className="mt-0.5 block text-xs leading-relaxed text-muted-foreground">
-            Décris la situation, le support se crée pour toi.
+            Décris la situation, il choisit et crée les supports pour toi.
           </span>
         </span>
         <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" strokeWidth={1.75} />
@@ -143,7 +176,10 @@ const StudioHome = () => {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.35, delay: i * 0.04, ease: [0.22, 1, 0.36, 1] }}
-              onClick={() => create(type)}
+              onClick={() => {
+                softHaptic();
+                setPending(type);
+              }}
               disabled={creating}
               className="flex min-h-[128px] flex-col items-start gap-2 rounded-[24px] border border-border/70 bg-card px-4 py-5 text-left transition-all hover:border-primary/40 active:scale-[0.98] disabled:opacity-60"
             >
@@ -155,6 +191,19 @@ const StudioHome = () => {
             </motion.button>
           );
         })}
+
+        <Link
+          to="/autonomie/pdf"
+          className="flex min-h-[128px] flex-col items-start gap-2 rounded-[24px] border border-border/70 bg-card px-4 py-5 text-left transition-all hover:border-primary/40 active:scale-[0.98]"
+        >
+          <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-secondary/60">
+            <FileText className="h-[18px] w-[18px] text-foreground" strokeWidth={1.75} />
+          </span>
+          <span className="text-sm font-semibold text-foreground">Générateur PDF</span>
+          <span className="text-[11px] leading-snug text-muted-foreground">
+            Réunir plusieurs supports en un seul document.
+          </span>
+        </Link>
       </div>
 
       {/* Reprendre */}
@@ -223,14 +272,24 @@ const StudioHome = () => {
             <Printer className="h-[18px] w-[18px]" strokeWidth={1.75} />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block text-sm font-semibold text-foreground">Mes supports</span>
+            <span className="block text-sm font-semibold text-foreground">Mes créations</span>
             <span className="mt-0.5 block text-xs text-muted-foreground">
-              Tout ce que tu as créé, avec recherche et favoris.
+              Derniers, favoris, brouillons, les plus utilisés.
             </span>
           </span>
           <ChevronRight className="h-4 w-4 text-muted-foreground" strokeWidth={1.75} />
         </Link>
       </div>
+
+      <PersonalisationSheet
+        open={Boolean(pending)}
+        onOpenChange={(o) => !o && setPending(null)}
+        label={pending ? SUPPORT_TYPES[pending].label : ""}
+        profiles={profiles}
+        value={perso}
+        loading={creating}
+        onConfirm={create}
+      />
     </HubShell>
   );
 };
