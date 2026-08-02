@@ -372,6 +372,66 @@ const CommunautePage = () => {
                   </div>
                 </div>
                 <p className="whitespace-pre-wrap text-sm text-foreground">{p.body}</p>
+
+                {(replies[p.id] ?? []).length > 0 && (
+                  <ul className="mt-3 space-y-2 border-l-2 border-border pl-3">
+                    {(replies[p.id] ?? []).map((r) => (
+                      <li key={r.id}>
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                          <CommunityAuthorLine
+                            author={authors[r.author_id]}
+                            isMine={r.author_id === user?.id}
+                          />
+                          {r.status === "pending" && (
+                            <span className="inline-flex items-center gap-1 text-[hsl(var(--lies))]">
+                              <Clock className="h-3 w-3" /> En attente
+                            </span>
+                          )}
+                        </div>
+                        <p className="whitespace-pre-wrap text-sm text-foreground">{r.body}</p>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+
+                {replyFor === p.id ? (
+                  <div className="mt-3 space-y-2">
+                    <Textarea
+                      value={replyBody}
+                      onChange={(e) => setReplyBody(e.target.value)}
+                      placeholder="Votre réponse…"
+                      rows={2}
+                    />
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        onClick={() => handleReply(p.id, p.thread_id)}
+                        disabled={!replyBody.trim()}
+                        className="bg-[hsl(var(--lies))] hover:bg-[hsl(var(--lies)/0.9)] text-[hsl(var(--lies-foreground))]"
+                      >
+                        <Send className="mr-2 h-3.5 w-3.5" /> Répondre (modération)
+                      </Button>
+                      <Button size="sm" variant="ghost" onClick={() => setReplyFor(null)}>
+                        Annuler
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => {
+                      if (readOnly) {
+                        setUnlockOpen(true);
+                        return;
+                      }
+                      setReplyBody("");
+                      setReplyFor(p.id);
+                    }}
+                    className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground"
+                  >
+                    <MessageCircle className="h-3.5 w-3.5" /> Répondre
+                  </button>
+                )}
+              </li>
               </li>
             );
           })}
