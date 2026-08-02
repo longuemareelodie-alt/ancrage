@@ -10,6 +10,8 @@ import { toast } from "@/hooks/use-toast";
 import { useAccessTier, isFreemiumLimited } from "@/lib/freemium";
 import UnlockDialog from "@/components/UnlockDialog";
 import { PREMIUM_PRICE_LONG } from "@/lib/premiumOffer";
+import CommunityAuthorLine from "@/components/lies/CommunityAuthorLine";
+import { CommunityAuthorMap, fetchCommunityAuthors } from "@/lib/communityAuthors";
 
 type Member = { user_id: string; display_name: string };
 type Thread = { id: string; slug: string; title: string; description: string };
