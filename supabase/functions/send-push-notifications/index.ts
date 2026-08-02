@@ -542,9 +542,11 @@ Deno.serve(async (req) => {
     }
 
     // Do not echo user IDs back to callers; keep response minimal.
-    return new Response(JSON.stringify({ sent, total: subscriptions.length }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({ sent, failed, skipped, total: subscriptions.length }),
+      { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+    );
+
   } catch (err) {
     return new Response(JSON.stringify({ error: String(err) }), {
       status: 500,
