@@ -8,5 +8,6 @@ To audit/regen LSF illustrations, run `node scripts/check-lsf-illustrations.mjs`
 
 ## Memories
 - [Philosophie produit Éclosia](mem://preference/eclosia-philosophie) — Règle d'or, ton de voix, interdits, principes UI/onboarding.
+- [Familles Fondatrices](mem://feature/familles-fondatrices) — Paliers 29/49/69/79/97 €, badges à vie, attribution automatique après paiement validé, non-cumul promo.
 - [LSF illustration style](mem://design/lsf-illustrations) — Full charter for per-sign visuals (format, palette, composition, prompt template, fallback). Mirrors docs/lsf-illustration-style.md.
 - [LSF illustrations check script](mem://reference/lsf-illustrations-check) — Audit + auto-regen of src/assets/lsf/*.jpg via AI Gateway (Nano Banana) with retry/backoff. Run after adding signs.
