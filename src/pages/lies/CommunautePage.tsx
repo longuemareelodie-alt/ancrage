@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Users, Send, Flag, Clock, Lock } from "lucide-react";
+import { Users, Send, Flag, Clock, Lock, MessageCircle } from "lucide-react";
 import LiesShell from "@/components/lies/LiesShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
