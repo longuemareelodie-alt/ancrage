@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import logo from "@/assets/logo-ancrage.png";
-import confetti from "canvas-confetti";
+import { haptic } from "@/lib/feedback";
 
 const PaymentSuccess = () => {
   const { user } = useAuth();
@@ -19,7 +19,8 @@ const PaymentSuccess = () => {
   const [downloadingInvoice, setDownloadingInvoice] = useState(false);
 
   useEffect(() => {
-    confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+    // Célébration discrète : une vibration douce, jamais de confettis.
+    haptic("success");
     if (typeof window !== "undefined") {
       try {
         const raw = window.localStorage.getItem("ancrage:pendingCheckin");
