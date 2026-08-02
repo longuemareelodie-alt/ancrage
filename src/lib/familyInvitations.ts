@@ -150,3 +150,56 @@ export async function fetchInvitationByToken(token: string): Promise<InvitationP
   if (error) return { found: false };
   return (data ?? { found: false }) as unknown as InvitationPreview;
 }
+
+/* ------------------------------------------------------------------ *
+ * Invitation en attente : chez Eclosia le compte n'existe qu'après le
+ * paiement. On garde donc le jeton de côté pendant tout le parcours
+ * (offre → paiement → première connexion) puis on le consomme.
+ * ------------------------------------------------------------------ */
+
+const PENDING_KEY = "eclosia_pending_invitation";
+
+export function rememberPendingInvitation(token: string) {
+  try {
+    if (token) localStorage.setItem(PENDING_KEY, token);
+  } catch {
+    /* stockage indisponible : le lien reste utilisable manuellement */
+  }
+}
+
+export function getPendingInvitation(): string | null {
+  try {
+    return localStorage.getItem(PENDING_KEY);
+  } catch {
+    return null;
+  }
+}
+
+export function forgetPendingInvitation() {
+  try {
+    localStorage.removeItem(PENDING_KEY);
+  } catch {
+    /* rien à nettoyer */
+  }
+}
+
+/**
+ * Marque l'invitation comme acceptée si l'adresse du compte correspond.
+ * Silencieux par nature : ça ne doit jamais gêner l'entrée dans l'app.
+ */
+export async function acceptPendingInvitation(): Promise<boolean> {
+  const token = getPendingInvitation();
+  if (!token) return false;
+
+  const { data, error } = await supabase.rpc("accept_family_invitation", {
+    _token: token,
+  });
+  if (error) return false;
+
+  const result = data as { accepted?: boolean; reason?: string } | null;
+  // On ne réessaie indéfiniment que si l'adresse ne correspond pas encore.
+  if (result?.accepted || result?.reason === "not_found" || result?.reason === "not_valid") {
+    forgetPendingInvitation();
+  }
+  return !!result?.accepted;
+}

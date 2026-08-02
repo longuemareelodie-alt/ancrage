@@ -5,6 +5,7 @@ import { Loader2, Sparkles } from "lucide-react";
 import {
   InvitationPreview,
   fetchInvitationByToken,
+  rememberPendingInvitation,
   roleEmoji,
   roleLabel,
 } from "@/lib/familyInvitations";
@@ -107,15 +108,24 @@ const Invitation = () => {
             </p>
 
             <Link
-              to={`/auth?invitation=${encodeURIComponent(token)}`}
+              to="/"
+              onClick={() => rememberPendingInvitation(token)}
               className="mt-8 inline-flex items-center justify-center gap-2 rounded-full bg-primary px-7 py-3 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90"
             >
               <Sparkles className="h-4 w-4" />
-              Créer mon espace
+              Découvrir Eclosia
             </Link>
-            <p className="mt-4 text-[11px] text-muted-foreground">
-              Ce lien est personnel et reste valable 30 jours.
+            <p className="mt-4 text-[11px] leading-relaxed text-muted-foreground">
+              Ce lien est personnel et reste valable 30 jours. Ton invitation
+              reste rattachée à ton espace une fois celui-ci créé.
             </p>
+            <Link
+              to={`/auth?invitation=${encodeURIComponent(token)}`}
+              onClick={() => rememberPendingInvitation(token)}
+              className="mt-5 inline-block text-xs font-medium text-primary hover:underline"
+            >
+              J'ai déjà un compte Eclosia
+            </Link>
           </>
         )}
 
