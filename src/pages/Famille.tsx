@@ -81,18 +81,23 @@ export default function Famille() {
   const [openProfile, setOpenProfile] = useState<Profile | null>(null);
   const [newProfileOpen, setNewProfileOpen] = useState(false);
   const [detailFor, setDetailFor] = useState<Profile | null>(null);
+  const [sharedProfiles, setSharedProfiles] = useState<Profile[]>([]);
 
   const load = async () => {
     if (!user) return;
     setLoading(true);
-    const [{ data: p }, { data: v }, { data: d }] = await Promise.all([
+    const [{ data: p }, { data: v }, { data: d }, { data: shared }] = await Promise.all([
       supabase.from("family_medical_profiles").select("*").eq("user_id", user.id).order("created_at", { ascending: true }),
       supabase.from("family_vaccinations").select("*").eq("user_id", user.id).order("date_given", { ascending: false }),
       supabase.from("family_medical_documents").select("id,profile_id,file_name,category,storage_path,created_at").eq("user_id", user.id).order("created_at", { ascending: false }),
+      // Profils partagés par un proche qui m'a invitée : lecture seule.
+      supabase.from("family_medical_profiles").select("*").neq("user_id", user.id).order("created_at", { ascending: true }),
     ]);
     setProfiles((p as Profile[]) || []);
     setVaccinations((v as Vaccination[]) || []);
     setDocuments((d as Document[]) || []);
+    setSharedProfiles((shared as Profile[]) || []);
+
     setLoading(false);
   };
 
