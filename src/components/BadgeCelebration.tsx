@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect } from "react";
-import confetti from "canvas-confetti";
+import { haptic } from "@/lib/feedback";
 import type { BadgeDef } from "@/lib/streaks";
 
 interface Props {
@@ -8,14 +8,15 @@ interface Props {
   onDone: () => void;
 }
 
+/**
+ * Célébration d'étape — douce et silencieuse.
+ * Jamais de confettis, jamais d'effet bruyant : une animation, une vibration
+ * discrète, un petit mot.
+ */
 const BadgeCelebration = ({ badges, onDone }: Props) => {
   useEffect(() => {
     if (badges.length === 0) return;
-    const fire = (opts: confetti.Options) =>
-      confetti({ ...opts, disableForReducedMotion: true });
-    fire({ particleCount: 60, spread: 80, origin: { x: 0.5, y: 0.5 } });
-    setTimeout(() => fire({ particleCount: 40, spread: 60, origin: { x: 0.3, y: 0.6 } }), 300);
-
+    haptic("success");
     const timer = setTimeout(onDone, 5000);
     return () => clearTimeout(timer);
   }, [badges, onDone]);
