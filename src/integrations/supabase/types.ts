@@ -1304,6 +1304,57 @@ export type Database = {
         }
         Relationships: []
       }
+      notification_preferences: {
+        Row: {
+          created_at: string
+          emotion_reminders: boolean
+          evening_time: string
+          last_sent_at: string | null
+          max_per_day: number
+          morning_time: string
+          quiet_end: string
+          quiet_start: string
+          routine_reminders: boolean
+          sent_today: number
+          sent_today_date: string | null
+          timezone: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          emotion_reminders?: boolean
+          evening_time?: string
+          last_sent_at?: string | null
+          max_per_day?: number
+          morning_time?: string
+          quiet_end?: string
+          quiet_start?: string
+          routine_reminders?: boolean
+          sent_today?: number
+          sent_today_date?: string | null
+          timezone?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          emotion_reminders?: boolean
+          evening_time?: string
+          last_sent_at?: string | null
+          max_per_day?: number
+          morning_time?: string
+          quiet_end?: string
+          quiet_start?: string
+          routine_reminders?: boolean
+          sent_today?: number
+          sent_today_date?: string | null
+          timezone?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       organisation_notes: {
         Row: {
           color: string | null
