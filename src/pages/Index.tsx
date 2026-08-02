@@ -136,11 +136,12 @@ const Nav = ({ onCTA, loading }: { onCTA: () => void; loading: boolean }) => {
   }, []);
 
   const links = [
-    { href: "#quotidien", label: "Le quotidien" },
-    { href: "#eclosia", label: "Eclosia" },
-    { href: "#modules", label: "Ce que ça change" },
-    { href: "#fondatrice", label: "Fondatrice" },
-    { href: "#tarif", label: "Tarif" },
+    { href: "#demonstration", label: "Démonstration" },
+    { href: "#studio", label: "Studio" },
+    { href: "#pour-qui", label: "Pour qui" },
+    { href: "#fondatrice", label: "Mon histoire" },
+    { href: "#tarif-fondateur", label: "Tarif" },
+
   ];
 
   return (
@@ -661,10 +662,11 @@ const Fondatrice = ({ onCTA, loading }: { onCTA: () => void; loading: boolean })
           </p>
           <p>Cet endroit n'existait pas. Alors je l'ai créé.</p>
           <p className="font-medium text-night">
-            Eclosia n'est pas née d'une idée marketing. Elle est née d'un
-            besoin réel. Celui d'une maman qui voulait arrêter de tout porter
-            seule.
+            Éclosia n'est pas née d'une idée marketing. Elle est née d'un
+            besoin réel. Celui d'un parent qui voulait arrêter de tout porter
+            seul.
           </p>
+
         </div>
         <div className="mt-8">
           <PrimaryCTA onClick={onCTA} disabled={loading}>
@@ -1016,12 +1018,13 @@ const Tarif = ({ onCTA, loading }: { onCTA: () => void; loading: boolean }) => (
 
 const Serenite = () => {
   const items = [
-    "Tu chercheras moins.",
-    "Tu centraliseras enfin toutes les informations importantes.",
-    "Tu retrouveras plus facilement ce dont tu as besoin.",
-    "Tu auras un espace qui pense avec toi.",
-    "Tu respireras un peu plus chaque jour.",
+    "Toute ta vie familiale au même endroit.",
+    "Les informations importantes toujours accessibles.",
+    "Un Studio d'Autonomie pour créer facilement des supports adaptés.",
+    "Des outils pensés pour accompagner ton enfant.",
+    "Un espace qui évolue avec toi.",
   ];
+
   return (
     <Section id="serenite">
       <motion.div {...fadeUp} className="mx-auto max-w-2xl text-center">
@@ -1128,34 +1131,76 @@ const AmbassadeurTeaser = () => (
 
 /* ------------------------------ FAQ extras ---------------------------- */
 
+const FAQ_EXTRAS = [
+  {
+    q: "Pourquoi un accès à vie ?",
+    a: "Parce qu'un abonnement de plus, c'est une charge de plus. Tu paies une seule fois et Éclosia reste à toi, pour toutes les années à venir.",
+  },
+  {
+    q: "Pourquoi le prix augmente ?",
+    a: "Les premières familles rejoignent Éclosia au tout début, quand tout reste à construire. Le tarif fondateur les remercie de cette confiance, puis il remonte progressivement vers le tarif normal de 97 €.",
+  },
+  {
+    q: "Comment fonctionne le tarif fondateur ?",
+    a: "Il est automatique : 5 Familles Fondatrices à 29 €, 10 Familles Pionnières à 49 €, 20 Premières Familles à 69 €, 20 familles suivantes à 79 €, puis 97 €. Le compteur n'avance qu'avec des paiements réellement validés, et le nombre de places restantes est affiché en temps réel.",
+  },
+  {
+    q: "Puis-je payer en plusieurs fois ?",
+    a: "Oui, avec Klarna lorsque c'est disponible dans ton pays. Le bouton apparaît juste sous le paiement classique.",
+  },
+  {
+    q: "Toutes les mises à jour sont-elles incluses ?",
+    a: "Oui, toutes. Chaque nouvelle fonctionnalité arrive automatiquement dans ton espace, sans supplément.",
+  },
+  {
+    q: "Comment fonctionne le programme Ambassadeur ?",
+    a: "Il est gratuit et facultatif. Tu reçois un lien personnel : lorsqu'une famille découvre Éclosia grâce à toi, tu reçois une commission. Tu peux aussi utiliser Éclosia sans jamais y participer.",
+  },
+  {
+    q: "Puis-je utiliser Éclosia sur plusieurs appareils ?",
+    a: "Oui. Téléphone, tablette, ordinateur : tu te connectes avec le même compte et tout se synchronise.",
+  },
+  {
+    q: "Mes données sont-elles sécurisées ?",
+    a: "Oui. Tes données sont chiffrées, hébergées en Europe, et personne d'autre que toi n'y a accès — sauf les proches que tu invites, avec les droits que tu choisis. Aucune publicité, aucune revente.",
+  },
+];
+
 const FaqExtras = () => (
   <section className="px-6 pb-12">
     <div className="mx-auto max-w-2xl">
       <Accordion type="single" collapsible className="w-full">
-        <AccordionItem value="paiement-unique">
-          <AccordionTrigger className="text-left text-sm font-semibold md:text-base">
-            Pourquoi un paiement unique ?
-          </AccordionTrigger>
-          <AccordionContent className="text-sm leading-relaxed text-muted-foreground">
-            Je voulais créer un outil qui accompagne les familles pendant des
-            années sans leur ajouter un abonnement de plus.
-          </AccordionContent>
-        </AccordionItem>
-        <AccordionItem value="recommander">
-          <AccordionTrigger className="text-left text-sm font-semibold md:text-base">
-            Peut-on recommander Eclosia ?
-          </AccordionTrigger>
-          <AccordionContent className="text-sm leading-relaxed text-muted-foreground">
-            Oui. Si Eclosia t'aide réellement, tu peux rejoindre gratuitement
-            notre programme ambassadrice et recevoir une commission lorsque des
-            familles découvrent Eclosia grâce à toi. Aucune obligation. Tu peux
-            simplement utiliser Eclosia sans participer au programme.
-          </AccordionContent>
-        </AccordionItem>
+        {FAQ_EXTRAS.map((item, i) => (
+          <AccordionItem key={item.q} value={`extra-${i}`}>
+            <AccordionTrigger className="text-left text-sm font-semibold md:text-base">
+              {item.q}
+            </AccordionTrigger>
+            <AccordionContent className="text-sm leading-relaxed text-muted-foreground">
+              {item.a}
+            </AccordionContent>
+          </AccordionItem>
+        ))}
       </Accordion>
+
+      <script
+        type="application/ld+json"
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: FAQ_EXTRAS.map((item) => ({
+              "@type": "Question",
+              name: item.q,
+              acceptedAnswer: { "@type": "Answer", text: item.a },
+            })),
+          }),
+        }}
+      />
     </div>
   </section>
 );
+
 
 /* ------------------------------- Page --------------------------------- */
 
