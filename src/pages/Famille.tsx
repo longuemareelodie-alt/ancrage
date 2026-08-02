@@ -81,18 +81,23 @@ export default function Famille() {
   const [openProfile, setOpenProfile] = useState<Profile | null>(null);
   const [newProfileOpen, setNewProfileOpen] = useState(false);
   const [detailFor, setDetailFor] = useState<Profile | null>(null);
+  const [sharedProfiles, setSharedProfiles] = useState<Profile[]>([]);
 
   const load = async () => {
     if (!user) return;
     setLoading(true);
-    const [{ data: p }, { data: v }, { data: d }] = await Promise.all([
+    const [{ data: p }, { data: v }, { data: d }, { data: shared }] = await Promise.all([
       supabase.from("family_medical_profiles").select("*").eq("user_id", user.id).order("created_at", { ascending: true }),
       supabase.from("family_vaccinations").select("*").eq("user_id", user.id).order("date_given", { ascending: false }),
       supabase.from("family_medical_documents").select("id,profile_id,file_name,category,storage_path,created_at").eq("user_id", user.id).order("created_at", { ascending: false }),
+      // Profils partagés par un proche qui m'a invitée : lecture seule.
+      supabase.from("family_medical_profiles").select("*").neq("user_id", user.id).order("created_at", { ascending: true }),
     ]);
     setProfiles((p as Profile[]) || []);
     setVaccinations((v as Vaccination[]) || []);
     setDocuments((d as Document[]) || []);
+    setSharedProfiles((shared as Profile[]) || []);
+
     setLoading(false);
   };
 
@@ -239,7 +244,57 @@ export default function Famille() {
             })}
           </div>
         )}
+
+        {/* Profils partagés avec moi — consultation seule */}
+        {sharedProfiles.length > 0 && (
+          <section className="mt-8">
+            <h2 className="font-playfair text-xl text-foreground">Partagés avec moi</h2>
+            <p className="mt-1 mb-3 text-sm text-muted-foreground">
+              Ces fiches vous sont partagées par un proche. Vous pouvez les consulter, pas les modifier.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {sharedProfiles.map((p) => {
+                const age = p.birth_date ? differenceInYears(new Date(), new Date(p.birth_date)) : null;
+                return (
+                  <Card key={p.id} className="border-dashed">
+                    <CardContent className="p-4">
+                      <div className="flex items-start gap-3">
+                        <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center text-lg font-semibold text-muted-foreground shrink-0">
+                          {p.first_name.charAt(0).toUpperCase() || "?"}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <p className="font-semibold truncate">{p.first_name || "Sans nom"}</p>
+                            <span className="text-[10px] font-semibold rounded-full bg-muted px-2 py-0.5 text-muted-foreground">
+                              Lecture seule
+                            </span>
+                          </div>
+                          <p className="text-xs text-muted-foreground">
+                            {p.relation || "Membre"}{age !== null ? ` · ${age} an${age > 1 ? "s" : ""}` : ""}
+                          </p>
+                          {p.allergies.trim() && (
+                            <p className="mt-2 text-xs text-muted-foreground">
+                              <span className="font-medium text-foreground">Allergies : </span>
+                              {p.allergies}
+                            </p>
+                          )}
+                          {p.current_treatments.trim() && (
+                            <p className="mt-1 text-xs text-muted-foreground">
+                              <span className="font-medium text-foreground">Traitements : </span>
+                              {p.current_treatments}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          </section>
+        )}
       </div>
+
 
       {/* Nouveau profil */}
       <ProfileDialog

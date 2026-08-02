@@ -2244,6 +2244,10 @@ export type Database = {
         }[]
       }
       get_premium_audit: { Args: never; Returns: Json }
+      has_family_read_access: {
+        Args: { _owner_id: string; _viewer_id: string }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
