@@ -23,6 +23,19 @@ const config: CapacitorConfig = {
   android: {
     backgroundColor: "#FDF8F3",
   },
+  plugins: {
+    // App Group partagé : indispensable pour que les widgets iPhone et
+    // l'écran de verrouillage lisent les données écrites par l'app.
+    Preferences: {
+      group: "group.app.lovable.eclosia",
+    },
+    SplashScreen: {
+      launchAutoHide: false,
+      backgroundColor: "#FDF8F3",
+      showSpinner: false,
+    },
+  },
 };
+
 
 export default config;
