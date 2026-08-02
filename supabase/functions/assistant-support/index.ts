@@ -83,7 +83,7 @@ Deno.serve(async (req) => {
         model: "google/gemini-3.6-flash",
         response_format: { type: "json_object" },
         messages: [
-          { role: "system", content: SYSTEM },
+          { role: "system", content: urgent === true ? `${SYSTEM}\n\n${URGENT_HINT}` : SYSTEM },
           {
             role: "user",
             content: `Situation : ${situation.slice(0, 800)}${
