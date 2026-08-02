@@ -175,7 +175,7 @@ export default function Famille() {
           <Card>
             <CardContent className="py-16 text-center text-muted-foreground">
               <Users className="h-12 w-12 mx-auto mb-3 opacity-30" />
-              <p>Aucun profil pour l'instant.</p>
+              <p>Ta famille n'est pas encore arrivée ici.</p>
               <p className="text-sm mt-1">Ajoute les membres de ta famille pour centraliser leurs infos santé.</p>
             </CardContent>
           </Card>
