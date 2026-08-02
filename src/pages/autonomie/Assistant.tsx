@@ -15,6 +15,14 @@ import {
 } from "@/data/supportTemplates";
 import { exportSupportPdf, PdfFormat } from "@/lib/exportSupportPdf";
 import { toast } from "@/hooks/use-toast";
+import PersonalisationSheet from "@/components/autonomie/PersonalisationSheet";
+import {
+  describePersonalisation,
+  loadPersonalisation,
+  Personalisation,
+  savePersonalisation,
+  softHaptic,
+} from "@/lib/supportPersonalisation";
 
 type Suggestion = {
   type: SupportType;
@@ -51,6 +59,8 @@ const Assistant = () => {
   const [childId, setChildId] = useState("");
   const [crisisKey, setCrisisKey] = useState<string | null>(null);
   const [format, setFormat] = useState<PdfFormat>("a4");
+  const [perso, setPerso] = useState<Personalisation>(loadPersonalisation);
+  const [askPerso, setAskPerso] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -59,7 +69,10 @@ const Assistant = () => {
         .select("id, first_name")
         .order("created_at");
       setProfiles(data ?? []);
-      if (data?.length) setChildId(data[0].id);
+      if (data?.length) {
+        const saved = loadPersonalisation().childId;
+        setChildId(saved && data.some((d) => d.id === saved) ? saved : data[0].id);
+      }
     })();
   }, []);
 
@@ -71,7 +84,18 @@ const Assistant = () => {
     setSuggestions([]);
     setIntro("");
     const { data, error } = await supabase.functions.invoke("assistant-support", {
-      body: { situation: text.trim(), childName, urgent: crisisMode },
+      body: {
+        situation: text.trim(),
+        childName,
+        urgent: crisisMode,
+        childId: childId || null,
+        personalisation: {
+          ageBand: perso.ageBand,
+          language: perso.language,
+          objective: perso.objective,
+          context: perso.context,
+        },
+      },
     });
     setLoading(false);
 
@@ -122,6 +146,12 @@ const Assistant = () => {
         title: s.title,
         description: s.description,
         content: { items: s.items },
+        personalisation: {
+          ageBand: perso.ageBand,
+          language: perso.language,
+          objective: perso.objective,
+          context: perso.context,
+        },
       })
       .select("id")
       .single();
@@ -129,6 +159,8 @@ const Assistant = () => {
       toast({ description: "Impossible d'enregistrer ce support.", variant: "destructive" });
       return;
     }
+    softHaptic([10, 40, 10]);
+    toast({ description: "Ton support est prêt 🌸" });
     navigate("/autonomie/support/" + data.id);
   };
 
@@ -212,7 +244,10 @@ const Assistant = () => {
             className="w-full resize-none bg-transparent text-sm leading-relaxed text-foreground outline-none placeholder:text-muted-foreground"
           />
           <button
-            onClick={() => run(situation)}
+            onClick={() => {
+              softHaptic();
+              setAskPerso(true);
+            }}
             disabled={loading || situation.trim().length < 5}
             className="mt-3 flex w-full items-center justify-center gap-2 rounded-2xl bg-primary px-5 py-3.5 text-sm font-semibold text-primary-foreground transition-transform active:scale-[0.98] disabled:opacity-50"
           >
@@ -312,6 +347,15 @@ const Assistant = () => {
         </div>
       )}
 
+      {describePersonalisation(perso) && (
+        <button
+          onClick={() => setAskPerso(true)}
+          className="self-start rounded-full border border-border/70 bg-card px-4 py-2 text-left text-[11px] font-medium text-muted-foreground"
+        >
+          {describePersonalisation(perso)} · modifier
+        </button>
+      )}
+
       {suggestions.map((s, i) => {
         const def = SUPPORT_TYPES[s.type];
         return (
@@ -371,6 +415,22 @@ const Assistant = () => {
           </motion.div>
         );
       })}
+
+      <PersonalisationSheet
+        open={askPerso}
+        onOpenChange={setAskPerso}
+        label="Pour qui, et dans quel contexte ?"
+        profiles={profiles}
+        value={{ ...perso, childId: childId || perso.childId }}
+        loading={loading}
+        onConfirm={(p) => {
+          savePersonalisation(p);
+          setPerso(p);
+          if (p.childId) setChildId(p.childId);
+          setAskPerso(false);
+          void run(situation);
+        }}
+      />
     </HubShell>
   );
 };
