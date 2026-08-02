@@ -106,6 +106,7 @@ import Organisation from "./pages/Organisation";
 import Statistiques from "./pages/Statistiques";
 import Famille from "./pages/Famille";
 import Aujourdhui from "./pages/Aujourdhui";
+import Onboarding from "./pages/Onboarding";
 import MoiEmotions from "./pages/moi/MoiEmotions";
 import MoiObjectifs from "./pages/moi/MoiObjectifs";
 import FicheMembre from "./pages/famille/FicheMembre";
