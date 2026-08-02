@@ -90,11 +90,31 @@ const CommunautePage = () => {
     if (tab === "free") q = q.eq("kind", "free_post");
     if (tab === "qa") q = q.eq("kind", "question");
     const { data } = await q;
-    if (data) {
-      setPosts(data);
-      const map = await fetchCommunityAuthors(data.map((p) => p.author_id));
-      setAuthors(map);
+    if (!data) return;
+    setPosts(data);
+
+    // Commentaires (réponses) rattachés aux messages affichés
+    const ids = data.map((p) => p.id);
+    let grouped: Record<string, Post[]> = {};
+    if (ids.length > 0) {
+      const { data: rep } = await supabase
+        .from("community_posts")
+        .select("id, thread_id, author_id, kind, body, status, created_at, parent_id")
+        .in("parent_id", ids)
+        .order("created_at", { ascending: true });
+      for (const r of rep ?? []) {
+        const key = String((r as Post & { parent_id?: string }).parent_id ?? "");
+        if (!key) continue;
+        grouped[key] = [...(grouped[key] ?? []), r as Post];
+      }
     }
+    setReplies(grouped);
+
+    const map = await fetchCommunityAuthors([
+      ...data.map((p) => p.author_id),
+      ...Object.values(grouped).flat().map((r) => r.author_id),
+    ]);
+    setAuthors(map);
   };
   useEffect(() => {
     loadPosts();
