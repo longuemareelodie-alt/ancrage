@@ -376,6 +376,7 @@ function ProfileDialog({
     } else {
       const { error } = await supabase.from("family_medical_profiles").insert({ user_id: userId, ...payload });
       if (error) return toast.error(error.message);
+      celebrate("first_child");
     }
     toast.success("Enregistré");
     onSaved();

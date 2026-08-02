@@ -110,6 +110,7 @@ const StudioHome = () => {
     }
     setPending(null);
     softHaptic([10, 40, 10]);
+    celebrate("first_routine");
     toast({ description: "Ton support est prêt 🌸" });
     navigate("/autonomie/support/" + data.id);
   };
