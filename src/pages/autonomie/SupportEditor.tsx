@@ -110,7 +110,7 @@ const SupportEditor = () => {
         profile_id: profileId,
         support_type: type,
         title: (title.trim() || def.label) + " (copie)",
-        content: { items: items.filter((i) => i.label.trim()) },
+        content: { items: stripRowKeys(items.filter((i) => i.label.trim())) },
       })
       .select("id")
       .single();
