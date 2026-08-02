@@ -54,8 +54,6 @@ import FinalCTA from "@/components/landing/FinalCTA";
 
 import heroPhoto from "@/assets/hero-fondatrice.png.asset.json";
 import journalShot from "@/assets/showcase/journal.jpg.asset.json";
-import portraitShot from "@/assets/showcase/portrait.jpg.asset.json";
-import friseShot from "@/assets/showcase/frise.jpg.asset.json";
 import dashboardShot from "@/assets/showcase/dashboard.jpg.asset.json";
 
 const fadeUp = {
