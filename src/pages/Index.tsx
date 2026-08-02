@@ -231,7 +231,7 @@ const Hero = ({ onCTA, loading }: { onCTA: () => void; loading: boolean }) => (
       <motion.div {...fadeIn}>
         <span className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-card/60 px-4 py-1.5 text-[11px] font-medium tracking-wide text-muted-foreground backdrop-blur-md">
           <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-          Pour les familles neuroatypiques
+          🌸 Pensé avec des familles, pour des familles.
         </span>
       </motion.div>
 
@@ -239,9 +239,11 @@ const Hero = ({ onCTA, loading }: { onCTA: () => void; loading: boolean }) => (
         {...fadeUp}
         className="mt-8 font-serif text-[clamp(2.25rem,6vw,4.5rem)] leading-[1.05] tracking-[-0.02em] text-night"
       >
-        Tu n'as pas besoin d'être
+        Enfin un endroit qui t'aide à porter
         <br />
-        <span className="italic text-primary-dark">une maman parfaite.</span>
+        <span className="italic text-primary-dark">
+          un peu moins la charge mentale.
+        </span>
       </motion.h1>
 
       <motion.p
@@ -249,17 +251,9 @@ const Hero = ({ onCTA, loading }: { onCTA: () => void; loading: boolean }) => (
         transition={{ ...fadeUp.transition, delay: 0.1 }}
         className="mt-6 max-w-2xl text-[clamp(1.05rem,1.6vw,1.25rem)] leading-relaxed text-foreground/80"
       >
-        Tu as besoin d'un endroit qui porte une partie de ta charge mentale.
-      </motion.p>
-
-      <motion.p
-        {...fadeUp}
-        transition={{ ...fadeUp.transition, delay: 0.15 }}
-        className="mt-5 max-w-2xl text-[15px] leading-relaxed text-muted-foreground"
-      >
-        Eclosia rassemble toute l'organisation, la santé, les émotions, les
-        documents importants et les ressources de ta famille dans un seul
-        espace pensé pour les parents d'enfants neuroatypiques.
+        Éclosia rassemble dans un seul espace tout ce qui compte pour
+        accompagner ton enfant au quotidien, retrouver facilement les
+        informations importantes et créer des supports adaptés à ses besoins.
       </motion.p>
 
       <motion.div
@@ -268,18 +262,34 @@ const Hero = ({ onCTA, loading }: { onCTA: () => void; loading: boolean }) => (
         className="mt-10 flex flex-wrap items-center justify-center gap-3"
       >
         <PrimaryCTA onClick={onCTA} disabled={loading}>
-          Découvrir Eclosia
+          Découvrir Éclosia
         </PrimaryCTA>
-        <GhostCTA href="#eclosia">Voir comment ça fonctionne</GhostCTA>
+        <GhostCTA href="#demonstration">Voir la démonstration</GhostCTA>
       </motion.div>
 
-      <motion.p
+      <motion.ul
         {...fadeUp}
         transition={{ ...fadeUp.transition, delay: 0.35 }}
-        className="mt-6 text-xs text-muted-foreground"
+        className="mt-8 flex flex-wrap items-center justify-center gap-2"
       >
-        Paiement unique · Accès à vie · Sans abonnement
-      </motion.p>
+        {[
+          "Accès à vie",
+          "Toutes les mises à jour incluses",
+          "Sans abonnement",
+          "Paiement en plusieurs fois avec Klarna",
+        ].map((r) => (
+          <li
+            key={r}
+            className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/70 px-4 py-2 text-[13px] text-foreground/85 backdrop-blur-md"
+          >
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/15">
+              <Check className="h-3 w-3 text-primary-dark" aria-hidden="true" />
+            </span>
+            {r}
+          </li>
+        ))}
+      </motion.ul>
+
     </div>
 
     {/* Hero mockup */}
