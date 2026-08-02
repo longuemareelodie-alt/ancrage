@@ -163,16 +163,8 @@ const SupportEditor = () => {
       .eq("id", supportId!);
   };
 
-  const move = (index: number, dir: -1 | 1) => {
-    const next = [...items];
-    const target = index + dir;
-    if (target < 0 || target >= next.length) return;
-    [next[index], next[target]] = [next[target], next[index]];
-    setItems(next);
-  };
 
-  const update = (index: number, patch: Partial<SupportItem>) =>
-    setItems(items.map((it, i) => (i === index ? { ...it, ...patch } : it)));
+
 
   if (loading) {
     return <HubShell title="Support">{null}</HubShell>;
