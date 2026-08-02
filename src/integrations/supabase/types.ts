@@ -2209,6 +2209,7 @@ export type Database = {
       ensure_ambassador_profile: { Args: { _user_id: string }; Returns: string }
       generate_referral_code: { Args: never; Returns: string }
       get_batch_recipients_admin: { Args: { _batch_id: string }; Returns: Json }
+      get_community_authors: { Args: { _user_ids: string[] }; Returns: Json }
       get_emergency_usage: { Args: never; Returns: Json }
       get_family_invitation_by_token: {
         Args: { _token: string }

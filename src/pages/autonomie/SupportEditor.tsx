@@ -6,19 +6,15 @@ import { SUPPORT_TYPES, SupportItem, SupportType } from "@/data/supportTemplates
 import { exportSupportPdf, PdfFormat } from "@/lib/exportSupportPdf";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  GripVertical,
-  Plus,
-  Printer,
-  Trash2,
-  ArrowLeft,
-  Star,
-  Copy,
-  Archive,
-} from "lucide-react";
+import { Printer, ArrowLeft, Star, Copy, Archive } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { describePersonalisation, softHaptic } from "@/lib/supportPersonalisation";
 import { readCachedSupport } from "@/lib/supportsCache";
+import SupportItemsReorder, {
+  SupportRow,
+  stripRowKeys,
+  withRowKeys,
+} from "@/components/autonomie/SupportItemsReorder";
 
 
 type Profile = { id: string; first_name: string };
@@ -30,7 +26,7 @@ const SupportEditor = () => {
   const [loading, setLoading] = useState(true);
   const [title, setTitle] = useState("");
   const [type, setType] = useState<SupportType>("routine");
-  const [items, setItems] = useState<SupportItem[]>([]);
+  const [items, setItems] = useState<SupportRow[]>([]);
   const [profileId, setProfileId] = useState<string | null>(null);
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [saving, setSaving] = useState(false);
@@ -57,7 +53,7 @@ const SupportEditor = () => {
           setType(cached.support_type as SupportType);
           setProfileId(cached.profile_id);
           setFavorite(Boolean(cached.is_favorite));
-          setItems(cached.content?.items?.length ? cached.content.items : [{ label: "" }]);
+          setItems(withRowKeys(cached.content?.items?.length ? cached.content.items : [{ label: "" }]));
         }
       }
       if (data) {
@@ -67,7 +63,7 @@ const SupportEditor = () => {
         setProfileId(data.profile_id);
         setFavorite(Boolean(data.is_favorite));
         const content = data.content as { items?: SupportItem[] } | null;
-        setItems(content?.items?.length ? content.items : [{ label: "" }]);
+        setItems(withRowKeys(content?.items?.length ? content.items : [{ label: "" }]));
       }
       setLoading(false);
     })();
@@ -77,7 +73,7 @@ const SupportEditor = () => {
 
   const save = async () => {
     setSaving(true);
-    const clean = items.filter((i) => i.label.trim());
+    const clean = stripRowKeys(items.filter((i) => i.label.trim()));
     const { error } = await supabase
       .from("autonomy_supports")
       .update({ title: title.trim() || def.label, content: { items: clean }, profile_id: profileId })
@@ -114,7 +110,7 @@ const SupportEditor = () => {
         profile_id: profileId,
         support_type: type,
         title: (title.trim() || def.label) + " (copie)",
-        content: { items: items.filter((i) => i.label.trim()) },
+        content: { items: stripRowKeys(items.filter((i) => i.label.trim())) },
       })
       .select("id")
       .single();
@@ -151,7 +147,7 @@ const SupportEditor = () => {
       type,
       childName,
       subtitle: describePersonalisation(perso as never),
-      items: items.filter((i) => i.label.trim()),
+      items: stripRowKeys(items.filter((i) => i.label.trim())),
       format,
     });
     softHaptic([10, 40, 10]);
@@ -167,16 +163,8 @@ const SupportEditor = () => {
       .eq("id", supportId!);
   };
 
-  const move = (index: number, dir: -1 | 1) => {
-    const next = [...items];
-    const target = index + dir;
-    if (target < 0 || target >= next.length) return;
-    [next[index], next[target]] = [next[target], next[index]];
-    setItems(next);
-  };
 
-  const update = (index: number, patch: Partial<SupportItem>) =>
-    setItems(items.map((it, i) => (i === index ? { ...it, ...patch } : it)));
+
 
   if (loading) {
     return <HubShell title="Support">{null}</HubShell>;
@@ -225,52 +213,13 @@ const SupportEditor = () => {
         )}
       </div>
 
-      <div className="space-y-2 pt-2">
-        {items.map((item, i) => (
-          <div
-            key={i}
-            className="flex items-start gap-2 rounded-[20px] border border-border/70 bg-card px-3 py-3"
-          >
-            <button
-              onClick={() => move(i, -1)}
-              aria-label="Monter"
-              className="mt-2 text-muted-foreground"
-            >
-              <GripVertical className="h-4 w-4" strokeWidth={1.75} />
-            </button>
-            <div className="min-w-0 flex-1 space-y-2">
-              <Input
-                value={item.label}
-                onChange={(e) => update(i, { label: e.target.value })}
-                placeholder={def.itemLabel + " " + (i + 1)}
-                className="h-9 border-0 bg-transparent px-0 text-sm focus-visible:ring-0"
-              />
-              {def.withTime && (
-                <Input
-                  type="time"
-                  value={item.time ?? ""}
-                  onChange={(e) => update(i, { time: e.target.value })}
-                  className="h-8 w-28 text-xs"
-                />
-              )}
-            </div>
-            <button
-              onClick={() => setItems(items.filter((_, idx) => idx !== i))}
-              aria-label="Supprimer"
-              className="mt-2 text-muted-foreground"
-            >
-              <Trash2 className="h-4 w-4" strokeWidth={1.75} />
-            </button>
-          </div>
-        ))}
-      </div>
+      <SupportItemsReorder
+        items={items}
+        setItems={setItems}
+        itemLabel={def.itemLabel}
+        withTime={Boolean(def.withTime)}
+      />
 
-      <button
-        onClick={() => setItems([...items, { label: "" }])}
-        className="flex w-full items-center justify-center gap-2 rounded-[20px] border border-dashed border-border bg-card/50 py-3 text-sm font-medium text-muted-foreground"
-      >
-        <Plus className="h-4 w-4" strokeWidth={2} /> Ajouter {def.itemLabel.toLowerCase()}
-      </button>
 
       <div className="flex items-center gap-2 pt-4">
         <span className="text-[11px] font-medium text-muted-foreground">Impression</span>
