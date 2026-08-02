@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { celebrate } from "@/lib/gentleBadges";
 import {
   Users, Plus, Syringe, FileText, Heart, AlertTriangle, Pill, Stethoscope,
   Trash2, Pencil, ChevronRight, Calendar, Phone, PlusCircle, ExternalLink,
