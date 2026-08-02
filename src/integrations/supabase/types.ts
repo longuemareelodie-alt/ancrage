@@ -2186,6 +2186,7 @@ export type Database = {
         }
         Returns: Json
       }
+      accept_family_invitation: { Args: { _token: string }; Returns: Json }
       award_badges: { Args: { _badge_keys: string[] }; Returns: undefined }
       claim_founding_slot: {
         Args: { _paid_cents: number; _payment_id: string; _user_id: string }
