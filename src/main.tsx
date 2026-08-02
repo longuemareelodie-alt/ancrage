@@ -5,6 +5,8 @@ import "./i18n/config";
 import { initPerfMetrics } from "./lib/perfMetrics";
 import { shouldDisableDecorativeMotion } from "./lib/motionPrefs";
 import { applyTheme, watchSystemTheme } from "./lib/theme";
+import { initNativeShell } from "./lib/native";
+
 
 initPerfMetrics();
 
