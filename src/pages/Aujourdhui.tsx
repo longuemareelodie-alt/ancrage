@@ -19,6 +19,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useTodayFeed } from "@/hooks/useTodayFeed";
 import { useWidgetSync } from "@/hooks/useWidgetSync";
 
+import SoftWhisper from "@/components/SoftWhisper";
+import { celebrate } from "@/lib/gentleBadges";
+
 import { useProgressStats } from "@/hooks/useProgressStats";
 import { toast } from "@/hooks/use-toast";
 import { getCachedAddressLabel, hasCompletedOnboarding } from "@/lib/onboarding";
@@ -125,6 +128,7 @@ const Aujourdhui = () => {
       .update({ last_emotion: mood.id, last_checkin_date: new Date().toISOString().slice(0, 10) })
       .eq("user_id", uid);
     toast({ description: "C'est noté. Merci de t'être écoutée." });
+    celebrate("first_emotion");
     feed.reload();
     if (mood.type === "negative") navigate("/moi/apaisement");
   };
@@ -159,6 +163,11 @@ const Aujourdhui = () => {
             <Settings className="h-4 w-4" strokeWidth={1.75} />
           </Link>
         </motion.header>
+
+        {/* Un petit mot inattendu, jamais plus d'une fois par jour */}
+        <div className="mb-6">
+          <SoftWhisper />
+        </div>
 
         {/* 2 — Émotion : une seule pression suffit */}
         <motion.section
