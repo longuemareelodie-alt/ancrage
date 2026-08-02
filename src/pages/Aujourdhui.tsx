@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -16,6 +16,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useTodayFeed } from "@/hooks/useTodayFeed";
 import { toast } from "@/hooks/use-toast";
+import { getCachedAddressLabel, hasCompletedOnboarding } from "@/lib/onboarding";
 
 /**
  * « Aujourd'hui » — le tableau de bord.
@@ -71,6 +72,14 @@ const Aujourdhui = () => {
   const navigate = useNavigate();
   const [savedMood, setSavedMood] = useState<string | null>(null);
 
+  // Premier passage : on propose l'accueil personnalisé, jamais imposé deux fois.
+  useEffect(() => {
+    if (!hasCompletedOnboarding()) navigate("/bienvenue", { replace: true });
+  }, [navigate]);
+
+  /** Formule d'appel choisie pendant l'accueil, sinon le prénom. */
+  const addressLabel = getCachedAddressLabel() || feed.firstName;
+
   const dateLabel = new Date().toLocaleDateString("fr-FR", {
     weekday: "long",
     day: "numeric",
@@ -113,7 +122,7 @@ const Aujourdhui = () => {
           <div className="min-w-0">
             <h1 className="font-serif text-3xl text-foreground">
               {greeting()}
-              {feed.firstName ? ` ${feed.firstName}` : ""} 👋
+              {addressLabel ? ` ${addressLabel}` : ""} 👋
             </h1>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
               {kindPhrase(calm)}
