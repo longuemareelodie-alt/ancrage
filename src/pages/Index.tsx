@@ -44,10 +44,16 @@ import { useMolliePayment } from "@/hooks/useMolliePayment";
 import { PREMIUM_PRICE_SHORT } from "@/lib/premiumOffer";
 import FoundingPrice from "@/components/FoundingPrice";
 import FoundingFamiliesBanner from "@/components/FoundingFamiliesBanner";
+import DemoSection from "@/components/landing/DemoSection";
+import ScreensCarousel from "@/components/landing/ScreensCarousel";
+import StudioSection from "@/components/landing/StudioSection";
+import AssistantSection from "@/components/landing/AssistantSection";
+import PourQuiSection from "@/components/landing/PourQuiSection";
+import TarifFondateurSection from "@/components/landing/TarifFondateurSection";
+import FinalCTA from "@/components/landing/FinalCTA";
+
 import heroPhoto from "@/assets/hero-fondatrice.png.asset.json";
 import journalShot from "@/assets/showcase/journal.jpg.asset.json";
-import portraitShot from "@/assets/showcase/portrait.jpg.asset.json";
-import friseShot from "@/assets/showcase/frise.jpg.asset.json";
 import dashboardShot from "@/assets/showcase/dashboard.jpg.asset.json";
 
 const fadeUp = {
@@ -136,11 +142,12 @@ const Nav = ({ onCTA, loading }: { onCTA: () => void; loading: boolean }) => {
   }, []);
 
   const links = [
-    { href: "#quotidien", label: "Le quotidien" },
-    { href: "#eclosia", label: "Eclosia" },
-    { href: "#modules", label: "Ce que ça change" },
-    { href: "#fondatrice", label: "Fondatrice" },
-    { href: "#tarif", label: "Tarif" },
+    { href: "#demonstration", label: "Démonstration" },
+    { href: "#studio", label: "Studio" },
+    { href: "#pour-qui", label: "Pour qui" },
+    { href: "#fondatrice", label: "Mon histoire" },
+    { href: "#tarif-fondateur", label: "Tarif" },
+
   ];
 
   return (
@@ -231,7 +238,7 @@ const Hero = ({ onCTA, loading }: { onCTA: () => void; loading: boolean }) => (
       <motion.div {...fadeIn}>
         <span className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-card/60 px-4 py-1.5 text-[11px] font-medium tracking-wide text-muted-foreground backdrop-blur-md">
           <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-          Pour les familles neuroatypiques
+          🌸 Pensé avec des familles, pour des familles.
         </span>
       </motion.div>
 
@@ -239,9 +246,11 @@ const Hero = ({ onCTA, loading }: { onCTA: () => void; loading: boolean }) => (
         {...fadeUp}
         className="mt-8 font-serif text-[clamp(2.25rem,6vw,4.5rem)] leading-[1.05] tracking-[-0.02em] text-night"
       >
-        Tu n'as pas besoin d'être
+        Enfin un endroit qui t'aide à porter
         <br />
-        <span className="italic text-primary-dark">une maman parfaite.</span>
+        <span className="italic text-primary-dark">
+          un peu moins la charge mentale.
+        </span>
       </motion.h1>
 
       <motion.p
@@ -249,17 +258,9 @@ const Hero = ({ onCTA, loading }: { onCTA: () => void; loading: boolean }) => (
         transition={{ ...fadeUp.transition, delay: 0.1 }}
         className="mt-6 max-w-2xl text-[clamp(1.05rem,1.6vw,1.25rem)] leading-relaxed text-foreground/80"
       >
-        Tu as besoin d'un endroit qui porte une partie de ta charge mentale.
-      </motion.p>
-
-      <motion.p
-        {...fadeUp}
-        transition={{ ...fadeUp.transition, delay: 0.15 }}
-        className="mt-5 max-w-2xl text-[15px] leading-relaxed text-muted-foreground"
-      >
-        Eclosia rassemble toute l'organisation, la santé, les émotions, les
-        documents importants et les ressources de ta famille dans un seul
-        espace pensé pour les parents d'enfants neuroatypiques.
+        Éclosia rassemble dans un seul espace tout ce qui compte pour
+        accompagner ton enfant au quotidien, retrouver facilement les
+        informations importantes et créer des supports adaptés à ses besoins.
       </motion.p>
 
       <motion.div
@@ -268,18 +269,34 @@ const Hero = ({ onCTA, loading }: { onCTA: () => void; loading: boolean }) => (
         className="mt-10 flex flex-wrap items-center justify-center gap-3"
       >
         <PrimaryCTA onClick={onCTA} disabled={loading}>
-          Découvrir Eclosia
+          Découvrir Éclosia
         </PrimaryCTA>
-        <GhostCTA href="#eclosia">Voir comment ça fonctionne</GhostCTA>
+        <GhostCTA href="#demonstration">Voir la démonstration</GhostCTA>
       </motion.div>
 
-      <motion.p
+      <motion.ul
         {...fadeUp}
         transition={{ ...fadeUp.transition, delay: 0.35 }}
-        className="mt-6 text-xs text-muted-foreground"
+        className="mt-8 flex flex-wrap items-center justify-center gap-2"
       >
-        Paiement unique · Accès à vie · Sans abonnement
-      </motion.p>
+        {[
+          "Accès à vie",
+          "Toutes les mises à jour incluses",
+          "Sans abonnement",
+          "Paiement en plusieurs fois avec Klarna",
+        ].map((r) => (
+          <li
+            key={r}
+            className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/70 px-4 py-2 text-[13px] text-foreground/85 backdrop-blur-md"
+          >
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/15">
+              <Check className="h-3 w-3 text-primary-dark" aria-hidden="true" />
+            </span>
+            {r}
+          </li>
+        ))}
+      </motion.ul>
+
     </div>
 
     {/* Hero mockup */}
@@ -525,81 +542,8 @@ const Transformations = () => {
   );
 };
 
-/* --------------------- Découvrir l'application ------------------------ */
 
-const PhoneMockup = ({
-  src,
-  alt,
-}: {
-  src: string;
-  alt: string;
-}) => (
-  <div className="relative mx-auto w-[260px]">
-    <div className="rounded-[2.25rem] border border-border/60 bg-night/95 p-2 shadow-[0_40px_100px_-40px_hsl(var(--night)/0.4)]">
-      <div className="overflow-hidden rounded-[1.8rem] bg-card">
-        <img src={src} alt={alt} className="w-full" />
-      </div>
-    </div>
-  </div>
-);
 
-const Immersive = () => {
-  const shots = [
-    {
-      src: dashboardShot.url,
-      label: "Organisation",
-      caption: "Tout ton foyer, dans un seul tableau de bord apaisant.",
-    },
-    {
-      src: journalShot.url,
-      label: "Émotions",
-      caption: "Un espace pour poser ce que tu ne dis à personne.",
-    },
-    {
-      src: portraitShot.url,
-      label: "Transformation",
-      caption: "Voir, chaque mois, le chemin que tu es en train de faire.",
-    },
-    {
-      src: friseShot.url,
-      label: "Parcours",
-      caption: "Ta frise d'évolution, pour se souvenir d'où tu viens.",
-    },
-  ];
-
-  return (
-    <Section>
-      <motion.div {...fadeUp} className="mx-auto max-w-2xl text-center">
-        <Eyebrow>Découvrir l'application</Eyebrow>
-        <h2 className="mt-4 font-serif text-[clamp(1.75rem,4vw,3rem)] leading-[1.1] tracking-tight text-night">
-          Chaque écran est pensé pour
-          <br />
-          <span className="italic text-primary-dark">te soulager.</span>
-        </h2>
-      </motion.div>
-
-      <div className="mt-20 space-y-24 md:space-y-32">
-        {shots.map((s, i) => (
-          <motion.div
-            key={s.label}
-            {...fadeUp}
-            className={`grid items-center gap-12 md:grid-cols-2 md:gap-20 ${
-              i % 2 === 1 ? "md:[&>*:first-child]:order-2" : ""
-            }`}
-          >
-            <PhoneMockup src={s.src} alt={s.label} />
-            <div className="text-center md:text-left">
-              <Eyebrow>{s.label}</Eyebrow>
-              <p className="mt-4 font-serif text-2xl leading-snug text-night md:text-3xl">
-                {s.caption}
-              </p>
-            </div>
-          </motion.div>
-        ))}
-      </div>
-    </Section>
-  );
-};
 
 /* ------------------------------ Fondatrice ----------------------------- */
 
@@ -651,10 +595,11 @@ const Fondatrice = ({ onCTA, loading }: { onCTA: () => void; loading: boolean })
           </p>
           <p>Cet endroit n'existait pas. Alors je l'ai créé.</p>
           <p className="font-medium text-night">
-            Eclosia n'est pas née d'une idée marketing. Elle est née d'un
-            besoin réel. Celui d'une maman qui voulait arrêter de tout porter
-            seule.
+            Éclosia n'est pas née d'une idée marketing. Elle est née d'un
+            besoin réel. Celui d'un parent qui voulait arrêter de tout porter
+            seul.
           </p>
+
         </div>
         <div className="mt-8">
           <PrimaryCTA onClick={onCTA} disabled={loading}>
@@ -1006,12 +951,13 @@ const Tarif = ({ onCTA, loading }: { onCTA: () => void; loading: boolean }) => (
 
 const Serenite = () => {
   const items = [
-    "Tu chercheras moins.",
-    "Tu centraliseras enfin toutes les informations importantes.",
-    "Tu retrouveras plus facilement ce dont tu as besoin.",
-    "Tu auras un espace qui pense avec toi.",
-    "Tu respireras un peu plus chaque jour.",
+    "Toute ta vie familiale au même endroit.",
+    "Les informations importantes toujours accessibles.",
+    "Un Studio d'Autonomie pour créer facilement des supports adaptés.",
+    "Des outils pensés pour accompagner ton enfant.",
+    "Un espace qui évolue avec toi.",
   ];
+
   return (
     <Section id="serenite">
       <motion.div {...fadeUp} className="mx-auto max-w-2xl text-center">
@@ -1065,13 +1011,32 @@ const PaiementUniqueCard = () => (
           J'ai fait un choix différent.
         </p>
         <p>
-          Tu achètes Eclosia une seule fois. Toutes les futures mises à jour
+          Tu achètes Éclosia une seule fois. Toutes les futures mises à jour
           sont incluses. Aucun abonnement. Aucun renouvellement.
         </p>
         <p className="font-medium text-night">
-          Eclosia évoluera avec toi et avec ta famille.
+          Éclosia évolue avec toi et avec ta famille.
         </p>
       </div>
+      <ul className="mx-auto mt-8 grid max-w-md gap-2.5 text-left sm:grid-cols-2">
+        {[
+          "Toutes les futures mises à jour incluses",
+          "Aucun abonnement",
+          "Aucun renouvellement",
+          "Éclosia évolue avec toi",
+        ].map((b) => (
+          <li
+            key={b}
+            className="flex items-center gap-2.5 rounded-2xl border border-border/50 bg-background/60 px-4 py-2.5 text-sm text-foreground/90"
+          >
+            <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-primary/15">
+              <Check className="h-3.5 w-3.5 text-primary-dark" aria-hidden="true" />
+            </span>
+            {b}
+          </li>
+        ))}
+      </ul>
+
     </motion.div>
   </section>
 );
@@ -1118,34 +1083,76 @@ const AmbassadeurTeaser = () => (
 
 /* ------------------------------ FAQ extras ---------------------------- */
 
+const FAQ_EXTRAS = [
+  {
+    q: "Pourquoi un accès à vie ?",
+    a: "Parce qu'un abonnement de plus, c'est une charge de plus. Tu paies une seule fois et Éclosia reste à toi, pour toutes les années à venir.",
+  },
+  {
+    q: "Pourquoi le prix augmente ?",
+    a: "Les premières familles rejoignent Éclosia au tout début, quand tout reste à construire. Le tarif fondateur les remercie de cette confiance, puis il remonte progressivement vers le tarif normal de 97 €.",
+  },
+  {
+    q: "Comment fonctionne le tarif fondateur ?",
+    a: "Il est automatique : 5 Familles Fondatrices à 29 €, 10 Familles Pionnières à 49 €, 20 Premières Familles à 69 €, 20 familles suivantes à 79 €, puis 97 €. Le compteur n'avance qu'avec des paiements réellement validés, et le nombre de places restantes est affiché en temps réel.",
+  },
+  {
+    q: "Puis-je payer en plusieurs fois ?",
+    a: "Oui, avec Klarna lorsque c'est disponible dans ton pays. Le bouton apparaît juste sous le paiement classique.",
+  },
+  {
+    q: "Toutes les mises à jour sont-elles incluses ?",
+    a: "Oui, toutes. Chaque nouvelle fonctionnalité arrive automatiquement dans ton espace, sans supplément.",
+  },
+  {
+    q: "Comment fonctionne le programme Ambassadeur ?",
+    a: "Il est gratuit et facultatif. Tu reçois un lien personnel : lorsqu'une famille découvre Éclosia grâce à toi, tu reçois une commission. Tu peux aussi utiliser Éclosia sans jamais y participer.",
+  },
+  {
+    q: "Puis-je utiliser Éclosia sur plusieurs appareils ?",
+    a: "Oui. Téléphone, tablette, ordinateur : tu te connectes avec le même compte et tout se synchronise.",
+  },
+  {
+    q: "Mes données sont-elles sécurisées ?",
+    a: "Oui. Tes données sont chiffrées, hébergées en Europe, et personne d'autre que toi n'y a accès — sauf les proches que tu invites, avec les droits que tu choisis. Aucune publicité, aucune revente.",
+  },
+];
+
 const FaqExtras = () => (
   <section className="px-6 pb-12">
     <div className="mx-auto max-w-2xl">
       <Accordion type="single" collapsible className="w-full">
-        <AccordionItem value="paiement-unique">
-          <AccordionTrigger className="text-left text-sm font-semibold md:text-base">
-            Pourquoi un paiement unique ?
-          </AccordionTrigger>
-          <AccordionContent className="text-sm leading-relaxed text-muted-foreground">
-            Je voulais créer un outil qui accompagne les familles pendant des
-            années sans leur ajouter un abonnement de plus.
-          </AccordionContent>
-        </AccordionItem>
-        <AccordionItem value="recommander">
-          <AccordionTrigger className="text-left text-sm font-semibold md:text-base">
-            Peut-on recommander Eclosia ?
-          </AccordionTrigger>
-          <AccordionContent className="text-sm leading-relaxed text-muted-foreground">
-            Oui. Si Eclosia t'aide réellement, tu peux rejoindre gratuitement
-            notre programme ambassadrice et recevoir une commission lorsque des
-            familles découvrent Eclosia grâce à toi. Aucune obligation. Tu peux
-            simplement utiliser Eclosia sans participer au programme.
-          </AccordionContent>
-        </AccordionItem>
+        {FAQ_EXTRAS.map((item, i) => (
+          <AccordionItem key={item.q} value={`extra-${i}`}>
+            <AccordionTrigger className="text-left text-sm font-semibold md:text-base">
+              {item.q}
+            </AccordionTrigger>
+            <AccordionContent className="text-sm leading-relaxed text-muted-foreground">
+              {item.a}
+            </AccordionContent>
+          </AccordionItem>
+        ))}
       </Accordion>
+
+      <script
+        type="application/ld+json"
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: FAQ_EXTRAS.map((item) => ({
+              "@type": "Question",
+              name: item.q,
+              acceptedAnswer: { "@type": "Answer", text: item.a },
+            })),
+          }),
+        }}
+      />
     </div>
   </section>
 );
+
 
 /* ------------------------------- Page --------------------------------- */
 
@@ -1158,24 +1165,31 @@ const Index = () => {
       <Nav onCTA={onCTA} loading={loading} />
       <main>
         <Hero onCTA={onCTA} loading={loading} />
+        <DemoSection />
         <Quotidien />
         <Presentation />
         <Serenite />
+        <ScreensCarousel />
         <Transformations />
-        <Immersive />
+        <StudioSection />
+        <AssistantSection />
         <Fondatrice onCTA={onCTA} loading={loading} />
+        <PourQuiSection />
         <Inclus />
         <Temoignages />
         <Unique />
         <PaiementUniqueCard />
         <PreTarif />
         <Tarif onCTA={onCTA} loading={loading} />
+        <TarifFondateurSection onCTA={onCTA} loading={loading} />
         <AmbassadeurTeaser />
         <div id="faq">
           <HomeFAQ />
           <FaqExtras />
         </div>
+        <FinalCTA onCTA={onCTA} loading={loading} />
       </main>
+
       <Footer />
     </div>
   );
