@@ -21,6 +21,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import ThemeToggle from "@/components/ThemeToggle";
+import NotificationPreferences from "@/components/settings/NotificationPreferences";
+
 
 
 export default function Parametres() {
@@ -60,6 +62,10 @@ export default function Parametres() {
         </div>
       </header>
 
+      <div className="mb-6">
+        <NotificationPreferences />
+      </div>
+
       <section className="mb-6 rounded-2xl border border-border bg-card p-5 shadow-sm">
         <h2 className="font-serif text-lg text-foreground">Ambiance</h2>
         <p className="mb-4 mt-1 text-sm text-muted-foreground">
@@ -68,6 +74,7 @@ export default function Parametres() {
         </p>
         <ThemeToggle />
       </section>
+
 
       <section className="mb-6 rounded-2xl border border-border bg-card p-5 shadow-sm">
 
