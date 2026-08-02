@@ -53,7 +53,7 @@ const SupportEditor = () => {
           setType(cached.support_type as SupportType);
           setProfileId(cached.profile_id);
           setFavorite(Boolean(cached.is_favorite));
-          setItems(cached.content?.items?.length ? cached.content.items : [{ label: "" }]);
+          setItems(withRowKeys(cached.content?.items?.length ? cached.content.items : [{ label: "" }]));
         }
       }
       if (data) {
