@@ -15,26 +15,44 @@ import { Scene5 } from "./scenes/Scene5";
 const T = 22;
 const timing = springTiming({ config: { damping: 200 }, durationInFrames: T });
 
-const LENGTHS = [110, 140, 155, 140, 150, 140, 115, 115];
-// somme - 7 transitions * 22
-export const DURATION = LENGTHS.reduce((a, b) => a + b, 0) - 7 * T;
-
-const SCENES = [Scene1, Scene2, SceneSpaces, Scene3, SceneAssistant, SceneFamille, Scene4, Scene5];
+// 110+140+155+140+150+140+115+115 = 1065 - 7*22 = 911 frames (~30,4 s)
+export const DURATION = 911;
 
 export const MainVideo: React.FC = () => (
   <AbsoluteFill>
     <PersistentBackground />
     <TransitionSeries>
-      {SCENES.map((Scene, i) => (
-        <React.Fragment key={i}>
-          {i > 0 ? (
-            <TransitionSeries.Transition presentation={fade()} timing={timing} />
-          ) : null}
-          <TransitionSeries.Sequence durationInFrames={LENGTHS[i]}>
-            <Scene />
-          </TransitionSeries.Sequence>
-        </React.Fragment>
-      ))}
+      <TransitionSeries.Sequence durationInFrames={110}>
+        <Scene1 />
+      </TransitionSeries.Sequence>
+      <TransitionSeries.Transition presentation={fade()} timing={timing} />
+      <TransitionSeries.Sequence durationInFrames={140}>
+        <Scene2 />
+      </TransitionSeries.Sequence>
+      <TransitionSeries.Transition presentation={fade()} timing={timing} />
+      <TransitionSeries.Sequence durationInFrames={155}>
+        <SceneSpaces />
+      </TransitionSeries.Sequence>
+      <TransitionSeries.Transition presentation={fade()} timing={timing} />
+      <TransitionSeries.Sequence durationInFrames={140}>
+        <Scene3 />
+      </TransitionSeries.Sequence>
+      <TransitionSeries.Transition presentation={fade()} timing={timing} />
+      <TransitionSeries.Sequence durationInFrames={150}>
+        <SceneAssistant />
+      </TransitionSeries.Sequence>
+      <TransitionSeries.Transition presentation={fade()} timing={timing} />
+      <TransitionSeries.Sequence durationInFrames={140}>
+        <SceneFamille />
+      </TransitionSeries.Sequence>
+      <TransitionSeries.Transition presentation={fade()} timing={timing} />
+      <TransitionSeries.Sequence durationInFrames={115}>
+        <Scene4 />
+      </TransitionSeries.Sequence>
+      <TransitionSeries.Transition presentation={fade()} timing={timing} />
+      <TransitionSeries.Sequence durationInFrames={115}>
+        <Scene5 />
+      </TransitionSeries.Sequence>
     </TransitionSeries>
   </AbsoluteFill>
 );
