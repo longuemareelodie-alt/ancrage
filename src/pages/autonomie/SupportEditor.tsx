@@ -73,7 +73,7 @@ const SupportEditor = () => {
 
   const save = async () => {
     setSaving(true);
-    const clean = items.filter((i) => i.label.trim());
+    const clean = stripRowKeys(items.filter((i) => i.label.trim()));
     const { error } = await supabase
       .from("autonomy_supports")
       .update({ title: title.trim() || def.label, content: { items: clean }, profile_id: profileId })
