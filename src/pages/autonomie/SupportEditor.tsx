@@ -147,7 +147,7 @@ const SupportEditor = () => {
       type,
       childName,
       subtitle: describePersonalisation(perso as never),
-      items: items.filter((i) => i.label.trim()),
+      items: stripRowKeys(items.filter((i) => i.label.trim())),
       format,
     });
     softHaptic([10, 40, 10]);
