@@ -149,6 +149,7 @@ RoutesWrapper.displayName = "RoutesWrapper";
 
 const AnimatedRoutes = () => {
   const location = useLocation();
+  useAcceptPendingInvitation();
 
   return (
     <RouteTransitionProvider>
