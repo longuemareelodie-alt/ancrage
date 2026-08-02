@@ -59,7 +59,62 @@
     --sidebar-border: 30 22% 88%;
     --sidebar-ring: 350 71% 79%;
   }
+
+  /*
+   * Mode sombre chaleureux — pas une inversion.
+   * On descend dans le bleu nuit signature, on adoucit le rose poudré et on
+   * garde le doré doux : l'ambiance reste enveloppante, jamais clinique.
+   */
+  .dark {
+    --background: 226 34% 11%;       /* bleu nuit profond */
+    --foreground: 30 24% 92%;        /* ivoire adouci */
+
+    --card: 226 30% 15%;
+    --card-foreground: 30 24% 92%;
+
+    --popover: 226 30% 15%;
+    --popover-foreground: 30 24% 92%;
+
+    --primary: 350 55% 72%;
+    --primary-foreground: 226 34% 11%;
+    --primary-dark: 350 45% 58%;
+
+    --secondary: 226 24% 22%;
+    --secondary-foreground: 30 24% 92%;
+
+    --muted: 226 22% 20%;
+    --muted-foreground: 30 14% 72%;
+
+    --accent: 41 70% 62%;
+    --accent-foreground: 226 34% 11%;
+
+    --night: 226 34% 9%;
+    --night-foreground: 30 24% 92%;
+
+    --sage: 122 14% 58%;
+
+    --destructive: 4 60% 58%;
+    --destructive-foreground: 30 24% 96%;
+
+    --lies: 350 55% 72%;
+    --lies-foreground: 226 34% 11%;
+    --lies-soft: 226 26% 20%;
+
+    --border: 226 20% 24%;
+    --input: 226 20% 24%;
+    --ring: 350 55% 72%;
+
+    --sidebar-background: 226 34% 11%;
+    --sidebar-foreground: 30 24% 92%;
+    --sidebar-primary: 350 55% 72%;
+    --sidebar-primary-foreground: 226 34% 11%;
+    --sidebar-accent: 226 24% 22%;
+    --sidebar-accent-foreground: 30 24% 92%;
+    --sidebar-border: 226 20% 24%;
+    --sidebar-ring: 350 55% 72%;
+  }
 }
+
 
 @layer base {
   * {

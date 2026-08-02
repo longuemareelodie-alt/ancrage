@@ -20,6 +20,8 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
+import ThemeToggle from "@/components/ThemeToggle";
+
 
 export default function Parametres() {
   const [parentType, , hasChosen] = useParentType();
@@ -59,6 +61,16 @@ export default function Parametres() {
       </header>
 
       <section className="mb-6 rounded-2xl border border-border bg-card p-5 shadow-sm">
+        <h2 className="font-serif text-lg text-foreground">Ambiance</h2>
+        <p className="mb-4 mt-1 text-sm text-muted-foreground">
+          Le mode sombre garde les couleurs douces d'Éclosia, pour les soirées
+          où la lumière fatigue.
+        </p>
+        <ThemeToggle />
+      </section>
+
+      <section className="mb-6 rounded-2xl border border-border bg-card p-5 shadow-sm">
+
         <h2 className="font-serif text-lg text-foreground">Profil parent</h2>
         <p className="mt-1 text-sm text-muted-foreground">
           Adapte les textes et illustrations à ton identité.
