@@ -464,11 +464,40 @@ Deno.serve(async (req) => {
       profiles?.map((p: any) => [p.user_id, p]) || [],
     );
 
+    // Préférences de notification : contrôle utilisateur + horaires respectés.
+    const { data: prefsRows } = await supabase
+      .from("notification_preferences")
+      .select(
+        "user_id, routine_reminders, emotion_reminders, morning_time, evening_time, quiet_start, quiet_end, timezone, max_per_day, last_sent_at, sent_today, sent_today_date",
+      )
+      .in("user_id", userIds);
+
+    const prefsMap = new Map(prefsRows?.map((p: any) => [p.user_id, p]) || []);
+
     let sent = 0;
     let failed = 0;
+    let skipped = 0;
+    // Un seul envoi par parent, même s'il a plusieurs appareils enregistrés.
+    const notifiedUsers = new Set<string>();
 
     for (const sub of subscriptions) {
       const profile = profileMap.get(sub.user_id) || {};
+      const prefs: NotificationPrefs = {
+        ...DEFAULT_PREFS,
+        ...(prefsMap.get(sub.user_id) || {}),
+      };
+
+      if (notifiedUsers.has(sub.user_id)) {
+        skipped++;
+        continue;
+      }
+
+      const verdict = shouldSend(prefs, type as "morning" | "evening");
+      if (!verdict.ok) {
+        skipped++;
+        continue;
+      }
+
       const ctx: UserContext = {
         isPremium: profile.is_premium ?? false,
         lastEmotion: profile.last_emotion ?? null,
@@ -476,7 +505,11 @@ Deno.serve(async (req) => {
         type: type as "morning" | "evening",
       };
 
-      const notification = buildNotification(ctx);
+      // Les rappels doux (routine / émotion) sont prioritaires pour les
+      // parents abonnés ; le message historique reste pour les autres.
+      const notification =
+        (ctx.isPremium ? buildGentleNotification(prefs, ctx.type) : null) ??
+        buildNotification(ctx);
 
       try {
         const ok = await sendWebPush(
@@ -484,10 +517,27 @@ Deno.serve(async (req) => {
           JSON.stringify(notification),
           vapidPrivateKey,
         );
-        if (ok) sent++; else failed++;
+        if (ok) {
+          sent++;
+          notifiedUsers.add(sub.user_id);
+          const today = localNow(prefs.timezone).date;
+          const usedToday = prefs.sent_today_date === today ? prefs.sent_today : 0;
+          await supabase.from("notification_preferences").upsert(
+            {
+              user_id: sub.user_id,
+              last_sent_at: new Date().toISOString(),
+              sent_today: usedToday + 1,
+              sent_today_date: today,
+            },
+            { onConflict: "user_id" },
+          );
+        } else {
+          failed++;
+        }
       } catch (err) {
         console.error("Push failed for", sub.endpoint, err);
         failed++;
+
       }
     }
 
