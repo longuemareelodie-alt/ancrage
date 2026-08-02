@@ -180,6 +180,7 @@ const AnimatedRoutes = () => {
         <Route path="/charge-mentale" element={<PageTransition><ChargeMentale /></PageTransition>} />
         <Route path="/comparaison" element={<PageTransition><Comparison /></PageTransition>} />
         <Route path="/auth" element={<PageTransition><Auth /></PageTransition>} />
+        <Route path="/invitation" element={<PageTransition><Invitation /></PageTransition>} />
         <Route path="/payment-success" element={<PageTransition><PaymentSuccess /></PageTransition>} />
         <Route path="/payment-pending" element={<PageTransition><PaymentPending /></PageTransition>} />
         <Route path="/payment-canceled" element={<PageTransition><PaymentCanceled /></PageTransition>} />
