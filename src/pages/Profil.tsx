@@ -26,6 +26,7 @@ import { PREMIUM_CTA, PREMIUM_FULL_ACCESS_LABEL, PREMIUM_LIFETIME_LABEL } from "
 import { useMolliePayment } from "@/hooks/useMolliePayment";
 import DiscoveryToggle from "@/components/DiscoveryToggle";
 import GuidedTourSettings from "@/components/GuidedTourSettings";
+import FoundingBadge from "@/components/FoundingBadge";
 interface Note {
   id: string;
   title: string;
