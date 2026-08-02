@@ -225,52 +225,13 @@ const SupportEditor = () => {
         )}
       </div>
 
-      <div className="space-y-2 pt-2">
-        {items.map((item, i) => (
-          <div
-            key={i}
-            className="flex items-start gap-2 rounded-[20px] border border-border/70 bg-card px-3 py-3"
-          >
-            <button
-              onClick={() => move(i, -1)}
-              aria-label="Monter"
-              className="mt-2 text-muted-foreground"
-            >
-              <GripVertical className="h-4 w-4" strokeWidth={1.75} />
-            </button>
-            <div className="min-w-0 flex-1 space-y-2">
-              <Input
-                value={item.label}
-                onChange={(e) => update(i, { label: e.target.value })}
-                placeholder={def.itemLabel + " " + (i + 1)}
-                className="h-9 border-0 bg-transparent px-0 text-sm focus-visible:ring-0"
-              />
-              {def.withTime && (
-                <Input
-                  type="time"
-                  value={item.time ?? ""}
-                  onChange={(e) => update(i, { time: e.target.value })}
-                  className="h-8 w-28 text-xs"
-                />
-              )}
-            </div>
-            <button
-              onClick={() => setItems(items.filter((_, idx) => idx !== i))}
-              aria-label="Supprimer"
-              className="mt-2 text-muted-foreground"
-            >
-              <Trash2 className="h-4 w-4" strokeWidth={1.75} />
-            </button>
-          </div>
-        ))}
-      </div>
+      <SupportItemsReorder
+        items={items}
+        setItems={setItems}
+        itemLabel={def.itemLabel}
+        withTime={Boolean(def.withTime)}
+      />
 
-      <button
-        onClick={() => setItems([...items, { label: "" }])}
-        className="flex w-full items-center justify-center gap-2 rounded-[20px] border border-dashed border-border bg-card/50 py-3 text-sm font-medium text-muted-foreground"
-      >
-        <Plus className="h-4 w-4" strokeWidth={2} /> Ajouter {def.itemLabel.toLowerCase()}
-      </button>
 
       <div className="flex items-center gap-2 pt-4">
         <span className="text-[11px] font-medium text-muted-foreground">Impression</span>
