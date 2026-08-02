@@ -1,11 +1,19 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Sparkles, Loader2, Printer, PenLine } from "lucide-react";
+import { ArrowLeft, Sparkles, Loader2, Printer, PenLine, ShieldAlert, Heart } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import HubShell from "@/components/hub/HubShell";
-import { SUPPORT_TYPES, SupportItem, SupportType } from "@/data/supportTemplates";
-import { exportSupportPdf } from "@/lib/exportSupportPdf";
+import {
+  CRISIS_FIRST_STEPS,
+  CRISIS_SITUATIONS,
+  CRISIS_TEMPLATE_MAP,
+  SUPPORT_TEMPLATES,
+  SUPPORT_TYPES,
+  SupportItem,
+  SupportType,
+} from "@/data/supportTemplates";
+import { exportSupportPdf, PdfFormat } from "@/lib/exportSupportPdf";
 import { toast } from "@/hooks/use-toast";
 
 type Suggestion = {
@@ -27,15 +35,22 @@ const EXAMPLES = [
 /**
  * Assistant Éclosia — on décrit une situation, on repart avec des supports
  * concrets, imprimables. Ce n'est pas un chat : c'est une fabrique.
+ * En mode crise, on ne demande rien à écrire : on choisit, on lit trois gestes,
+ * et les supports arrivent ensuite.
  */
 const Assistant = () => {
   const navigate = useNavigate();
+  const [params] = useSearchParams();
+  const crisisMode = params.get("crise") === "1";
+
   const [situation, setSituation] = useState("");
   const [loading, setLoading] = useState(false);
   const [intro, setIntro] = useState("");
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [childId, setChildId] = useState("");
+  const [crisisKey, setCrisisKey] = useState<string | null>(null);
+  const [format, setFormat] = useState<PdfFormat>("a4");
 
   useEffect(() => {
     (async () => {
@@ -50,16 +65,33 @@ const Assistant = () => {
 
   const childName = profiles.find((p) => p.id === childId)?.first_name;
 
-  const ask = async () => {
-    if (situation.trim().length < 5 || loading) return;
+  const run = async (text: string, fallbackKey?: string) => {
+    if (text.trim().length < 5 || loading) return;
     setLoading(true);
     setSuggestions([]);
     setIntro("");
     const { data, error } = await supabase.functions.invoke("assistant-support", {
-      body: { situation: situation.trim(), childName },
+      body: { situation: text.trim(), childName, urgent: crisisMode },
     });
     setLoading(false);
-    if (error || data?.error) {
+
+    if (error || data?.error || !data?.supports?.length) {
+      // Filet de sécurité : en pleine crise, on ne laisse jamais l'écran vide.
+      const slugs = fallbackKey ? CRISIS_TEMPLATE_MAP[fallbackKey] ?? [] : [];
+      const local = slugs
+        .map((slug) => SUPPORT_TEMPLATES.find((t) => t.slug === slug))
+        .filter(Boolean)
+        .map((t) => ({
+          type: t!.type,
+          title: t!.title,
+          description: t!.description,
+          items: t!.items,
+        }));
+      if (local.length) {
+        setIntro("Voici des supports prêts à l'emploi pour cette situation.");
+        setSuggestions(local);
+        return;
+      }
       toast({
         description: data?.message ?? "L'assistant n'a pas pu répondre. Réessaie dans un instant.",
         variant: "destructive",
@@ -68,6 +100,13 @@ const Assistant = () => {
     }
     setIntro(data.intro ?? "");
     setSuggestions(data.supports ?? []);
+  };
+
+  const chooseCrisis = (key: string) => {
+    const s = CRISIS_SITUATIONS.find((c) => c.key === key)!;
+    setCrisisKey(key);
+    setSituation(s.prompt);
+    void run(s.prompt, key);
   };
 
   const save = async (s: Suggestion) => {
@@ -93,10 +132,16 @@ const Assistant = () => {
     navigate("/autonomie/support/" + data.id);
   };
 
+  const firstSteps = crisisKey ? CRISIS_FIRST_STEPS[crisisKey] ?? [] : [];
+
   return (
     <HubShell
-      title="Assistant Éclosia"
-      subtitle="Décris la situation en une phrase. Je prépare les supports pour toi."
+      title={crisisMode ? "Besoin d'aide maintenant" : "Assistant Éclosia"}
+      subtitle={
+        crisisMode
+          ? "Choisis ce qui se passe. Trois gestes d'abord, les supports ensuite."
+          : "Décris la situation en une phrase. Je prépare les supports pour toi."
+      }
     >
       <button
         onClick={() => navigate("/autonomie/studio")}
@@ -104,6 +149,15 @@ const Assistant = () => {
       >
         <ArrowLeft className="h-3.5 w-3.5" strokeWidth={2} /> Studio
       </button>
+
+      {crisisMode && (
+        <div className="flex items-start gap-3 rounded-[24px] border border-destructive/25 bg-destructive/5 px-5 py-4">
+          <Heart className="mt-0.5 h-4 w-4 shrink-0 text-destructive" strokeWidth={1.75} />
+          <p className="text-xs leading-relaxed text-muted-foreground">
+            Respire. Tu fais déjà ce qu'il faut en cherchant de l'aide. Rien ici n'est un examen.
+          </p>
+        </div>
+      )}
 
       {profiles.length > 0 && (
         <div className="flex items-center gap-3 rounded-[20px] border border-border/70 bg-card px-5 py-3">
@@ -122,32 +176,86 @@ const Assistant = () => {
         </div>
       )}
 
-      <div className="rounded-[24px] border border-border/70 bg-card px-5 py-5">
-        <textarea
-          value={situation}
-          onChange={(e) => setSituation(e.target.value)}
-          rows={3}
-          placeholder="Ex. : mon fils refuse de mettre ses chaussures."
-          className="w-full resize-none bg-transparent text-sm leading-relaxed text-foreground outline-none placeholder:text-muted-foreground"
-        />
-        <button
-          onClick={ask}
-          disabled={loading || situation.trim().length < 5}
-          className="mt-3 flex w-full items-center justify-center gap-2 rounded-2xl bg-primary px-5 py-3.5 text-sm font-semibold text-primary-foreground transition-transform active:scale-[0.98] disabled:opacity-50"
-        >
-          {loading ? (
-            <>
-              <Loader2 className="h-4 w-4 animate-spin" strokeWidth={2} /> Je prépare…
-            </>
-          ) : (
-            <>
-              <Sparkles className="h-4 w-4" strokeWidth={1.75} /> Créer les supports
-            </>
-          )}
-        </button>
-      </div>
+      {crisisMode ? (
+        <>
+          <p className="pb-1 pt-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+            Que se passe-t-il ?
+          </p>
+          <div className="space-y-2">
+            {CRISIS_SITUATIONS.map((c) => (
+              <button
+                key={c.key}
+                onClick={() => chooseCrisis(c.key)}
+                disabled={loading}
+                className={`flex w-full items-center gap-3 rounded-[20px] border px-5 py-4 text-left text-sm transition-all active:scale-[0.99] disabled:opacity-60 ${
+                  crisisKey === c.key
+                    ? "border-destructive/40 bg-destructive/5 font-semibold text-foreground"
+                    : "border-border/70 bg-card text-foreground"
+                }`}
+              >
+                <ShieldAlert
+                  className="h-4 w-4 shrink-0 text-muted-foreground"
+                  strokeWidth={1.75}
+                />
+                <span className="min-w-0 flex-1">{c.label}</span>
+              </button>
+            ))}
+          </div>
+        </>
+      ) : (
+        <div className="rounded-[24px] border border-border/70 bg-card px-5 py-5">
+          <textarea
+            value={situation}
+            onChange={(e) => setSituation(e.target.value)}
+            rows={3}
+            placeholder="Ex. : mon fils refuse de mettre ses chaussures."
+            className="w-full resize-none bg-transparent text-sm leading-relaxed text-foreground outline-none placeholder:text-muted-foreground"
+          />
+          <button
+            onClick={() => run(situation)}
+            disabled={loading || situation.trim().length < 5}
+            className="mt-3 flex w-full items-center justify-center gap-2 rounded-2xl bg-primary px-5 py-3.5 text-sm font-semibold text-primary-foreground transition-transform active:scale-[0.98] disabled:opacity-50"
+          >
+            {loading ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" strokeWidth={2} /> Je prépare…
+              </>
+            ) : (
+              <>
+                <Sparkles className="h-4 w-4" strokeWidth={1.75} /> Créer les supports
+              </>
+            )}
+          </button>
+        </div>
+      )}
 
-      {!suggestions.length && !loading && (
+      {/* Gestes immédiats : lisibles avant même que l'IA ait répondu */}
+      <AnimatePresence>
+        {firstSteps.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="rounded-[24px] border border-border/70 bg-card px-5 py-5"
+          >
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+              Là, tout de suite
+            </p>
+            <ol className="mt-3 space-y-2.5">
+              {firstSteps.map((step, i) => (
+                <li key={i} className="flex gap-3 text-sm leading-relaxed text-foreground">
+                  <span className="text-xs font-semibold text-muted-foreground">{i + 1}</span>
+                  <span className="min-w-0 flex-1">{step}</span>
+                </li>
+              ))}
+            </ol>
+            <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
+              Quand c'est retombé, garde un support ci-dessous pour la prochaine fois.
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {!crisisMode && !suggestions.length && !loading && (
         <>
           <p className="pb-1 pt-4 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
             Exemples
@@ -166,6 +274,13 @@ const Assistant = () => {
         </>
       )}
 
+      {loading && crisisMode && (
+        <p className="flex items-center gap-2 pt-2 text-xs text-muted-foreground">
+          <Loader2 className="h-3.5 w-3.5 animate-spin" strokeWidth={2} /> Je prépare des supports
+          adaptés…
+        </p>
+      )}
+
       <AnimatePresence>
         {intro && (
           <motion.p
@@ -177,6 +292,25 @@ const Assistant = () => {
           </motion.p>
         )}
       </AnimatePresence>
+
+      {suggestions.length > 0 && (
+        <div className="flex items-center gap-2 pt-2">
+          <span className="text-[11px] font-medium text-muted-foreground">Impression</span>
+          {(["a4", "a5"] as PdfFormat[]).map((f) => (
+            <button
+              key={f}
+              onClick={() => setFormat(f)}
+              className={`rounded-full border px-3 py-1.5 text-[11px] font-medium ${
+                format === f
+                  ? "border-primary/40 bg-primary/10 text-foreground"
+                  : "border-border/70 bg-card text-muted-foreground"
+              }`}
+            >
+              {f.toUpperCase()}
+            </button>
+          ))}
+        </div>
+      )}
 
       {suggestions.map((s, i) => {
         const def = SUPPORT_TYPES[s.type];
@@ -226,6 +360,7 @@ const Assistant = () => {
                     type: s.type,
                     childName,
                     items: s.items,
+                    format,
                   })
                 }
                 className="flex items-center justify-center gap-2 rounded-2xl border border-border/70 px-4 py-3 text-xs font-semibold text-foreground transition-transform active:scale-[0.98]"
