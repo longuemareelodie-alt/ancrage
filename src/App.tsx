@@ -22,6 +22,7 @@ import { DiscoveryProvider } from "@/contexts/DiscoveryContext";
 import Index from "./pages/Index";
 import RechercheGlobale from "./pages/RechercheGlobale";
 import Invitation from "./pages/Invitation";
+import { useAcceptPendingInvitation } from "@/hooks/useAcceptPendingInvitation";
 import QuizResultat from "./pages/QuizResultat";
 import Dashboard from "./pages/Dashboard";
 import Emotions from "./pages/Emotions";
