@@ -162,6 +162,34 @@ const CommunautePage = () => {
     loadPosts();
   };
 
+  /** Commentaire sous un message : même modération que les publications. */
+  const handleReply = async (parentId: string, threadId: string | null) => {
+    if (readOnly) {
+      setUnlockOpen(true);
+      return;
+    }
+    if (!user || !replyBody.trim()) return;
+    const { error } = await supabase.from("community_posts").insert({
+      author_id: user.id,
+      kind: "reply",
+      parent_id: parentId,
+      thread_id: threadId,
+      body: replyBody.trim(),
+      status: "pending" as const,
+    });
+    if (error) {
+      toast({ title: "Erreur", description: error.message, variant: "destructive" });
+      return;
+    }
+    setReplyBody("");
+    setReplyFor(null);
+    toast({
+      title: "Envoyé pour modération",
+      description: "Votre réponse sera publiée après validation.",
+    });
+    loadPosts();
+  };
+
   const handleReport = async (postId: string) => {
     if (readOnly) {
       setUnlockOpen(true);
