@@ -3,11 +3,21 @@ import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import HubShell from "@/components/hub/HubShell";
 import { SUPPORT_TYPES, SupportItem, SupportType } from "@/data/supportTemplates";
-import { exportSupportPdf } from "@/lib/exportSupportPdf";
+import { exportSupportPdf, PdfFormat } from "@/lib/exportSupportPdf";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { GripVertical, Plus, Printer, Trash2, ArrowLeft } from "lucide-react";
+import {
+  GripVertical,
+  Plus,
+  Printer,
+  Trash2,
+  ArrowLeft,
+  Star,
+  Copy,
+  Archive,
+} from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+
 
 type Profile = { id: string; first_name: string };
 
