@@ -148,7 +148,7 @@ export default function Famille() {
               <p className="text-xs text-amber-800/80 dark:text-amber-300/80">
                 {upcomingVaccines.slice(0, 3).map((x) => {
                   const p = profiles.find((pp) => pp.id === x.v.profile_id);
-                  const label = x.days < 0 ? `en retard ${Math.abs(x.days)}j` : `dans ${x.days}j`;
+                  const label = x.days < 0 ? `à prévoir depuis ${Math.abs(x.days)}j` : `dans ${x.days}j`;
                   return `${p?.first_name || "?"} · ${x.v.vaccine_name} (${label})`;
                 }).join(" · ")}
               </p>
@@ -175,7 +175,7 @@ export default function Famille() {
           <Card>
             <CardContent className="py-16 text-center text-muted-foreground">
               <Users className="h-12 w-12 mx-auto mb-3 opacity-30" />
-              <p>Aucun profil pour l'instant.</p>
+              <p>Ta famille n'est pas encore arrivée ici.</p>
               <p className="text-sm mt-1">Ajoute les membres de ta famille pour centraliser leurs infos santé.</p>
             </CardContent>
           </Card>
@@ -594,7 +594,7 @@ function ProfileDetail({
                           {v.next_due_date && (
                             <> · <span className={tone}>
                               Rappel {format(new Date(v.next_due_date), "d MMM yyyy", { locale: fr })}
-                              {daysLeft != null && (daysLeft < 0 ? ` (retard ${Math.abs(daysLeft)}j)` : ` (dans ${daysLeft}j)`)}
+                              {daysLeft != null && (daysLeft < 0 ? ` (à prévoir depuis ${Math.abs(daysLeft)}j)` : ` (dans ${daysLeft}j)`)}
                             </span></>
                           )}
                         </p>
