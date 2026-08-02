@@ -361,7 +361,11 @@ const Profil = () => {
                   </div>
                 </div>
 
+                {/* Familles Fondatrices — badge à vie, arrivée, tarif obtenu */}
+                <FoundingBadge />
+
                 {/* Badges */}
+
                 <div>
                   <p className="text-xs font-medium text-muted-foreground mb-2">Badges gagnés</p>
                   <div className="grid grid-cols-4 gap-2">
