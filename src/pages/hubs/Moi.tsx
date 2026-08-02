@@ -1,4 +1,14 @@
-import { Heart, PenLine, Moon, Clock, Target } from "lucide-react";
+import {
+  Heart,
+  PenLine,
+  Moon,
+  Clock,
+  Target,
+  Trophy,
+  Sparkles,
+  BookOpen,
+  History,
+} from "lucide-react";
 import HubShell from "@/components/hub/HubShell";
 import HubCard from "@/components/hub/HubCard";
 
@@ -13,26 +23,50 @@ const Moi = () => (
     <HubCard
       to="/lies-autrement/journal"
       icon={PenLine}
-      title="Mon journal"
+      title="Journal"
       desc="Écrire librement ou guidée. 100 % privé."
     />
     <HubCard
       to="/moi/apaisement"
       icon={Moon}
-      title="M'apaiser maintenant"
-      desc="Quand ça déborde, un chemin court et calme."
+      title="M'apaiser"
+      desc="Respiration, ancrage, relaxation. Tout de suite."
     />
     <HubCard
       to="/moi/chemin"
       icon={Clock}
       title="Mon chemin"
-      desc="Frise, livre de reconstruction, portraits, repères."
+      desc="Ta chronologie : moments, émotions, victoires."
     />
     <HubCard
       to="/moi/objectifs"
       icon={Target}
-      title="Objectifs & réussites"
-      desc="Ce que tu veux, ce que tu as déjà réussi."
+      title="Objectifs"
+      desc="Ce que tu veux, à ton rythme."
+    />
+    <HubCard
+      to="/moi/objectifs"
+      icon={Trophy}
+      title="Réussites"
+      desc="Ce que tu as déjà traversé et réussi."
+    />
+    <HubCard
+      to="/portrait-transformation"
+      icon={Sparkles}
+      title="Portrait"
+      desc="Qui tu deviens, mois après mois."
+    />
+    <HubCard
+      to="/livre-reconstruction"
+      icon={BookOpen}
+      title="Livre de reconstruction"
+      desc="Ton livre personnel, exportable en PDF."
+    />
+    <HubCard
+      to="/frise-evolution"
+      icon={History}
+      title="Frise"
+      desc="Avant, tempête, aujourd'hui."
     />
   </HubShell>
 );
