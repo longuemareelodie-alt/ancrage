@@ -432,7 +432,6 @@ const CommunautePage = () => {
                   </button>
                 )}
               </li>
-              </li>
             );
           })}
         </ul>
