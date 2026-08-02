@@ -227,7 +227,24 @@ const SupportEditor = () => {
         <Plus className="h-4 w-4" strokeWidth={2} /> Ajouter {def.itemLabel.toLowerCase()}
       </button>
 
-      <div className="flex gap-3 pt-4">
+      <div className="flex items-center gap-2 pt-4">
+        <span className="text-[11px] font-medium text-muted-foreground">Impression</span>
+        {(["a4", "a5"] as PdfFormat[]).map((f) => (
+          <button
+            key={f}
+            onClick={() => setFormat(f)}
+            className={`rounded-full border px-3 py-1.5 text-[11px] font-medium ${
+              format === f
+                ? "border-primary/40 bg-primary/10 text-foreground"
+                : "border-border/70 bg-card text-muted-foreground"
+            }`}
+          >
+            {f.toUpperCase()}
+          </button>
+        ))}
+      </div>
+
+      <div className="flex gap-3 pt-2">
         <Button onClick={save} disabled={saving} className="flex-1">
           Enregistrer
         </Button>
@@ -239,11 +256,37 @@ const SupportEditor = () => {
               type,
               childName,
               items: items.filter((i) => i.label.trim()),
+              format,
             })
           }
         >
           <Printer className="mr-2 h-4 w-4" strokeWidth={1.75} /> PDF
         </Button>
+      </div>
+
+      <div className="grid grid-cols-3 gap-2 pt-3">
+        <button
+          onClick={toggleFavorite}
+          className="flex flex-col items-center gap-1.5 rounded-[20px] border border-border/70 bg-card py-3 text-[11px] font-medium text-muted-foreground"
+        >
+          <Star
+            className={`h-4 w-4 ${favorite ? "fill-primary text-primary" : ""}`}
+            strokeWidth={1.75}
+          />
+          {favorite ? "Favori" : "Mettre en favori"}
+        </button>
+        <button
+          onClick={duplicate}
+          className="flex flex-col items-center gap-1.5 rounded-[20px] border border-border/70 bg-card py-3 text-[11px] font-medium text-muted-foreground"
+        >
+          <Copy className="h-4 w-4" strokeWidth={1.75} /> Dupliquer
+        </button>
+        <button
+          onClick={archive}
+          className="flex flex-col items-center gap-1.5 rounded-[20px] border border-border/70 bg-card py-3 text-[11px] font-medium text-muted-foreground"
+        >
+          <Archive className="h-4 w-4" strokeWidth={1.75} /> Ranger
+        </button>
       </div>
 
       <button
@@ -252,6 +295,7 @@ const SupportEditor = () => {
       >
         Supprimer ce support
       </button>
+
     </HubShell>
   );
 };
