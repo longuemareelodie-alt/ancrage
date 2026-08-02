@@ -49,6 +49,9 @@ const DemoSection = () => (
             <video
               className="w-full rounded-[1.6rem]"
               controls
+              autoPlay
+              muted
+              loop
               playsInline
               preload="metadata"
               poster={DEMO_POSTER_URL}
