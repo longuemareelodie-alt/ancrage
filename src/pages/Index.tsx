@@ -44,6 +44,14 @@ import { useMolliePayment } from "@/hooks/useMolliePayment";
 import { PREMIUM_PRICE_SHORT } from "@/lib/premiumOffer";
 import FoundingPrice from "@/components/FoundingPrice";
 import FoundingFamiliesBanner from "@/components/FoundingFamiliesBanner";
+import DemoSection from "@/components/landing/DemoSection";
+import ScreensCarousel from "@/components/landing/ScreensCarousel";
+import StudioSection from "@/components/landing/StudioSection";
+import AssistantSection from "@/components/landing/AssistantSection";
+import PourQuiSection from "@/components/landing/PourQuiSection";
+import TarifFondateurSection from "@/components/landing/TarifFondateurSection";
+import FinalCTA from "@/components/landing/FinalCTA";
+
 import heroPhoto from "@/assets/hero-fondatrice.png.asset.json";
 import journalShot from "@/assets/showcase/journal.jpg.asset.json";
 import portraitShot from "@/assets/showcase/portrait.jpg.asset.json";
@@ -1213,24 +1221,31 @@ const Index = () => {
       <Nav onCTA={onCTA} loading={loading} />
       <main>
         <Hero onCTA={onCTA} loading={loading} />
+        <DemoSection />
         <Quotidien />
         <Presentation />
         <Serenite />
+        <ScreensCarousel />
         <Transformations />
-        <Immersive />
+        <StudioSection />
+        <AssistantSection />
         <Fondatrice onCTA={onCTA} loading={loading} />
+        <PourQuiSection />
         <Inclus />
         <Temoignages />
         <Unique />
         <PaiementUniqueCard />
         <PreTarif />
         <Tarif onCTA={onCTA} loading={loading} />
+        <TarifFondateurSection onCTA={onCTA} loading={loading} />
         <AmbassadeurTeaser />
         <div id="faq">
           <HomeFAQ />
           <FaqExtras />
         </div>
+        <FinalCTA onCTA={onCTA} loading={loading} />
       </main>
+
       <Footer />
     </div>
   );
