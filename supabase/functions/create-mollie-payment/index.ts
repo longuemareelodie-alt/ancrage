@@ -159,7 +159,34 @@ Deno.serve(async (req) => {
     }
 
     const basePriceCents = product.priceCents;
-    const discountCents = promo?.discountCents ?? 0;
+
+    // ---- Familles Fondatrices : tarif du moment, décidé par la base ----
+    // Le compteur ne bouge qu'avec des paiements réellement validés, donc le
+    // palier lu ici est toujours celui qui reste à prendre. Aucun code promo,
+    // aucune manipulation manuelle.
+    let foundingTier: string | null = null;
+    let foundingCents = basePriceCents;
+    try {
+      const svc = createClient(supabaseUrl, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+      const { data: offer, error: offerErr } = await svc.rpc("get_founding_offer");
+      if (offerErr) throw offerErr;
+      const cents = Number((offer as Record<string, unknown>)?.price_cents);
+      const tier = (offer as Record<string, unknown>)?.tier_key;
+      if (Number.isFinite(cents) && cents >= 100 && cents <= basePriceCents) {
+        foundingCents = Math.floor(cents);
+        foundingTier = typeof tier === "string" ? tier : null;
+      }
+    } catch (e) {
+      // En cas de souci, on retombe sur le tarif plein : jamais moins cher par accident.
+      console.warn("[create-mollie-payment] founding offer lookup failed:", (e as Error)?.message);
+    }
+
+    // Le tarif fondatrice et un code promo ne se cumulent pas : on garde
+    // simplement la meilleure remise pour la famille.
+    const foundingDiscountCents = Math.max(0, basePriceCents - foundingCents);
+    const promoDiscountCents = promo?.discountCents ?? 0;
+    const discountCents = Math.max(foundingDiscountCents, promoDiscountCents);
+    const foundingApplied = foundingDiscountCents >= promoDiscountCents && foundingDiscountCents > 0;
     const finalCents = Math.max(0, basePriceCents - discountCents);
     // Mollie minimum is 1 cent for EUR — guard against a free total.
     if (finalCents < 100) {
@@ -168,9 +195,19 @@ Deno.serve(async (req) => {
     const finalAmountEur = (finalCents / 100).toFixed(2);
     const vatAmountEur = (Math.round(finalCents / 6) / 100).toFixed(2);
 
-    const description = promo
-      ? `${product.description} (${promo.label})`
-      : product.description;
+    const FOUNDING_LABELS: Record<string, string> = {
+      fondatrice: "Famille Fondatrice",
+      pionniere: "Famille Pionnière",
+      premiere: "Première Génération",
+      suivante: "Famille suivante",
+    };
+
+    const description = foundingApplied && foundingTier && FOUNDING_LABELS[foundingTier]
+      ? `${product.description} (${FOUNDING_LABELS[foundingTier]})`
+      : promo
+        ? `${product.description} (${promo.label})`
+        : product.description;
+
 
     // Validate optional billing address (required by Klarna)
     let validatedBillingAddress: Record<string, string> | null = null;
@@ -227,7 +264,9 @@ Deno.serve(async (req) => {
         base_price_cents: basePriceCents,
         discount_cents: discountCents,
         final_cents: finalCents,
-        promo_code: promo ? normalizedPromo : null,
+        promo_code: !foundingApplied && promo ? normalizedPromo : null,
+        founding_tier: foundingApplied ? foundingTier : null,
+
         method_forced: forceMethod ?? null,
         ref_code: referralCode,
       },

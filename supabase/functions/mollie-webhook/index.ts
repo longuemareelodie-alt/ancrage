@@ -1353,6 +1353,26 @@ export const handleMollieWebhook = async (req: Request): Promise<Response> => {
       },
     });
 
+    // --- Familles Fondatrices : place + tarif obtenu + badge à vie ---
+    // Idempotent : une famille n'occupe qu'une place, même si le webhook rejoue.
+    try {
+      const { error: foundingErr } = await supabase.rpc("claim_founding_slot", {
+        _user_id: updatedProfile.user_id,
+        _payment_id: paymentId,
+        _paid_cents: amountCents,
+      });
+      if (foundingErr) {
+        logError("claim_founding_slot failed (non-fatal)", foundingErr, {
+          user_id: updatedProfile.user_id,
+        });
+      }
+    } catch (e) {
+      logError("claim_founding_slot threw (non-fatal)", e, {
+        user_id: updatedProfile.user_id,
+      });
+    }
+
+
     // --- Programme Ambassadrices : ensure profile + attribution commission ---
     try {
       // 1. Toute nouvelle premium devient automatiquement ambassadrice (idempotent)

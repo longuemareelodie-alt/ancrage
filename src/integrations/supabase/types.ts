@@ -1034,6 +1034,42 @@ export type Database = {
           },
         ]
       }
+      founding_families: {
+        Row: {
+          created_at: string
+          id: string
+          joined_at: string
+          payment_id: string | null
+          position: number
+          price_cents: number
+          tier_key: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          joined_at?: string
+          payment_id?: string | null
+          position: number
+          price_cents: number
+          tier_key: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          joined_at?: string
+          payment_id?: string | null
+          position?: number
+          price_cents?: number
+          tier_key?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       lsf_progress: {
         Row: {
           id: string
@@ -2106,6 +2142,10 @@ export type Database = {
         Returns: Json
       }
       award_badges: { Args: { _badge_keys: string[] }; Returns: undefined }
+      claim_founding_slot: {
+        Args: { _paid_cents: number; _payment_id: string; _user_id: string }
+        Returns: Json
+      }
       cleanup_pending_account_emails: { Args: never; Returns: Json }
       delete_email: {
         Args: { message_id: number; queue_name: string }
@@ -2120,10 +2160,12 @@ export type Database = {
       generate_referral_code: { Args: never; Returns: string }
       get_batch_recipients_admin: { Args: { _batch_id: string }; Returns: Json }
       get_emergency_usage: { Args: never; Returns: Json }
+      get_founding_offer: { Args: never; Returns: Json }
       get_is_premium: { Args: { _user_id: string }; Returns: boolean }
       get_medical_record_by_token: { Args: { _token: string }; Returns: Json }
       get_my_ambassador_impact: { Args: never; Returns: Json }
       get_my_contract_status: { Args: never; Returns: Json }
+      get_my_founding_status: { Args: never; Returns: Json }
       get_payout_batch_admin: { Args: { _batch_id: string }; Returns: Json }
       get_premium_activation_log: {
         Args: {

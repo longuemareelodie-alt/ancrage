@@ -26,6 +26,7 @@ import { PREMIUM_CTA, PREMIUM_FULL_ACCESS_LABEL, PREMIUM_LIFETIME_LABEL } from "
 import { useMolliePayment } from "@/hooks/useMolliePayment";
 import DiscoveryToggle from "@/components/DiscoveryToggle";
 import GuidedTourSettings from "@/components/GuidedTourSettings";
+import FoundingBadge from "@/components/FoundingBadge";
 interface Note {
   id: string;
   title: string;
@@ -361,7 +362,11 @@ const Profil = () => {
                   </div>
                 </div>
 
+                {/* Familles Fondatrices — badge à vie, arrivée, tarif obtenu */}
+                <FoundingBadge />
+
                 {/* Badges */}
+
                 <div>
                   <p className="text-xs font-medium text-muted-foreground mb-2">Badges gagnés</p>
                   <div className="grid grid-cols-4 gap-2">
