@@ -38,7 +38,7 @@ const SoftWhisper = () => {
     }
     // Une surprise ne se planifie pas : un jour sur deux environ.
     if (Math.random() < 0.5) return;
-    const index = Number(today.replaceAll("-", "")) % WHISPERS.length;
+    const index = Number(today.replace(/-/g, "")) % WHISPERS.length;
     const timer = setTimeout(() => setText(WHISPERS[index]), 1400);
     return () => clearTimeout(timer);
   }, []);
