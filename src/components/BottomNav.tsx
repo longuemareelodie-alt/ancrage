@@ -71,18 +71,18 @@ const BottomNav = () => {
       title: "Pour toi",
       actions: [
         { to: "/moi/emotions", label: "Noter une émotion", icon: Heart },
-        { to: "/moi/journal", label: "Écrire dans mon journal", icon: PenLine },
+        { to: "/lies-autrement/journal", label: "Écrire dans mon journal", icon: PenLine },
         { to: "/moi/objectifs", label: "Ajouter un objectif", icon: Target },
-        { to: "/moi/apaisement", label: "Exercice d'apaisement", icon: Moon },
+        { to: "/moi/apaisement", label: "M'apaiser maintenant", icon: Moon },
       ],
     },
     {
       match: "/famille",
       title: "Pour ta famille",
       actions: [
-        { to: "/famille", label: "Ajouter une information enfant", icon: Users },
+        { to: "/famille", label: "Ajouter un enfant", icon: Users },
         { to: "/famille/coffre", label: "Scanner un document", icon: FileUp },
-        { to: "/sante/fiche", label: "Ajouter un vaccin", icon: Syringe },
+        { to: "/organisation", label: "Ajouter un rendez-vous", icon: CalendarPlus },
         { to: "/sante/medicaments", label: "Ajouter un traitement", icon: Pill },
       ],
     },
@@ -90,24 +90,24 @@ const BottomNav = () => {
       match: "/autonomie",
       title: "Créer un support",
       actions: [
+        { to: "/autonomie/assistant", label: "Créer avec l'Assistant Éclosia", icon: Sparkles },
         { to: "/autonomie/studio", label: "Nouvelle routine", icon: Repeat },
-        { to: "/autonomie/studio", label: "Nouvelle check-list", icon: ListChecks },
         { to: "/autonomie/studio", label: "Nouvelle histoire sociale", icon: BookHeart },
-        { to: "/autonomie/studio", label: "Nouvelle carte visuelle", icon: Grid3x3 },
+        { to: "/autonomie/studio", label: "Nouvelle check-list", icon: ListChecks },
         { to: "/autonomie/studio", label: "Nouveau tableau de récompenses", icon: Star },
-        { to: "/autonomie/assistant", label: "Demander à l'assistant", icon: Sparkles },
+        { to: "/autonomie/studio", label: "Nouvelle carte visuelle", icon: Grid3x3 },
       ],
     },
     {
       match: "/plus",
       title: "Tous les raccourcis",
       actions: [
+        { to: "/recherche", label: "Rechercher dans Éclosia", icon: Grid3x3 },
         { to: "/moi/emotions", label: "Noter une émotion", icon: Heart },
-        { to: "/moi/journal", label: "Écrire dans mon journal", icon: PenLine },
-        { to: "/plus/organisation", label: "Ajouter un rendez-vous", icon: CalendarPlus },
-        { to: "/plus/budget", label: "Ajouter une dépense", icon: Wallet },
+        { to: "/lies-autrement/journal", label: "Écrire dans mon journal", icon: PenLine },
+        { to: "/organisation", label: "Ajouter un rendez-vous", icon: CalendarPlus },
+        { to: "/budget", label: "Ajouter une dépense", icon: Wallet },
         { to: "/famille/coffre", label: "Déposer un document", icon: FileUp },
-        { to: "/autonomie/studio", label: "Créer un support", icon: Repeat },
       ],
     },
   ];
@@ -116,9 +116,9 @@ const BottomNav = () => {
     title: "Que souhaites-tu faire ?",
     actions: [
       { to: "/moi/emotions", label: "Noter une émotion", icon: Heart },
-      { to: "/moi/journal", label: "Écrire dans mon journal", icon: PenLine },
-      { to: "/plus/organisation", label: "Ajouter un rendez-vous", icon: CalendarPlus },
+      { to: "/lies-autrement/journal", label: "Écrire dans mon journal", icon: PenLine },
       { to: "/famille/coffre", label: "Déposer un document", icon: FileUp },
+      { to: "/organisation", label: "Ajouter un rendez-vous", icon: CalendarPlus },
     ] as Action[],
   };
 
