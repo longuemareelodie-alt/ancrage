@@ -544,81 +544,8 @@ const Transformations = () => {
   );
 };
 
-/* --------------------- Découvrir l'application ------------------------ */
 
-const PhoneMockup = ({
-  src,
-  alt,
-}: {
-  src: string;
-  alt: string;
-}) => (
-  <div className="relative mx-auto w-[260px]">
-    <div className="rounded-[2.25rem] border border-border/60 bg-night/95 p-2 shadow-[0_40px_100px_-40px_hsl(var(--night)/0.4)]">
-      <div className="overflow-hidden rounded-[1.8rem] bg-card">
-        <img src={src} alt={alt} className="w-full" />
-      </div>
-    </div>
-  </div>
-);
 
-const Immersive = () => {
-  const shots = [
-    {
-      src: dashboardShot.url,
-      label: "Organisation",
-      caption: "Tout ton foyer, dans un seul tableau de bord apaisant.",
-    },
-    {
-      src: journalShot.url,
-      label: "Émotions",
-      caption: "Un espace pour poser ce que tu ne dis à personne.",
-    },
-    {
-      src: portraitShot.url,
-      label: "Transformation",
-      caption: "Voir, chaque mois, le chemin que tu es en train de faire.",
-    },
-    {
-      src: friseShot.url,
-      label: "Parcours",
-      caption: "Ta frise d'évolution, pour se souvenir d'où tu viens.",
-    },
-  ];
-
-  return (
-    <Section>
-      <motion.div {...fadeUp} className="mx-auto max-w-2xl text-center">
-        <Eyebrow>Découvrir l'application</Eyebrow>
-        <h2 className="mt-4 font-serif text-[clamp(1.75rem,4vw,3rem)] leading-[1.1] tracking-tight text-night">
-          Chaque écran est pensé pour
-          <br />
-          <span className="italic text-primary-dark">te soulager.</span>
-        </h2>
-      </motion.div>
-
-      <div className="mt-20 space-y-24 md:space-y-32">
-        {shots.map((s, i) => (
-          <motion.div
-            key={s.label}
-            {...fadeUp}
-            className={`grid items-center gap-12 md:grid-cols-2 md:gap-20 ${
-              i % 2 === 1 ? "md:[&>*:first-child]:order-2" : ""
-            }`}
-          >
-            <PhoneMockup src={s.src} alt={s.label} />
-            <div className="text-center md:text-left">
-              <Eyebrow>{s.label}</Eyebrow>
-              <p className="mt-4 font-serif text-2xl leading-snug text-night md:text-3xl">
-                {s.caption}
-              </p>
-            </div>
-          </motion.div>
-        ))}
-      </div>
-    </Section>
-  );
-};
 
 /* ------------------------------ Fondatrice ----------------------------- */
 
@@ -1086,13 +1013,32 @@ const PaiementUniqueCard = () => (
           J'ai fait un choix différent.
         </p>
         <p>
-          Tu achètes Eclosia une seule fois. Toutes les futures mises à jour
+          Tu achètes Éclosia une seule fois. Toutes les futures mises à jour
           sont incluses. Aucun abonnement. Aucun renouvellement.
         </p>
         <p className="font-medium text-night">
-          Eclosia évoluera avec toi et avec ta famille.
+          Éclosia évolue avec toi et avec ta famille.
         </p>
       </div>
+      <ul className="mx-auto mt-8 grid max-w-md gap-2.5 text-left sm:grid-cols-2">
+        {[
+          "Toutes les futures mises à jour incluses",
+          "Aucun abonnement",
+          "Aucun renouvellement",
+          "Éclosia évolue avec toi",
+        ].map((b) => (
+          <li
+            key={b}
+            className="flex items-center gap-2.5 rounded-2xl border border-border/50 bg-background/60 px-4 py-2.5 text-sm text-foreground/90"
+          >
+            <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-primary/15">
+              <Check className="h-3.5 w-3.5 text-primary-dark" aria-hidden="true" />
+            </span>
+            {b}
+          </li>
+        ))}
+      </ul>
+
     </motion.div>
   </section>
 );
