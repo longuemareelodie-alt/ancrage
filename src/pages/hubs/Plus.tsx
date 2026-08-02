@@ -9,13 +9,22 @@ import {
   Heart,
   Settings,
   Sprout,
+  Search,
+  LifeBuoy,
 } from "lucide-react";
 import HubShell from "@/components/hub/HubShell";
 import HubCard from "@/components/hub/HubCard";
 
 const Plus = () => (
   <HubShell title="Plus" subtitle="Tout le reste, rangé par besoin.">
-    <p className="pb-1 pt-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+    <HubCard
+      to="/recherche"
+      icon={Search}
+      title="Recherche universelle"
+      desc="Un enfant, un document, un support, une note…"
+    />
+
+    <p className="pb-1 pt-6 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
       Organisation
     </p>
     <HubCard
@@ -47,13 +56,14 @@ const Plus = () => (
       Communauté
     </p>
     <HubCard to="/lies-autrement/communaute" icon={Users} title="Échanges" desc="Parler avec d'autres parents." />
-    <HubCard to="/mon-impact" icon={Handshake} title="Mon impact" desc="Programme ambassadrice." />
+    <HubCard to="/mon-impact" icon={Handshake} title="Programme ambassadrice" desc="Ton impact et tes commissions." />
 
     <p className="pb-1 pt-6 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
       Mon compte
     </p>
     <HubCard to="/profil" icon={Heart} title="Mon profil" />
     <HubCard to="/parametres" icon={Settings} title="Réglages" />
+    <HubCard to="/parametres#support" icon={LifeBuoy} title="Support" desc="Une question ? On te répond." />
   </HubShell>
 );
 
