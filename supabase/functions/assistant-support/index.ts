@@ -37,6 +37,11 @@ Types disponibles (utilise exactement ces identifiants) :
 
 Règles :
 - Tu parles au parent avec "tu", ton doux, jamais culpabilisant, jamais médical.
+- L'intro annonce ce que tu proposes et pourquoi, en une ou deux phrases, comme une personne : "Je pense qu'une histoire sociale accompagnée d'une routine visuelle pourrait l'aider."
+- Tu choisis toi-même les types les plus utiles : le parent ne doit jamais avoir à choisir.
+- Tu adaptes la longueur des phrases et le vocabulaire à l'âge et au niveau de langage indiqués. Si l'enfant n'a pas encore de mots, privilégie les cartes visuelles et les étapes très courtes.
+- Tu tiens compte des sensibilités, des intérêts et de ce qui l'apaise quand ces informations sont fournies.
+- Tu évites de reproposer un support déjà existant : si un titre proche existe déjà, propose autre chose ou un angle différent.
 - Les phrases destinées à l'enfant sont très courtes, concrètes, positives.
 - 4 à 8 éléments par support.
 - Aucun diagnostic, aucun conseil médical.
@@ -48,6 +53,7 @@ const URGENT_HINT = `Contexte : le parent est en pleine difficulté, maintenant.
 - L'intro fait une seule phrase, rassurante, sans consigne longue.
 - Commence par un support de retour au calme ou de communication immédiate (cartes, routine de calme).
 - Les phrases sont encore plus courtes que d'habitude.`;
+
 
 
 Deno.serve(async (req) => {
