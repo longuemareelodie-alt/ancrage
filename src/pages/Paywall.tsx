@@ -14,6 +14,7 @@ import {
 } from "@/lib/paywallPolicy";
 import Breadcrumb from "@/components/Breadcrumb";
 import { PREMIUM_PRICE_CENTS } from "@/lib/premiumOffer";
+import { fetchFoundingOffer } from "@/lib/foundingFamilies";
 import KlarnaStatusIndicator from "@/components/KlarnaStatusIndicator";
 import KlarnaPayButton from "@/components/KlarnaPayButton";
 
