@@ -6,19 +6,15 @@ import { SUPPORT_TYPES, SupportItem, SupportType } from "@/data/supportTemplates
 import { exportSupportPdf, PdfFormat } from "@/lib/exportSupportPdf";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  GripVertical,
-  Plus,
-  Printer,
-  Trash2,
-  ArrowLeft,
-  Star,
-  Copy,
-  Archive,
-} from "lucide-react";
+import { Printer, ArrowLeft, Star, Copy, Archive } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { describePersonalisation, softHaptic } from "@/lib/supportPersonalisation";
 import { readCachedSupport } from "@/lib/supportsCache";
+import SupportItemsReorder, {
+  SupportRow,
+  stripRowKeys,
+  withRowKeys,
+} from "@/components/autonomie/SupportItemsReorder";
 
 
 type Profile = { id: string; first_name: string };
