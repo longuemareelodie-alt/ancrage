@@ -14,6 +14,8 @@ import BottomNav from "@/components/BottomNav";
 import TopNav from "@/components/TopNav";
 import ScrollToHash from "@/components/ScrollToHash";
 import { RouteTransitionProvider } from "@/components/RouteTransition";
+import SplashScreen from "@/components/SplashScreen";
+
 
 import GuidedTour from "@/components/GuidedTour";
 import RestartTourButton from "@/components/RestartTourButton";
@@ -300,8 +302,10 @@ const App = () => (
     <AuthProvider>
       <DiscoveryProvider>
         <TooltipProvider>
+          <SplashScreen />
           <Toaster />
           <Sonner />
+
           <BrowserRouter>
             <ReferralCapture />
             <AnimatedRoutes />
