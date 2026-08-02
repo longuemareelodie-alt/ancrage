@@ -5,6 +5,8 @@ import "./i18n/config";
 import { initPerfMetrics } from "./lib/perfMetrics";
 import { shouldDisableDecorativeMotion } from "./lib/motionPrefs";
 import { applyTheme, watchSystemTheme } from "./lib/theme";
+import { initNativeShell } from "./lib/native";
+
 
 initPerfMetrics();
 
@@ -20,5 +22,9 @@ if (shouldDisableDecorativeMotion()) {
 }
 
 createRoot(document.getElementById("root")!).render(<App />);
+
+// Ambiance native (barre de statut, splash) — sans effet dans un navigateur.
+void initNativeShell();
+
 
 
