@@ -298,8 +298,11 @@ const CommunautePage = () => {
                   isPending ? "border-dashed border-[hsl(var(--lies))] bg-[hsl(var(--lies-soft))]" : "border-border"
                 }`}
               >
-                <div className="mb-1 flex items-center justify-between gap-2 text-xs text-muted-foreground">
-                  <span>{new Date(p.created_at).toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" })}</span>
+                <div className="mb-1.5 flex items-start justify-between gap-2 text-xs text-muted-foreground">
+                  <div className="flex flex-col gap-0.5">
+                    <CommunityAuthorLine author={authors[p.author_id]} isMine={isMine} />
+                    <span>{new Date(p.created_at).toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" })}</span>
+                  </div>
                   <div className="flex items-center gap-2">
                     {isPending && (
                       <span className="inline-flex items-center gap-1 text-[hsl(var(--lies))]">
