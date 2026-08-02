@@ -952,11 +952,7 @@ const Tarif = ({ onCTA, loading }: { onCTA: () => void; loading: boolean }) => (
         est valable à vie.
       </p>
 
-      <div className="mt-10 flex items-baseline justify-center gap-2">
-        <span className="font-serif text-[clamp(3rem,7vw,5rem)] leading-none text-night">
-          {PREMIUM_PRICE_SHORT}
-        </span>
-      </div>
+      <FoundingPrice />
       <p className="mt-2 text-xs uppercase tracking-[0.2em] text-muted-foreground">
         Paiement unique · Aucun abonnement
       </p>
@@ -976,6 +972,9 @@ const Tarif = ({ onCTA, loading }: { onCTA: () => void; loading: boolean }) => (
           Ou paie en plusieurs fois avec Klarna
         </p>
       </div>
+
+      <FoundingFamiliesBanner className="mt-10 text-left" />
+
 
 
       <ul className="mx-auto mt-10 grid max-w-lg gap-2.5 sm:grid-cols-2">
