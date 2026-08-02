@@ -3,11 +3,21 @@ import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import HubShell from "@/components/hub/HubShell";
 import { SUPPORT_TYPES, SupportItem, SupportType } from "@/data/supportTemplates";
-import { exportSupportPdf } from "@/lib/exportSupportPdf";
+import { exportSupportPdf, PdfFormat } from "@/lib/exportSupportPdf";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { GripVertical, Plus, Printer, Trash2, ArrowLeft } from "lucide-react";
+import {
+  GripVertical,
+  Plus,
+  Printer,
+  Trash2,
+  ArrowLeft,
+  Star,
+  Copy,
+  Archive,
+} from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+
 
 type Profile = { id: string; first_name: string };
 
@@ -22,13 +32,15 @@ const SupportEditor = () => {
   const [profileId, setProfileId] = useState<string | null>(null);
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [saving, setSaving] = useState(false);
+  const [favorite, setFavorite] = useState(false);
+  const [format, setFormat] = useState<PdfFormat>("a4");
 
   useEffect(() => {
     (async () => {
       const [{ data }, { data: p }] = await Promise.all([
         supabase
           .from("autonomy_supports")
-          .select("title, support_type, content, profile_id")
+          .select("title, support_type, content, profile_id, is_favorite")
           .eq("id", supportId!)
           .maybeSingle(),
         supabase.from("family_medical_profiles").select("id, first_name").order("created_at"),
@@ -38,6 +50,7 @@ const SupportEditor = () => {
         setTitle(data.title);
         setType(data.support_type as SupportType);
         setProfileId(data.profile_id);
+        setFavorite(Boolean(data.is_favorite));
         const content = data.content as { items?: SupportItem[] } | null;
         setItems(content?.items?.length ? content.items : [{ label: "" }]);
       }
@@ -61,10 +74,59 @@ const SupportEditor = () => {
     });
   };
 
+  const toggleFavorite = async () => {
+    const next = !favorite;
+    setFavorite(next);
+    const { error } = await supabase
+      .from("autonomy_supports")
+      .update({ is_favorite: next })
+      .eq("id", supportId!);
+    if (error) {
+      setFavorite(!next);
+      toast({ description: "Impossible de mettre à jour.", variant: "destructive" });
+    }
+  };
+
+  const duplicate = async () => {
+    const { data: auth } = await supabase.auth.getUser();
+    const uid = auth.user?.id;
+    if (!uid) return;
+    const { data, error } = await supabase
+      .from("autonomy_supports")
+      .insert({
+        user_id: uid,
+        profile_id: profileId,
+        support_type: type,
+        title: (title.trim() || def.label) + " (copie)",
+        content: { items: items.filter((i) => i.label.trim()) },
+      })
+      .select("id")
+      .single();
+    if (error || !data) {
+      toast({ description: "Impossible de dupliquer.", variant: "destructive" });
+      return;
+    }
+    navigate("/autonomie/support/" + data.id);
+  };
+
+  const archive = async () => {
+    const { error } = await supabase
+      .from("autonomy_supports")
+      .update({ archived: true })
+      .eq("id", supportId!);
+    if (error) {
+      toast({ description: "Impossible de ranger ce support.", variant: "destructive" });
+      return;
+    }
+    toast({ description: "Rangé. Tu le retrouveras dans Mes supports." });
+    navigate("/autonomie/mes-supports");
+  };
+
   const remove = async () => {
     await supabase.from("autonomy_supports").delete().eq("id", supportId!);
     navigate("/autonomie/studio");
   };
+
 
   const move = (index: number, dir: -1 | 1) => {
     const next = [...items];
@@ -165,7 +227,24 @@ const SupportEditor = () => {
         <Plus className="h-4 w-4" strokeWidth={2} /> Ajouter {def.itemLabel.toLowerCase()}
       </button>
 
-      <div className="flex gap-3 pt-4">
+      <div className="flex items-center gap-2 pt-4">
+        <span className="text-[11px] font-medium text-muted-foreground">Impression</span>
+        {(["a4", "a5"] as PdfFormat[]).map((f) => (
+          <button
+            key={f}
+            onClick={() => setFormat(f)}
+            className={`rounded-full border px-3 py-1.5 text-[11px] font-medium ${
+              format === f
+                ? "border-primary/40 bg-primary/10 text-foreground"
+                : "border-border/70 bg-card text-muted-foreground"
+            }`}
+          >
+            {f.toUpperCase()}
+          </button>
+        ))}
+      </div>
+
+      <div className="flex gap-3 pt-2">
         <Button onClick={save} disabled={saving} className="flex-1">
           Enregistrer
         </Button>
@@ -177,11 +256,37 @@ const SupportEditor = () => {
               type,
               childName,
               items: items.filter((i) => i.label.trim()),
+              format,
             })
           }
         >
           <Printer className="mr-2 h-4 w-4" strokeWidth={1.75} /> PDF
         </Button>
+      </div>
+
+      <div className="grid grid-cols-3 gap-2 pt-3">
+        <button
+          onClick={toggleFavorite}
+          className="flex flex-col items-center gap-1.5 rounded-[20px] border border-border/70 bg-card py-3 text-[11px] font-medium text-muted-foreground"
+        >
+          <Star
+            className={`h-4 w-4 ${favorite ? "fill-primary text-primary" : ""}`}
+            strokeWidth={1.75}
+          />
+          {favorite ? "Favori" : "Mettre en favori"}
+        </button>
+        <button
+          onClick={duplicate}
+          className="flex flex-col items-center gap-1.5 rounded-[20px] border border-border/70 bg-card py-3 text-[11px] font-medium text-muted-foreground"
+        >
+          <Copy className="h-4 w-4" strokeWidth={1.75} /> Dupliquer
+        </button>
+        <button
+          onClick={archive}
+          className="flex flex-col items-center gap-1.5 rounded-[20px] border border-border/70 bg-card py-3 text-[11px] font-medium text-muted-foreground"
+        >
+          <Archive className="h-4 w-4" strokeWidth={1.75} /> Ranger
+        </button>
       </div>
 
       <button
@@ -190,6 +295,7 @@ const SupportEditor = () => {
       >
         Supprimer ce support
       </button>
+
     </HubShell>
   );
 };

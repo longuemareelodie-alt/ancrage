@@ -11,7 +11,15 @@ const json = (body: unknown, status = 200) =>
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
 
-const TYPES = ["routine", "checklist", "emploi-du-temps", "histoire", "recompenses", "cartes"];
+const TYPES = [
+  "routine",
+  "checklist",
+  "emploi-du-temps",
+  "histoire",
+  "recompenses",
+  "cartes",
+  "activite",
+];
 
 const SYSTEM = `Tu es l'assistant d'Éclosia, une application pour les parents d'enfants neuroatypiques.
 
@@ -25,6 +33,7 @@ Types disponibles (utilise exactement ces identifiants) :
 - "histoire" : histoire sociale, une phrase courte par ligne, à la première personne de l'enfant.
 - "recompenses" : objectifs simples à valoriser.
 - "cartes" : mots ou besoins isolés, un par carte.
+- "activite" : un moment préparé ; la première ligne commence par "Matériel :", la deuxième par "Objectif :", puis les étapes.
 
 Règles :
 - Tu parles au parent avec "tu", ton doux, jamais culpabilisant, jamais médical.
@@ -34,6 +43,12 @@ Règles :
 - Tu réponds UNIQUEMENT avec un objet JSON valide, sans texte autour, de la forme :
 {"intro":"une phrase pour le parent","supports":[{"type":"routine","title":"...","description":"...","items":[{"label":"...","time":"07:00"}]}]}
 Le champ "time" est optionnel et réservé aux routines et emplois du temps.`;
+
+const URGENT_HINT = `Contexte : le parent est en pleine difficulté, maintenant.
+- L'intro fait une seule phrase, rassurante, sans consigne longue.
+- Commence par un support de retour au calme ou de communication immédiate (cartes, routine de calme).
+- Les phrases sont encore plus courtes que d'habitude.`;
+
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
@@ -50,7 +65,7 @@ Deno.serve(async (req) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return json({ error: "Unauthorized" }, 401);
 
-    const { situation, childName } = await req.json();
+    const { situation, childName, urgent } = await req.json();
     if (!situation || typeof situation !== "string" || situation.trim().length < 5) {
       return json({ error: "invalid_input", message: "Décris la situation en quelques mots." }, 400);
     }
@@ -68,7 +83,7 @@ Deno.serve(async (req) => {
         model: "google/gemini-3.6-flash",
         response_format: { type: "json_object" },
         messages: [
-          { role: "system", content: SYSTEM },
+          { role: "system", content: urgent === true ? `${SYSTEM}\n\n${URGENT_HINT}` : SYSTEM },
           {
             role: "user",
             content: `Situation : ${situation.slice(0, 800)}${

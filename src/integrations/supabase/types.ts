@@ -274,34 +274,43 @@ export type Database = {
       }
       autonomy_supports: {
         Row: {
+          archived: boolean
           content: Json
           created_at: string
           description: string | null
           id: string
+          is_favorite: boolean
           profile_id: string | null
           support_type: string
+          tags: string[]
           title: string
           updated_at: string
           user_id: string
         }
         Insert: {
+          archived?: boolean
           content?: Json
           created_at?: string
           description?: string | null
           id?: string
+          is_favorite?: boolean
           profile_id?: string | null
           support_type: string
+          tags?: string[]
           title: string
           updated_at?: string
           user_id: string
         }
         Update: {
+          archived?: boolean
           content?: Json
           created_at?: string
           description?: string | null
           id?: string
+          is_favorite?: boolean
           profile_id?: string | null
           support_type?: string
+          tags?: string[]
           title?: string
           updated_at?: string
           user_id?: string
