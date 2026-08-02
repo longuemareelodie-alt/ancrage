@@ -8,6 +8,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { JOURNAL_PROMPTS } from "@/data/journalPrompts";
 import { toast } from "@/hooks/use-toast";
 import JournalMemoryInsight from "@/components/journal/JournalMemoryInsight";
+import SoftEmptyState from "@/components/SoftEmptyState";
+import { celebrate } from "@/lib/gentleBadges";
 
 type Entry = {
   id: string;
@@ -57,7 +59,8 @@ const JournalPage = () => {
     }
     setContent("");
     setPromptKey(null);
-    toast({ title: "Entrée enregistrée", description: "Votre journal a été mis à jour." });
+    toast({ title: "C'est déposé 💛", description: "Ta page est enregistrée, rien qu'à toi." });
+    celebrate("first_journal");
     load();
     setInsightKey((k) => k + 1);
   };
@@ -153,9 +156,15 @@ const JournalPage = () => {
 
       <h2 className="mb-3 font-serif text-xl text-foreground">Mes entrées</h2>
       {entries.length === 0 ? (
-        <p className="rounded-xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
-          Pas encore d'entrée. Votre première page vous attend ↑
-        </p>
+        <SoftEmptyState
+          emoji="💛"
+          title="Chaque histoire commence quelque part."
+          hint="Personne d'autre ne lira ces pages."
+          actionLabel="Écrire ma première page"
+          onAction={() =>
+            document.querySelector("textarea")?.scrollIntoView({ behavior: "smooth", block: "center" })
+          }
+        />
       ) : (
         <ul className="space-y-2">
           {entries.map((e) => {

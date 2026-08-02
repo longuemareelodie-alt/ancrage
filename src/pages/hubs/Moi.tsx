@@ -45,10 +45,10 @@ const Moi = () => (
       desc="Ce que tu veux, à ton rythme."
     />
     <HubCard
-      to="/moi/objectifs"
+      to="/moi/badges"
       icon={Trophy}
-      title="Réussites"
-      desc="Ce que tu as déjà traversé et réussi."
+      title="Mes petits moments"
+      desc="Tes badges privés. Aucun classement."
     />
     <HubCard
       to="/portrait-transformation"

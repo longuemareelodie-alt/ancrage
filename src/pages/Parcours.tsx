@@ -4,7 +4,7 @@ import CTAButton from "@/components/CTAButton";
 import OnboardingQuiz from "@/components/OnboardingQuiz";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, Check } from "lucide-react";
-import confetti from "canvas-confetti";
+import { haptic } from "@/lib/feedback";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -114,11 +114,8 @@ const Parcours = () => {
   useEffect(() => {
     if (allDone) {
       setShowCelebration(true);
-      const fire = (opts: confetti.Options) =>
-        confetti({ ...opts, disableForReducedMotion: true });
-      fire({ particleCount: 80, spread: 70, origin: { x: 0.3, y: 0.6 } });
-      setTimeout(() => fire({ particleCount: 80, spread: 70, origin: { x: 0.7, y: 0.6 } }), 250);
-      setTimeout(() => fire({ particleCount: 60, spread: 100, origin: { x: 0.5, y: 0.4 } }), 500);
+      // Célébration silencieuse : une vibration douce, aucun effet bruyant.
+      haptic("success");
     } else {
       setShowCelebration(false);
     }

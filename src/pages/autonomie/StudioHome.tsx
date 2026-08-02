@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { celebrate } from "@/lib/gentleBadges";
 import { supabase } from "@/integrations/supabase/client";
 import HubShell from "@/components/hub/HubShell";
 import { SUPPORT_ORDER, SUPPORT_TYPES, SupportType } from "@/data/supportTemplates";
@@ -110,6 +111,7 @@ const StudioHome = () => {
     }
     setPending(null);
     softHaptic([10, 40, 10]);
+    celebrate("first_routine");
     toast({ description: "Ton support est prêt 🌸" });
     navigate("/autonomie/support/" + data.id);
   };

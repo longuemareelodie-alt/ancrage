@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { celebrate } from "@/lib/gentleBadges";
 import {
   Users, Plus, Syringe, FileText, Heart, AlertTriangle, Pill, Stethoscope,
   Trash2, Pencil, ChevronRight, Calendar, Phone, PlusCircle, ExternalLink,
@@ -376,6 +377,7 @@ function ProfileDialog({
     } else {
       const { error } = await supabase.from("family_medical_profiles").insert({ user_id: userId, ...payload });
       if (error) return toast.error(error.message);
+      celebrate("first_child");
     }
     toast.success("Enregistré");
     onSaved();
