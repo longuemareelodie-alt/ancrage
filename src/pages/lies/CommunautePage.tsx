@@ -212,6 +212,9 @@ const CommunautePage = () => {
       subtitle={`Bienvenue, ${member.display_name}.`}
       icon={<Users className="h-6 w-6" />}
     >
+      <div className="mb-3">
+        <FoundingBadge variant="chip" />
+      </div>
       <div className="mb-4 flex gap-1 overflow-x-auto rounded-full border border-border bg-card p-1">
         {TABS.map((t) => (
           <button
