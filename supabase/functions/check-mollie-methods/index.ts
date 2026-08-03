@@ -1,4 +1,5 @@
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors'
+import { createClient } from 'npm:@supabase/supabase-js@2'
 
 const json = (payload: unknown, status = 200) =>
   new Response(JSON.stringify(payload), {
@@ -11,7 +12,28 @@ Deno.serve(async (req) => {
 
   try {
     const mollieKey = Deno.env.get("MOLLIE_API_KEY");
-    if (!mollieKey) return json({ error: "Server config error" }, 500);
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const anonKey = Deno.env.get("SUPABASE_ANON_KEY");
+    if (!mollieKey || !supabaseUrl || !anonKey) return json({ error: "Server config error" }, 500);
+
+    // This endpoint exposes payment configuration and can create diagnostic
+    // payments on the live Mollie account: admins only.
+    const authHeader = req.headers.get("Authorization") ?? "";
+    if (!authHeader.toLowerCase().startsWith("bearer ")) {
+      return json({ error: "unauthorized" }, 401);
+    }
+    const authed = createClient(supabaseUrl, anonKey, {
+      global: { headers: { Authorization: authHeader } },
+    });
+    const { data: userData, error: userErr } = await authed.auth.getUser();
+    const userId = userData?.user?.id;
+    if (userErr || !userId) return json({ error: "unauthorized" }, 401);
+    const { data: isAdmin } = await authed.rpc("has_role", {
+      _user_id: userId,
+      _role: "admin",
+    });
+    if (isAdmin !== true) return json({ error: "forbidden" }, 403);
+
 
     const url = new URL(req.url);
     const amount = url.searchParams.get("amount") ?? "57.00";

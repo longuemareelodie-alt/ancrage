@@ -23,20 +23,27 @@ const KlarnaStatusIndicator = () => {
   const [error, setError] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
 
+  const [hidden, setHidden] = useState(false);
+
   useEffect(() => {
     let cancelled = false;
     (async () => {
       try {
+        const { data: sessionData } = await supabase.auth.getSession();
+        if (!sessionData.session) {
+          if (!cancelled) setHidden(true);
+          return;
+        }
         const amount = PREMIUM_PRICE_EUR.toFixed(2);
         const { data, error } = await supabase.functions.invoke(
           `check-mollie-methods?amount=${amount}`,
           { method: "GET" },
         );
         if (cancelled) return;
-        if (error) setError(error.message ?? "Erreur");
+        if (error) setHidden(true);
         else setResult(data as Result);
-      } catch (e) {
-        if (!cancelled) setError((e as Error).message);
+      } catch {
+        if (!cancelled) setHidden(true);
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -45,6 +52,9 @@ const KlarnaStatusIndicator = () => {
       cancelled = true;
     };
   }, []);
+
+  if (hidden) return null;
+
 
   // Styles selon état
   const tone = loading

@@ -9,9 +9,29 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.95.0";
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
-  const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+  const supabaseUrl = Deno.env.get("SUPABASE_URL");
+  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  if (!supabaseUrl || !serviceKey) {
+    return new Response(JSON.stringify({ error: "server_config_error" }), {
+      status: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+
+  // Only the cron job (presenting the service role key) may trigger this
+  // worker — otherwise anyone could blast reminders to every user.
+  const presented =
+    (req.headers.get("authorization") ?? "").replace(/^Bearer\s+/i, "") ||
+    (req.headers.get("apikey") ?? "");
+  if (presented !== serviceKey) {
+    return new Response(JSON.stringify({ error: "unauthorized" }), {
+      status: 401,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+
   const supabase = createClient(supabaseUrl, serviceKey);
+
 
   const now = new Date();
   const results = { appointments_24h: 0, appointments_1h: 0, medications: 0, agenda: 0, todos: 0, errors: [] as string[] };
