@@ -156,6 +156,8 @@ const DemoSection = () => (
         </div>
       </div>
     </motion.div>
+
+    <MiniTour />
   </Section>
 );
 
