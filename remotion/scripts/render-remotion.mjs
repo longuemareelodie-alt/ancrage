@@ -31,7 +31,7 @@ await renderMedia({
   outputLocation: process.argv[2] ?? "/mnt/documents/eclosia-demo.mp4",
   puppeteerInstance: browser,
   muted: true,
-  concurrency: 1,
+  concurrency: 4,
 });
 
 await browser.close({ silent: false });
