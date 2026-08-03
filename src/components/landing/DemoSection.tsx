@@ -26,6 +26,68 @@ const STEPS = [
   "🤍 Assistant Éclosia",
 ];
 
+const TOUR = [
+  {
+    step: "1",
+    space: "🏠 Aujourd'hui",
+    title: "Tu ouvres l'app, tout est déjà là",
+    text: "Le rendez-vous ORL de jeudi, la facture de cantine à régler, et un mot doux si la journée a été rude. Rien à chercher, rien à cocher.",
+    example: "« Jeudi 14 h — ORL de Léa. Le carnet de santé est déjà prêt à emporter. »",
+  },
+  {
+    step: "2",
+    space: "🌱 Autonomie",
+    title: "Tu fabriques un support en deux minutes",
+    text: "Tu choisis un moment difficile, Éclosia écrit la routine avec les mots de ton enfant. Tu ajustes, tu imprimes en A5 pour le frigo.",
+    example: "« Routine du soir de Léa : pyjama, dents, histoire, câlin. » — prête en PDF.",
+  },
+  {
+    step: "3",
+    space: "❤️ Moi · 👨‍👩‍👧 Famille",
+    title: "Tu déposes ta charge, l'app s'en souvient",
+    text: "Une émotion en un geste, une ordonnance photographiée, un document rangé dans le coffre-fort. Le mois prochain, tu verras le chemin parcouru.",
+    example: "« Ordonnance de mars ajoutée — renouvellement à prévoir vers le 12 juin. »",
+  },
+];
+
+const MiniTour = () => (
+  <motion.div {...fadeUp} className="mx-auto mt-16 max-w-4xl">
+    <p className="text-center text-xs font-semibold uppercase tracking-[0.2em] text-primary-dark">
+      La visite en 3 étapes
+    </p>
+    <ol className="mt-8 grid gap-5 md:grid-cols-3">
+      {TOUR.map(({ step, space, title, text, example }, i) => (
+        <motion.li
+          key={step}
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.7, delay: i * 0.12, ease: [0.22, 1, 0.36, 1] }}
+          className="flex flex-col rounded-3xl border border-border/60 bg-background p-6 shadow-[0_30px_70px_-55px_hsl(var(--night)/0.5)]"
+        >
+          <div className="flex items-center gap-3">
+            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/15 text-sm font-semibold text-primary-dark">
+              {step}
+            </span>
+            <span className="text-[13px] font-medium text-muted-foreground">
+              {space}
+            </span>
+          </div>
+          <h3 className="mt-4 font-serif text-lg leading-snug text-night">
+            {title}
+          </h3>
+          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+            {text}
+          </p>
+          <p className="mt-4 rounded-2xl bg-secondary/40 px-4 py-3 text-[13px] italic leading-relaxed text-foreground/80">
+            {example}
+          </p>
+        </motion.li>
+      ))}
+    </ol>
+  </motion.div>
+);
+
 const DemoSection = () => (
   <Section id="demonstration" className="bg-card">
     <motion.div {...fadeUp} className="mx-auto max-w-2xl text-center">
@@ -94,6 +156,8 @@ const DemoSection = () => (
         </div>
       </div>
     </motion.div>
+
+    <MiniTour />
   </Section>
 );
 
