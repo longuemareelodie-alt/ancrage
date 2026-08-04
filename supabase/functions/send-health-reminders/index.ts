@@ -18,17 +18,32 @@ Deno.serve(async (req) => {
     });
   }
 
-  // Only the cron job (presenting the service role key) may trigger this
-  // worker — otherwise anyone could blast reminders to every user.
+  // Only internal callers (cron job / server-side functions) presenting a
+  // service-role credential may trigger this worker — otherwise anyone could
+  // blast reminders to every user.
   const presented =
     (req.headers.get("authorization") ?? "").replace(/^Bearer\s+/i, "") ||
     (req.headers.get("apikey") ?? "");
-  if (presented !== serviceKey) {
+  const isServiceRole = (() => {
+    if (!presented) return false;
+    if (presented === serviceKey) return true;
+    const parts = presented.split(".");
+    if (parts.length < 2) return false;
+    try {
+      const b64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+      const padded = b64 + "=".repeat((4 - (b64.length % 4)) % 4);
+      return JSON.parse(atob(padded)).role === "service_role";
+    } catch {
+      return false;
+    }
+  })();
+  if (!isServiceRole) {
     return new Response(JSON.stringify({ error: "unauthorized" }), {
       status: 401,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
+
 
   const supabase = createClient(supabaseUrl, serviceKey);
 
@@ -292,11 +307,17 @@ async function sendEmail(supabase: any, to: string, subject: string, html: strin
         subject,
         html,
         text,
+        from: "Éclosia <noreply@digitalmamanlibre.com>",
+        sender_domain: "notify.digitalmamanlibre.com",
         purpose: "transactional",
-        idempotency_key: idempotencyKey,
+        // Le suffixe de version évite les collisions avec d'anciens envois
+        // définitivement en échec (l'API refuse une clé déjà brûlée).
+        idempotency_key: `${idempotencyKey}-v2`,
+
         template_name: "health_reminder",
       },
     });
+
     if (error) {
       console.error("enqueue_email failed", error);
       return false;
