@@ -363,7 +363,3 @@ async function sendPush(supabase: any, userId: string, title: string, body: stri
     console.error("push failed", e);
   }
 }
-
-function escapeHtml(s: string): string {
-  return s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
-}
