@@ -18,17 +18,32 @@ Deno.serve(async (req) => {
     });
   }
 
-  // Only the cron job (presenting the service role key) may trigger this
-  // worker — otherwise anyone could blast reminders to every user.
+  // Only internal callers (cron job / server-side functions) presenting a
+  // service-role credential may trigger this worker — otherwise anyone could
+  // blast reminders to every user.
   const presented =
     (req.headers.get("authorization") ?? "").replace(/^Bearer\s+/i, "") ||
     (req.headers.get("apikey") ?? "");
-  if (presented !== serviceKey) {
+  const isServiceRole = (() => {
+    if (!presented) return false;
+    if (presented === serviceKey) return true;
+    const parts = presented.split(".");
+    if (parts.length < 2) return false;
+    try {
+      const b64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+      const padded = b64 + "=".repeat((4 - (b64.length % 4)) % 4);
+      return JSON.parse(atob(padded)).role === "service_role";
+    } catch {
+      return false;
+    }
+  })();
+  if (!isServiceRole) {
     return new Response(JSON.stringify({ error: "unauthorized" }), {
       status: 401,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
+
 
   const supabase = createClient(supabaseUrl, serviceKey);
 
@@ -199,18 +214,23 @@ async function sendAgendaReminder(supabase: any, ev: any, eventAt: Date): Promis
   const dateStr = eventAt.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
   const timeStr = ev.event_time ? ev.event_time.slice(0, 5) : null;
   const subject = `📅 Rappel : ${ev.title} demain`;
-  const html = `
-<div style="font-family: -apple-system, sans-serif; max-width: 500px; margin: 0 auto; padding: 24px; color: #333;">
-  <h1 style="color: #5b8def; font-size: 22px; margin-bottom: 16px;">C'est demain 💛</h1>
-  <div style="background: #f5f7fa; border-radius: 12px; padding: 20px; margin: 16px 0;">
-    <p style="margin: 0 0 8px; font-size: 18px; font-weight: 600;">${escapeHtml(ev.title)}</p>
-    <p style="margin: 0; font-size: 14px; color: #666;">📅 ${dateStr}${timeStr ? ` à ${timeStr}` : ""}</p>
-    ${ev.location ? `<p style="margin: 8px 0 0; font-size: 14px; color: #666;">📍 ${escapeHtml(ev.location)}</p>` : ""}
-    ${ev.description ? `<p style="margin: 12px 0 0; font-size: 14px; color: #555;">${escapeHtml(ev.description)}</p>` : ""}
-  </div>
-  <p style="font-size: 13px; color: #888;">Prends soin de toi 💗</p>
-</div>`;
-  const emailOk = await sendEmail(supabase, email, subject, html, `agenda-${ev.id}`);
+  const emailOk = await sendEmail(
+    supabase,
+    email,
+    subject,
+    {
+      title: "C'est demain 💛",
+      headline: ev.title,
+      details: [
+        `📅 ${dateStr}${timeStr ? ` à ${timeStr}` : ""}`,
+        ...(ev.location ? [`📍 ${ev.location}`] : []),
+        ...(ev.description ? [ev.description] : []),
+      ],
+      closing: "Prends soin de toi 💗",
+      url: "https://www.digitalmamanlibre.com/organisation",
+    },
+    `agenda-${ev.id}`,
+  );
   await sendPush(supabase, ev.user_id, `📅 ${ev.title}`, `Demain${timeStr ? ` à ${timeStr}` : ""}${ev.location ? ` — ${ev.location}` : ""}`);
   return emailOk;
 }
@@ -220,16 +240,19 @@ async function sendTodoReminder(supabase: any, t: any): Promise<boolean> {
   if (!email) return false;
   const prio = t.priority === "haute" ? "🔴 Priorité haute" : t.priority === "basse" ? "Priorité basse" : "";
   const subject = `✅ Rappel : ${t.title}`;
-  const html = `
-<div style="font-family: -apple-system, sans-serif; max-width: 500px; margin: 0 auto; padding: 24px; color: #333;">
-  <h1 style="color: #5b8def; font-size: 22px; margin-bottom: 16px;">À faire aujourd'hui 💛</h1>
-  <div style="background: #f5f7fa; border-radius: 12px; padding: 20px; margin: 16px 0;">
-    <p style="margin: 0 0 8px; font-size: 18px; font-weight: 600;">${escapeHtml(t.title)}</p>
-    ${prio ? `<p style="margin: 0; font-size: 14px; color: #666;">${prio}</p>` : ""}
-  </div>
-  <p style="font-size: 13px; color: #888;">Un pas à la fois 🌱</p>
-</div>`;
-  const emailOk = await sendEmail(supabase, email, subject, html, `todo-${t.id}`);
+  const emailOk = await sendEmail(
+    supabase,
+    email,
+    subject,
+    {
+      title: "À faire aujourd'hui 💛",
+      headline: t.title,
+      details: prio ? [prio] : [],
+      closing: "Un pas à la fois 🌱",
+      url: "https://www.digitalmamanlibre.com/organisation",
+    },
+    `todo-${t.id}`,
+  );
   await sendPush(supabase, t.user_id, `✅ À faire aujourd'hui`, t.title);
   return emailOk;
 }
@@ -244,18 +267,22 @@ async function sendAppointmentReminder(supabase: any, apt: any, when: "24h" | "1
   const subject = when === "24h" ? `Rappel : ${apt.title} demain` : `Rappel : ${apt.title} dans 1h`;
   const intro = when === "24h" ? "C'est demain 💛" : "C'est dans 1h 💛";
 
-  const html = `
-<div style="font-family: -apple-system, sans-serif; max-width: 500px; margin: 0 auto; padding: 24px; color: #333;">
-  <h1 style="color: #5b8def; font-size: 22px; margin-bottom: 16px;">${intro}</h1>
-  <div style="background: #f5f7fa; border-radius: 12px; padding: 20px; margin: 16px 0;">
-    <p style="margin: 0 0 8px; font-size: 18px; font-weight: 600;">${escapeHtml(apt.title)}</p>
-    <p style="margin: 0; font-size: 14px; color: #666;">📅 ${dateStr} à ${timeStr}</p>
-    ${apt.location ? `<p style="margin: 8px 0 0; font-size: 14px; color: #666;">📍 ${escapeHtml(apt.location)}</p>` : ""}
-  </div>
-  <p style="font-size: 13px; color: #888;">Prends soin de toi 💗</p>
-</div>`;
-
-  return await sendEmail(supabase, email, subject, html, `apt-${when}-${apt.id}`);
+  return await sendEmail(
+    supabase,
+    email,
+    subject,
+    {
+      title: intro,
+      headline: apt.title,
+      details: [
+        `📅 ${dateStr} à ${timeStr}`,
+        ...(apt.location ? [`📍 ${apt.location}`] : []),
+      ],
+      closing: "Prends soin de toi 💗",
+      url: "https://www.digitalmamanlibre.com/sante-rendez-vous",
+    },
+    `apt-${when}-${apt.id}`,
+  );
 }
 
 async function sendMedicationReminder(supabase: any, med: any, time: string): Promise<boolean> {
@@ -263,18 +290,19 @@ async function sendMedicationReminder(supabase: any, med: any, time: string): Pr
   if (!email) return false;
 
   const subject = `💊 Rappel : ${med.name}`;
-  const html = `
-<div style="font-family: -apple-system, sans-serif; max-width: 500px; margin: 0 auto; padding: 24px; color: #333;">
-  <h1 style="color: #5b8def; font-size: 22px; margin-bottom: 16px;">C'est l'heure de ton traitement 💛</h1>
-  <div style="background: #f5f7fa; border-radius: 12px; padding: 20px; margin: 16px 0;">
-    <p style="margin: 0 0 8px; font-size: 18px; font-weight: 600;">💊 ${escapeHtml(med.name)}</p>
-    ${med.dosage ? `<p style="margin: 0; font-size: 14px; color: #666;">${escapeHtml(med.dosage)}</p>` : ""}
-    <p style="margin: 8px 0 0; font-size: 14px; color: #666;">⏰ ${time}</p>
-  </div>
-</div>`;
-
   const today = new Date().toISOString().split("T")[0];
-  const emailOk = await sendEmail(supabase, email, subject, html, `med-${med.id}-${today}-${time}`);
+  const emailOk = await sendEmail(
+    supabase,
+    email,
+    subject,
+    {
+      title: "C'est l'heure de ton traitement 💛",
+      headline: `💊 ${med.name}`,
+      details: [...(med.dosage ? [med.dosage] : []), `⏰ ${time}`],
+      url: "https://www.digitalmamanlibre.com/sante-medicaments",
+    },
+    `med-${med.id}-${today}-${time}`,
+  );
 
   // Push notification
   await sendPush(supabase, med.user_id, `💊 ${med.name}`, `C'est l'heure de prendre ${med.dosage || "ton traitement"}`);
@@ -282,23 +310,38 @@ async function sendMedicationReminder(supabase: any, med: any, time: string): Pr
   return emailOk;
 }
 
-async function sendEmail(supabase: any, to: string, subject: string, html: string, idempotencyKey: string): Promise<boolean> {
+type ReminderData = {
+  title: string;
+  headline?: string;
+  details?: string[];
+  closing?: string;
+  url?: string;
+};
+
+/**
+ * Les rappels passent par `send-transactional-email` : c'est ce circuit qui
+ * gère l'expéditeur vérifié, le lien de désinscription, la file d'attente et
+ * les relances. On ne pousse plus de HTML brut dans la file (l'API rejetait
+ * les envois sans expéditeur ni libellé).
+ */
+async function sendEmail(
+  supabase: any,
+  to: string,
+  subject: string,
+  data: ReminderData,
+  idempotencyKey: string,
+): Promise<boolean> {
   try {
-    const text = html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
-    const { error } = await supabase.rpc("enqueue_email", {
-      queue_name: "transactional_emails",
-      payload: {
-        to,
-        subject,
-        html,
-        text,
-        purpose: "transactional",
-        idempotency_key: idempotencyKey,
-        template_name: "health_reminder",
+    const { error } = await supabase.functions.invoke("send-transactional-email", {
+      body: {
+        templateName: "health-reminder",
+        recipientEmail: to,
+        idempotencyKey: `${idempotencyKey}-v3`,
+        templateData: { subject, ...data },
       },
     });
     if (error) {
-      console.error("enqueue_email failed", error);
+      console.error("send-transactional-email failed", error);
       return false;
     }
     return true;
@@ -319,8 +362,4 @@ async function sendPush(supabase: any, userId: string, title: string, body: stri
   } catch (e) {
     console.error("push failed", e);
   }
-}
-
-function escapeHtml(s: string): string {
-  return s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
 }
