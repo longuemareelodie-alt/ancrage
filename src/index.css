@@ -154,6 +154,17 @@
 
   .text-night { color: hsl(var(--night)); }
 
+  /*
+   * En mode sombre, le bleu nuit signature devient illisible sur un fond
+   * lui-même bleu nuit : on bascule sur l'ivoire adouci (foreground) pour
+   * garder la même intention typographique sans perdre le texte.
+   */
+  .dark .text-night { color: hsl(var(--foreground)); }
+  .dark .text-night\/90 { color: hsl(var(--foreground) / 0.9); }
+  .dark .text-night\/80 { color: hsl(var(--foreground) / 0.8); }
+  .dark .text-night\/70 { color: hsl(var(--foreground) / 0.7); }
+  .dark .text-night\/60 { color: hsl(var(--foreground) / 0.6); }
+
   /* Surlignage manuscrit (doré doux sous un mot) */
   .underline-handwritten {
     background-image: linear-gradient(180deg, transparent 62%, hsl(41 86% 62% / 0.55) 62%, hsl(41 86% 62% / 0.55) 92%, transparent 92%);
