@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { PlayCircle } from "lucide-react";
 import { Eyebrow, Section, SectionTitle, fadeUp } from "./primitives";
 import dashboardShot from "@/assets/showcase/dashboard.jpg.asset.json";
-import demoVideo from "@/assets/video/eclosia-demo.mp4.asset.json";
+import demoVideo from "@/assets/video/eclosia-demo-son.mp4.asset.json";
 
 /**
  * Démonstration.
@@ -111,9 +111,6 @@ const DemoSection = () => (
             <video
               className="w-full rounded-[1.6rem]"
               controls
-              autoPlay
-              muted
-              loop
               playsInline
               preload="metadata"
               poster={DEMO_POSTER_URL}
