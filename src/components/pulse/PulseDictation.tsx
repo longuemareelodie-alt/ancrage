@@ -14,6 +14,7 @@ import MascotPicker from "@/components/pulse/MascotPicker";
 const PulseDictation = ({ onAdded }: { onAdded?: () => void }) => {
   const [draft, setDraft] = useState("");
   const [saving, setSaving] = useState(false);
+  const [chosen, setChosen] = useState<PulseDomain | null | undefined>(undefined);
 
   const { status, partial, start, stop, cancel } = useVoiceDictation({
     onDone: (text) => setDraft(text),
