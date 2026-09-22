@@ -57,7 +57,7 @@ import FinalCTA from "@/components/landing/FinalCTA";
 import famille1 from "@/assets/famille/IMG_1687.jpg.asset.json";
 import famille2 from "@/assets/famille/IMG_1814.jpg.asset.json";
 import famille3 from "@/assets/famille/IMG_2117.jpg.asset.json";
-import fondatriceVideo from "@/assets/video/eclosia-fondatrice-son.mp4.asset.json";
+import fondatriceVideo from "@/assets/video/eclosia-fondatrice-son2.mp4.asset.json";
 import fondatricePoster from "@/assets/video/fondatrice-poster.jpg.asset.json";
 import journalShot from "@/assets/showcase/journal.jpg.asset.json";
 import dashboardShot from "@/assets/showcase/dashboard.jpg.asset.json";
@@ -566,7 +566,7 @@ const Fondatrice = ({ onCTA, loading }: { onCTA: () => void; loading: boolean })
             playsInline
             preload="metadata"
             poster={fondatricePoster.url}
-            aria-label="Vingt-cinq secondes : pourquoi Éclosia existe, raconté à voix haute"
+            aria-label="Quarante secondes : pourquoi Éclosia existe, raconté à voix haute"
           >
             <source src={fondatriceVideo.url} type="video/mp4" />
             Ton navigateur ne peut pas lire cette vidéo.
@@ -574,7 +574,7 @@ const Fondatrice = ({ onCTA, loading }: { onCTA: () => void; loading: boolean })
         </div>
       </div>
       <p className="mt-5 text-center text-[13px] text-muted-foreground">
-        Vingt-cinq secondes, avec le son : pourquoi Éclosia existe.
+        Quarante secondes, avec le son : pourquoi Éclosia existe.
       </p>
     </motion.div>
 
