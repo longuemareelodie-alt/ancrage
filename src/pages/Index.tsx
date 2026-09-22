@@ -148,13 +148,13 @@ const Nav = ({ onCTA, loading }: { onCTA: () => void; loading: boolean }) => {
   }, []);
 
   const links = [
+    { href: "#modules", label: "Ce que ça change" },
     { href: "#demonstration", label: "Démonstration" },
-    { href: "#studio", label: "Studio" },
-    { href: "#pour-qui", label: "Pour qui" },
+    { href: "#inclus", label: "Ce qui est inclus" },
     { href: "#fondatrice", label: "Mon histoire" },
-    { href: "#tarif-fondateur", label: "Tarif" },
-
+    { href: "#tarif", label: "Tarif" },
   ];
+
 
   return (
     <header
@@ -721,6 +721,24 @@ const Inclus = () => {
       items: ["Guides de crise", "Activités", "LSF"],
     },
     {
+      icon: Sparkles,
+      title: "Studio d'autonomie",
+      items: [
+        "Plannings et séquentiels",
+        "Supports visuels à imprimer",
+        "Bibliothèque adaptée",
+      ],
+    },
+    {
+      icon: Stars,
+      title: "Assistant Éclosia",
+      items: [
+        "Il t'aide à formuler et à trier",
+        "Disponible quand tu en as besoin",
+      ],
+    },
+
+    {
       icon: Users,
       title: "Communauté",
       items: ["Échanges bienveillants", "Retours d'expérience"],
@@ -1238,30 +1256,23 @@ const Index = () => {
       <Nav onCTA={onCTA} loading={loading} />
       <main>
         <Hero onCTA={onCTA} loading={loading} />
-        <DemoSection />
-        <PulseSection />
         <Quotidien />
-        <Presentation />
-        <Serenite />
-        <ScreensCarousel />
         <Transformations />
-        <StudioSection />
-        <AssistantSection />
-        <Fondatrice onCTA={onCTA} loading={loading} />
+        <PulseSection />
+        <DemoSection />
         <PourQuiSection />
         <Inclus />
+        <Fondatrice onCTA={onCTA} loading={loading} />
         <Temoignages />
         <Unique />
-        <PaiementUniqueCard />
-        <PreTarif />
         <Tarif onCTA={onCTA} loading={loading} />
-        <TarifFondateurSection onCTA={onCTA} loading={loading} />
         <AmbassadeurTeaser />
         <div id="faq">
           <HomeFAQ />
           <FaqExtras />
         </div>
         <FinalCTA onCTA={onCTA} loading={loading} />
+
       </main>
 
       <Footer />
