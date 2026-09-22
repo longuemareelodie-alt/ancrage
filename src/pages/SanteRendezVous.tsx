@@ -6,6 +6,7 @@ import SectionBlock from "@/components/SectionBlock";
 import { ArrowLeft, Plus, Trash2, Calendar, MapPin, Bell, Save, CalendarPlus, Download } from "lucide-react";
 import { toast } from "sonner";
 import { buildGoogleCalendarUrl, downloadICS } from "@/lib/calendarExport";
+import VoiceDictationButton from "@/components/VoiceDictationButton";
 
 interface Appointment {
   id: string;
