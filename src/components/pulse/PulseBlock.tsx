@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowRight, Check, RotateCcw, Sparkles } from "lucide-react";
+import { ArrowRight, Check, LineChart, RotateCcw, Sparkles } from "lucide-react";
 import { BRAIN_STATES, usePulseState } from "@/hooks/usePulseState";
 import { useNextAction } from "@/hooks/useNextAction";
 import { MASCOTS, mascotOf } from "@/data/pulseMascots";
@@ -53,7 +53,20 @@ const PulseBlock = ({ onChange }: { onChange?: () => void }) => {
           );
         })}
       </div>
-      {hint && <p className="mt-3 text-xs leading-relaxed text-muted-foreground">{hint}</p>}
+      <div className="mt-3 flex items-center justify-between gap-3">
+        {hint ? (
+          <p className="text-xs leading-relaxed text-muted-foreground">{hint}</p>
+        ) : (
+          <span />
+        )}
+        <Link
+          to="/pulse/mon-rythme"
+          className="flex shrink-0 items-center gap-1.5 text-[11px] font-semibold text-primary"
+        >
+          <LineChart className="h-3.5 w-3.5" strokeWidth={2} />
+          Mon rythme
+        </Link>
+      </div>
 
       {/* 2 — Prochaine action : une seule, jamais une liste */}
       <div className="mt-6 rounded-[20px] border border-border/60 bg-secondary/25 px-5 py-5">
