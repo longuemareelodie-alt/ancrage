@@ -53,6 +53,7 @@ export const estimateWithHabits = (
   label: string,
 ): { minutes: number; learned: boolean } => {
   const bucket = bucketOf(label);
+  const base = baseMinutes(source, bucket);
   const pools = [
     samples.filter(
       (s) => s.source === source && s.domain === domain && s.length_bucket === bucket,
@@ -63,8 +64,13 @@ export const estimateWithHabits = (
   ];
   for (const pool of pools) {
     if (pool.length >= 2) {
-      return { minutes: round(median(pool.map((s) => Number(s.minutes)))), learned: true };
+      // Une seule mesure ne renverse jamais tout : on avance doucement vers
+      // la réalité mesurée (plus il y a de mesures, plus elles pèsent).
+      const observed = median(pool.map((s) => Number(s.minutes)));
+      const k = 2;
+      const blended = (pool.length * observed + k * base) / (pool.length + k);
+      return { minutes: round(blended), learned: pool.length >= 3 };
     }
   }
-  return { minutes: baseMinutes(source, bucket), learned: false };
+  return { minutes: base, learned: false };
 };
