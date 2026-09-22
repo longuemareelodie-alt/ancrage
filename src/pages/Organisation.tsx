@@ -449,7 +449,10 @@ function NotesTab({ userId }: { userId: string }) {
       <Card className={`p-4 space-y-3 border ${COLOR_CLASS[color]}`}>
         <h3 className="font-serif text-lg">{editing ? "Modifier la note" : "Nouvelle note"}</h3>
         <Input placeholder="Titre (optionnel)" value={title} onChange={(e) => setTitle(e.target.value)} className="bg-white/60" />
-        <Textarea placeholder="Écris ici..." value={content} onChange={(e) => setContent(e.target.value)} rows={4} className="bg-white/60" />
+        <div className="flex items-start gap-2">
+          <Textarea placeholder="Écris ici..." value={content} onChange={(e) => setContent(e.target.value)} rows={4} className="bg-white/60" />
+          <VoiceDictationButton onText={(t) => setContent(content ? `${content} ${t}` : t)} label="Dicter la note" />
+        </div>
         <div className="flex gap-2 items-center">
           <span className="text-xs text-[#6b7280]">Couleur :</span>
           {NOTE_COLORS.map((c) => (
