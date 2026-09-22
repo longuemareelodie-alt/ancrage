@@ -98,8 +98,9 @@ const DemoSection = () => (
         <span className="italic text-primary-dark">avant de lire la page.</span>
       </SectionTitle>
       <p className="mt-6 text-[15px] leading-relaxed text-muted-foreground">
-        Trente secondes calmes : tu dis comment va ta tête, Éclosia sort une
-        seule action, et tu peux tout dicter à la voix.
+        Quarante secondes calmes, racontées à voix haute : tu dis comment va ta
+        tête, Éclosia sort une seule action, et tu peux tout dicter à la voix.
+        Mets le son.
       </p>
     </motion.div>
 
