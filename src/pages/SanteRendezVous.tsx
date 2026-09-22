@@ -113,13 +113,19 @@ const SanteRendezVous = () => {
               placeholder="Lieu (optionnel)"
               className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary/30"
             />
-            <textarea
-              value={editing.notes}
-              onChange={(e) => setEditing({ ...editing, notes: e.target.value })}
-              placeholder="Notes (optionnel)"
-              rows={3}
-              className="w-full resize-none rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary/30"
-            />
+            <div className="flex items-start gap-2">
+              <textarea
+                value={editing.notes}
+                onChange={(e) => setEditing({ ...editing, notes: e.target.value })}
+                placeholder="Notes (optionnel)"
+                rows={3}
+                className="w-full resize-none rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary/30"
+              />
+              <VoiceDictationButton
+                onText={(t) => setEditing({ ...editing, notes: editing.notes ? `${editing.notes} ${t}` : t })}
+                label="Dicter les notes"
+              />
+            </div>
             <div className="flex gap-2">
               <button
                 onClick={save}
