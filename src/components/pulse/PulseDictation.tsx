@@ -35,7 +35,7 @@ const PulseDictation = ({ onAdded }: { onAdded?: () => void }) => {
     }
     const { error } = await supabase
       .from("todo_items")
-      .insert({ user_id: uid, title, domain: guessDomain(title) });
+      .insert({ user_id: uid, title, domain });
     setSaving(false);
     if (error) {
       toast({ description: "Ça n'a pas pu être enregistré. On réessaie ?" });
