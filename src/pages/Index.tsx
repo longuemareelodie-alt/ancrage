@@ -38,6 +38,7 @@ import {
   Quote,
   Wallet,
   Stars,
+  Zap,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
@@ -666,7 +667,7 @@ const Inclus = () => {
     {
       icon: BarChart3,
       title: "Statistiques",
-      items: ["Progression", "Habitudes", "Repères doux"],
+      items: ["Progression", "Habitudes", "Mon rythme jour après jour"],
     },
     {
       icon: RefreshCw,
