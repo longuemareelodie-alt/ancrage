@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { SUPPORT_TYPES } from "@/data/supportTemplates";
+import EnfantJour from "@/components/famille/EnfantJour";
 
 type Profile = {
   id: string;
@@ -45,6 +46,7 @@ type Support = { id: string; title: string; support_type: string };
 
 const TABS = [
   { key: "apercu", label: "Aperçu" },
+  { key: "jour", label: "Son jour" },
   { key: "profil", label: "Profil" },
   { key: "sante", label: "Santé" },
   { key: "documents", label: "Documents" },
