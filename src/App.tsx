@@ -113,6 +113,7 @@ import Organisation from "./pages/Organisation";
 import Statistiques from "./pages/Statistiques";
 import Famille from "./pages/Famille";
 import Aujourdhui from "./pages/Aujourdhui";
+import ViderMaTete from "./pages/pulse/ViderMaTete";
 import Onboarding from "./pages/Onboarding";
 import MoiEmotions from "./pages/moi/MoiEmotions";
 import MoiObjectifs from "./pages/moi/MoiObjectifs";
@@ -238,6 +239,7 @@ const AnimatedRoutes = () => {
         {/* Hubs — needs-based architecture */}
         <Route path="/bienvenue" element={<ProtectedRoute><PageTransition><Onboarding /></PageTransition></ProtectedRoute>} />
         <Route path="/aujourdhui" element={<PaidRoute><PageTransition><Aujourdhui /></PageTransition></PaidRoute>} />
+        <Route path="/pulse/vider-ma-tete" element={<PaidRoute><PageTransition><ViderMaTete /></PageTransition></PaidRoute>} />
         <Route path="/moi" element={<PaidRoute><PageTransition><Moi /></PageTransition></PaidRoute>} />
         <Route path="/moi/apaisement" element={<PaidRoute><PageTransition><MoiApaisement /></PageTransition></PaidRoute>} />
         <Route path="/moi/chemin" element={<PaidRoute><PageTransition><MoiChemin /></PageTransition></PaidRoute>} />
