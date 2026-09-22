@@ -61,14 +61,20 @@ const PulseBlock = ({ onChange }: { onChange?: () => void }) => {
         ) : (
           <span />
         )}
-        <Link
-          to="/pulse/mon-rythme"
-          className="flex shrink-0 items-center gap-1.5 text-[11px] font-semibold text-primary"
-        >
-          <LineChart className="h-3.5 w-3.5" strokeWidth={2} />
-          Mon rythme
-        </Link>
+        <div className="flex shrink-0 items-center gap-2">
+          {state && hint && (
+            <SpeakButton text={hint} style={STYLE_FOR_STATE[state]} label="Écouter" />
+          )}
+          <Link
+            to="/pulse/mon-rythme"
+            className="flex shrink-0 items-center gap-1.5 text-[11px] font-semibold text-primary"
+          >
+            <LineChart className="h-3.5 w-3.5" strokeWidth={2} />
+            Mon rythme
+          </Link>
+        </div>
       </div>
+
 
       {/* 2 — Prochaine action : une seule, jamais une liste */}
       <div className="mt-6 rounded-[20px] border border-border/60 bg-secondary/25 px-5 py-5">
