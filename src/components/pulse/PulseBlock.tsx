@@ -78,12 +78,7 @@ const PulseBlock = ({ onChange }: { onChange?: () => void }) => {
           <>
             <div className="mt-3 flex items-start gap-3">
               {mascotOf(next.domain) && (
-                <span
-                  className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl text-base ${mascotOf(next.domain)!.tint}`}
-                  aria-hidden
-                >
-                  {mascotOf(next.domain)!.emoji}
-                </span>
+                <MascotAvatar mascot={mascotOf(next.domain)} size={38} />
               )}
               <div className="min-w-0">
                 <p className="text-base font-semibold leading-snug text-foreground">{next.label}</p>
@@ -151,12 +146,7 @@ const PulseBlock = ({ onChange }: { onChange?: () => void }) => {
               aria-label={`${m.name} — ${m.label}`}
               className="flex flex-col items-center gap-1"
             >
-              <span
-                className={`flex h-10 w-10 items-center justify-center rounded-2xl text-lg ${m.tint}`}
-                aria-hidden
-              >
-                {m.emoji}
-              </span>
+              <MascotAvatar mascot={m} size={44} />
               <span className="text-[10px] leading-tight text-muted-foreground">{m.label}</span>
             </Link>
           ))}
