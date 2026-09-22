@@ -226,6 +226,7 @@ function TodoTab({ userId }: { userId: string }) {
   const [priority, setPriority] = useState("normal");
   const [dueDate, setDueDate] = useState("");
   const [reminderOffset, setReminderOffset] = useState<number>(24);
+  const [domain, setDomain] = useState<PulseDomain | null>(null);
 
   const load = async () => {
     const { data } = await supabase.from("todo_items").select("*").eq("user_id", userId).order("done").order("due_date", { nullsFirst: false }).order("created_at", { ascending: false });
