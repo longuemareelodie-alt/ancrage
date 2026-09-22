@@ -19,6 +19,7 @@ export type Database = {
           category: string | null
           created_at: string
           description: string | null
+          domain: string | null
           event_date: string
           event_time: string | null
           id: string
@@ -33,6 +34,7 @@ export type Database = {
           category?: string | null
           created_at?: string
           description?: string | null
+          domain?: string | null
           event_date: string
           event_time?: string | null
           id?: string
@@ -47,6 +49,7 @@ export type Database = {
           category?: string | null
           created_at?: string
           description?: string | null
+          domain?: string | null
           event_date?: string
           event_time?: string | null
           id?: string
@@ -237,6 +240,7 @@ export type Database = {
         Row: {
           appointment_at: string
           created_at: string
+          domain: string | null
           id: string
           location: string | null
           notes: string | null
@@ -249,6 +253,7 @@ export type Database = {
         Insert: {
           appointment_at: string
           created_at?: string
+          domain?: string | null
           id?: string
           location?: string | null
           notes?: string | null
@@ -261,6 +266,7 @@ export type Database = {
         Update: {
           appointment_at?: string
           created_at?: string
+          domain?: string | null
           id?: string
           location?: string | null
           notes?: string | null
@@ -1616,6 +1622,36 @@ export type Database = {
         }
         Relationships: []
       }
+      pulse_daily_states: {
+        Row: {
+          created_at: string
+          day: string
+          id: string
+          note: string | null
+          state: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          day?: string
+          id?: string
+          note?: string | null
+          state: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          day?: string
+          id?: string
+          note?: string | null
+          state?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       push_subscriptions: {
         Row: {
           auth: string
@@ -1863,6 +1899,7 @@ export type Database = {
         Row: {
           category: string | null
           created_at: string
+          domain: string | null
           done: boolean
           due_date: string | null
           id: string
@@ -1876,6 +1913,7 @@ export type Database = {
         Insert: {
           category?: string | null
           created_at?: string
+          domain?: string | null
           done?: boolean
           due_date?: string | null
           id?: string
@@ -1889,6 +1927,7 @@ export type Database = {
         Update: {
           category?: string | null
           created_at?: string
+          domain?: string | null
           done?: boolean
           due_date?: string | null
           id?: string
