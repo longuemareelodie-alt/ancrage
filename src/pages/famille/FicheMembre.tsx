@@ -277,6 +277,10 @@ const FicheMembre = () => {
         </div>
       )}
 
+      {tab === "jour" && <EnfantJour profileId={profile.id} firstName={profile.first_name} />}
+
+
+
       {tab === "profil" && (
         <div className="space-y-4 rounded-[20px] border border-border/70 bg-card px-5 py-5">
           {[
