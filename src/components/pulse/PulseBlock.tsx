@@ -95,8 +95,12 @@ const PulseBlock = ({ onChange }: { onChange?: () => void }) => {
               )}
               <div className="min-w-0">
                 <p className="text-base font-semibold leading-snug text-foreground">{next.label}</p>
+                {next.who && (
+                  <p className="mt-1 text-xs font-medium text-primary">pour {next.who}</p>
+                )}
                 <p className="mt-1 text-xs text-muted-foreground">
                   {next.minutes} min
+                  {next.learned ? " (d'après tes habitudes)" : ""}
                   {remaining > 1 ? ` · ${remaining - 1} autre${remaining > 2 ? "s" : ""} ensuite` : ""}
                 </p>
               </div>

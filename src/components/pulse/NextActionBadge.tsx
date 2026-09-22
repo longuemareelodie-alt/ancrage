@@ -55,8 +55,12 @@ const NextActionBadge = () => {
                   Ta prochaine action
                 </p>
                 <p className="mt-0.5 text-sm font-semibold leading-snug">{next.label}</p>
+                {next.who && (
+                  <p className="mt-0.5 text-[11px] font-medium text-primary">pour {next.who}</p>
+                )}
                 <p className="mt-1 flex items-center gap-1 text-[11px] text-muted-foreground">
                   <Clock className="h-3 w-3" /> environ {next.minutes} min
+                  {next.learned ? " · d'après tes habitudes" : ""}
                 </p>
               </div>
               <button
