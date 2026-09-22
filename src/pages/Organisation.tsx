@@ -19,7 +19,8 @@ import VoiceDictationButton from "@/components/VoiceDictationButton";
 import { guessDomain, mascotOf, type PulseDomain } from "@/data/pulseMascots";
 
 type AgendaEvent = { id: string; title: string; description: string | null; event_date: string; event_time: string | null; location: string | null; category: string; reminder_offset_hours: number };
-type Todo = { id: string; title: string; done: boolean; priority: string; due_date: string | null; category: string; reminder_offset_hours: number; domain: string | null };
+type Todo = { id: string; title: string; done: boolean; priority: string; due_date: string | null; category: string; reminder_offset_hours: number; domain: string | null; profile_id: string | null };
+type FamilyMember = { id: string; first_name: string };
 
 const AGENDA_OFFSETS: { value: number; label: string }[] = [
   { value: 1, label: "1h avant" },
