@@ -102,6 +102,7 @@ const BottomNav = () => {
       match: "/plus",
       title: "Tous les raccourcis",
       actions: [
+        { to: "/pulse/vider-ma-tete", label: "Vider ma tête", icon: Brain },
         { to: "/recherche", label: "Rechercher dans Éclosia", icon: Grid3x3 },
         { to: "/moi/emotions", label: "Noter une émotion", icon: Heart },
         { to: "/lies-autrement/journal", label: "Écrire dans mon journal", icon: PenLine },
@@ -115,10 +116,12 @@ const BottomNav = () => {
   const fallback = {
     title: "Que souhaites-tu faire ?",
     actions: [
-      { to: "/moi/emotions", label: "Noter une émotion", icon: Heart },
-      { to: "/lies-autrement/journal", label: "Écrire dans mon journal", icon: PenLine },
-      { to: "/famille/coffre", label: "Déposer un document", icon: FileUp },
+      { to: "/pulse/vider-ma-tete", label: "Vider ma tête", icon: Brain },
+      { to: "/plus/organisation", label: "Ajouter une tâche", icon: ListChecks },
       { to: "/organisation", label: "Ajouter un rendez-vous", icon: CalendarPlus },
+      { to: "/moi/emotions", label: "Noter une émotion", icon: Heart },
+      { to: "/famille/coffre", label: "Déposer un document", icon: FileUp },
+      { to: "/pulse/vider-ma-tete", label: "Parler (bientôt)", icon: Mic },
     ] as Action[],
   };
 

@@ -20,6 +20,7 @@ import { useTodayFeed } from "@/hooks/useTodayFeed";
 import { useWidgetSync } from "@/hooks/useWidgetSync";
 
 import SoftWhisper from "@/components/SoftWhisper";
+import PulseBlock from "@/components/pulse/PulseBlock";
 import { celebrate } from "@/lib/gentleBadges";
 
 import { useProgressStats } from "@/hooks/useProgressStats";
@@ -168,6 +169,11 @@ const Aujourdhui = () => {
         <div className="mb-6">
           <SoftWhisper />
         </div>
+
+        {/* PULSE — état du jour + une seule prochaine action */}
+        <motion.div {...fade(1)} className="mb-8">
+          <PulseBlock onChange={feed.reload} />
+        </motion.div>
 
         {/* 2 — Émotion : une seule pression suffit */}
         <motion.section
