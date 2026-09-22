@@ -5,6 +5,7 @@ import { toast } from "sonner";
 /**
  * 🎙️ Petit bouton de dictée réutilisable.
  * On parle, le texte s'écrit tout seul dans le champ à côté.
+ * Sur téléphone : le bouton respire avec la voix pour montrer qu'il entend bien.
  * `onText` reçoit le texte final (à insérer ou ajouter au champ).
  */
 const VoiceDictationButton = ({
@@ -16,10 +17,12 @@ const VoiceDictationButton = ({
   label?: string;
   className?: string;
 }) => {
-  const { status, start, stop } = useVoiceDictation({
+  const { status, level, supported, start, stop } = useVoiceDictation({
     onDone: (text) => onText(text),
     onError: (message) => toast.error(message),
   });
+
+  if (!supported) return null;
 
   const recording = status === "recording";
   const busy = status === "transcribing";
@@ -31,7 +34,12 @@ const VoiceDictationButton = ({
       disabled={busy}
       aria-label={recording ? "Arrêter la dictée" : label}
       title={recording ? "Arrêter la dictée" : label}
-      className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border transition-colors ${
+      style={
+        recording
+          ? { boxShadow: `0 0 0 ${2 + Math.round(level * 8)}px hsl(var(--primary) / 0.18)` }
+          : undefined
+      }
+      className={`inline-flex h-11 w-11 shrink-0 touch-manipulation items-center justify-center rounded-full border transition-colors ${
         recording
           ? "border-primary bg-primary text-primary-foreground"
           : "border-border bg-background text-muted-foreground hover:text-foreground"
