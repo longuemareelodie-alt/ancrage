@@ -235,24 +235,34 @@ function TodoTab({ userId }: { userId: string }) {
   const [dueDate, setDueDate] = useState("");
   const [reminderOffset, setReminderOffset] = useState<number>(24);
   const [domain, setDomain] = useState<PulseDomain | null>(null);
+  const [profileId, setProfileId] = useState<string>("aucun");
+  const [members, setMembers] = useState<FamilyMember[]>([]);
 
   const load = async () => {
     const { data } = await supabase.from("todo_items").select("*").eq("user_id", userId).order("done").order("due_date", { nullsFirst: false }).order("created_at", { ascending: false });
     setItems((data as any) || []);
   };
   useEffect(() => { load(); }, [userId]);
+  useEffect(() => {
+    supabase.from("family_medical_profiles").select("id, first_name").eq("user_id", userId).then(({ data }) => setMembers((data as any) || []));
+  }, [userId]);
 
   const add = async () => {
     if (!title) return;
-    const { error } = await supabase.from("todo_items").insert({ user_id: userId, title, priority, due_date: dueDate || null, reminder_offset_hours: reminderOffset, domain: domain ?? guessDomain(title) });
+    const { error } = await supabase.from("todo_items").insert({ user_id: userId, title, priority, due_date: dueDate || null, reminder_offset_hours: reminderOffset, domain: domain ?? guessDomain(title), profile_id: profileId === "aucun" ? null : profileId });
     if (error) return toast.error(error.message);
-    setTitle(""); setDueDate(""); setPriority("normal"); setReminderOffset(24); setDomain(null);
+    setTitle(""); setDueDate(""); setPriority("normal"); setReminderOffset(24); setDomain(null); setProfileId("aucun");
     load();
   };
   const updateDomain = async (id: string, value: PulseDomain | null) => {
     await supabase.from("todo_items").update({ domain: value }).eq("id", id);
     load();
   };
+  const updateMember = async (id: string, value: string) => {
+    await supabase.from("todo_items").update({ profile_id: value === "aucun" ? null : value }).eq("id", id);
+    load();
+  };
+  const nameOf = (id: string | null) => members.find((m) => m.id === id)?.first_name || null;
   const toggle = async (t: Todo) => {
     await supabase.from("todo_items").update({ done: !t.done }).eq("id", t.id);
     load();
