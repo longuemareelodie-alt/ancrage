@@ -46,6 +46,7 @@ import FoundingPrice from "@/components/FoundingPrice";
 import FoundingFamiliesBanner from "@/components/FoundingFamiliesBanner";
 import DemoSection from "@/components/landing/DemoSection";
 import ScreensCarousel from "@/components/landing/ScreensCarousel";
+import PulseSection from "@/components/landing/PulseSection";
 import StudioSection from "@/components/landing/StudioSection";
 import AssistantSection from "@/components/landing/AssistantSection";
 import PourQuiSection from "@/components/landing/PourQuiSection";
@@ -1166,6 +1167,7 @@ const Index = () => {
       <main>
         <Hero onCTA={onCTA} loading={loading} />
         <DemoSection />
+        <PulseSection />
         <Quotidien />
         <Presentation />
         <Serenite />
