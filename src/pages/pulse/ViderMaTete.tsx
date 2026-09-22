@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { guessDomain, mascotOf } from "@/data/pulseMascots";
 import { useVoiceDictation } from "@/hooks/useVoiceDictation";
 import { toast } from "@/hooks/use-toast";
+import MascotAvatar from "@/components/pulse/MascotAvatar";
 
 /**
  * 🧠 Vider ma tête — on écrit tout en vrac, Éclosia range.
@@ -115,12 +116,7 @@ const ViderMaTete = () => {
                   key={i}
                   className="flex items-center gap-3 rounded-[18px] border border-border/60 bg-card/60 px-4 py-3"
                 >
-                  <span
-                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-sm ${m?.tint ?? "bg-secondary/40"}`}
-                    aria-hidden
-                  >
-                    {m?.emoji ?? "✨"}
-                  </span>
+                  <MascotAvatar mascot={m} size={34} className="rounded-xl" />
                   <span className="min-w-0 flex-1 truncate text-sm text-foreground">{l}</span>
                   {m && <span className="shrink-0 text-[11px] text-muted-foreground">{m.label}</span>}
                 </li>
