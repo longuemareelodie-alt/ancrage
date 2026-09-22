@@ -6,6 +6,7 @@ import { useNextAction } from "@/hooks/useNextAction";
 import { MASCOTS, mascotOf } from "@/data/pulseMascots";
 import { toast } from "@/hooks/use-toast";
 import PulseDictation from "@/components/pulse/PulseDictation";
+import MascotAvatar from "@/components/pulse/MascotAvatar";
 
 /**
  * PULSE — le moteur quotidien, posé en haut d'« Aujourd'hui ».
