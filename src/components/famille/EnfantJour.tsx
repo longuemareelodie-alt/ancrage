@@ -9,6 +9,8 @@ import { BRAIN_STATES, type BrainState } from "@/hooks/usePulseState";
 import { useChildPulse } from "@/hooks/useChildPulse";
 import { STATE_COLOR } from "@/hooks/usePulseHistory";
 import { toast } from "@/hooks/use-toast";
+import SpeakButton from "@/components/pulse/SpeakButton";
+import { STYLE_FOR_STATE, voiceForChild } from "@/data/softVoices";
 
 type Todo = { id: string; title: string; done: boolean; due_date: string | null };
 type Note = { id: string; title: string | null; content: string; pinned: boolean; updated_at: string };
@@ -115,7 +117,15 @@ const EnfantJour = ({ profileId, firstName }: { profileId: string; firstName: st
           ))}
         </div>
         {state && (
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{CHILD_HINT[state]}</p>
+          <div className="mt-3 flex items-start justify-between gap-3">
+            <p className="text-sm leading-relaxed text-muted-foreground">{CHILD_HINT[state]}</p>
+            <SpeakButton
+              text={`${firstName}, ${CHILD_HINT[state].toLowerCase()}`}
+              voice={voiceForChild(profileId)}
+              style={STYLE_FOR_STATE[state]}
+              label="Écouter"
+            />
+          </div>
         )}
         {state && (
           <div className="mt-3">

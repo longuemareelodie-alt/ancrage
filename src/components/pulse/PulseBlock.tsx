@@ -7,6 +7,8 @@ import { MASCOTS, mascotOf } from "@/data/pulseMascots";
 import { toast } from "@/hooks/use-toast";
 import PulseDictation from "@/components/pulse/PulseDictation";
 import MascotAvatar from "@/components/pulse/MascotAvatar";
+import SpeakButton from "@/components/pulse/SpeakButton";
+import { STYLE_FOR_STATE, voiceForChild } from "@/data/softVoices";
 
 /**
  * PULSE — le moteur quotidien, posé en haut d'« Aujourd'hui ».
@@ -59,14 +61,20 @@ const PulseBlock = ({ onChange }: { onChange?: () => void }) => {
         ) : (
           <span />
         )}
-        <Link
-          to="/pulse/mon-rythme"
-          className="flex shrink-0 items-center gap-1.5 text-[11px] font-semibold text-primary"
-        >
-          <LineChart className="h-3.5 w-3.5" strokeWidth={2} />
-          Mon rythme
-        </Link>
+        <div className="flex shrink-0 items-center gap-2">
+          {state && hint && (
+            <SpeakButton text={hint} style={STYLE_FOR_STATE[state]} label="Écouter" />
+          )}
+          <Link
+            to="/pulse/mon-rythme"
+            className="flex shrink-0 items-center gap-1.5 text-[11px] font-semibold text-primary"
+          >
+            <LineChart className="h-3.5 w-3.5" strokeWidth={2} />
+            Mon rythme
+          </Link>
+        </div>
       </div>
+
 
       {/* 2 — Prochaine action : une seule, jamais une liste */}
       <div className="mt-6 rounded-[20px] border border-border/60 bg-secondary/25 px-5 py-5">
@@ -103,8 +111,17 @@ const PulseBlock = ({ onChange }: { onChange?: () => void }) => {
                   {next.learned ? " (d'après tes habitudes)" : ""}
                   {remaining > 1 ? ` · ${remaining - 1} autre${remaining > 2 ? "s" : ""} ensuite` : ""}
                 </p>
+                <div className="mt-2">
+                  <SpeakButton
+                    text={`${next.label}${next.who ? `, pour ${next.who}` : ""}. Environ ${next.minutes} minutes.`}
+                    voice={next.profileId ? voiceForChild(next.profileId) : undefined}
+                    style={state ? STYLE_FOR_STATE[state] : undefined}
+                    label="Écouter ma prochaine action"
+                  />
+                </div>
               </div>
             </div>
+
             <div className="mt-4 flex items-center gap-2">
               <button
                 onClick={() => navigate(next.to)}
