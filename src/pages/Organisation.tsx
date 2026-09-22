@@ -181,7 +181,10 @@ function AgendaTab({ userId }: { userId: string }) {
             <SelectContent>{AGENDA_OFFSETS.map((o) => <SelectItem key={o.value} value={String(o.value)}>Rappel : {o.label}</SelectItem>)}</SelectContent>
           </Select>
         </div>
-        <Textarea placeholder="Notes (optionnel)" value={description} onChange={(e) => setDescription(e.target.value)} rows={2} />
+        <div className="flex items-start gap-2">
+          <Textarea placeholder="Notes (optionnel)" value={description} onChange={(e) => setDescription(e.target.value)} rows={2} />
+          <VoiceDictationButton onText={(t) => setDescription(description ? `${description} ${t}` : t)} label="Dicter les notes" />
+        </div>
         <Button onClick={add} className="w-full"><Plus className="w-4 h-4 mr-1" />Ajouter</Button>
       </Card>
 
