@@ -15,6 +15,7 @@ import { Calendar, CheckSquare, ShoppingCart, StickyNote, Plus, Trash2, Pin, Map
 import { format, parseISO, isToday, isTomorrow, isPast } from "date-fns";
 import { fr } from "date-fns/locale";
 import MascotPicker from "@/components/pulse/MascotPicker";
+import VoiceDictationButton from "@/components/VoiceDictationButton";
 import { guessDomain, mascotOf, type PulseDomain } from "@/data/pulseMascots";
 
 type AgendaEvent = { id: string; title: string; description: string | null; event_date: string; event_time: string | null; location: string | null; category: string; reminder_offset_hours: number };
