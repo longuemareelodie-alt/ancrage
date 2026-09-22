@@ -93,9 +93,9 @@ const EnfantJour = ({ profileId, firstName }: { profileId: string; firstName: st
   };
 
   return (
-    <div className="space-y-4 pt-2">
+    <div className="space-y-3 pt-2 sm:space-y-4">
       {/* --- Son état du jour --- */}
-      <section className="rounded-[20px] border border-border/70 bg-card px-5 py-5">
+      <section className="rounded-[20px] border border-border/70 bg-card px-4 py-4 sm:px-5 sm:py-5">
         <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
           Comment va {firstName} aujourd'hui ?
         </p>
@@ -104,21 +104,24 @@ const EnfantJour = ({ profileId, firstName }: { profileId: string; firstName: st
             <button
               key={s.id}
               onClick={() => save(s.id)}
-              className={`rounded-[16px] border px-3 py-3 text-left transition-colors ${
+              className={`flex min-h-12 items-center gap-2 rounded-[16px] border px-3 py-2.5 text-left transition-colors ${
                 state === s.id
                   ? "border-primary/60 bg-secondary/60"
                   : "border-border/70 bg-background hover:bg-secondary/30"
               }`}
             >
-              <span className="text-sm font-semibold text-foreground">
-                {s.dot} {s.label}
+              <span className="text-base leading-none">{s.dot}</span>
+              <span className="min-w-0 break-words text-[13px] font-semibold leading-tight text-foreground sm:text-sm">
+                {s.label}
               </span>
             </button>
           ))}
         </div>
         {state && (
-          <div className="mt-3 flex items-start justify-between gap-3">
-            <p className="text-sm leading-relaxed text-muted-foreground">{CHILD_HINT[state]}</p>
+          <div className="mt-3 flex flex-col items-start gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
+            <p className="text-[13px] leading-relaxed text-muted-foreground sm:text-sm">
+              {CHILD_HINT[state]}
+            </p>
             <SpeakButton
               text={`${firstName}, ${CHILD_HINT[state].toLowerCase()}`}
               voice={voiceForChild(profileId)}
@@ -129,23 +132,23 @@ const EnfantJour = ({ profileId, firstName }: { profileId: string; firstName: st
         )}
         {state && (
           <div className="mt-3">
-            <div className="flex items-start gap-2">
-              <Textarea
-                value={note}
-                onChange={(e) => setNote(e.target.value)}
-                placeholder={`Ce qui s'est passé pour ${firstName} aujourd'hui…`}
-                className="min-h-20 text-sm"
-              />
+            <Textarea
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              placeholder={`Ce qui s'est passé pour ${firstName} aujourd'hui…`}
+              className="min-h-20 text-sm"
+            />
+            <div className="mt-2 flex items-center gap-2">
+              <Button
+                size="sm"
+                variant="secondary"
+                onClick={() => save(state, note)}
+                className="h-11 flex-1"
+              >
+                Enregistrer cette journée
+              </Button>
               <VoiceDictationButton onText={(t) => setNote((v) => (v ? v + " " + t : t))} />
             </div>
-            <Button
-              size="sm"
-              variant="secondary"
-              onClick={() => save(state, note)}
-              className="mt-2 w-full"
-            >
-              Enregistrer cette journée
-            </Button>
           </div>
         )}
         {history.length > 0 && (
@@ -161,7 +164,7 @@ const EnfantJour = ({ profileId, firstName }: { profileId: string; firstName: st
                   <span
                     key={h.day}
                     title={`${h.day} · ${h.state}`}
-                    className="h-5 w-5 rounded-[7px]"
+                    className="h-6 w-6 rounded-[8px] sm:h-5 sm:w-5"
                     style={{ background: STATE_COLOR[h.state] }}
                   />
                 ))}
@@ -171,7 +174,7 @@ const EnfantJour = ({ profileId, firstName }: { profileId: string; firstName: st
       </section>
 
       {/* --- Ses tâches --- */}
-      <section className="rounded-[20px] border border-border/70 bg-card px-5 py-5">
+      <section className="rounded-[20px] border border-border/70 bg-card px-4 py-4 sm:px-5 sm:py-5">
         <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
           Ses tâches
         </p>
@@ -181,32 +184,38 @@ const EnfantJour = ({ profileId, firstName }: { profileId: string; firstName: st
             onChange={(e) => setNewTodo(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && addTodo()}
             placeholder={`Une chose à faire pour ${firstName}…`}
-            className="text-sm"
+            className="h-11 min-w-0 flex-1 text-sm"
           />
           <VoiceDictationButton onText={(t) => setNewTodo((v) => (v ? v + " " + t : t))} />
-          <Button size="icon" onClick={addTodo} disabled={!newTodo.trim()} aria-label="Ajouter">
+          <Button
+            size="icon"
+            onClick={addTodo}
+            disabled={!newTodo.trim()}
+            aria-label="Ajouter"
+            className="h-11 w-11 shrink-0"
+          >
             <Plus className="h-4 w-4" strokeWidth={2} />
           </Button>
         </div>
         <div className="mt-3 space-y-1.5">
           {todos.length === 0 && (
-            <p className="text-sm leading-relaxed text-muted-foreground">
+            <p className="text-[13px] leading-relaxed text-muted-foreground sm:text-sm">
               Rien à faire pour {firstName} en ce moment. C'est une bonne nouvelle.
             </p>
           )}
           {todos.map((t) => (
-            <div key={t.id} className="flex items-center gap-3 rounded-[14px] bg-background px-3 py-2.5">
+            <div key={t.id} className="flex items-center gap-3 rounded-[14px] bg-background px-3 py-3">
               <button
                 onClick={() => toggleTodo(t)}
                 aria-label={t.done ? "Rouvrir" : "C'est fait"}
-                className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${
+                className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border ${
                   t.done ? "border-primary bg-primary/15" : "border-border"
                 }`}
               >
-                {t.done && <Check className="h-3 w-3 text-primary-dark" strokeWidth={2.5} />}
+                {t.done && <Check className="h-3.5 w-3.5 text-primary-dark" strokeWidth={2.5} />}
               </button>
               <span
-                className={`min-w-0 flex-1 text-sm ${
+                className={`min-w-0 flex-1 break-words text-[13px] leading-snug sm:text-sm ${
                   t.done ? "text-muted-foreground line-through" : "text-foreground"
                 }`}
               >
@@ -218,8 +227,9 @@ const EnfantJour = ({ profileId, firstName }: { profileId: string; firstName: st
                   load();
                 }}
                 aria-label="Supprimer"
+                className="flex h-8 w-8 shrink-0 items-center justify-center"
               >
-                <Trash2 className="h-3.5 w-3.5 text-muted-foreground" strokeWidth={1.75} />
+                <Trash2 className="h-4 w-4 text-muted-foreground" strokeWidth={1.75} />
               </button>
             </div>
           ))}
@@ -227,46 +237,53 @@ const EnfantJour = ({ profileId, firstName }: { profileId: string; firstName: st
       </section>
 
       {/* --- Ses notes --- */}
-      <section className="rounded-[20px] border border-border/70 bg-card px-5 py-5">
+      <section className="rounded-[20px] border border-border/70 bg-card px-4 py-4 sm:px-5 sm:py-5">
         <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
           Ses notes
         </p>
-        <div className="mt-3 flex items-start gap-2">
-          <Textarea
-            value={newNote}
-            onChange={(e) => setNewNote(e.target.value)}
-            placeholder="Une observation, une phrase du médecin, une idée qui marche…"
-            className="min-h-20 text-sm"
-          />
+        <Textarea
+          value={newNote}
+          onChange={(e) => setNewNote(e.target.value)}
+          placeholder="Une observation, une phrase du médecin, une idée qui marche…"
+          className="mt-3 min-h-20 text-sm"
+        />
+        <div className="mt-2 flex items-center gap-2">
+          <Button
+            size="sm"
+            onClick={addNote}
+            disabled={!newNote.trim()}
+            className="h-11 flex-1"
+          >
+            Ajouter cette note
+          </Button>
           <VoiceDictationButton onText={(t) => setNewNote((v) => (v ? v + " " + t : t))} />
         </div>
-        <Button size="sm" onClick={addNote} disabled={!newNote.trim()} className="mt-2 w-full">
-          Ajouter cette note
-        </Button>
         <div className="mt-3 space-y-2">
           {notes.map((n) => (
-            <div key={n.id} className="rounded-[14px] bg-background px-4 py-3">
-              <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">{n.content}</p>
-              <div className="mt-2 flex items-center gap-3">
+            <div key={n.id} className="rounded-[14px] bg-background px-3 py-3 sm:px-4">
+              <p className="whitespace-pre-wrap break-words text-[13px] leading-relaxed text-foreground sm:text-sm">
+                {n.content}
+              </p>
+              <div className="mt-2 flex items-center gap-4">
                 <button
                   onClick={async () => {
                     await supabase.from("child_notes").update({ pinned: !n.pinned }).eq("id", n.id);
                     load();
                   }}
-                  className={`flex items-center gap-1 text-[11px] font-medium ${
+                  className={`flex min-h-8 items-center gap-1 text-xs font-medium ${
                     n.pinned ? "text-primary-dark" : "text-muted-foreground"
                   }`}
                 >
-                  <Pin className="h-3 w-3" strokeWidth={2} /> {n.pinned ? "Épinglée" : "Épingler"}
+                  <Pin className="h-3.5 w-3.5" strokeWidth={2} /> {n.pinned ? "Épinglée" : "Épingler"}
                 </button>
                 <button
                   onClick={async () => {
                     await supabase.from("child_notes").delete().eq("id", n.id);
                     load();
                   }}
-                  className="flex items-center gap-1 text-[11px] font-medium text-muted-foreground"
+                  className="flex min-h-8 items-center gap-1 text-xs font-medium text-muted-foreground"
                 >
-                  <Trash2 className="h-3 w-3" strokeWidth={2} /> Supprimer
+                  <Trash2 className="h-3.5 w-3.5" strokeWidth={2} /> Supprimer
                 </button>
               </div>
             </div>
