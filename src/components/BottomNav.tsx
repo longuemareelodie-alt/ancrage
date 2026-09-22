@@ -19,6 +19,8 @@ import {
   Syringe,
   Pill,
   Grid3x3,
+  Brain,
+  Mic,
   Sparkles,
   Wallet,
   LucideIcon,
