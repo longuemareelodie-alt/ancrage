@@ -1,27 +1,44 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, Loader2, Mic, Square, X } from "lucide-react";
+import { Check, Loader2, Mic, RefreshCw, Square, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { guessDomain, type PulseDomain } from "@/data/pulseMascots";
 import { useVoiceDictation } from "@/hooks/useVoiceDictation";
 import { toast } from "@/hooks/use-toast";
 import MascotPicker from "@/components/pulse/MascotPicker";
+import DictationWords from "@/components/pulse/DictationWords";
 
 /**
  * 🎙️ Dictée vocale PULSE — on parle, la prochaine action s'écrit toute seule.
- * Le texte dicté devient une tâche dans les tâches existantes (`todo_items`).
+ * Le texte dicté devient une tâche dans les tâches existantes (`todo_items`),
+ * ou vient corriger la prochaine action déjà affichée (`onReplace`).
  */
-const PulseDictation = ({ onAdded }: { onAdded?: () => void }) => {
+const PulseDictation = ({
+  onAdded,
+  nextLabel,
+  onReplace,
+}: {
+  onAdded?: () => void;
+  /** Libellé de la prochaine action, si elle peut être reprise. */
+  nextLabel?: string | null;
+  /** Reprise de la prochaine action avec le texte dicté. */
+  onReplace?: (text: string) => Promise<boolean>;
+}) => {
   const [draft, setDraft] = useState("");
   const [saving, setSaving] = useState(false);
   const [chosen, setChosen] = useState<PulseDomain | null | undefined>(undefined);
 
-  const { status, partial, start, stop, cancel } = useVoiceDictation({
+  const { status, partial, level, supported, start, stop, cancel } = useVoiceDictation({
     onDone: (text) => setDraft(text),
     onError: (message) => toast({ description: message }),
   });
 
   const domain = chosen !== undefined ? chosen : draft ? guessDomain(draft) : null;
+
+  const reset = () => {
+    setDraft("");
+    setChosen(undefined);
+  };
 
   const save = async () => {
     const title = draft.trim();
@@ -42,11 +59,26 @@ const PulseDictation = ({ onAdded }: { onAdded?: () => void }) => {
       return;
     }
     navigator.vibrate?.(12);
-    setDraft("");
-    setChosen(undefined);
+    reset();
     toast({ description: "C'est noté. Tu n'as plus à y penser." });
     onAdded?.();
   };
+
+  const replace = async () => {
+    const title = draft.trim();
+    if (!title || saving || !onReplace) return;
+    setSaving(true);
+    const ok = await onReplace(title);
+    setSaving(false);
+    if (!ok) {
+      toast({ description: "Ça n'a pas pu être modifié. On réessaie ?" });
+      return;
+    }
+    reset();
+    toast({ description: "C'est corrigé. On reprend là." });
+  };
+
+  if (!supported) return null;
 
   const recording = status === "recording";
   const transcribing = status === "transcribing";
@@ -59,7 +91,12 @@ const PulseDictation = ({ onAdded }: { onAdded?: () => void }) => {
           onClick={recording ? stop : start}
           disabled={transcribing}
           aria-label={recording ? "Arrêter la dictée" : "Dicter à voix haute"}
-          className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full border transition-colors ${
+          style={
+            recording
+              ? { boxShadow: `0 0 0 ${2 + Math.round(level * 10)}px hsl(var(--primary) / 0.18)` }
+              : undefined
+          }
+          className={`flex h-12 w-12 shrink-0 touch-manipulation items-center justify-center rounded-full border transition-colors ${
             recording
               ? "border-primary bg-primary text-primary-foreground"
               : "border-border/70 text-foreground"
@@ -77,17 +114,20 @@ const PulseDictation = ({ onAdded }: { onAdded?: () => void }) => {
         <div className="min-w-0 flex-1">
           {recording ? (
             <div className="flex items-center gap-2">
-              <span className="flex items-center gap-1" aria-hidden>
+              <span className="flex items-end gap-1" aria-hidden>
                 {[0, 1, 2].map((i) => (
                   <motion.span
                     key={i}
-                    className="h-3 w-[3px] rounded-full bg-primary"
-                    animate={{ scaleY: [0.5, 1.6, 0.5] }}
-                    transition={{ duration: 1, repeat: Infinity, delay: i * 0.15 }}
+                    className="w-[3px] rounded-full bg-primary"
+                    animate={{ height: 5 + level * 16 + i * 2 }}
+                    transition={{ duration: 0.12 }}
+                    style={{ height: 6 }}
                   />
                 ))}
               </span>
-              <p className="text-xs text-muted-foreground">Je t'écoute… parle tranquillement.</p>
+              <p className="text-xs text-muted-foreground">
+                Je t'écoute… parle tranquillement, puis touche le carré.
+              </p>
             </div>
           ) : transcribing ? (
             <p className="text-xs text-muted-foreground">
@@ -104,7 +144,7 @@ const PulseDictation = ({ onAdded }: { onAdded?: () => void }) => {
           <button
             onClick={cancel}
             aria-label="Annuler"
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border/60 text-muted-foreground"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border/60 text-muted-foreground"
           >
             <X className="h-4 w-4" strokeWidth={1.75} />
           </button>
@@ -128,6 +168,10 @@ const PulseDictation = ({ onAdded }: { onAdded?: () => void }) => {
                 className="min-w-0 flex-1 bg-transparent text-sm text-foreground outline-none"
               />
             </div>
+
+            {/* Correction sans clavier : on enlève les mots mal compris */}
+            <DictationWords text={draft} onChange={setDraft} />
+
             <div className="mt-3 flex items-center gap-2">
               <button
                 onClick={save}
@@ -138,13 +182,24 @@ const PulseDictation = ({ onAdded }: { onAdded?: () => void }) => {
                 {saving ? "J'enregistre…" : "Garder cette action"}
               </button>
               <button
-                onClick={() => setDraft("")}
+                onClick={reset}
                 className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border/70 text-muted-foreground"
                 aria-label="Effacer"
               >
                 <X className="h-4 w-4" strokeWidth={1.75} />
               </button>
             </div>
+
+            {onReplace && nextLabel && (
+              <button
+                onClick={replace}
+                disabled={saving}
+                className="mt-2 flex w-full items-center justify-center gap-2 rounded-full border border-border/70 px-4 py-2.5 text-xs font-semibold text-foreground transition-transform active:scale-[0.98] disabled:opacity-60"
+              >
+                <RefreshCw className="h-3.5 w-3.5" strokeWidth={2} />
+                Reprendre ma prochaine action à la place
+              </button>
+            )}
           </motion.div>
         )}
       </AnimatePresence>

@@ -15,7 +15,7 @@ import MascotAvatar from "@/components/pulse/MascotAvatar";
 const PulseBlock = ({ onChange }: { onChange?: () => void }) => {
   const navigate = useNavigate();
   const { state, save } = usePulseState();
-  const { next, remaining, complete, skip } = useNextAction(state);
+  const { next, remaining, complete, skip, rename } = useNextAction(state);
 
   const hint = BRAIN_STATES.find((s) => s.id === state)?.hint;
 
@@ -147,7 +147,19 @@ const PulseBlock = ({ onChange }: { onChange?: () => void }) => {
         )}
 
         {/* 🎙️ Dictée vocale : parler plutôt que taper */}
-        <PulseDictation onAdded={onChange} />
+        <PulseDictation
+          onAdded={onChange}
+          nextLabel={next?.completable ? next.label : null}
+          onReplace={
+            next?.completable
+              ? async (text) => {
+                  const ok = await rename(next, text);
+                  if (ok) onChange?.();
+                  return ok;
+                }
+              : undefined
+          }
+        />
       </div>
 
       {/* 3 — L'équipe : six compagnons, six domaines */}
