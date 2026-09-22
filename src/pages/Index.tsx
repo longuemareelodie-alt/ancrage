@@ -555,6 +555,31 @@ const Transformations = () => {
 
 const Fondatrice = ({ onCTA, loading }: { onCTA: () => void; loading: boolean }) => (
   <Section id="fondatrice" className="bg-card">
+    {/* Courte vidéo : la fondatrice et ses enfants, visages floutés. */}
+    <motion.div {...fadeUp} className="mx-auto mb-16 max-w-3xl">
+      <div className="relative">
+        <div className="absolute -inset-5 -z-10 rounded-[3rem] bg-gradient-to-br from-primary/20 to-accent/10 blur-2xl" />
+        <div className="overflow-hidden rounded-[2rem] border border-border/60 bg-background p-2 shadow-[0_50px_120px_-45px_hsl(var(--night)/0.35)]">
+          <video
+            className="aspect-video w-full rounded-[1.6rem] bg-secondary/40 object-cover"
+            controls
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            poster={fondatricePoster.url}
+            aria-label="Vingt secondes : pourquoi Éclosia existe, par sa fondatrice"
+          >
+            <source src={fondatriceVideo.url} type="video/mp4" />
+            Ton navigateur ne peut pas lire cette vidéo.
+          </video>
+        </div>
+      </div>
+      <p className="mt-5 text-center text-[13px] text-muted-foreground">
+        Vingt secondes : pourquoi Éclosia existe.
+      </p>
+    </motion.div>
+
     <div className="grid items-center gap-16 md:grid-cols-2 md:gap-20">
       <motion.div
         initial={{ opacity: 0, scale: 0.96 }}
