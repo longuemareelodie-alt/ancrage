@@ -300,6 +300,7 @@ const AnimatedRoutes = () => {
         </RoutesWrapper>
       </AnimatePresence>
       <RestartTourButton />
+      <NextActionBadge />
       <BottomNav />
     </RouteTransitionProvider>
   );
