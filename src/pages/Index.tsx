@@ -34,8 +34,6 @@ import {
   BookOpen,
   BarChart3,
   RefreshCw,
-  Star,
-  Quote,
   Wallet,
   Stars,
   Zap,
@@ -813,54 +811,6 @@ const Inclus = () => {
   );
 };
 
-/* ----------------------------- Témoignages ---------------------------- */
-
-const Temoignages = () => {
-  const cards = [1, 2, 3];
-  return (
-    <Section id="temoignages" className="bg-card">
-      <motion.div {...fadeUp} className="mx-auto max-w-2xl text-center">
-        <div className="flex items-center justify-center gap-1 text-primary-dark">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <Star key={i} className="h-4 w-4 fill-current" />
-          ))}
-        </div>
-        <h2 className="mt-4 font-serif text-[clamp(1.75rem,4vw,3rem)] leading-[1.1] tracking-tight text-night">
-          Les premiers retours
-          <br />
-          <span className="italic text-primary-dark">arriveront bientôt.</span>
-        </h2>
-        <p className="mx-auto mt-6 max-w-xl text-[15px] leading-relaxed text-muted-foreground">
-          Les premières familles découvrent actuellement Eclosia. Les premiers
-          témoignages arriveront très bientôt. Je préfère partager de vrais
-          retours d'expérience plutôt que d'en inventer.
-        </p>
-      </motion.div>
-
-      <div className="mt-14 grid gap-5 md:grid-cols-3">
-        {cards.map((n, i) => (
-          <motion.article
-            key={n}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.7, delay: i * 0.08 }}
-            className="relative rounded-[1.75rem] border border-dashed border-border/70 bg-background p-7"
-          >
-            <Quote className="h-6 w-6 text-primary/40" />
-            <p className="mt-5 min-h-[7rem] font-serif text-[15px] italic leading-relaxed text-muted-foreground/70">
-              Un vrai témoignage prendra bientôt sa place ici.
-            </p>
-            <div className="mt-6 flex items-center gap-3 border-t border-border/50 pt-4">
-              <div className="h-9 w-9 rounded-full bg-primary/15" />
-              <div className="h-2 w-24 rounded-full bg-border/70" />
-            </div>
-          </motion.article>
-        ))}
-      </div>
-    </Section>
-  );
-};
 
 
 /* -------------------------- Réassurance -------------------------------- */
@@ -1264,7 +1214,6 @@ const Index = () => {
         <PourQuiSection />
         <Inclus />
         <Fondatrice onCTA={onCTA} loading={loading} />
-        <Temoignages />
         <Unique />
         <Tarif onCTA={onCTA} loading={loading} />
         <AmbassadeurTeaser />
