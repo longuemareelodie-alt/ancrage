@@ -112,11 +112,13 @@ const PulseSection = () => (
               strokeLinejoin="round"
             />
           </svg>
-          <div className="mt-3 flex justify-between text-[11px] text-muted-foreground">
-            <span>KO</span>
-            <span>Saturé</span>
-            <span>Moyen</span>
-            <span>GO</span>
+          <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2">
+            {BRAIN_STATES.map((s) => (
+              <span key={s.id} className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+                <span className="h-2 w-2 rounded-full" style={{ background: STATE_COLOR[s.id] }} />
+                {s.label}
+              </span>
+            ))}
           </div>
         </div>
 
@@ -124,11 +126,11 @@ const PulseSection = () => (
           <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
             L'aperçu du mois
           </p>
-          <div className="mt-5 grid grid-cols-7 gap-1.5">
+          <div className="mt-5 grid max-w-[240px] grid-cols-7 gap-1.5">
             {MONTH_DEMO.map((s, i) => (
               <span
                 key={i}
-                className="aspect-square rounded-lg"
+                className="aspect-square rounded-md"
                 style={{ background: s ? STATE_COLOR[s] : "hsl(var(--border))" }}
               />
             ))}
