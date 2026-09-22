@@ -584,8 +584,8 @@ const Fondatrice = ({ onCTA, loading }: { onCTA: () => void; loading: boolean })
           ))}
         </div>
         <p className="mt-3 text-[12px] leading-relaxed text-muted-foreground">
-          Mes enfants — trouble du spectre autistique, dyspraxie, ataxie. Leurs
-          visages restent flous : c'est leur vie privée, pas un argument de vente.
+          Les visages de mes enfants restent flous : c'est leur vie privée, pas
+          un argument de vente.
         </p>
       </motion.div>
 
@@ -600,6 +600,13 @@ const Fondatrice = ({ onCTA, loading }: { onCTA: () => void; loading: boolean })
           <p>
             Il y a eu un moment où j'ai réalisé que ma tête était devenue un
             deuxième agenda.
+          </p>
+          <p>
+            J'élève trois enfants, et l'un vit avec un trouble du spectre
+            autistique, un autre avec une dyspraxie, un autre avec une ataxie.
+            Ce sont des années de rendez-vous, de suivis, de bilans, de mots
+            compliqués à retenir et de papiers à ne jamais perdre. C'est aussi
+            pour eux qu'Éclosia existe.
           </p>
           <p>
             Les rendez-vous. Les dossiers. Les traitements. Les documents. Les
