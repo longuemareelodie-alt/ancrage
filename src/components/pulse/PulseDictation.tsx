@@ -2,10 +2,10 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check, Loader2, Mic, Square, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { guessDomain, mascotOf } from "@/data/pulseMascots";
+import { guessDomain, type PulseDomain } from "@/data/pulseMascots";
 import { useVoiceDictation } from "@/hooks/useVoiceDictation";
 import { toast } from "@/hooks/use-toast";
-import MascotAvatar from "@/components/pulse/MascotAvatar";
+import MascotPicker from "@/components/pulse/MascotPicker";
 
 /**
  * 🎙️ Dictée vocale PULSE — on parle, la prochaine action s'écrit toute seule.
@@ -14,13 +14,14 @@ import MascotAvatar from "@/components/pulse/MascotAvatar";
 const PulseDictation = ({ onAdded }: { onAdded?: () => void }) => {
   const [draft, setDraft] = useState("");
   const [saving, setSaving] = useState(false);
+  const [chosen, setChosen] = useState<PulseDomain | null | undefined>(undefined);
 
   const { status, partial, start, stop, cancel } = useVoiceDictation({
     onDone: (text) => setDraft(text),
     onError: (message) => toast({ description: message }),
   });
 
-  const mascot = draft ? mascotOf(guessDomain(draft)) : null;
+  const domain = chosen !== undefined ? chosen : draft ? guessDomain(draft) : null;
 
   const save = async () => {
     const title = draft.trim();
@@ -34,7 +35,7 @@ const PulseDictation = ({ onAdded }: { onAdded?: () => void }) => {
     }
     const { error } = await supabase
       .from("todo_items")
-      .insert({ user_id: uid, title, domain: guessDomain(title) });
+      .insert({ user_id: uid, title, domain });
     setSaving(false);
     if (error) {
       toast({ description: "Ça n'a pas pu être enregistré. On réessaie ?" });
@@ -42,6 +43,7 @@ const PulseDictation = ({ onAdded }: { onAdded?: () => void }) => {
     }
     navigator.vibrate?.(12);
     setDraft("");
+    setChosen(undefined);
     toast({ description: "C'est noté. Tu n'as plus à y penser." });
     onAdded?.();
   };
@@ -118,7 +120,7 @@ const PulseDictation = ({ onAdded }: { onAdded?: () => void }) => {
             className="mt-3 rounded-[18px] border border-border/60 bg-card px-4 py-3"
           >
             <div className="flex items-center gap-3">
-              <MascotAvatar mascot={mascot} size={34} className="rounded-xl" />
+              <MascotPicker value={domain} onChange={(d) => setChosen(d)} showLabel={false} />
               <input
                 value={draft}
                 onChange={(e) => setDraft(e.target.value)}

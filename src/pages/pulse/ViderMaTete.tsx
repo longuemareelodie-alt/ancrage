@@ -2,10 +2,10 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Loader2, Mic, Sparkles, Square } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { guessDomain, mascotOf } from "@/data/pulseMascots";
+import { guessDomain, mascotOf, type PulseDomain } from "@/data/pulseMascots";
+import MascotPicker from "@/components/pulse/MascotPicker";
 import { useVoiceDictation } from "@/hooks/useVoiceDictation";
 import { toast } from "@/hooks/use-toast";
-import MascotAvatar from "@/components/pulse/MascotAvatar";
 
 /**
  * 🧠 Vider ma tête — on écrit tout en vrac, Éclosia range.
@@ -16,6 +16,8 @@ const ViderMaTete = () => {
   const navigate = useNavigate();
   const [text, setText] = useState("");
   const [saving, setSaving] = useState(false);
+  /** Compagnon choisi à la main, par ligne (clé = texte de la ligne). */
+  const [chosen, setChosen] = useState<Record<string, PulseDomain | null>>({});
   const dictation = useVoiceDictation({
     onDone: (spoken) => setText((prev) => (prev.trim() ? `${prev.replace(/\n+$/, "")}\n${spoken}` : spoken)),
     onError: (message) => toast({ description: message }),
@@ -39,7 +41,7 @@ const ViderMaTete = () => {
       lines.map((title) => ({
         user_id: uid,
         title,
-        domain: guessDomain(title),
+        domain: title in chosen ? chosen[title] : guessDomain(title),
       })),
     );
     setSaving(false);
@@ -110,13 +112,18 @@ const ViderMaTete = () => {
         {lines.length > 0 && (
           <ul className="mt-4 space-y-2">
             {lines.map((l, i) => {
-              const m = mascotOf(guessDomain(l));
+              const domain = l in chosen ? chosen[l] : guessDomain(l);
+              const m = mascotOf(domain);
               return (
                 <li
                   key={i}
                   className="flex items-center gap-3 rounded-[18px] border border-border/60 bg-card/60 px-4 py-3"
                 >
-                  <MascotAvatar mascot={m} size={34} className="rounded-xl" />
+                  <MascotPicker
+                    value={domain}
+                    onChange={(d) => setChosen((prev) => ({ ...prev, [l]: d }))}
+                    showLabel={false}
+                  />
                   <span className="min-w-0 flex-1 truncate text-sm text-foreground">{l}</span>
                   {m && <span className="shrink-0 text-[11px] text-muted-foreground">{m.label}</span>}
                 </li>

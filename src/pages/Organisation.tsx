@@ -14,9 +14,11 @@ import { toast } from "sonner";
 import { Calendar, CheckSquare, ShoppingCart, StickyNote, Plus, Trash2, Pin, MapPin, Clock, Bell } from "lucide-react";
 import { format, parseISO, isToday, isTomorrow, isPast } from "date-fns";
 import { fr } from "date-fns/locale";
+import MascotPicker from "@/components/pulse/MascotPicker";
+import { guessDomain, mascotOf, type PulseDomain } from "@/data/pulseMascots";
 
 type AgendaEvent = { id: string; title: string; description: string | null; event_date: string; event_time: string | null; location: string | null; category: string; reminder_offset_hours: number };
-type Todo = { id: string; title: string; done: boolean; priority: string; due_date: string | null; category: string; reminder_offset_hours: number };
+type Todo = { id: string; title: string; done: boolean; priority: string; due_date: string | null; category: string; reminder_offset_hours: number; domain: string | null };
 
 const AGENDA_OFFSETS: { value: number; label: string }[] = [
   { value: 1, label: "1h avant" },
@@ -224,6 +226,7 @@ function TodoTab({ userId }: { userId: string }) {
   const [priority, setPriority] = useState("normal");
   const [dueDate, setDueDate] = useState("");
   const [reminderOffset, setReminderOffset] = useState<number>(24);
+  const [domain, setDomain] = useState<PulseDomain | null>(null);
 
   const load = async () => {
     const { data } = await supabase.from("todo_items").select("*").eq("user_id", userId).order("done").order("due_date", { nullsFirst: false }).order("created_at", { ascending: false });
@@ -233,9 +236,13 @@ function TodoTab({ userId }: { userId: string }) {
 
   const add = async () => {
     if (!title) return;
-    const { error } = await supabase.from("todo_items").insert({ user_id: userId, title, priority, due_date: dueDate || null, reminder_offset_hours: reminderOffset });
+    const { error } = await supabase.from("todo_items").insert({ user_id: userId, title, priority, due_date: dueDate || null, reminder_offset_hours: reminderOffset, domain: domain ?? guessDomain(title) });
     if (error) return toast.error(error.message);
-    setTitle(""); setDueDate(""); setPriority("normal"); setReminderOffset(24);
+    setTitle(""); setDueDate(""); setPriority("normal"); setReminderOffset(24); setDomain(null);
+    load();
+  };
+  const updateDomain = async (id: string, value: PulseDomain | null) => {
+    await supabase.from("todo_items").update({ domain: value }).eq("id", id);
     load();
   };
   const toggle = async (t: Todo) => {
@@ -279,6 +286,10 @@ function TodoTab({ userId }: { userId: string }) {
             <SelectContent>{TODO_OFFSETS.map((o) => <SelectItem key={o.value} value={String(o.value)}>Rappel : {o.label}</SelectItem>)}</SelectContent>
           </Select>
         </div>
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-[#6b7280]">Compagnon :</span>
+          <MascotPicker value={domain} onChange={setDomain} />
+        </div>
       </Card>
 
       <p className="text-xs text-[#6b7280]">{activeCount} tâche{activeCount > 1 ? "s" : ""} en cours</p>
@@ -289,9 +300,11 @@ function TodoTab({ userId }: { userId: string }) {
           return (
             <Card key={t.id} className={`p-3 flex items-center gap-3 bg-white/80 ${t.done ? "opacity-50" : ""}`}>
               <Checkbox checked={t.done} onCheckedChange={() => toggle(t)} />
+              <MascotPicker value={t.domain} onChange={(d) => updateDomain(t.id, d)} showLabel={false} />
               <div className="flex-1 min-w-0">
                 <p className={`text-sm ${t.done ? "line-through" : ""}`}>{t.title}</p>
                 <div className="flex gap-2 mt-1 flex-wrap">
+                  {mascotOf(t.domain) && <Badge variant="outline" className="text-xs">{mascotOf(t.domain)!.name}</Badge>}
                   {t.priority === "haute" && <Badge variant="destructive" className="text-xs">Haute</Badge>}
                   {t.priority === "basse" && <Badge variant="outline" className="text-xs">Basse</Badge>}
                   {t.due_date && <span className={`text-xs ${overdue ? "text-red-600" : "text-[#6b7280]"}`}>{format(parseISO(t.due_date), "d MMM", { locale: fr })}</span>}
