@@ -4,6 +4,8 @@ import { MASCOTS } from "@/data/pulseMascots";
 import { BRAIN_STATES } from "@/hooks/usePulseState";
 import { STATE_COLOR } from "@/hooks/usePulseHistory";
 import MascotAvatar from "@/components/pulse/MascotAvatar";
+import pulseVideo from "@/assets/video/eclosia-pulse.mp4.asset.json";
+import pulsePoster from "@/assets/video/pulse-poster.jpg.asset.json";
 
 /**
  * PULSE sur la page de vente : l'état du jour, UNE seule action,
