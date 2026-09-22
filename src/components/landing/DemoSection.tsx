@@ -6,7 +6,7 @@ import demoVideo from "@/assets/video/eclosia-demo.mp4.asset.json";
 
 /**
  * Démonstration.
- * Vidéo courte (19 s) : une visite calme et rythmée d'Éclosia.
+ * Vidéo courte (32 s) : la visite de la version 2, portée par PULSE.
  */
 export const DEMO_VIDEO_URL = demoVideo.url;
 const DEMO_POSTER_URL = dashboardShot.url;
@@ -14,39 +14,39 @@ const DEMO_POSTER_URL = dashboardShot.url;
 
 const STEPS = [
   "Ouverture d'Éclosia",
+  "⚡ Le bloc PULSE",
+  "Comment va ta tête aujourd'hui ?",
+  "Ta prochaine action",
+  "🎙️ La dictée vocale",
+  "Six compagnons",
+  "Mon rythme jour après jour",
   "🏠 Aujourd'hui",
   "👨‍👩‍👧 Profil de l'enfant",
-  "📖 Journal",
-  "😊 Émotions",
   "📄 Documents",
   "🌱 Studio d'Autonomie",
-  "Création d'une routine",
-  "Création d'une histoire sociale",
-  "Export PDF",
-  "🤍 Assistant Éclosia",
 ];
 
 const TOUR = [
   {
     step: "1",
-    space: "🏠 Aujourd'hui",
-    title: "Tu ouvres l'app, tout est déjà là",
-    text: "Le rendez-vous ORL de jeudi, la facture de cantine à régler, et un mot doux si la journée a été rude. Rien à chercher, rien à cocher.",
-    example: "« Jeudi 14 h — ORL de Léa. Le carnet de santé est déjà prêt à emporter. »",
+    space: "⚡ PULSE",
+    title: "Tu dis comment va ta tête",
+    text: "GO, Moyen, Saturé ou KO : un seul geste. Éclosia adapte la journée à ta réserve du jour, sans jamais te noter.",
+    example: "« Tête saturée aujourd'hui — on garde une seule chose, courte. »",
   },
   {
     step: "2",
-    space: "🌱 Autonomie",
-    title: "Tu fabriques un support en deux minutes",
-    text: "Tu choisis un moment difficile, Éclosia écrit la routine avec les mots de ton enfant. Tu ajustes, tu imprimes en A5 pour le frigo.",
-    example: "« Routine du soir de Léa : pyjama, dents, histoire, câlin. » — prête en PDF.",
+    space: "🎯 Ta prochaine action",
+    title: "Une seule chose à la fois",
+    text: "Tes tâches, rendez-vous et papiers sont déjà là. Éclosia en sort une, à ta mesure, avec le compagnon qui la porte. Terminée, la suivante arrive seule.",
+    example: "« Renard · administratif — Envoyer le dossier MDPH, ~10 minutes. »",
   },
   {
     step: "3",
-    space: "❤️ Moi · 👨‍👩‍👧 Famille",
-    title: "Tu déposes ta charge, l'app s'en souvient",
-    text: "Une émotion en un geste, une ordonnance photographiée, un document rangé dans le coffre-fort. Le mois prochain, tu verras le chemin parcouru.",
-    example: "« Ordonnance de mars ajoutée — renouvellement à prévoir vers le 12 juin. »",
+    space: "🎙️ La dictée vocale",
+    title: "Tu parles, ça s'écrit tout seul",
+    text: "Une tâche, un rendez-vous, une émotion : tu appuies sur le micro, tu parles, c'est rangé au bon endroit. Et ta courbe garde la trace de tes journées.",
+    example: "« C'est noté. Tu n'as plus à y penser. »",
   },
 ];
 
