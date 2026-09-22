@@ -42,7 +42,7 @@ const ViderMaTete = () => {
       lines.map((title) => ({
         user_id: uid,
         title,
-        domain: guessDomain(title),
+        domain: title in chosen ? chosen[title] : guessDomain(title),
       })),
     );
     setSaving(false);
