@@ -6,7 +6,6 @@ import { guessDomain, mascotOf, type PulseDomain } from "@/data/pulseMascots";
 import MascotPicker from "@/components/pulse/MascotPicker";
 import { useVoiceDictation } from "@/hooks/useVoiceDictation";
 import { toast } from "@/hooks/use-toast";
-import MascotAvatar from "@/components/pulse/MascotAvatar";
 
 /**
  * 🧠 Vider ma tête — on écrit tout en vrac, Éclosia range.
