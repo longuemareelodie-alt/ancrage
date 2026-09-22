@@ -521,6 +521,47 @@ export type Database = {
         }
         Relationships: []
       }
+      child_notes: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          pinned: boolean
+          profile_id: string
+          title: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content?: string
+          created_at?: string
+          id?: string
+          pinned?: boolean
+          profile_id: string
+          title?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          pinned?: boolean
+          profile_id?: string
+          title?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "child_notes_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "family_medical_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       community_members: {
         Row: {
           display_name: string
@@ -1662,6 +1703,47 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      pulse_child_states: {
+        Row: {
+          created_at: string
+          day: string
+          id: string
+          note: string | null
+          profile_id: string
+          state: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          day?: string
+          id?: string
+          note?: string | null
+          profile_id: string
+          state: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          day?: string
+          id?: string
+          note?: string | null
+          profile_id?: string
+          state?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pulse_child_states_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "family_medical_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       pulse_daily_states: {
         Row: {
