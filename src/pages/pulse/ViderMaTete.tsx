@@ -113,13 +113,18 @@ const ViderMaTete = () => {
         {lines.length > 0 && (
           <ul className="mt-4 space-y-2">
             {lines.map((l, i) => {
-              const m = mascotOf(guessDomain(l));
+              const domain = l in chosen ? chosen[l] : guessDomain(l);
+              const m = mascotOf(domain);
               return (
                 <li
                   key={i}
                   className="flex items-center gap-3 rounded-[18px] border border-border/60 bg-card/60 px-4 py-3"
                 >
-                  <MascotAvatar mascot={m} size={34} className="rounded-xl" />
+                  <MascotPicker
+                    value={domain}
+                    onChange={(d) => setChosen((prev) => ({ ...prev, [l]: d }))}
+                    showLabel={false}
+                  />
                   <span className="min-w-0 flex-1 truncate text-sm text-foreground">{l}</span>
                   {m && <span className="shrink-0 text-[11px] text-muted-foreground">{m.label}</span>}
                 </li>
