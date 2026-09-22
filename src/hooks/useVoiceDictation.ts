@@ -1,6 +1,7 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { recordWav } from "@/lib/voiceRecorder";
+import { micErrorMessage, micSupported, recordWav } from "@/lib/voiceRecorder";
+import { cleanTranscript } from "@/lib/transcriptCleanup";
 
 type Status = "idle" | "recording" | "transcribing";
 
@@ -10,6 +11,10 @@ const FUNCTION_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/transcri
  * 🎙️ Dictée vocale — on parle, le texte s'écrit tout seul.
  * L'audio est enregistré en WAV complet, envoyé au serveur, et le transcript
  * revient en flux (SSE) pour s'afficher au fil de la phrase.
+ *
+ * Sur téléphone : micro nettoyé, niveau de voix en direct (`level`),
+ * arrêt automatique au bout de 2 minutes, et texte débarrassé des
+ * hésitations et des mots répétés avant d'arriver dans l'app.
  */
 export const useVoiceDictation = (options?: {
   onText?: (text: string) => void;
@@ -18,49 +23,85 @@ export const useVoiceDictation = (options?: {
 }) => {
   const [status, setStatus] = useState<Status>("idle");
   const [partial, setPartial] = useState("");
+  const [level, setLevel] = useState(0);
   const recorderRef = useRef<Awaited<ReturnType<typeof recordWav>> | null>(null);
+  const statusRef = useRef<Status>("idle");
+  const meterRef = useRef<number | null>(null);
+  const supported = micSupported();
+
+  const setBoth = (value: Status) => {
+    statusRef.current = value;
+    setStatus(value);
+  };
+
+  const stopMeter = () => {
+    if (meterRef.current !== null) {
+      window.clearInterval(meterRef.current);
+      meterRef.current = null;
+    }
+    setLevel(0);
+  };
+
+  useEffect(() => stopMeter, []);
 
   const fail = useCallback(
     (message: string) => {
-      setStatus("idle");
+      stopMeter();
+      setBoth("idle");
       setPartial("");
       options?.onError?.(message);
     },
     [options],
   );
 
+  const stopRef = useRef<() => Promise<void>>(async () => {});
+
   const start = useCallback(async () => {
-    if (status !== "idle") return;
-    try {
-      recorderRef.current = await recordWav();
-      setPartial("");
-      setStatus("recording");
-      navigator.vibrate?.(8);
-    } catch {
-      fail("Je n'ai pas pu accéder au micro. Autorise-le et réessaie.");
+    if (statusRef.current !== "idle") return;
+    if (!supported) {
+      options?.onError?.("La dictée n'est pas disponible sur ce navigateur.");
+      return;
     }
-  }, [status, fail]);
+    try {
+      recorderRef.current = await recordWav({
+        onAutoStop: () => {
+          void stopRef.current();
+        },
+      });
+      setPartial("");
+      setBoth("recording");
+      navigator.vibrate?.(8);
+      meterRef.current = window.setInterval(
+        () => setLevel(recorderRef.current?.level() ?? 0),
+        100,
+      );
+    } catch (error) {
+      fail(micErrorMessage(error));
+    }
+  }, [supported, fail, options]);
 
   const cancel = useCallback(() => {
     recorderRef.current?.cancel();
     recorderRef.current = null;
-    setStatus("idle");
+    stopMeter();
+    setBoth("idle");
     setPartial("");
   }, []);
 
   const stop = useCallback(async () => {
     const recorder = recorderRef.current;
-    if (!recorder || status !== "recording") return;
+    if (!recorder || statusRef.current !== "recording") return;
     recorderRef.current = null;
+    stopMeter();
     let file: File;
     try {
       file = await recorder.stop();
-    } catch {
-      fail("Je n'ai rien entendu. Réessaie en parlant un peu plus longtemps.");
+    } catch (error) {
+      fail(micErrorMessage(error));
       return;
     }
 
-    setStatus("transcribing");
+    setBoth("transcribing");
     try {
       const { data: session } = await supabase.auth.getSession();
       const token = session.session?.access_token;
@@ -123,8 +164,8 @@ export const useVoiceDictation = (options?: {
       }
       if (buffer.trim()) handleEvent(buffer);
 
-      const finalText = text.trim();
-      setStatus("idle");
+      const finalText = cleanTranscript(text);
+      setBoth("idle");
       setPartial("");
       if (!finalText) {
         options?.onError?.("Je n'ai pas réussi à comprendre. Réessaie doucement.");
@@ -135,7 +176,9 @@ export const useVoiceDictation = (options?: {
     } catch {
       fail("La dictée n'a pas fonctionné. On réessaie ?");
     }
-  }, [status, fail, options]);
+  }, [fail, options]);
 
-  return { status, partial, start, stop, cancel };
+  stopRef.current = stop;
+
+  return { status, partial, level, supported, start, stop, cancel };
 };
