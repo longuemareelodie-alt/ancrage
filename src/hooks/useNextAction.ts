@@ -150,6 +150,7 @@ export function useNextAction(brainState: BrainState | null) {
           learned: est.learned,
           domain,
           who: profileId ? nameOf.get(profileId) ?? null : null,
+          profileId,
           to,
           completable,
           weight,
