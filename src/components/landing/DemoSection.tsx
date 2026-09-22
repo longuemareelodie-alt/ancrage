@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { PlayCircle } from "lucide-react";
 import { Eyebrow, Section, SectionTitle, fadeUp } from "./primitives";
 import dashboardShot from "@/assets/showcase/dashboard.jpg.asset.json";
-import demoVideo from "@/assets/video/eclosia-demo.mp4.asset.json";
+import demoVideo from "@/assets/video/eclosia-demo-son.mp4.asset.json";
 
 /**
  * Démonstration.
@@ -98,8 +98,9 @@ const DemoSection = () => (
         <span className="italic text-primary-dark">avant de lire la page.</span>
       </SectionTitle>
       <p className="mt-6 text-[15px] leading-relaxed text-muted-foreground">
-        Trente secondes calmes : tu dis comment va ta tête, Éclosia sort une
-        seule action, et tu peux tout dicter à la voix.
+        Quarante secondes calmes, racontées à voix haute : tu dis comment va ta
+        tête, Éclosia sort une seule action, et tu peux tout dicter à la voix.
+        Mets le son.
       </p>
     </motion.div>
 
@@ -111,9 +112,6 @@ const DemoSection = () => (
             <video
               className="w-full rounded-[1.6rem]"
               controls
-              autoPlay
-              muted
-              loop
               playsInline
               preload="metadata"
               poster={DEMO_POSTER_URL}

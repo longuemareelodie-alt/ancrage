@@ -4,7 +4,7 @@ import { MASCOTS } from "@/data/pulseMascots";
 import { BRAIN_STATES } from "@/hooks/usePulseState";
 import { STATE_COLOR } from "@/hooks/usePulseHistory";
 import MascotAvatar from "@/components/pulse/MascotAvatar";
-import pulseVideo from "@/assets/video/eclosia-pulse.mp4.asset.json";
+import pulseVideo from "@/assets/video/eclosia-pulse-son.mp4.asset.json";
 import pulsePoster from "@/assets/video/pulse-poster.jpg.asset.json";
 
 /**
@@ -38,13 +38,10 @@ const PulseSection = () => (
           <video
             className="aspect-video w-full rounded-[1.6rem] bg-secondary/40 object-cover"
             controls
-            autoPlay
-            muted
-            loop
             playsInline
             preload="metadata"
             poster={pulsePoster.url}
-            aria-label="PULSE en seize secondes : les quatre états, la prochaine action, les six compagnons"
+            aria-label="PULSE expliqué à voix haute : les quatre états, la prochaine action, les six compagnons"
           >
             <source src={pulseVideo.url} type="video/mp4" />
             Ton navigateur ne peut pas lire cette vidéo.
@@ -52,7 +49,7 @@ const PulseSection = () => (
         </div>
       </div>
       <p className="mt-5 text-center text-[13px] text-muted-foreground">
-        Seize secondes : ton état du jour, une seule prochaine action, tes six compagnons.
+        Avec le son : ton état du jour, une seule prochaine action, tes six compagnons.
       </p>
     </motion.div>
 
