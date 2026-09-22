@@ -36,7 +36,7 @@ const PulseSection = () => (
         <div className="absolute -inset-6 -z-10 rounded-[3rem] bg-gradient-to-b from-primary/20 to-transparent blur-2xl" />
         <div className="overflow-hidden rounded-[2rem] border border-border/60 bg-background p-2 shadow-[0_50px_120px_-45px_hsl(var(--night)/0.35)]">
           <video
-            className="w-full rounded-[1.6rem]"
+            className="aspect-video w-full rounded-[1.6rem] bg-secondary/40 object-cover"
             controls
             autoPlay
             muted
