@@ -562,11 +562,29 @@ const Fondatrice = ({ onCTA, loading }: { onCTA: () => void; loading: boolean })
         <div className="absolute -inset-4 -z-10 rounded-[3rem] bg-gradient-to-br from-primary/25 to-accent/10 blur-2xl" />
         <div className="overflow-hidden rounded-[2rem] border border-border/60 bg-background">
           <img
-            src={heroPhoto.url}
-            alt="La fondatrice d'Eclosia"
+            src={famille1.url}
+            alt="Elodie, la fondatrice d'Eclosia, avec ses enfants"
             className="aspect-[4/5] w-full object-cover"
           />
         </div>
+        <div className="mt-3 grid grid-cols-2 gap-3">
+          {[famille2, famille3].map((photo, i) => (
+            <div
+              key={i}
+              className="overflow-hidden rounded-[1.25rem] border border-border/60 bg-background"
+            >
+              <img
+                src={photo.url}
+                alt="La fondatrice d'Eclosia et ses enfants, visages préservés"
+                className="aspect-[4/3] w-full object-cover"
+              />
+            </div>
+          ))}
+        </div>
+        <p className="mt-3 text-[12px] leading-relaxed text-muted-foreground">
+          Mes enfants — trouble du spectre autistique, dyspraxie, ataxie. Leurs
+          visages restent flous : c'est leur vie privée, pas un argument de vente.
+        </p>
       </motion.div>
 
       <motion.div {...fadeUp}>
