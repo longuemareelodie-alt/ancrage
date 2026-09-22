@@ -43,6 +43,7 @@ const PulseDictation = ({ onAdded }: { onAdded?: () => void }) => {
     }
     navigator.vibrate?.(12);
     setDraft("");
+    setChosen(undefined);
     toast({ description: "C'est noté. Tu n'as plus à y penser." });
     onAdded?.();
   };
