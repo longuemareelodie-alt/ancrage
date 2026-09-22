@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { guessDomain, mascotOf } from "@/data/pulseMascots";
 import { useVoiceDictation } from "@/hooks/useVoiceDictation";
 import { toast } from "@/hooks/use-toast";
+import MascotAvatar from "@/components/pulse/MascotAvatar";
 
 /**
  * 🎙️ Dictée vocale PULSE — on parle, la prochaine action s'écrit toute seule.
@@ -117,12 +118,7 @@ const PulseDictation = ({ onAdded }: { onAdded?: () => void }) => {
             className="mt-3 rounded-[18px] border border-border/60 bg-card px-4 py-3"
           >
             <div className="flex items-center gap-3">
-              <span
-                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-sm ${mascot?.tint ?? "bg-secondary/40"}`}
-                aria-hidden
-              >
-                {mascot?.emoji ?? "✨"}
-              </span>
+              <MascotAvatar mascot={mascot} size={34} className="rounded-xl" />
               <input
                 value={draft}
                 onChange={(e) => setDraft(e.target.value)}
