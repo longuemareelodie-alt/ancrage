@@ -619,6 +619,16 @@ const Fondatrice = ({ onCTA, loading }: { onCTA: () => void; loading: boolean })
 const Inclus = () => {
   const groups = [
     {
+      icon: Zap,
+      title: "PULSE, ton moteur du jour",
+      items: [
+        "État de ta tête : GO, Moyen, Saturé, KO",
+        "Une seule prochaine action",
+        "Dictée vocale",
+        "Suivi « Mon rythme » : courbe et aperçu du mois",
+      ],
+    },
+    {
       icon: CalendarDays,
       title: "Organisation familiale",
       items: ["Agenda", "Tâches", "Liste de courses", "Notes", "Rappels"],
