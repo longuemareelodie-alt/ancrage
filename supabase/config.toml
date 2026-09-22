@@ -21,3 +21,6 @@ project_id = "mpadkxqomykztvqrnmfv"
     verify_jwt = false
   [functions.transcribe-voice]
     verify_jwt = true
+
+  [functions.speak-soft]
+    verify_jwt = true
