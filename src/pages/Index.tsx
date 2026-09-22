@@ -55,6 +55,9 @@ import TarifFondateurSection from "@/components/landing/TarifFondateurSection";
 import FinalCTA from "@/components/landing/FinalCTA";
 
 import heroPhoto from "@/assets/hero-fondatrice.png.asset.json";
+import famille1 from "@/assets/famille/IMG_1687.jpg.asset.json";
+import famille2 from "@/assets/famille/IMG_1814.jpg.asset.json";
+import famille3 from "@/assets/famille/IMG_2117.jpg.asset.json";
 import journalShot from "@/assets/showcase/journal.jpg.asset.json";
 import dashboardShot from "@/assets/showcase/dashboard.jpg.asset.json";
 
