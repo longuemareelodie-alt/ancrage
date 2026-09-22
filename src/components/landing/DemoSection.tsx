@@ -98,8 +98,8 @@ const DemoSection = () => (
         <span className="italic text-primary-dark">avant de lire la page.</span>
       </SectionTitle>
       <p className="mt-6 text-[15px] leading-relaxed text-muted-foreground">
-        Une visite calme de l'application, du premier écran jusqu'à la création
-        d'un support pour ton enfant.
+        Trente secondes calmes : tu dis comment va ta tête, Éclosia sort une
+        seule action, et tu peux tout dicter à la voix.
       </p>
     </motion.div>
 
