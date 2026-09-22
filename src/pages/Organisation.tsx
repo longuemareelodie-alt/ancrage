@@ -341,6 +341,15 @@ function TodoTab({ userId }: { userId: string }) {
                   {t.priority === "basse" && <Badge variant="outline" className="text-xs">Basse</Badge>}
                   {t.due_date && <span className={`text-xs ${overdue ? "text-red-600" : "text-[#6b7280]"}`}>{format(parseISO(t.due_date), "d MMM", { locale: fr })}</span>}
                 </div>
+                {members.length > 0 && !t.done && (
+                  <Select value={t.profile_id ?? "aucun"} onValueChange={(v) => updateMember(t.id, v)}>
+                    <SelectTrigger className="mt-1 h-6 w-auto min-w-[110px] px-2 text-xs"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="aucun">Pour moi</SelectItem>
+                      {members.map((m) => <SelectItem key={m.id} value={m.id}>Pour {m.first_name}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                )}
                 {t.due_date && !t.done && (
                   <div className="mt-1 flex items-center gap-1">
                     <Bell className="w-3 h-3 text-[#6b7280]" />
