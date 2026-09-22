@@ -11,6 +11,7 @@ import PaidRoute from "@/components/PaidRoute";
 import AdminRoute from "@/components/AdminRoute";
 import PageTransition from "@/components/PageTransition";
 import BottomNav from "@/components/BottomNav";
+import NextActionBadge from "@/components/pulse/NextActionBadge";
 import TopNav from "@/components/TopNav";
 import ScrollToHash from "@/components/ScrollToHash";
 import { RouteTransitionProvider } from "@/components/RouteTransition";
@@ -299,6 +300,7 @@ const AnimatedRoutes = () => {
         </RoutesWrapper>
       </AnimatePresence>
       <RestartTourButton />
+      <NextActionBadge />
       <BottomNav />
     </RouteTransitionProvider>
   );
