@@ -19,7 +19,8 @@ import VoiceDictationButton from "@/components/VoiceDictationButton";
 import { guessDomain, mascotOf, type PulseDomain } from "@/data/pulseMascots";
 
 type AgendaEvent = { id: string; title: string; description: string | null; event_date: string; event_time: string | null; location: string | null; category: string; reminder_offset_hours: number };
-type Todo = { id: string; title: string; done: boolean; priority: string; due_date: string | null; category: string; reminder_offset_hours: number; domain: string | null };
+type Todo = { id: string; title: string; done: boolean; priority: string; due_date: string | null; category: string; reminder_offset_hours: number; domain: string | null; profile_id: string | null };
+type FamilyMember = { id: string; first_name: string };
 
 const AGENDA_OFFSETS: { value: number; label: string }[] = [
   { value: 1, label: "1h avant" },
@@ -234,24 +235,34 @@ function TodoTab({ userId }: { userId: string }) {
   const [dueDate, setDueDate] = useState("");
   const [reminderOffset, setReminderOffset] = useState<number>(24);
   const [domain, setDomain] = useState<PulseDomain | null>(null);
+  const [profileId, setProfileId] = useState<string>("aucun");
+  const [members, setMembers] = useState<FamilyMember[]>([]);
 
   const load = async () => {
     const { data } = await supabase.from("todo_items").select("*").eq("user_id", userId).order("done").order("due_date", { nullsFirst: false }).order("created_at", { ascending: false });
     setItems((data as any) || []);
   };
   useEffect(() => { load(); }, [userId]);
+  useEffect(() => {
+    supabase.from("family_medical_profiles").select("id, first_name").eq("user_id", userId).then(({ data }) => setMembers((data as any) || []));
+  }, [userId]);
 
   const add = async () => {
     if (!title) return;
-    const { error } = await supabase.from("todo_items").insert({ user_id: userId, title, priority, due_date: dueDate || null, reminder_offset_hours: reminderOffset, domain: domain ?? guessDomain(title) });
+    const { error } = await supabase.from("todo_items").insert({ user_id: userId, title, priority, due_date: dueDate || null, reminder_offset_hours: reminderOffset, domain: domain ?? guessDomain(title), profile_id: profileId === "aucun" ? null : profileId });
     if (error) return toast.error(error.message);
-    setTitle(""); setDueDate(""); setPriority("normal"); setReminderOffset(24); setDomain(null);
+    setTitle(""); setDueDate(""); setPriority("normal"); setReminderOffset(24); setDomain(null); setProfileId("aucun");
     load();
   };
   const updateDomain = async (id: string, value: PulseDomain | null) => {
     await supabase.from("todo_items").update({ domain: value }).eq("id", id);
     load();
   };
+  const updateMember = async (id: string, value: string) => {
+    await supabase.from("todo_items").update({ profile_id: value === "aucun" ? null : value }).eq("id", id);
+    load();
+  };
+  const nameOf = (id: string | null) => members.find((m) => m.id === id)?.first_name || null;
   const toggle = async (t: Todo) => {
     await supabase.from("todo_items").update({ done: !t.done }).eq("id", t.id);
     load();
@@ -298,6 +309,18 @@ function TodoTab({ userId }: { userId: string }) {
           <span className="text-xs text-[#6b7280]">Compagnon :</span>
           <MascotPicker value={domain} onChange={setDomain} />
         </div>
+        {members.length > 0 && (
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-[#6b7280]">Pour qui :</span>
+            <Select value={profileId} onValueChange={setProfileId}>
+              <SelectTrigger className="h-8 flex-1 text-xs"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="aucun">Pour moi</SelectItem>
+                {members.map((m) => <SelectItem key={m.id} value={m.id}>Pour {m.first_name}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
       </Card>
 
       <p className="text-xs text-[#6b7280]">{activeCount} tâche{activeCount > 1 ? "s" : ""} en cours</p>
@@ -313,10 +336,20 @@ function TodoTab({ userId }: { userId: string }) {
                 <p className={`text-sm ${t.done ? "line-through" : ""}`}>{t.title}</p>
                 <div className="flex gap-2 mt-1 flex-wrap">
                   {mascotOf(t.domain) && <Badge variant="outline" className="text-xs">{mascotOf(t.domain)!.name}</Badge>}
+                  {nameOf(t.profile_id) && <Badge variant="outline" className="text-xs border-primary/40 text-primary">pour {nameOf(t.profile_id)}</Badge>}
                   {t.priority === "haute" && <Badge variant="destructive" className="text-xs">Haute</Badge>}
                   {t.priority === "basse" && <Badge variant="outline" className="text-xs">Basse</Badge>}
                   {t.due_date && <span className={`text-xs ${overdue ? "text-red-600" : "text-[#6b7280]"}`}>{format(parseISO(t.due_date), "d MMM", { locale: fr })}</span>}
                 </div>
+                {members.length > 0 && !t.done && (
+                  <Select value={t.profile_id ?? "aucun"} onValueChange={(v) => updateMember(t.id, v)}>
+                    <SelectTrigger className="mt-1 h-6 w-auto min-w-[110px] px-2 text-xs"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="aucun">Pour moi</SelectItem>
+                      {members.map((m) => <SelectItem key={m.id} value={m.id}>Pour {m.first_name}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                )}
                 {t.due_date && !t.done && (
                   <div className="mt-1 flex items-center gap-1">
                     <Bell className="w-3 h-3 text-[#6b7280]" />

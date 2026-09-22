@@ -244,6 +244,7 @@ export type Database = {
           id: string
           location: string | null
           notes: string | null
+          profile_id: string | null
           reminder_1h_sent: boolean
           reminder_24h_sent: boolean
           title: string
@@ -257,6 +258,7 @@ export type Database = {
           id?: string
           location?: string | null
           notes?: string | null
+          profile_id?: string | null
           reminder_1h_sent?: boolean
           reminder_24h_sent?: boolean
           title: string
@@ -270,13 +272,22 @@ export type Database = {
           id?: string
           location?: string | null
           notes?: string | null
+          profile_id?: string | null
           reminder_1h_sent?: boolean
           reminder_24h_sent?: boolean
           title?: string
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "appointments_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "family_medical_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       autonomy_supports: {
         Row: {
@@ -1622,6 +1633,36 @@ export type Database = {
         }
         Relationships: []
       }
+      pulse_action_durations: {
+        Row: {
+          created_at: string
+          domain: string | null
+          id: string
+          length_bucket: number
+          minutes: number
+          source: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          domain?: string | null
+          id?: string
+          length_bucket?: number
+          minutes: number
+          source: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          domain?: string | null
+          id?: string
+          length_bucket?: number
+          minutes?: number
+          source?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       pulse_daily_states: {
         Row: {
           created_at: string
@@ -1904,6 +1945,7 @@ export type Database = {
           due_date: string | null
           id: string
           priority: string | null
+          profile_id: string | null
           reminder_offset_hours: number
           reminder_sent_at: string | null
           title: string
@@ -1918,6 +1960,7 @@ export type Database = {
           due_date?: string | null
           id?: string
           priority?: string | null
+          profile_id?: string | null
           reminder_offset_hours?: number
           reminder_sent_at?: string | null
           title: string
@@ -1932,13 +1975,22 @@ export type Database = {
           due_date?: string | null
           id?: string
           priority?: string | null
+          profile_id?: string | null
           reminder_offset_hours?: number
           reminder_sent_at?: string | null
           title?: string
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "todo_items_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "family_medical_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       transformation_portraits: {
         Row: {
