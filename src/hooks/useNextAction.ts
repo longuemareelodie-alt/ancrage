@@ -281,5 +281,30 @@ export function useNextAction(brainState: BrainState | null) {
     setQueue((q) => [...q.filter((a) => a.id !== action.id), action]);
   }, []);
 
-  return { next: queue[0] ?? null, remaining: queue.length, loading, complete, skip, reload };
+  /**
+   * Reprendre la prochaine action : on réécrit son libellé (tâches uniquement),
+   * sans créer de doublon ni perdre l'historique.
+   */
+  const rename = useCallback(async (action: NextAction, label: string) => {
+    const title = label.trim();
+    if (!title || action.source !== "tache") return false;
+    const { error } = await supabase
+      .from("todo_items")
+      .update({ title })
+      .eq("id", action.rowId);
+    if (error) return false;
+    setQueue((q) => q.map((a) => (a.id === action.id ? { ...a, label: title } : a)));
+    navigator.vibrate?.(10);
+    return true;
+  }, []);
+
+  return {
+    next: queue[0] ?? null,
+    remaining: queue.length,
+    loading,
+    complete,
+    skip,
+    rename,
+    reload,
+  };
 }
