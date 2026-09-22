@@ -15,6 +15,7 @@ import { Calendar, CheckSquare, ShoppingCart, StickyNote, Plus, Trash2, Pin, Map
 import { format, parseISO, isToday, isTomorrow, isPast } from "date-fns";
 import { fr } from "date-fns/locale";
 import MascotPicker from "@/components/pulse/MascotPicker";
+import VoiceDictationButton from "@/components/VoiceDictationButton";
 import { guessDomain, mascotOf, type PulseDomain } from "@/data/pulseMascots";
 
 type AgendaEvent = { id: string; title: string; description: string | null; event_date: string; event_time: string | null; location: string | null; category: string; reminder_offset_hours: number };
@@ -163,7 +164,10 @@ function AgendaTab({ userId }: { userId: string }) {
     <div className="space-y-6">
       <Card className="p-4 space-y-3 bg-white/80">
         <h3 className="font-serif text-lg">Nouvel événement</h3>
-        <Input placeholder="Titre" value={title} onChange={(e) => setTitle(e.target.value)} />
+        <div className="flex items-center gap-2">
+          <Input placeholder="Titre" value={title} onChange={(e) => setTitle(e.target.value)} />
+          <VoiceDictationButton onText={(t) => setTitle(t)} label="Dicter le titre" />
+        </div>
         <div className="grid grid-cols-2 gap-2">
           <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
           <Input type="time" value={time} onChange={(e) => setTime(e.target.value)} />
@@ -180,7 +184,10 @@ function AgendaTab({ userId }: { userId: string }) {
             <SelectContent>{AGENDA_OFFSETS.map((o) => <SelectItem key={o.value} value={String(o.value)}>Rappel : {o.label}</SelectItem>)}</SelectContent>
           </Select>
         </div>
-        <Textarea placeholder="Notes (optionnel)" value={description} onChange={(e) => setDescription(e.target.value)} rows={2} />
+        <div className="flex items-start gap-2">
+          <Textarea placeholder="Notes (optionnel)" value={description} onChange={(e) => setDescription(e.target.value)} rows={2} />
+          <VoiceDictationButton onText={(t) => setDescription(description ? `${description} ${t}` : t)} label="Dicter les notes" />
+        </div>
         <Button onClick={add} className="w-full"><Plus className="w-4 h-4 mr-1" />Ajouter</Button>
       </Card>
 
@@ -266,6 +273,7 @@ function TodoTab({ userId }: { userId: string }) {
       <Card className="p-4 space-y-3 bg-white/80">
         <div className="flex gap-2">
           <Input placeholder="Nouvelle tâche..." value={title} onChange={(e) => setTitle(e.target.value)} onKeyDown={(e) => e.key === "Enter" && add()} />
+          <VoiceDictationButton onText={(t) => setTitle(t)} label="Dicter la tâche" />
           <Button onClick={add}><Plus className="w-4 h-4" /></Button>
         </div>
         <div className="grid grid-cols-2 gap-2">
@@ -448,7 +456,10 @@ function NotesTab({ userId }: { userId: string }) {
       <Card className={`p-4 space-y-3 border ${COLOR_CLASS[color]}`}>
         <h3 className="font-serif text-lg">{editing ? "Modifier la note" : "Nouvelle note"}</h3>
         <Input placeholder="Titre (optionnel)" value={title} onChange={(e) => setTitle(e.target.value)} className="bg-white/60" />
-        <Textarea placeholder="Écris ici..." value={content} onChange={(e) => setContent(e.target.value)} rows={4} className="bg-white/60" />
+        <div className="flex items-start gap-2">
+          <Textarea placeholder="Écris ici..." value={content} onChange={(e) => setContent(e.target.value)} rows={4} className="bg-white/60" />
+          <VoiceDictationButton onText={(t) => setContent(content ? `${content} ${t}` : t)} label="Dicter la note" />
+        </div>
         <div className="flex gap-2 items-center">
           <span className="text-xs text-[#6b7280]">Couleur :</span>
           {NOTE_COLORS.map((c) => (

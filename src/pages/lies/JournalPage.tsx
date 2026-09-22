@@ -3,6 +3,7 @@ import { NotebookPen, Plus, Trash2, Sparkles, PenLine } from "lucide-react";
 import LiesShell from "@/components/lies/LiesShell";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import VoiceDictationButton from "@/components/VoiceDictationButton";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { JOURNAL_PROMPTS } from "@/data/journalPrompts";
@@ -136,13 +137,18 @@ const JournalPage = () => {
           </p>
         )}
 
-        <Textarea
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          placeholder={mode === "guided" && !promptKey ? "Choisissez un prompt ci-dessus…" : "Écrivez librement…"}
-          rows={6}
-          className="mb-3"
-        />
+        <div className="mb-3 flex items-start gap-2">
+          <Textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder={mode === "guided" && !promptKey ? "Choisissez un prompt ci-dessus…" : "Écrivez librement…"}
+            rows={6}
+          />
+          <VoiceDictationButton
+            onText={(t) => setContent(content ? `${content}\n${t}` : t)}
+            label="Dicter ce que je ressens"
+          />
+        </div>
 
         <Button
           onClick={handleSave}
