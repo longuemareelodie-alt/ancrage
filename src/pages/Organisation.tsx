@@ -336,6 +336,7 @@ function TodoTab({ userId }: { userId: string }) {
                 <p className={`text-sm ${t.done ? "line-through" : ""}`}>{t.title}</p>
                 <div className="flex gap-2 mt-1 flex-wrap">
                   {mascotOf(t.domain) && <Badge variant="outline" className="text-xs">{mascotOf(t.domain)!.name}</Badge>}
+                  {nameOf(t.profile_id) && <Badge variant="outline" className="text-xs border-primary/40 text-primary">pour {nameOf(t.profile_id)}</Badge>}
                   {t.priority === "haute" && <Badge variant="destructive" className="text-xs">Haute</Badge>}
                   {t.priority === "basse" && <Badge variant="outline" className="text-xs">Basse</Badge>}
                   {t.due_date && <span className={`text-xs ${overdue ? "text-red-600" : "text-[#6b7280]"}`}>{format(parseISO(t.due_date), "d MMM", { locale: fr })}</span>}
