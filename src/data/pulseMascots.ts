@@ -1,12 +1,21 @@
 /**
  * L'équipe PULSE : six compagnons qui portent chacun un domaine du quotidien.
- * Illustrations temporaires (emoji + couleur douce), jamais de photo réaliste.
+ * Illustrations douces dessinées aux couleurs Éclosia, jamais de photo réaliste.
  * Le champ `domain` est stocké (optionnellement) sur les tâches et rendez-vous.
  */
+import louve from "@/assets/mascots/louve.png";
+import bichette from "@/assets/mascots/bichette.png";
+import renard from "@/assets/mascots/renard.png";
+import abeille from "@/assets/mascots/abeille.png";
+import lapin from "@/assets/mascots/lapin.png";
+import chat from "@/assets/mascots/chat.png";
+
 export type PulseDomain = "moi" | "sante" | "admin" | "argent" | "ecole" | "maison";
 
 export type Mascot = {
   domain: PulseDomain;
+  /** Illustration douce du compagnon. */
+  image: string;
   emoji: string;
   name: string;
   label: string;
@@ -16,12 +25,12 @@ export type Mascot = {
 };
 
 export const MASCOTS: Mascot[] = [
-  { domain: "moi", emoji: "🐺", name: "Louve", label: "Moi", tint: "bg-primary/15", to: "/moi" },
-  { domain: "sante", emoji: "🦌", name: "Bichette", label: "Santé", tint: "bg-secondary/60", to: "/sante" },
-  { domain: "admin", emoji: "🦊", name: "Renard", label: "Administratif", tint: "bg-primary/10", to: "/famille/coffre" },
-  { domain: "argent", emoji: "🐝", name: "Abeille", label: "Argent", tint: "bg-secondary/50", to: "/budget" },
-  { domain: "ecole", emoji: "🐰", name: "Lapin", label: "École", tint: "bg-primary/10", to: "/famille" },
-  { domain: "maison", emoji: "🐱", name: "Chat", label: "Maison", tint: "bg-secondary/60", to: "/plus/organisation" },
+  { domain: "moi", image: louve, emoji: "🐺", name: "Louve", label: "Moi", tint: "bg-primary/15", to: "/moi" },
+  { domain: "sante", image: bichette, emoji: "🦌", name: "Bichette", label: "Santé", tint: "bg-secondary/60", to: "/sante" },
+  { domain: "admin", image: renard, emoji: "🦊", name: "Renard", label: "Administratif", tint: "bg-primary/10", to: "/famille/coffre" },
+  { domain: "argent", image: abeille, emoji: "🐝", name: "Abeille", label: "Argent", tint: "bg-secondary/50", to: "/budget" },
+  { domain: "ecole", image: lapin, emoji: "🐰", name: "Lapin", label: "École", tint: "bg-primary/10", to: "/famille" },
+  { domain: "maison", image: chat, emoji: "🐱", name: "Chat", label: "Maison", tint: "bg-secondary/60", to: "/plus/organisation" },
 ];
 
 export const mascotOf = (domain?: string | null): Mascot | undefined =>
