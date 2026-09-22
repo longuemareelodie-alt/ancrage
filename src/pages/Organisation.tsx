@@ -286,6 +286,10 @@ function TodoTab({ userId }: { userId: string }) {
             <SelectContent>{TODO_OFFSETS.map((o) => <SelectItem key={o.value} value={String(o.value)}>Rappel : {o.label}</SelectItem>)}</SelectContent>
           </Select>
         </div>
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-[#6b7280]">Compagnon :</span>
+          <MascotPicker value={domain} onChange={setDomain} />
+        </div>
       </Card>
 
       <p className="text-xs text-[#6b7280]">{activeCount} tâche{activeCount > 1 ? "s" : ""} en cours</p>
