@@ -627,8 +627,15 @@ const Fondatrice = ({ onCTA, loading }: { onCTA: () => void; loading: boolean })
             deuxième agenda.
           </p>
           <p>
-            J'élève trois enfants, et l'un vit avec un trouble du spectre
-            autistique, un autre avec une dyspraxie, un autre avec une ataxie.
+            Je suis maman de trois enfants, et nous sommes cinq enfants à la
+            maison. Mes deux grands, mon Loulou et ma Bichette, vivent tous les
+            deux avec un trouble du spectre autistique, une dyspraxie et une
+            ataxie. Mon petit Koala, ma dernière, est asthmatique et une
+            suspicion de trouble du neurodéveloppement est en cours. Mon
+            beau-fils est également autiste, ma belle-fille n'a pas de trouble
+            apparent. Et mon mari est en formation.
+          </p>
+          <p>
             Ce sont des années de rendez-vous, de suivis, de bilans, de mots
             compliqués à retenir et de papiers à ne jamais perdre. C'est aussi
             pour eux qu'Éclosia existe.
