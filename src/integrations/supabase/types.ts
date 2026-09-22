@@ -1704,6 +1704,39 @@ export type Database = {
         }
         Relationships: []
       }
+      pulse_action_skips: {
+        Row: {
+          action_key: string
+          brain_state: string | null
+          created_at: string
+          domain: string | null
+          id: string
+          length_bucket: number
+          source: string
+          user_id: string
+        }
+        Insert: {
+          action_key: string
+          brain_state?: string | null
+          created_at?: string
+          domain?: string | null
+          id?: string
+          length_bucket?: number
+          source: string
+          user_id: string
+        }
+        Update: {
+          action_key?: string
+          brain_state?: string | null
+          created_at?: string
+          domain?: string | null
+          id?: string
+          length_bucket?: number
+          source?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       pulse_child_states: {
         Row: {
           created_at: string
