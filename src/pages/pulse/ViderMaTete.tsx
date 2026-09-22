@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Sparkles } from "lucide-react";
+import { ArrowLeft, Loader2, Mic, Sparkles, Square } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { guessDomain, mascotOf } from "@/data/pulseMascots";
+import { useVoiceDictation } from "@/hooks/useVoiceDictation";
 import { toast } from "@/hooks/use-toast";
 
 /**
