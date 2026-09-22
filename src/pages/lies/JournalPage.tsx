@@ -3,6 +3,7 @@ import { NotebookPen, Plus, Trash2, Sparkles, PenLine } from "lucide-react";
 import LiesShell from "@/components/lies/LiesShell";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import VoiceDictationButton from "@/components/VoiceDictationButton";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { JOURNAL_PROMPTS } from "@/data/journalPrompts";
