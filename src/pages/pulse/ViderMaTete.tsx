@@ -82,6 +82,30 @@ const ViderMaTete = () => {
           className="mt-6 w-full resize-none rounded-[20px] border border-border/70 bg-card px-5 py-4 text-sm leading-relaxed text-foreground outline-none placeholder:text-muted-foreground/60 focus:border-primary/50"
         />
 
+        <button
+          onClick={dictation.status === "recording" ? dictation.stop : dictation.start}
+          disabled={dictation.status === "transcribing"}
+          className="mt-3 flex w-full items-center justify-center gap-2 rounded-full border border-border/70 px-5 py-3 text-sm font-medium text-foreground transition-transform active:scale-[0.98] disabled:opacity-60"
+        >
+          {dictation.status === "transcribing" ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" strokeWidth={1.75} />
+              {dictation.partial || "J'écris ce que tu viens de dire…"}
+            </>
+          ) : dictation.status === "recording" ? (
+            <>
+              <Square className="h-3.5 w-3.5" strokeWidth={2.5} />
+              Je t'écoute — appuie pour arrêter
+            </>
+          ) : (
+            <>
+              <Mic className="h-4 w-4" strokeWidth={1.75} />
+              Dicter à voix haute
+            </>
+          )}
+        </button>
+
+
         {lines.length > 0 && (
           <ul className="mt-4 space-y-2">
             {lines.map((l, i) => {
