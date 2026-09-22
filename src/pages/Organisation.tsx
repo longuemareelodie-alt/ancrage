@@ -309,6 +309,18 @@ function TodoTab({ userId }: { userId: string }) {
           <span className="text-xs text-[#6b7280]">Compagnon :</span>
           <MascotPicker value={domain} onChange={setDomain} />
         </div>
+        {members.length > 0 && (
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-[#6b7280]">Pour qui :</span>
+            <Select value={profileId} onValueChange={setProfileId}>
+              <SelectTrigger className="h-8 flex-1 text-xs"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="aucun">Pour moi</SelectItem>
+                {members.map((m) => <SelectItem key={m.id} value={m.id}>Pour {m.first_name}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
       </Card>
 
       <p className="text-xs text-[#6b7280]">{activeCount} tâche{activeCount > 1 ? "s" : ""} en cours</p>
