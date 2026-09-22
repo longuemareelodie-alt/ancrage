@@ -2,10 +2,10 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check, Loader2, Mic, Square, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { guessDomain, mascotOf } from "@/data/pulseMascots";
+import { guessDomain, type PulseDomain } from "@/data/pulseMascots";
 import { useVoiceDictation } from "@/hooks/useVoiceDictation";
 import { toast } from "@/hooks/use-toast";
-import MascotAvatar from "@/components/pulse/MascotAvatar";
+import MascotPicker from "@/components/pulse/MascotPicker";
 
 /**
  * 🎙️ Dictée vocale PULSE — on parle, la prochaine action s'écrit toute seule.
