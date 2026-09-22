@@ -85,13 +85,19 @@ const SanteRendezVous = () => {
 
         {editing && (
           <div className="mb-4 space-y-3 rounded-2xl bg-card p-4 shadow-sm">
-            <input
-              type="text"
-              value={editing.title}
-              onChange={(e) => setEditing({ ...editing, title: e.target.value })}
-              placeholder="Ex : Médecin généraliste"
-              className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary/30"
-            />
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                value={editing.title}
+                onChange={(e) => setEditing({ ...editing, title: e.target.value })}
+                placeholder="Ex : Médecin généraliste"
+                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary/30"
+              />
+              <VoiceDictationButton
+                onText={(t) => setEditing({ ...editing, title: t })}
+                label="Dicter le rendez-vous"
+              />
+            </div>
             <div className="flex gap-2">
               <input
                 type="date"
