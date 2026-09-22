@@ -148,13 +148,13 @@ const Nav = ({ onCTA, loading }: { onCTA: () => void; loading: boolean }) => {
   }, []);
 
   const links = [
+    { href: "#modules", label: "Ce que ça change" },
     { href: "#demonstration", label: "Démonstration" },
-    { href: "#studio", label: "Studio" },
-    { href: "#pour-qui", label: "Pour qui" },
+    { href: "#inclus", label: "Ce qui est inclus" },
     { href: "#fondatrice", label: "Mon histoire" },
-    { href: "#tarif-fondateur", label: "Tarif" },
-
+    { href: "#tarif", label: "Tarif" },
   ];
+
 
   return (
     <header
@@ -504,14 +504,15 @@ const Transformations = () => {
   return (
     <Section id="modules" className="bg-card">
       <motion.div {...fadeUp} className="mx-auto max-w-2xl text-center">
-        <Eyebrow>Ce que ça change</Eyebrow>
+        <Eyebrow>Ce que tu tiens dès le premier jour</Eyebrow>
         <h2 className="mt-4 font-serif text-[clamp(1.75rem,4vw,3rem)] leading-[1.1] tracking-tight text-night">
-          Six transformations,
+          Six choses en moins
           <br />
           <span className="italic text-primary-dark">
-            un même soulagement.
+            à porter toute seule.
           </span>
         </h2>
+
       </motion.div>
 
       <div className="mt-16 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
@@ -720,6 +721,24 @@ const Inclus = () => {
       title: "Ressources neuroatypie",
       items: ["Guides de crise", "Activités", "LSF"],
     },
+    {
+      icon: Sparkles,
+      title: "Studio d'autonomie",
+      items: [
+        "Plannings et séquentiels",
+        "Supports visuels à imprimer",
+        "Bibliothèque adaptée",
+      ],
+    },
+    {
+      icon: Stars,
+      title: "Assistant Éclosia",
+      items: [
+        "Il t'aide à formuler et à trier",
+        "Disponible quand tu en as besoin",
+      ],
+    },
+
     {
       icon: Users,
       title: "Communauté",
@@ -1238,30 +1257,23 @@ const Index = () => {
       <Nav onCTA={onCTA} loading={loading} />
       <main>
         <Hero onCTA={onCTA} loading={loading} />
-        <DemoSection />
-        <PulseSection />
         <Quotidien />
-        <Presentation />
-        <Serenite />
-        <ScreensCarousel />
         <Transformations />
-        <StudioSection />
-        <AssistantSection />
-        <Fondatrice onCTA={onCTA} loading={loading} />
+        <PulseSection />
+        <DemoSection />
         <PourQuiSection />
         <Inclus />
+        <Fondatrice onCTA={onCTA} loading={loading} />
         <Temoignages />
         <Unique />
-        <PaiementUniqueCard />
-        <PreTarif />
         <Tarif onCTA={onCTA} loading={loading} />
-        <TarifFondateurSection onCTA={onCTA} loading={loading} />
         <AmbassadeurTeaser />
         <div id="faq">
           <HomeFAQ />
           <FaqExtras />
         </div>
         <FinalCTA onCTA={onCTA} loading={loading} />
+
       </main>
 
       <Footer />
