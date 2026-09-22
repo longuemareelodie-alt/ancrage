@@ -4,6 +4,8 @@ import { MASCOTS } from "@/data/pulseMascots";
 import { BRAIN_STATES } from "@/hooks/usePulseState";
 import { STATE_COLOR } from "@/hooks/usePulseHistory";
 import MascotAvatar from "@/components/pulse/MascotAvatar";
+import pulseVideo from "@/assets/video/eclosia-pulse.mp4.asset.json";
+import pulsePoster from "@/assets/video/pulse-poster.jpg.asset.json";
 
 /**
  * PULSE sur la page de vente : l'état du jour, UNE seule action,
@@ -28,6 +30,32 @@ const MONTH_DEMO: (keyof typeof STATE_COLOR | null)[] = [
 
 const PulseSection = () => (
   <Section id="pulse" className="bg-night/[0.03]">
+    {/* La vidéo PULSE : les états du jour, la prochaine action, les six compagnons. */}
+    <motion.div {...fadeUp} className="mx-auto mb-16 max-w-4xl">
+      <div className="relative">
+        <div className="absolute -inset-6 -z-10 rounded-[3rem] bg-gradient-to-b from-primary/20 to-transparent blur-2xl" />
+        <div className="overflow-hidden rounded-[2rem] border border-border/60 bg-background p-2 shadow-[0_50px_120px_-45px_hsl(var(--night)/0.35)]">
+          <video
+            className="aspect-video w-full rounded-[1.6rem] bg-secondary/40 object-cover"
+            controls
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            poster={pulsePoster.url}
+            aria-label="PULSE en seize secondes : les quatre états, la prochaine action, les six compagnons"
+          >
+            <source src={pulseVideo.url} type="video/mp4" />
+            Ton navigateur ne peut pas lire cette vidéo.
+          </video>
+        </div>
+      </div>
+      <p className="mt-5 text-center text-[13px] text-muted-foreground">
+        Seize secondes : ton état du jour, une seule prochaine action, tes six compagnons.
+      </p>
+    </motion.div>
+
     <div className="grid items-center gap-14 lg:grid-cols-2">
       <motion.div {...fadeUp}>
         <Eyebrow>Le moteur du quotidien</Eyebrow>
