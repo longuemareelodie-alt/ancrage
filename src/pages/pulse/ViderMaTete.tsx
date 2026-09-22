@@ -15,6 +15,10 @@ const ViderMaTete = () => {
   const navigate = useNavigate();
   const [text, setText] = useState("");
   const [saving, setSaving] = useState(false);
+  const dictation = useVoiceDictation({
+    onDone: (spoken) => setText((prev) => (prev.trim() ? `${prev.replace(/\n+$/, "")}\n${spoken}` : spoken)),
+    onError: (message) => toast({ description: message }),
+  });
 
   const lines = text
     .split("\n")
