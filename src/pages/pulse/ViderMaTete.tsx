@@ -17,6 +17,8 @@ const ViderMaTete = () => {
   const navigate = useNavigate();
   const [text, setText] = useState("");
   const [saving, setSaving] = useState(false);
+  /** Compagnon choisi à la main, par ligne (clé = texte de la ligne). */
+  const [chosen, setChosen] = useState<Record<string, PulseDomain | null>>({});
   const dictation = useVoiceDictation({
     onDone: (spoken) => setText((prev) => (prev.trim() ? `${prev.replace(/\n+$/, "")}\n${spoken}` : spoken)),
     onError: (message) => toast({ description: message }),
