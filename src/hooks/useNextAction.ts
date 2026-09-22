@@ -31,6 +31,8 @@ export type NextAction = {
   domain: PulseDomain | null;
   /** Prénom du membre de la famille concerné, s'il y en a un. */
   who: string | null;
+  /** Identifiant du membre concerné : sert à garder la même voix pour lui. */
+  profileId: string | null;
   to: string;
   /** Peut être cochée directement (tâches uniquement). */
   completable: boolean;
