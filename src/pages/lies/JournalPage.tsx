@@ -136,13 +136,18 @@ const JournalPage = () => {
           </p>
         )}
 
-        <Textarea
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          placeholder={mode === "guided" && !promptKey ? "Choisissez un prompt ci-dessus…" : "Écrivez librement…"}
-          rows={6}
-          className="mb-3"
-        />
+        <div className="mb-3 flex items-start gap-2">
+          <Textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder={mode === "guided" && !promptKey ? "Choisissez un prompt ci-dessus…" : "Écrivez librement…"}
+            rows={6}
+          />
+          <VoiceDictationButton
+            onText={(t) => setContent(content ? `${content}\n${t}` : t)}
+            label="Dicter ce que je ressens"
+          />
+        </div>
 
         <Button
           onClick={handleSave}
