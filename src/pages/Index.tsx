@@ -38,6 +38,7 @@ import {
   Quote,
   Wallet,
   Stars,
+  Zap,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
@@ -46,6 +47,7 @@ import FoundingPrice from "@/components/FoundingPrice";
 import FoundingFamiliesBanner from "@/components/FoundingFamiliesBanner";
 import DemoSection from "@/components/landing/DemoSection";
 import ScreensCarousel from "@/components/landing/ScreensCarousel";
+import PulseSection from "@/components/landing/PulseSection";
 import StudioSection from "@/components/landing/StudioSection";
 import AssistantSection from "@/components/landing/AssistantSection";
 import PourQuiSection from "@/components/landing/PourQuiSection";
@@ -618,6 +620,16 @@ const Fondatrice = ({ onCTA, loading }: { onCTA: () => void; loading: boolean })
 const Inclus = () => {
   const groups = [
     {
+      icon: Zap,
+      title: "PULSE, ton moteur du jour",
+      items: [
+        "État de ta tête : GO, Moyen, Saturé, KO",
+        "Une seule prochaine action",
+        "Dictée vocale",
+        "Suivi « Mon rythme » : courbe et aperçu du mois",
+      ],
+    },
+    {
       icon: CalendarDays,
       title: "Organisation familiale",
       items: ["Agenda", "Tâches", "Liste de courses", "Notes", "Rappels"],
@@ -655,7 +667,7 @@ const Inclus = () => {
     {
       icon: BarChart3,
       title: "Statistiques",
-      items: ["Progression", "Habitudes", "Repères doux"],
+      items: ["Progression", "Habitudes", "Mon rythme jour après jour"],
     },
     {
       icon: RefreshCw,
@@ -1166,6 +1178,7 @@ const Index = () => {
       <main>
         <Hero onCTA={onCTA} loading={loading} />
         <DemoSection />
+        <PulseSection />
         <Quotidien />
         <Presentation />
         <Serenite />
