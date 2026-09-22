@@ -267,6 +267,7 @@ function TodoTab({ userId }: { userId: string }) {
       <Card className="p-4 space-y-3 bg-white/80">
         <div className="flex gap-2">
           <Input placeholder="Nouvelle tâche..." value={title} onChange={(e) => setTitle(e.target.value)} onKeyDown={(e) => e.key === "Enter" && add()} />
+          <VoiceDictationButton onText={(t) => setTitle(t)} label="Dicter la tâche" />
           <Button onClick={add}><Plus className="w-4 h-4" /></Button>
         </div>
         <div className="grid grid-cols-2 gap-2">
