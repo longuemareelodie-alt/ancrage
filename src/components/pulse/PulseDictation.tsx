@@ -120,7 +120,7 @@ const PulseDictation = ({ onAdded }: { onAdded?: () => void }) => {
             className="mt-3 rounded-[18px] border border-border/60 bg-card px-4 py-3"
           >
             <div className="flex items-center gap-3">
-              <MascotAvatar mascot={mascot} size={34} className="rounded-xl" />
+              <MascotPicker value={domain} onChange={(d) => setChosen(d)} showLabel={false} />
               <input
                 value={draft}
                 onChange={(e) => setDraft(e.target.value)}
