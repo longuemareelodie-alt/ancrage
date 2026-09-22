@@ -236,9 +236,13 @@ function TodoTab({ userId }: { userId: string }) {
 
   const add = async () => {
     if (!title) return;
-    const { error } = await supabase.from("todo_items").insert({ user_id: userId, title, priority, due_date: dueDate || null, reminder_offset_hours: reminderOffset });
+    const { error } = await supabase.from("todo_items").insert({ user_id: userId, title, priority, due_date: dueDate || null, reminder_offset_hours: reminderOffset, domain: domain ?? guessDomain(title) });
     if (error) return toast.error(error.message);
-    setTitle(""); setDueDate(""); setPriority("normal"); setReminderOffset(24);
+    setTitle(""); setDueDate(""); setPriority("normal"); setReminderOffset(24); setDomain(null);
+    load();
+  };
+  const updateDomain = async (id: string, value: PulseDomain | null) => {
+    await supabase.from("todo_items").update({ domain: value }).eq("id", id);
     load();
   };
   const toggle = async (t: Todo) => {
