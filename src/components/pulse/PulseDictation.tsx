@@ -21,7 +21,7 @@ const PulseDictation = ({ onAdded }: { onAdded?: () => void }) => {
     onError: (message) => toast({ description: message }),
   });
 
-  const mascot = draft ? mascotOf(guessDomain(draft)) : null;
+  const domain = chosen !== undefined ? chosen : draft ? guessDomain(draft) : null;
 
   const save = async () => {
     const title = draft.trim();
