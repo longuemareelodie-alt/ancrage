@@ -164,7 +164,10 @@ function AgendaTab({ userId }: { userId: string }) {
     <div className="space-y-6">
       <Card className="p-4 space-y-3 bg-white/80">
         <h3 className="font-serif text-lg">Nouvel événement</h3>
-        <Input placeholder="Titre" value={title} onChange={(e) => setTitle(e.target.value)} />
+        <div className="flex items-center gap-2">
+          <Input placeholder="Titre" value={title} onChange={(e) => setTitle(e.target.value)} />
+          <VoiceDictationButton onText={(t) => setTitle(t)} label="Dicter le titre" />
+        </div>
         <div className="grid grid-cols-2 gap-2">
           <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
           <Input type="time" value={time} onChange={(e) => setTime(e.target.value)} />
