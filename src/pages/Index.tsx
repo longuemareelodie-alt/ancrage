@@ -504,14 +504,15 @@ const Transformations = () => {
   return (
     <Section id="modules" className="bg-card">
       <motion.div {...fadeUp} className="mx-auto max-w-2xl text-center">
-        <Eyebrow>Ce que ça change</Eyebrow>
+        <Eyebrow>Ce que tu tiens dès le premier jour</Eyebrow>
         <h2 className="mt-4 font-serif text-[clamp(1.75rem,4vw,3rem)] leading-[1.1] tracking-tight text-night">
-          Six transformations,
+          Six choses en moins
           <br />
           <span className="italic text-primary-dark">
-            un même soulagement.
+            à porter toute seule.
           </span>
         </h2>
+
       </motion.div>
 
       <div className="mt-16 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
