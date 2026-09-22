@@ -5,6 +5,7 @@ import { BRAIN_STATES, usePulseState } from "@/hooks/usePulseState";
 import { useNextAction } from "@/hooks/useNextAction";
 import { MASCOTS, mascotOf } from "@/data/pulseMascots";
 import { toast } from "@/hooks/use-toast";
+import PulseDictation from "@/components/pulse/PulseDictation";
 
 /**
  * PULSE — le moteur quotidien, posé en haut d'« Aujourd'hui ».
@@ -131,6 +132,9 @@ const PulseBlock = ({ onChange }: { onChange?: () => void }) => {
             </Link>
           </>
         )}
+
+        {/* 🎙️ Dictée vocale : parler plutôt que taper */}
+        <PulseDictation onAdded={onChange} />
       </div>
 
       {/* 3 — L'équipe : six compagnons, six domaines */}
