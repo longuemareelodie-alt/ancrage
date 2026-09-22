@@ -19,3 +19,5 @@ project_id = "mpadkxqomykztvqrnmfv"
     verify_jwt = false
   [functions.check-mollie-payment]
     verify_jwt = false
+  [functions.transcribe-voice]
+    verify_jwt = true
