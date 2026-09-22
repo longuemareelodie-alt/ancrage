@@ -609,9 +609,11 @@ const Fondatrice = ({ onCTA, loading }: { onCTA: () => void; loading: boolean })
           ))}
         </div>
         <p className="mt-3 text-[12px] leading-relaxed text-muted-foreground">
-          Les visages de mes enfants restent flous : c'est leur vie privée, pas
-          un argument de vente.
+          Vous ne verrez pas leurs visages, et c'est voulu : ce sont mes enfants
+          avant d'être une histoire à raconter. Éclosia est né de ce réflexe-là
+          — protéger ce qui compte, et tout garder au même endroit, à l'abri.
         </p>
+
       </motion.div>
 
       <motion.div {...fadeUp}>
