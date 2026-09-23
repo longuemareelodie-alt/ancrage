@@ -23,7 +23,7 @@ const OffreV4 = ({ onCTA, loading }: { onCTA: () => void; loading: boolean }) =>
     <Band id="tarif">
       <div
         ref={viewRef}
-        className="mx-auto max-w-2xl rounded-2xl border border-primary/25 bg-card px-5 py-7 text-center shadow-[0_24px_60px_-40px_hsl(var(--night)/0.45)] md:px-10 md:py-9"
+        className="mx-auto max-w-2xl rounded-2xl border border-primary/25 bg-card px-5 py-6 text-center shadow-[0_24px_60px_-40px_hsl(var(--night)/0.45)] md:px-10 md:py-8"
       >
         <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary-dark">
           {tier.emoji} {tier.label}
@@ -35,7 +35,7 @@ const OffreV4 = ({ onCTA, loading }: { onCTA: () => void; loading: boolean }) =>
           Un seul paiement. Accès à vie.
         </p>
 
-        <ul className="mx-auto mt-5 grid max-w-md gap-1.5 text-left">
+        <ul className="mx-auto mt-4 grid max-w-md gap-1 text-left">
           {AVANTAGES.map((a) => (
             <li key={a} className="flex items-start gap-2 text-[14px] text-foreground/85">
               <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary-dark" aria-hidden="true" />
@@ -44,7 +44,7 @@ const OffreV4 = ({ onCTA, loading }: { onCTA: () => void; loading: boolean }) =>
           ))}
         </ul>
 
-        <p className="mt-5 text-[12.5px] text-muted-foreground">
+        <p className="mt-4 text-[12.5px] text-muted-foreground">
           Tarif fondateur évolutif :{" "}
           {FOUNDING_TIERS.map((t) => formatEurAmount(t.priceCents / 100)).join(" → ")}
         </p>
@@ -56,7 +56,7 @@ const OffreV4 = ({ onCTA, loading }: { onCTA: () => void; loading: boolean }) =>
             onCTA();
           }}
           disabled={loading}
-          className="mt-5 inline-flex min-h-[52px] w-full items-center justify-center rounded-full bg-night px-6 text-[15px] font-medium text-night-foreground transition-transform hover:-translate-y-[1px] disabled:opacity-60"
+          className="mt-4 inline-flex min-h-[52px] w-full items-center justify-center rounded-full bg-night px-6 text-[15px] font-medium text-night-foreground transition-transform hover:-translate-y-[1px] disabled:opacity-60"
         >
           🌸 Je rejoins Éclosia{price ? ` — ${price}` : ""}
         </button>

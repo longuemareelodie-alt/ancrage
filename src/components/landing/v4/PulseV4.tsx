@@ -9,7 +9,7 @@ const STATES = [
 
 const PulseV4 = () => (
   <Band id="pulse" className="bg-card">
-    <div className="grid gap-6 md:grid-cols-[0.9fr_1.1fr] md:items-center md:gap-10">
+    <div className="grid gap-4 md:grid-cols-[0.9fr_1.1fr] md:items-center md:gap-10">
       <div>
         <Eyebrow>Le cœur d'Éclosia</Eyebrow>
         <H2>
@@ -17,7 +17,7 @@ const PulseV4 = () => (
           <br />
           <span className="italic text-primary-dark">Éclosia adapte la suite.</span>
         </H2>
-        <p className="mt-3 text-[14.5px] leading-relaxed text-foreground/75">
+        <p className="mt-2 text-[14.5px] leading-relaxed text-foreground/75">
           Une seule prochaine action. Jamais une liste qui t'écrase.
         </p>
       </div>

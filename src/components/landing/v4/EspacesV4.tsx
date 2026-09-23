@@ -15,7 +15,7 @@ const EspacesV4 = () => (
     <H2>
       Tout ce que tu portes. <span className="italic">Un seul espace.</span>
     </H2>
-    <ul className="mt-5 grid grid-cols-2 gap-2.5 md:grid-cols-3">
+    <ul className="mt-4 grid grid-cols-2 gap-2 md:grid-cols-3">
       {ESPACES.map((e) => (
         <li
           key={e.title}

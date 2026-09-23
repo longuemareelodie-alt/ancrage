@@ -17,7 +17,7 @@ export const Band = ({
   className?: string;
   id?: string;
 }) => (
-  <section id={id} className={`px-5 py-6 md:px-6 md:py-10 ${className}`}>
+  <section id={id} className={`px-5 py-5 md:px-6 md:py-9 ${className}`}>
     <div className="mx-auto w-full max-w-[1100px]">{children}</div>
   </section>
 );
