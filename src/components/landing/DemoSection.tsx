@@ -51,7 +51,7 @@ const TOUR = [
 ];
 
 const MiniTour = () => (
-  <motion.div {...fadeUp} className="mx-auto mt-16 max-w-4xl">
+  <motion.div {...fadeUp} className="mx-auto mt-12 max-w-4xl">
     <p className="text-center text-xs font-semibold uppercase tracking-[0.2em] text-primary-dark">
       La visite en 3 étapes
     </p>
