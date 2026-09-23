@@ -223,3 +223,14 @@
     100% { box-shadow: 0 0 0 0 hsl(142 60% 55% / 0); }
   }
 }
+
+/* Questions de la page de vente : jamais de texte justifié ni de mots étirés,
+   même quand le texte est un enfant direct d'un conteneur flex (Safari iOS). */
+.faq-trigger,
+.faq-trigger * {
+  text-align: left !important;
+  text-align-last: left !important;
+  word-spacing: normal !important;
+  -webkit-hyphens: none;
+  hyphens: none;
+}
