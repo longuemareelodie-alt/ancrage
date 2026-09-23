@@ -1,5 +1,6 @@
 import { useState } from "react";
 import famille from "@/assets/famille/IMG_2117.jpg.asset.json";
+import fondatriceVideo from "@/assets/video/eclosia-fondatrice-son5.mp4.asset.json";
 import { Band, Eyebrow, H2 } from "./kit";
 
 const HistoireV4 = () => {
