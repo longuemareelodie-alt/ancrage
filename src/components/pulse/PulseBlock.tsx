@@ -185,14 +185,14 @@ const PulseBlock = ({ onChange }: { onChange?: () => void }) => {
           Ton équipe
         </p>
         <div className="grid grid-cols-6 gap-2">
-          {MASCOTS.map((m) => (
+          {MASCOTS.map((m, i) => (
             <Link
               key={m.domain}
               to={m.to}
               aria-label={`${m.name} — ${m.label}`}
               className="flex flex-col items-center gap-1"
             >
-              <MascotAvatar mascot={m} size={44} />
+              <MascotAvatar mascot={m} size={44} alive index={i} className="mascot-tap" />
               <span className="text-[10px] leading-tight text-muted-foreground">{m.label}</span>
             </Link>
           ))}

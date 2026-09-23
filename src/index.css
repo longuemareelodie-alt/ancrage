@@ -234,3 +234,33 @@
   -webkit-hyphens: none;
   hyphens: none;
 }
+
+/* === Mascottes vivantes : micro-animations douces, uniquement transform === */
+@layer utilities {
+  .mascot-alive { will-change: transform; transform-origin: 50% 90%; animation-timing-function: ease-in-out; animation-iteration-count: infinite; }
+  .mascot-moi     { animation-name: m-louve;   animation-duration: 5.2s; }
+  .mascot-sante   { animation-name: m-biche;   animation-duration: 6s; }
+  .mascot-admin   { animation-name: m-renard;  animation-duration: 6.4s; }
+  .mascot-argent  { animation-name: m-abeille; animation-duration: 3.8s; }
+  .mascot-ecole   { animation-name: m-lapin;   animation-duration: 5.6s; }
+  .mascot-maison  { animation-name: m-chat;    animation-duration: 6.8s; }
+
+  .mascot-tap { transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1); -webkit-tap-highlight-color: transparent; }
+  .mascot-tap:hover { transform: translateY(-1px); }
+  .mascot-tap:active { transform: scale(1.05) translateY(-2px); transition-duration: 0.18s; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mascot-alive { animation: none !important; }
+    .mascot-tap:hover { transform: none; }
+  }
+  :root.no-deco-motion .mascot-alive { animation: none !important; }
+}
+
+@layer base {
+  @keyframes m-louve   { 0%,100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-1px) scale(1.02, 1.025); } }
+  @keyframes m-biche   { 0%,100% { transform: rotate(0) scale(1); } 30% { transform: rotate(-1.2deg) scale(1.015); } 60% { transform: rotate(1deg) scale(1.02); } }
+  @keyframes m-renard  { 0%,100% { transform: rotate(0) scale(1); } 40% { transform: rotate(1.8deg) scale(1.015); } 75% { transform: rotate(-1deg) scale(1.02); } }
+  @keyframes m-abeille { 0%,100% { transform: translateY(0) rotate(0); } 25% { transform: translateY(-2px) rotate(0.6deg); } 50% { transform: translateY(-3px) rotate(-0.4deg); } 75% { transform: translateY(-1.5px) rotate(0.5deg); } }
+  @keyframes m-lapin   { 0%,100% { transform: translateY(0) scale(1); } 45% { transform: translateY(-1.5px) scale(1, 1.02) rotate(-0.8deg); } 70% { transform: translateY(-0.5px) rotate(0.6deg); } }
+  @keyframes m-chat    { 0%,100% { transform: scale(1); } 50% { transform: scale(1.018, 1.024); } }
+}

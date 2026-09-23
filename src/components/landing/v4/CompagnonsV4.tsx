@@ -1,4 +1,5 @@
 import { MASCOTS } from "@/data/pulseMascots";
+import { mascotAliveClass, mascotDelay } from "@/lib/mascotMotion";
 import { Band, Eyebrow, H2 } from "./kit";
 
 const CompagnonsV4 = () => (
@@ -13,19 +14,21 @@ const CompagnonsV4 = () => (
         </p>
       </div>
       <ul className="grid grid-cols-3 gap-2.5 sm:grid-cols-6">
-        {MASCOTS.map((m) => (
+        {MASCOTS.map((m, i) => (
           <li key={m.domain} className="text-center">
             <div
-              className={`mx-auto flex h-14 w-14 items-center justify-center rounded-full ${m.tint}`}
+              className={`mascot-tap mx-auto flex h-14 w-14 items-center justify-center rounded-full ${m.tint}`}
             >
-              <img
-                src={m.image}
-                alt={m.name}
-                width={56}
-                height={56}
-                loading="lazy"
-                className="h-12 w-12 object-contain"
-              />
+              <span className={mascotAliveClass(m.domain)} style={mascotDelay(i)}>
+                <img
+                  src={m.image}
+                  alt={m.name}
+                  width={56}
+                  height={56}
+                  loading="lazy"
+                  className="h-12 w-12 object-contain"
+                />
+              </span>
             </div>
             <p className="mt-1 text-[12.5px] font-medium text-night">{m.name}</p>
             <p className="text-[11.5px] text-muted-foreground">{m.label}</p>
