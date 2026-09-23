@@ -358,25 +358,25 @@ const Aujourdhui = () => {
         )}
 
         {/* 6 — Progression : trois repères doux, jamais de statistique anxiogène */}
-        <motion.section {...fade(5)} className="mt-8 flex items-center justify-between gap-2 rounded-[20px] border border-border/60 bg-card/50 px-5 py-4">
+        <motion.section {...fade(5)} className="mt-6 flex items-center justify-between gap-2 rounded-2xl border border-border/60 bg-card/50 px-4 py-2.5">
           {[
             { value: progress.days, label: progress.days > 1 ? "jours ici" : "jour ici" },
             { value: progress.supports, label: "supports" },
-            { value: progress.goals, label: "réussites" },
+            { value: progress.goals, label: progress.goals > 1 ? "objectifs atteints" : "objectif atteint" },
           ].map((s) => (
             <span key={s.label} className="flex-1 text-center">
-              <span className="block text-lg font-semibold tabular-nums text-foreground">
+              <span className="block text-base font-semibold leading-tight tabular-nums text-foreground">
                 {s.value}
               </span>
-              <span className="mt-0.5 block text-[11px] text-muted-foreground">{s.label}</span>
+              <span className="block text-[10.5px] leading-tight text-muted-foreground">{s.label}</span>
             </span>
           ))}
         </motion.section>
 
-        {/* 7 — Respiration éditoriale */}
+        {/* 7 — Signature douce */}
         <motion.p
           {...fade(6)}
-          className="mt-10 text-center font-serif text-base italic text-muted-foreground"
+          className="mt-3 text-center font-serif text-[13px] italic text-muted-foreground/80"
         >
           « {quote} »
         </motion.p>

@@ -46,10 +46,9 @@ export default function RestartTourButton() {
       }
       aria-label="Refaire la visite guidée"
       title="Refaire la visite guidée"
-      className="fixed bottom-24 right-4 z-30 inline-flex h-11 items-center gap-1.5 rounded-full border border-border bg-card/95 px-3.5 text-xs font-semibold text-foreground shadow-lg backdrop-blur transition-transform hover:scale-105 focus:outline-none focus-visible:ring-4 focus-visible:ring-primary/40"
+      className="fixed right-3 top-[calc(env(safe-area-inset-top)+0.75rem)] z-30 inline-flex h-8 w-8 items-center justify-center rounded-full border border-border/60 bg-card/80 text-muted-foreground backdrop-blur transition-colors hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
     >
-      <HelpCircle className="h-4 w-4 text-primary" aria-hidden="true" />
-      <span>Visite</span>
+      <HelpCircle className="h-4 w-4" aria-hidden="true" strokeWidth={1.75} />
     </button>
   );
 }
