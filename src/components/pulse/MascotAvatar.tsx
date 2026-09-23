@@ -47,7 +47,6 @@ const MascotAvatar = ({
         className="h-full w-full scale-[1.08] object-contain"
       />
       </span>
-      />
     </span>
   );
 };
