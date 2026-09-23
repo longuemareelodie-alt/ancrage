@@ -236,7 +236,7 @@
 }
 
 /* === Mascottes vivantes : micro-animations douces, uniquement transform === */
-@layer utilities {
+/* hors @layer : classes construites dynamiquement, sinon purgées */
   .mascot-alive { will-change: transform; transform-origin: 50% 90%; animation-timing-function: ease-in-out; animation-iteration-count: infinite; }
   .mascot-moi     { animation-name: m-louve;   animation-duration: 5.2s; }
   .mascot-sante   { animation-name: m-biche;   animation-duration: 6s; }
@@ -254,7 +254,6 @@
     .mascot-tap:hover { transform: none; }
   }
   :root.no-deco-motion .mascot-alive { animation: none !important; }
-}
 
 @layer base {
   @keyframes m-louve   { 0%,100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-1px) scale(1.02, 1.025); } }
