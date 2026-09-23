@@ -321,7 +321,7 @@ const Hero = ({ onCTA, loading }: { onCTA: () => void; loading: boolean }) => (
       initial={{ opacity: 0, y: 60 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 1.2, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
-      className="relative mx-auto mt-16 w-full max-w-[420px] px-6"
+      className="relative mx-auto mt-10 w-full max-w-[230px] px-6 sm:max-w-[260px]"
     >
       <div className="relative">
         <div className="absolute -inset-8 -z-10 rounded-[3rem] bg-gradient-to-b from-primary/20 to-transparent blur-2xl" />
