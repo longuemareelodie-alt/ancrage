@@ -7,6 +7,7 @@ import {
   estimateWithHabits,
   type DurationSample,
 } from "@/lib/pulseDurations";
+import { emitPulseChange, onPulseChange } from "@/lib/pulseBus";
 
 /**
  * ⚡ Prochaine action — le cœur de PULSE.
@@ -79,7 +80,7 @@ export function useNextAction(brainState: BrainState | null) {
       const dayEnd = new Date(iso + "T23:59:59").toISOString();
       const horizon = new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 10);
 
-      const [todos, appts, events, samples, profiles, vaccins, medEvents] =
+      const [todos, appts, events, samples, profiles, vaccins, medEvents, skips] =
         await Promise.all([
           supabase
             .from("todo_items")
@@ -118,6 +119,12 @@ export function useNextAction(brainState: BrainState | null) {
             .select("id, title, event_date, profile_id")
             .eq("event_date", iso)
             .limit(10),
+          // « Plus tard » : ce qui a été reporté aujourd'hui ne revient pas en tête.
+          supabase
+            .from("pulse_action_skips")
+            .select("action_key")
+            .gte("created_at", iso + "T00:00:00")
+            .limit(200),
         ]);
 
       if (cancelled) return;
@@ -231,10 +238,20 @@ export function useNextAction(brainState: BrainState | null) {
         );
       });
 
+      // Reporté aujourd'hui → on le garde, mais en fin de file.
+      const skipped = new Set((skips.data ?? []).map((s) => s.action_key as string));
+
       const max = maxMinutesFor(brainState);
       const fits = items.filter((i) => i.minutes <= max);
-      const pool = fits.length ? fits : items;
-      pool.sort((a, b) => a.weight - b.weight || a.minutes - b.minutes);
+      // Les jours saturés ou KO, on ne remonte jamais une action trop lourde.
+      const strict = brainState === "ko" || brainState === "sature";
+      const pool = fits.length || strict ? fits : items;
+      pool.sort(
+        (a, b) =>
+          Number(skipped.has(a.id)) - Number(skipped.has(b.id)) ||
+          a.weight - b.weight ||
+          a.minutes - b.minutes,
+      );
 
       setQueue(pool.map(({ weight: _w, ...rest }) => rest));
       setLoading(false);
@@ -278,11 +295,29 @@ export function useNextAction(brainState: BrainState | null) {
         }
       }
     }
+    emitPulseChange();
   }, []);
 
-  const skip = useCallback((action: NextAction) => {
-    setQueue((q) => [...q.filter((a) => a.id !== action.id), action]);
-  }, []);
+  /** « Plus tard » : rien n'est supprimé, mais on s'en souvient pour la journée. */
+  const skip = useCallback(
+    async (action: NextAction) => {
+      setQueue((q) => [...q.filter((a) => a.id !== action.id), action]);
+      navigator.vibrate?.(8);
+      const { data: auth } = await supabase.auth.getUser();
+      if (auth.user) {
+        await supabase.from("pulse_action_skips").insert({
+          user_id: auth.user.id,
+          action_key: action.id,
+          source: action.source,
+          domain: action.domain,
+          length_bucket: bucketOf(action.label),
+          brain_state: brainState,
+        });
+      }
+      emitPulseChange();
+    },
+    [brainState],
+  );
 
   /**
    * Reprendre la prochaine action : on réécrit son libellé (tâches uniquement),
@@ -298,8 +333,12 @@ export function useNextAction(brainState: BrainState | null) {
     if (error) return false;
     setQueue((q) => q.map((a) => (a.id === action.id ? { ...a, label: title } : a)));
     navigator.vibrate?.(10);
+    emitPulseChange();
     return true;
   }, []);
+
+  // Une action cochée ici se met aussi à jour là-bas (bloc ↔ badge flottant).
+  useEffect(() => onPulseChange(reload), [reload]);
 
   return {
     next: queue[0] ?? null,

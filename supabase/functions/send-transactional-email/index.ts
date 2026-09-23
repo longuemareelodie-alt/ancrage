@@ -57,8 +57,17 @@ Deno.serve(async (req) => {
     return new Response(null, { headers: corsHeaders })
   }
 
+  // Les appels internes (cron, autres fonctions) présentent la clé service-role.
+  // Celle-ci n'est pas toujours un JWT (clés secrètes `sb_secret_…`) : on la
+  // compare donc directement, sinon les rappels santé étaient rejetés en 401.
+  const presentedToken = (req.headers.get('Authorization') ?? '')
+    .replace(/^Bearer\s+/i, '')
+    .trim()
+  const serviceKeyEnv = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+  const isInternalCaller = !!presentedToken && presentedToken === serviceKeyEnv
+
   const callerRole = decodeJwtRole(req.headers.get('Authorization'))
-  if (callerRole !== 'service_role' && callerRole !== 'authenticated') {
+  if (!isInternalCaller && callerRole !== 'service_role' && callerRole !== 'authenticated') {
     return new Response(
       JSON.stringify({ error: 'Unauthorized' }),
       { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },

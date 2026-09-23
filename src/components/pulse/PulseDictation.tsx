@@ -7,6 +7,7 @@ import { useVoiceDictation } from "@/hooks/useVoiceDictation";
 import { toast } from "@/hooks/use-toast";
 import MascotPicker from "@/components/pulse/MascotPicker";
 import DictationWords from "@/components/pulse/DictationWords";
+import { emitPulseChange } from "@/lib/pulseBus";
 
 /**
  * 🎙️ Dictée vocale PULSE — on parle, la prochaine action s'écrit toute seule.
@@ -61,6 +62,7 @@ const PulseDictation = ({
     navigator.vibrate?.(12);
     reset();
     toast({ description: "C'est noté. Tu n'as plus à y penser." });
+    emitPulseChange();
     onAdded?.();
   };
 
