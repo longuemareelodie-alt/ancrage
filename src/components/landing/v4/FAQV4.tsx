@@ -82,9 +82,9 @@ const FAQV4 = () => (
           <AccordionItem key={i.q} value={i.q} className="border-border/60">
             <AccordionTrigger
               onClick={() => track("faq_open", { q: i.q })}
-              className="gap-3 py-2.5 text-left text-[14.5px] font-medium text-night hover:no-underline"
+              className="faq-trigger gap-3 py-2.5 text-[14.5px] font-medium text-night hover:no-underline [&>svg]:shrink-0"
             >
-              <span className="flex-1 text-left [text-align:left]">{i.q}</span>
+              <span className="block flex-1">{i.q}</span>
             </AccordionTrigger>
             <AccordionContent className="pb-2.5 text-[14px] leading-relaxed text-muted-foreground">
               {i.a ?? i.text}
