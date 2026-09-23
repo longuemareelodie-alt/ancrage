@@ -6,22 +6,18 @@ import Footer from "@/components/Footer";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
 import { track } from "@/lib/landingAnalytics";
 
-import HeroV3 from "@/components/landing/v3/HeroV3";
-import ReconnaisSection from "@/components/landing/v3/ReconnaisSection";
-import AvantApresSection from "@/components/landing/v3/AvantApresSection";
-import DemoV3 from "@/components/landing/v3/DemoV3";
-import StudioHeroSection from "@/components/landing/v3/StudioHeroSection";
-import CasUsageSection from "@/components/landing/v3/CasUsageSection";
-import FonctionnalitesSection from "@/components/landing/v3/FonctionnalitesSection";
-import PourQuiV3 from "@/components/landing/v3/PourQuiV3";
-import FondatriceV3 from "@/components/landing/v3/FondatriceV3";
-import ConfianceSection from "@/components/landing/v3/ConfianceSection";
-import PreuveSection from "@/components/landing/v3/PreuveSection";
-import OffreFondatricesSection from "@/components/landing/v3/OffreFondatricesSection";
-import PrixSection from "@/components/landing/v3/PrixSection";
-import FAQV3 from "@/components/landing/v3/FAQV3";
+import HeroV4 from "@/components/landing/v4/HeroV4";
+import PulseV4 from "@/components/landing/v4/PulseV4";
+import EspacesV4 from "@/components/landing/v4/EspacesV4";
+import PremierJourV4 from "@/components/landing/v4/PremierJourV4";
+import DemarrageV4 from "@/components/landing/v4/DemarrageV4";
+import CompagnonsV4 from "@/components/landing/v4/CompagnonsV4";
+import HistoireV4 from "@/components/landing/v4/HistoireV4";
+import ConfianceV4 from "@/components/landing/v4/ConfianceV4";
+import OffreV4 from "@/components/landing/v4/OffreV4";
+import FAQV4 from "@/components/landing/v4/FAQV4";
+import FinalV4 from "@/components/landing/v4/FinalV4";
 import AmbassadriceTeaser from "@/components/landing/v3/AmbassadriceTeaser";
-import FinalCTA from "@/components/landing/FinalCTA";
 import MobileStickyCTA from "@/components/landing/v3/MobileStickyCTA";
 
 /**
