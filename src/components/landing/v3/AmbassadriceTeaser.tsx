@@ -1,14 +1,14 @@
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import { Section, fadeUp } from "../primitives";
+import { fadeUp } from "../primitives";
 import { track } from "@/lib/landingAnalytics";
 
 const AmbassadriceTeaser = () => (
-  <Section id="ambassadrice">
+  <section id="ambassadrice" className="px-5 py-5 md:px-6 md:py-8">
     <motion.div
       {...fadeUp}
-      className="mx-auto flex max-w-3xl flex-col items-center gap-4 rounded-[1.75rem] border border-border/60 bg-card px-6 py-7 text-center md:flex-row md:justify-between md:text-left"
+      className="mx-auto flex max-w-3xl flex-col items-center gap-3 rounded-2xl border border-border/60 bg-card px-5 py-4 text-center md:flex-row md:justify-between md:text-left"
     >
       <p className="text-[15px] leading-relaxed text-foreground/85">
         Tu utilises Éclosia et tu veux la faire découvrir ?
@@ -22,7 +22,7 @@ const AmbassadriceTeaser = () => (
         <ArrowRight className="h-4 w-4" aria-hidden="true" />
       </Link>
     </motion.div>
-  </Section>
+  </section>
 );
 
 export default AmbassadriceTeaser;

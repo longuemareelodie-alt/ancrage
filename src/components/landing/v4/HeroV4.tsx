@@ -10,8 +10,8 @@ const HeroV4 = ({ onCTA, loading }: { onCTA: () => void; loading: boolean }) => 
   const price = priceLabel(offer);
 
   return (
-    <section className="px-5 pb-8 pt-20 md:px-6 md:pb-14 md:pt-24">
-      <div className="mx-auto grid w-full max-w-[1100px] items-center gap-7 md:grid-cols-[1.05fr_0.95fr] md:gap-10">
+    <section className="px-5 pb-5 pt-[68px] md:px-6 md:pb-10 md:pt-20">
+      <div className="mx-auto grid w-full max-w-[1100px] items-center gap-5 md:grid-cols-[1.05fr_0.95fr] md:gap-10">
         <div className="text-center md:text-left">
           <p className="text-[10.5px] font-semibold uppercase tracking-[0.3em] text-primary-dark">
             Éclosia
@@ -25,14 +25,14 @@ const HeroV4 = ({ onCTA, loading }: { onCTA: () => void; loading: boolean }) => 
             espace à toi. Au même endroit.
           </p>
 
-          <p className="mt-4 text-[15px] font-medium text-night">
+          <p className="mt-3 text-[15px] font-medium text-night">
             🌸 {price ?? "Tarif fondateur"} · accès à vie
             <span className="ml-2 text-[13px] font-normal text-muted-foreground">
               paiement unique, sans abonnement
             </span>
           </p>
 
-          <div className="mt-4 flex flex-col items-stretch gap-2.5 sm:flex-row sm:items-center sm:justify-center md:justify-start">
+          <div className="mt-3 flex flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:justify-center md:justify-start">
             <button
               onClick={() => {
                 track("hero_cta_click");

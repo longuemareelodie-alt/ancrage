@@ -8,21 +8,21 @@ const HistoireV4 = () => {
 
   return (
     <Band id="fondatrice">
-      <div className="grid gap-5 md:grid-cols-[1fr_0.8fr] md:items-center md:gap-10">
+      <div className="grid gap-4 md:grid-cols-[1fr_0.8fr] md:items-center md:gap-8">
         <div>
           <Eyebrow>Mon histoire</Eyebrow>
           <H2>Pourquoi j'ai créé Éclosia.</H2>
-          <p className="mt-3 text-[14.5px] leading-relaxed text-foreground/80">
+          <p className="mt-2 text-[14.5px] leading-relaxed text-foreground/80">
             Je ne voulais pas créer une application de plus. Je voulais créer
             l'endroit que j'aurais aimé avoir quand tout devenait trop lourd à
             gérer.
           </p>
-          <p className="mt-3 text-[13.5px] text-muted-foreground">
+          <p className="mt-1.5 text-[13.5px] text-muted-foreground">
             Élodie — fondatrice d'Éclosia
           </p>
 
           {open && (
-            <div className="mt-3 space-y-2.5 text-[14px] leading-relaxed text-foreground/75">
+            <div className="mt-2.5 space-y-2 text-[14px] leading-relaxed text-foreground/75">
               <p>
                 Je suis maman de trois enfants, et nous sommes cinq enfants à la
                 maison. Mes deux grands vivent avec un trouble du spectre
@@ -41,7 +41,7 @@ const HistoireV4 = () => {
 
           <button
             onClick={() => setOpen((v) => !v)}
-            className="mt-3 text-[13.5px] font-medium text-primary-dark underline underline-offset-4"
+            className="mt-2.5 text-[13.5px] font-medium text-primary-dark underline underline-offset-4"
           >
             {open ? "Replier" : "Découvrir mon histoire →"}
           </button>

@@ -35,16 +35,14 @@ const MobileStickyCTA = ({
   if (!visible) return null;
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border/60 bg-background/95 px-4 py-3 backdrop-blur-xl md:hidden">
-      <div className="flex items-center justify-between gap-3">
-        <div className="min-w-0">
-          <p className="text-[11px] font-semibold uppercase tracking-wide text-primary-dark">
-            🌸 Tarif fondateur
-          </p>
-          <p className="truncate text-[13px] text-muted-foreground">
-            {offer ? `${formatEurAmount(offer.priceCents / 100)} · accès à vie` : "Accès à vie, sans abonnement"}
-          </p>
-        </div>
+    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border/60 bg-background/95 px-3 py-1.5 backdrop-blur-xl md:hidden">
+      <div className="flex items-center justify-between gap-2">
+        <p className="truncate text-[13px] font-medium text-night">
+          🌸{" "}
+          {offer
+            ? `${formatEurAmount(offer.priceCents / 100)} · accès à vie`
+            : "Accès à vie, sans abonnement"}
+        </p>
         <button
           onClick={() => {
             track("founder_cta_click", { from: "sticky" });
@@ -52,9 +50,9 @@ const MobileStickyCTA = ({
             onCTA();
           }}
           disabled={loading}
-          className="min-h-[48px] shrink-0 rounded-full bg-night px-5 text-sm font-medium text-night-foreground disabled:opacity-60"
+          className="min-h-[40px] shrink-0 rounded-full bg-night px-4 text-[13.5px] font-medium text-night-foreground disabled:opacity-60"
         >
-          Rejoindre
+          Rejoindre →
         </button>
       </div>
     </div>

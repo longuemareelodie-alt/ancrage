@@ -152,7 +152,7 @@ const Index = () => {
     <div className="min-h-screen bg-background text-foreground">
       <Nav onCTA={onCTA} loading={loading} />
 
-      <main className="pb-24 md:pb-0">
+      <main className="pb-14 md:pb-0">
         <HeroV4 onCTA={onCTA} loading={loading} />
         <PulseV4 />
         <EspacesV4 />
