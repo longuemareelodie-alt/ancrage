@@ -573,10 +573,13 @@ const Transformations = () => {
 
 /* ------------------------------ Fondatrice ----------------------------- */
 
-const Fondatrice = ({ onCTA, loading }: { onCTA: () => void; loading: boolean }) => (
+const Fondatrice = ({ onCTA, loading }: { onCTA: () => void; loading: boolean }) => {
+  const [suite, setSuite] = useState(false);
+
+  return (
   <Section id="fondatrice" className="bg-card">
     {/* Courte vidéo : la fondatrice et ses enfants, visages floutés. */}
-    <motion.div {...fadeUp} className="mx-auto mb-16 max-w-3xl">
+    <motion.div {...fadeUp} className="mx-auto mb-12 max-w-xl">
       <div className="relative">
         <div className="absolute -inset-5 -z-10 rounded-[3rem] bg-gradient-to-br from-primary/20 to-accent/10 blur-2xl" />
         <div className="overflow-hidden rounded-[2rem] border border-border/60 bg-background p-2 shadow-[0_50px_120px_-45px_hsl(var(--night)/0.35)]">
