@@ -29,11 +29,11 @@ import MobileStickyCTA from "@/components/landing/v3/MobileStickyCTA";
  */
 
 const LINKS = [
-  { href: "#demonstration", label: "Démonstration" },
-  { href: "#studio", label: "Studio d'Autonomie" },
-  { href: "#fonctionnalites", label: "Ce qui est inclus" },
+  { href: "#pulse", label: "Comment ça marche" },
+  { href: "#espaces", label: "Les espaces" },
   { href: "#fondatrice", label: "Mon histoire" },
   { href: "#tarif", label: "Tarif" },
+  { href: "#faq", label: "Questions" },
 ];
 
 const Nav = ({ onCTA, loading }: { onCTA: () => void; loading: boolean }) => {
@@ -153,22 +153,18 @@ const Index = () => {
       <Nav onCTA={onCTA} loading={loading} />
 
       <main className="pb-24 md:pb-0">
-        <HeroV3 onCTA={onCTA} loading={loading} />
-        <ReconnaisSection />
-        <AvantApresSection />
-        <DemoV3 onCTA={onCTA} loading={loading} />
-        <StudioHeroSection onCTA={onCTA} loading={loading} />
-        <CasUsageSection />
-        <FonctionnalitesSection />
-        <PourQuiV3 />
-        <FondatriceV3 onCTA={onCTA} loading={loading} />
-        <ConfianceSection />
-        <PreuveSection />
-        <OffreFondatricesSection onCTA={onCTA} loading={loading} />
-        <PrixSection onCTA={onCTA} loading={loading} />
-        <FAQV3 />
+        <HeroV4 onCTA={onCTA} loading={loading} />
+        <PulseV4 />
+        <EspacesV4 />
+        <PremierJourV4 />
+        <DemarrageV4 />
+        <CompagnonsV4 />
+        <HistoireV4 />
+        <ConfianceV4 />
+        <OffreV4 onCTA={onCTA} loading={loading} />
+        <FAQV4 />
         <AmbassadriceTeaser />
-        <FinalCTA onCTA={onCTA} loading={loading} />
+        <FinalV4 onCTA={onCTA} loading={loading} />
       </main>
 
       <Footer />
