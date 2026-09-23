@@ -131,12 +131,12 @@ const BottomNav = () => {
 
 
   const tabClass = ({ isActive }: { isActive: boolean }) =>
-    `flex flex-col items-center justify-center gap-1 rounded-xl py-1.5 text-[10px] font-medium transition-colors ${
+    `flex h-full w-full flex-col items-center justify-center gap-1 text-[10px] font-medium transition-colors ${
       isActive ? "text-primary-dark" : "text-muted-foreground hover:text-foreground"
     }`;
 
   const renderTab = (item: { to: string; label: string; icon: LucideIcon }) => (
-    <li key={item.to} className="flex-1">
+    <li key={item.to} className="min-w-0">
       <NavLink to={item.to} className={tabClass}>
         {({ isActive }) => (
           <>
@@ -144,7 +144,7 @@ const BottomNav = () => {
               className="h-[18px] w-[18px] transition-transform"
               strokeWidth={isActive ? 2.2 : 1.75}
             />
-            <span className="leading-none">{item.label}</span>
+            <span className="max-w-full truncate px-0.5 leading-none">{item.label}</span>
           </>
         )}
       </NavLink>
@@ -169,20 +169,20 @@ const BottomNav = () => {
 
   return (
     <>
-      <div aria-hidden className="h-[calc(4.5rem+env(safe-area-inset-bottom))] w-full" />
+      <div aria-hidden className="h-[calc(4.75rem+env(safe-area-inset-bottom))] w-full" />
       <nav
-        className="fixed bottom-0 left-0 right-0 z-40 border-t border-border/50 bg-background/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl"
+        className="fixed bottom-0 left-0 right-0 z-40 border-t border-border/50 bg-background/90 pb-[max(env(safe-area-inset-bottom),0.375rem)] backdrop-blur-xl"
         aria-label="Navigation principale"
       >
-        <ul className="relative mx-auto flex h-14 max-w-lg items-center justify-around px-1">
+        <ul className="mx-auto grid h-16 max-w-lg grid-cols-6 items-stretch">
           {left.map(renderTab)}
 
-          <li className="flex w-14 shrink-0 items-center justify-center">
+          <li className="flex min-w-0 items-start justify-center">
             <button
               type="button"
               onClick={() => setOpen(true)}
               aria-label="Créer"
-              className="-mt-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground ring-4 ring-background shadow-[0_8px_18px_-10px_hsl(var(--foreground)/0.4)] transition-transform active:scale-95"
+              className="-mt-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground ring-4 ring-background shadow-[0_8px_18px_-10px_hsl(var(--foreground)/0.4)] transition-transform active:scale-95"
             >
               <Plus className="h-5 w-5" strokeWidth={2} />
             </button>
