@@ -144,7 +144,7 @@ const BottomNav = () => {
               className="h-[18px] w-[18px] transition-transform"
               strokeWidth={isActive ? 2.2 : 1.75}
             />
-            <span className="max-w-full truncate px-0.5 leading-none">{item.label}</span>
+            <span className="max-w-full truncate leading-none tracking-[-0.01em]">{item.label}</span>
           </>
         )}
       </NavLink>
@@ -171,10 +171,10 @@ const BottomNav = () => {
     <>
       <div aria-hidden className="h-[calc(5.25rem+env(safe-area-inset-bottom))] w-full" />
       <nav
-        className="fixed bottom-0 left-0 right-0 z-40 px-3 pb-[max(env(safe-area-inset-bottom),0.625rem)]"
+        className="fixed bottom-0 left-0 right-0 z-40 px-2 pb-[max(env(safe-area-inset-bottom),0.625rem)]"
         aria-label="Navigation principale"
       >
-        <ul className="mx-auto grid h-[60px] max-w-lg grid-cols-6 items-stretch rounded-[22px] border border-border/60 bg-card/95 px-1 shadow-[0_10px_30px_-14px_hsl(var(--foreground)/0.28)] backdrop-blur-xl">
+        <ul className="mx-auto grid h-[60px] max-w-lg grid-cols-6 items-stretch rounded-[22px] border border-border/60 bg-card/95 shadow-[0_10px_30px_-14px_hsl(var(--foreground)/0.28)] backdrop-blur-xl">
           {left.map(renderTab)}
 
           <li className="flex min-w-0 items-center justify-center">
