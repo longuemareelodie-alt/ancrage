@@ -1,4 +1,4 @@
-import type { Mascot } from "@/data/pulseMascots";
+import { MASCOTS, type Mascot } from "@/data/pulseMascots";
 import { mascotAliveClass, mascotDelay } from "@/lib/mascotMotion";
 
 /**
@@ -8,8 +8,8 @@ const MascotAvatar = ({
   mascot,
   size = 36,
   className = "",
-  alive = false,
-  index = 0,
+  alive = true,
+  index,
 }: {
   mascot?: Mascot | null;
   size?: number;
@@ -17,6 +17,7 @@ const MascotAvatar = ({
   alive?: boolean;
   index?: number;
 }) => {
+  const i = index ?? Math.max(0, MASCOTS.findIndex((m) => m.domain === mascot?.domain));
   if (!mascot) {
     return (
       <span
@@ -36,7 +37,7 @@ const MascotAvatar = ({
     >
       <span
         className={`block h-full w-full ${alive ? mascotAliveClass(mascot.domain) : ""}`}
-        style={alive ? mascotDelay(index) : undefined}
+        style={alive ? mascotDelay(i) : undefined}
       >
       <img
         src={mascot.image}
