@@ -8,14 +8,7 @@ import {
 import { Link } from "react-router-dom";
 import { useTranslation, Trans } from "react-i18next";
 
-const ITEM_KEYS = [
-  "who",
-  "medical",
-  "duration",
-  "privacy",
-  "refund",
-  "devices",
-] as const;
+const ITEM_KEYS = ["who", "medical", "privacy", "refund"] as const;
 
 const HomeFAQ = () => {
   const { t } = useTranslation();
