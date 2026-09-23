@@ -11,6 +11,7 @@ import { START_TOUR_EVENT } from "@/components/GuidedTour";
 const HIDDEN_ROUTES = new Set<string>([
   "/",
   "/auth",
+  "/connexion",
   "/reset-password",
   "/set-password",
   "/cgv",

@@ -43,7 +43,7 @@ const BottomNav = () => {
   const [open, setOpen] = useState(false);
 
   const hiddenRoutes = [
-    "/", "/auth", "/reset-password", "/set-password",
+    "/", "/auth", "/connexion", "/reset-password", "/set-password",
     "/cgv", "/confidentialite", "/mentions-legales",
     "/unsubscribe", "/paywall", "/comparaison", "/aller-plus-loin",
     "/payment-success", "/post-flow", "/devenir-ambassadrice",

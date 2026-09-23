@@ -6,6 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 const HIDDEN_ROUTES = new Set<string>([
   "/",
   "/auth",
+  "/connexion",
   "/reset-password",
   "/set-password",
   "/cgv",
