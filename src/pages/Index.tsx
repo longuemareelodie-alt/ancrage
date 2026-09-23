@@ -505,64 +505,85 @@ const Transformations = () => {
     },
   ];
 
-  const [open, setOpen] = useState<string | null>(null);
+  const [open, setOpen] = useState<string | null>(cards[0].title);
 
   return (
     <Section id="modules" className="bg-card">
-      <motion.div {...fadeUp} className="mx-auto max-w-2xl text-center">
+      <motion.div {...fadeUp} className="mx-auto max-w-xl text-center">
         <Eyebrow>Ce que tu tiens dès le premier jour</Eyebrow>
-        <h2 className="mt-4 font-serif text-[clamp(1.75rem,4vw,3rem)] leading-[1.1] tracking-tight text-night">
+        <h2 className="mt-4 font-serif text-[clamp(1.75rem,4vw,2.75rem)] leading-[1.1] tracking-tight text-night">
           Six choses en moins
           <br />
-          <span className="italic text-primary-dark">
-            à porter toute seule.
-          </span>
+          <span className="italic text-primary-dark">à porter toute seule.</span>
         </h2>
-
+        <p className="mt-4 text-[14.5px] leading-relaxed text-muted-foreground">
+          Pour libérer de l'espace dans ta tête, et retrouver ton souffle.
+        </p>
       </motion.div>
 
-      <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {cards.map(({ icon: Icon, emoji, title, desc, more }, i) => (
-          <motion.article
-            key={title}
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{
-              duration: 0.7,
-              delay: i * 0.07,
-              ease: [0.22, 1, 0.36, 1],
-            }}
-            className="group relative overflow-hidden rounded-[1.75rem] border border-border/60 bg-background p-6 transition-all duration-500 hover:border-primary/40 hover:shadow-[0_30px_80px_-40px_hsl(var(--night)/0.25)]"
-          >
-            <div className="absolute inset-x-0 -top-24 h-40 bg-gradient-to-b from-primary/15 to-transparent opacity-0 blur-2xl transition-opacity duration-700 group-hover:opacity-100" />
-            <div className="relative flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/15">
-              <Icon className="h-5 w-5 text-primary-dark" />
-            </div>
-            <h3 className="relative mt-4 font-serif text-lg leading-tight text-night">
-              <span aria-hidden className="mr-2">
-                {emoji}
-              </span>
-              {title}
-            </h3>
-            <p className="relative mt-2 text-[14px] leading-relaxed text-muted-foreground">
-              {desc}
-            </p>
-            <button
-              type="button"
-              onClick={() => setOpen(open === title ? null : title)}
-              aria-expanded={open === title}
-              className="relative mt-3 text-[13px] font-semibold text-primary-dark underline decoration-primary/40 underline-offset-4"
+      <div className="mx-auto mt-10 max-w-xl">
+        {cards.map(({ icon: Icon, title, desc, more }, i) => {
+          const isOpen = open === title;
+          return (
+            <motion.article
+              key={title}
+              initial={{ opacity: 0, y: 18 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{
+                duration: 0.6,
+                delay: i * 0.05,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+              className="border-b border-night/10"
             >
-              {open === title ? "Replier" : "En savoir plus"}
-            </button>
-            {open === title && (
-              <p className="relative mt-3 text-[13.5px] leading-relaxed text-muted-foreground">
-                {more}
-              </p>
-            )}
-          </motion.article>
-        ))}
+              <button
+                type="button"
+                onClick={() => setOpen(isOpen ? null : title)}
+                aria-expanded={isOpen}
+                className="flex w-full items-center justify-between gap-4 py-5 text-left"
+              >
+                <span className="flex items-center gap-4">
+                  <span className="font-serif text-sm italic text-primary-dark">
+                    {String(i + 1).padStart(2, "0")}.
+                  </span>
+                  <span className="font-serif text-[17px] leading-tight text-night">
+                    {title}
+                  </span>
+                </span>
+                <span
+                  aria-hidden
+                  className={`shrink-0 text-primary-dark transition-transform duration-300 ${
+                    isOpen ? "rotate-45" : ""
+                  }`}
+                >
+                  <svg width="14" height="14" viewBox="0 0 12 12" fill="none">
+                    <path
+                      d="M6 0V12M0 6H12"
+                      stroke="currentColor"
+                      strokeWidth="1.4"
+                    />
+                  </svg>
+                </span>
+              </button>
+              {isOpen && (
+                <div className="animate-fade-in pb-6 pl-10 pr-2">
+                  <div className="flex items-start gap-3">
+                    <Icon className="mt-0.5 h-4 w-4 shrink-0 text-primary-dark/70" />
+                    <div>
+                      <p className="text-[14px] leading-relaxed text-night/80">
+                        {desc}
+                      </p>
+                      <p className="mt-2 text-[13.5px] leading-relaxed text-muted-foreground">
+                        {more}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </motion.article>
+          );
+        })}
       </div>
     </Section>
   );
