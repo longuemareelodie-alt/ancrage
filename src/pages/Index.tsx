@@ -521,8 +521,8 @@ const Transformations = () => {
 
       </motion.div>
 
-      <div className="mt-16 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-        {cards.map(({ icon: Icon, emoji, title, desc }, i) => (
+      <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {cards.map(({ icon: Icon, emoji, title, desc, more }, i) => (
           <motion.article
             key={title}
             initial={{ opacity: 0, y: 24 }}
