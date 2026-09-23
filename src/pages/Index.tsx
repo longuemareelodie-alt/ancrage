@@ -1195,57 +1195,6 @@ const AmbassadeurTeaser = () => (
   </Section>
 );
 
-/* ------------------------------ FAQ extras ---------------------------- */
-
-const FAQ_EXTRAS = [
-  {
-    q: "Pourquoi un accès à vie ?",
-    a: "Parce qu'un abonnement de plus, c'est une charge de plus. Tu paies une seule fois et Éclosia reste à toi.",
-  },
-  {
-    q: "Comment fonctionne le tarif fondateur ?",
-    a: "Il monte par paliers, de 29 € à 97 €, et les places restantes sont affichées en temps réel.",
-  },
-  {
-    q: "Puis-je payer en plusieurs fois ?",
-    a: "Oui, avec Klarna lorsque c'est disponible dans ton pays. Le bouton apparaît juste sous le paiement classique.",
-  },
-];
-
-const FaqExtras = () => (
-  <section className="px-6 pb-8">
-    <div className="mx-auto max-w-2xl">
-      <Accordion type="single" collapsible className="w-full">
-        {FAQ_EXTRAS.map((item, i) => (
-          <AccordionItem key={item.q} value={`extra-${i}`}>
-            <AccordionTrigger className="text-left text-sm font-semibold md:text-base">
-              {item.q}
-            </AccordionTrigger>
-            <AccordionContent className="text-sm leading-relaxed text-muted-foreground">
-              {item.a}
-            </AccordionContent>
-          </AccordionItem>
-        ))}
-      </Accordion>
-
-      <script
-        type="application/ld+json"
-        // eslint-disable-next-line react/no-danger
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "FAQPage",
-            mainEntity: FAQ_EXTRAS.map((item) => ({
-              "@type": "Question",
-              name: item.q,
-              acceptedAnswer: { "@type": "Answer", text: item.a },
-            })),
-          }),
-        }}
-      />
-    </div>
-  </section>
-);
 
 
 /* ------------------------------- Page --------------------------------- */
@@ -1269,10 +1218,7 @@ const Index = () => {
         <Unique />
         <Tarif onCTA={onCTA} loading={loading} />
         <AmbassadeurTeaser />
-        <div id="faq">
-          <HomeFAQ />
-          <FaqExtras />
-        </div>
+        <HomeFAQ />
         <FinalCTA onCTA={onCTA} loading={loading} />
 
       </main>

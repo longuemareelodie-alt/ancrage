@@ -10,37 +10,53 @@ import { useTranslation, Trans } from "react-i18next";
 
 const ITEM_KEYS = ["who", "medical", "privacy", "refund"] as const;
 
+const EXTRAS = [
+  {
+    q: "Un accès à vie ?",
+    a: "Oui. Tu paies une seule fois, Éclosia reste à toi.",
+  },
+  {
+    q: "Le tarif fondateur ?",
+    a: "Il monte par paliers, de 29 € à 97 €. Les places restantes sont affichées en direct.",
+  },
+  {
+    q: "Payer en plusieurs fois ?",
+    a: "Oui, avec Klarna quand c'est disponible dans ton pays.",
+  },
+];
+
 const HomeFAQ = () => {
   const { t } = useTranslation();
 
   const faqJsonLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: ITEM_KEYS.map((k) => ({
-      "@type": "Question",
-      name: t(`faq.items.${k}.q`),
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: t(`faq.items.${k}.a`),
-      },
-    })),
+    mainEntity: [
+      ...ITEM_KEYS.map((k) => ({
+        "@type": "Question",
+        name: t(`faq.items.${k}.q`),
+        acceptedAnswer: { "@type": "Answer", text: t(`faq.items.${k}.a`) },
+      })),
+      ...EXTRAS.map((item) => ({
+        "@type": "Question",
+        name: item.q,
+        acceptedAnswer: { "@type": "Answer", text: item.a },
+      })),
+    ],
   };
 
   return (
     <SectionBlock>
-      <div id="faq" className="space-y-4 scroll-mt-20">
-        <div className="space-y-2 text-center">
-          <h2 className="text-xl font-bold md:text-2xl">{t("faq.title")}</h2>
-          <p className="text-sm text-muted-foreground">{t("faq.intro")}</p>
-        </div>
+      <div id="faq" className="mx-auto max-w-2xl space-y-3 scroll-mt-20">
+        <h2 className="text-center text-xl font-bold md:text-2xl">{t("faq.title")}</h2>
 
         <Accordion type="single" collapsible className="w-full">
           {ITEM_KEYS.map((k, i) => (
             <AccordionItem key={k} value={`item-${i}`}>
-              <AccordionTrigger className="text-left text-sm font-semibold md:text-base">
+              <AccordionTrigger className="py-2.5 text-left text-sm font-semibold">
                 {t(`faq.items.${k}.q`)}
               </AccordionTrigger>
-              <AccordionContent className="text-sm text-muted-foreground leading-relaxed">
+              <AccordionContent className="pb-3 text-sm leading-relaxed text-muted-foreground">
                 {k === "privacy" ? (
                   <Trans
                     i18nKey="faq.items.privacy.a"
@@ -58,6 +74,17 @@ const HomeFAQ = () => {
                 ) : (
                   t(`faq.items.${k}.a`)
                 )}
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+
+          {EXTRAS.map((item, i) => (
+            <AccordionItem key={item.q} value={`extra-${i}`}>
+              <AccordionTrigger className="py-2.5 text-left text-sm font-semibold">
+                {item.q}
+              </AccordionTrigger>
+              <AccordionContent className="pb-3 text-sm leading-relaxed text-muted-foreground">
+                {item.a}
               </AccordionContent>
             </AccordionItem>
           ))}
