@@ -1,138 +1,44 @@
-import Footer from "@/components/Footer";
-import HomeFAQ from "@/components/HomeFAQ";
-import KlarnaPayButton from "@/components/KlarnaPayButton";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-
-import {
-  ArrowRight,
-  Heart,
-  Stethoscope,
-  FolderLock,
-  Sparkles,
-  Users,
-  ShieldAlert,
-  Check,
-  Infinity as InfinityIcon,
-  Lock,
-  BadgeCheck,
-  HeartHandshake,
-  Menu,
-  X,
-  CalendarDays,
-  ListChecks,
-  ShoppingCart,
-  NotebookPen,
-  Bell,
-  BookHeart,
-  BookOpen,
-  BarChart3,
-  RefreshCw,
-  Wallet,
-  Stars,
-  Zap,
-} from "lucide-react";
 import { Link } from "react-router-dom";
+import { Menu, X } from "lucide-react";
+
+import Footer from "@/components/Footer";
 import { useMolliePayment } from "@/hooks/useMolliePayment";
-import { PREMIUM_PRICE_SHORT } from "@/lib/premiumOffer";
-import FoundingPrice from "@/components/FoundingPrice";
-import FoundingFamiliesBanner from "@/components/FoundingFamiliesBanner";
-import DemoSection from "@/components/landing/DemoSection";
-import ScreensCarousel from "@/components/landing/ScreensCarousel";
-import PulseSection from "@/components/landing/PulseSection";
-import StudioSection from "@/components/landing/StudioSection";
-import AssistantSection from "@/components/landing/AssistantSection";
-import PourQuiSection from "@/components/landing/PourQuiSection";
-import TarifFondateurSection from "@/components/landing/TarifFondateurSection";
+import { track } from "@/lib/landingAnalytics";
+
+import HeroV3 from "@/components/landing/v3/HeroV3";
+import ReconnaisSection from "@/components/landing/v3/ReconnaisSection";
+import AvantApresSection from "@/components/landing/v3/AvantApresSection";
+import DemoV3 from "@/components/landing/v3/DemoV3";
+import StudioHeroSection from "@/components/landing/v3/StudioHeroSection";
+import CasUsageSection from "@/components/landing/v3/CasUsageSection";
+import FonctionnalitesSection from "@/components/landing/v3/FonctionnalitesSection";
+import PourQuiV3 from "@/components/landing/v3/PourQuiV3";
+import FondatriceV3 from "@/components/landing/v3/FondatriceV3";
+import ConfianceSection from "@/components/landing/v3/ConfianceSection";
+import PreuveSection from "@/components/landing/v3/PreuveSection";
+import OffreFondatricesSection from "@/components/landing/v3/OffreFondatricesSection";
+import PrixSection from "@/components/landing/v3/PrixSection";
+import FAQV3 from "@/components/landing/v3/FAQV3";
+import AmbassadriceTeaser from "@/components/landing/v3/AmbassadriceTeaser";
 import FinalCTA from "@/components/landing/FinalCTA";
+import MobileStickyCTA from "@/components/landing/v3/MobileStickyCTA";
 
-import famille1 from "@/assets/famille/IMG_1687.jpg.asset.json";
-import famille2 from "@/assets/famille/IMG_1814.jpg.asset.json";
-import famille3 from "@/assets/famille/IMG_2117.jpg.asset.json";
-import fondatriceVideo from "@/assets/video/eclosia-fondatrice-son5.mp4.asset.json";
-import fondatricePoster from "@/assets/video/fondatrice-poster.jpg.asset.json";
-import journalShot from "@/assets/showcase/journal.jpg.asset.json";
-import dashboardShot from "@/assets/showcase/dashboard.jpg.asset.json";
+/**
+ * Page de vente Éclosia.
+ * Parcours : comprendre → se reconnaître → voir le produit → se projeter →
+ * être rassurée → rejoindre les Familles Fondatrices.
+ * Aucun chiffre, témoignage ou compte à rebours inventé : le tarif vient
+ * de la base, les témoignages n'apparaissent que s'ils existent vraiment.
+ */
 
-const fadeUp = {
-  initial: { opacity: 0, y: 24 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, amount: 0.2 },
-  transition: { duration: 0.9, ease: [0.22, 1, 0.36, 1] as const },
-};
-
-const fadeIn = {
-  initial: { opacity: 0 },
-  whileInView: { opacity: 1 },
-  viewport: { once: true, amount: 0.2 },
-  transition: { duration: 1.1, ease: [0.22, 1, 0.36, 1] as const },
-};
-
-/* -------------------------- Reusable primitives -------------------------- */
-
-const Section = ({
-  children,
-  className = "",
-  id,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  id?: string;
-}) => (
-  <section id={id} className={`px-6 py-9 md:py-14 ${className}`}>
-    <div className="mx-auto w-full max-w-[1180px]">{children}</div>
-  </section>
-);
-
-const Eyebrow = ({ children }: { children: React.ReactNode }) => (
-  <p className="text-[11px] font-medium uppercase tracking-[0.24em] text-primary-dark/80">
-    {children}
-  </p>
-);
-
-const PrimaryCTA = ({
-  onClick,
-  disabled,
-  children,
-  className = "",
-}: {
-  onClick?: () => void;
-  disabled?: boolean;
-  children: React.ReactNode;
-  className?: string;
-}) => (
-  <button
-    onClick={onClick}
-    disabled={disabled}
-    className={`group inline-flex items-center justify-center gap-2 rounded-full bg-night px-7 py-3.5 text-sm font-medium text-night-foreground shadow-[0_10px_40px_-15px_hsl(var(--night)/0.5)] transition-all duration-300 hover:shadow-[0_15px_50px_-15px_hsl(var(--night)/0.6)] hover:-translate-y-[1px] active:translate-y-0 disabled:opacity-60 ${className}`}
-  >
-    {children}
-    <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
-  </button>
-);
-
-const GhostCTA = ({
-  href,
-  children,
-}: {
-  href: string;
-  children: React.ReactNode;
-}) => (
-  <a
-    href={href}
-    className="inline-flex items-center gap-1.5 rounded-full border border-border/70 bg-card/60 px-6 py-3.5 text-sm font-medium text-foreground backdrop-blur-md transition-all duration-300 hover:bg-card hover:border-border"
-  >
-    {children}
-  </a>
-);
-
-/* -------------------------------- Nav ---------------------------------- */
+const LINKS = [
+  { href: "#demonstration", label: "Démonstration" },
+  { href: "#studio", label: "Studio d'Autonomie" },
+  { href: "#fonctionnalites", label: "Ce qui est inclus" },
+  { href: "#fondatrice", label: "Mon histoire" },
+  { href: "#tarif", label: "Tarif" },
+];
 
 const Nav = ({ onCTA, loading }: { onCTA: () => void; loading: boolean }) => {
   const [scrolled, setScrolled] = useState(false);
@@ -145,30 +51,21 @@ const Nav = ({ onCTA, loading }: { onCTA: () => void; loading: boolean }) => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const links = [
-    { href: "#modules", label: "Ce que ça change" },
-    { href: "#demonstration", label: "Démonstration" },
-    { href: "#inclus", label: "Ce qui est inclus" },
-    { href: "#fondatrice", label: "Mon histoire" },
-    { href: "#tarif", label: "Tarif" },
-  ];
-
-
   return (
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
         scrolled
-          ? "bg-background/70 backdrop-blur-xl border-b border-border/50"
+          ? "border-b border-border/50 bg-background/80 backdrop-blur-xl"
           : "bg-transparent"
       }`}
     >
       <div className="mx-auto flex h-16 max-w-[1180px] items-center justify-between px-6">
         <Link to="/" className="font-serif text-lg tracking-tight text-night">
-          Eclosia
+          Éclosia
         </Link>
 
-        <nav className="hidden items-center gap-8 md:flex">
-          {links.map((l) => (
+        <nav className="hidden items-center gap-7 md:flex" aria-label="Sections">
+          {LINKS.map((l) => (
             <a
               key={l.href}
               href={l.href}
@@ -187,32 +84,37 @@ const Nav = ({ onCTA, loading }: { onCTA: () => void; loading: boolean }) => {
             Je me connecte
           </Link>
           <button
-            onClick={onCTA}
+            onClick={() => {
+              track("founder_cta_click", { from: "nav" });
+              track("checkout_start", { from: "nav" });
+              onCTA();
+            }}
             disabled={loading}
-            className="rounded-full bg-night px-5 py-2 text-[13px] font-medium text-night-foreground transition-all duration-300 hover:bg-night/90"
+            className="rounded-full bg-night px-5 py-2.5 text-[13px] font-medium text-night-foreground transition-all duration-300 hover:bg-night/90 disabled:opacity-60"
           >
-            Découvrir Eclosia
+            🌸 Rejoindre
           </button>
         </div>
 
         <button
-          className="md:hidden rounded-full p-2 text-foreground"
+          className="rounded-full p-2 text-foreground md:hidden"
           onClick={() => setOpen((v) => !v)}
-          aria-label="Menu"
+          aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}
+          aria-expanded={open}
         >
           {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
       </div>
 
       {open && (
-        <div className="md:hidden border-t border-border/50 bg-background/95 backdrop-blur-xl">
+        <div className="border-t border-border/50 bg-background/95 backdrop-blur-xl md:hidden">
           <div className="mx-auto flex max-w-[1180px] flex-col gap-1 px-6 py-4">
-            {links.map((l) => (
+            {LINKS.map((l) => (
               <a
                 key={l.href}
                 href={l.href}
                 onClick={() => setOpen(false)}
-                className="rounded-lg px-2 py-2.5 text-sm text-foreground hover:bg-card"
+                className="rounded-lg px-2 py-3 text-sm text-foreground hover:bg-card"
               >
                 {l.label}
               </a>
@@ -220,18 +122,20 @@ const Nav = ({ onCTA, loading }: { onCTA: () => void; loading: boolean }) => {
             <Link
               to="/connexion"
               onClick={() => setOpen(false)}
-              className="rounded-lg px-2 py-2.5 text-sm text-foreground hover:bg-card"
+              className="rounded-lg px-2 py-3 text-sm text-foreground hover:bg-card"
             >
               Je me connecte
             </Link>
             <button
               onClick={() => {
                 setOpen(false);
+                track("founder_cta_click", { from: "nav-mobile" });
+                track("checkout_start", { from: "nav-mobile" });
                 onCTA();
               }}
-              className="mt-2 rounded-full bg-night px-5 py-3 text-sm font-medium text-night-foreground"
+              className="mt-2 min-h-[50px] rounded-full bg-night px-5 text-sm font-medium text-night-foreground"
             >
-              Découvrir Eclosia
+              🌸 Rejoindre les Familles Fondatrices
             </button>
           </div>
         </div>
@@ -240,994 +144,41 @@ const Nav = ({ onCTA, loading }: { onCTA: () => void; loading: boolean }) => {
   );
 };
 
-/* -------------------------------- Hero --------------------------------- */
-
-const Hero = ({ onCTA, loading }: { onCTA: () => void; loading: boolean }) => (
-  <section className="relative overflow-hidden pt-32 pb-20 md:pt-44 md:pb-32">
-    {/* Ambient gradient */}
-    <div className="pointer-events-none absolute inset-0 -z-10">
-      <div className="absolute -top-40 left-1/2 h-[560px] w-[560px] -translate-x-1/2 rounded-full bg-primary/25 blur-3xl" />
-      <div className="absolute top-40 right-[-10%] h-[420px] w-[420px] rounded-full bg-accent/15 blur-3xl" />
-      <div className="absolute -bottom-40 left-[-10%] h-[480px] w-[480px] rounded-full bg-secondary/40 blur-3xl" />
-    </div>
-
-    <div className="mx-auto flex max-w-[980px] flex-col items-center px-6 text-center">
-      <motion.div {...fadeIn}>
-        <span className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-card/60 px-4 py-1.5 text-[11px] font-medium tracking-wide text-muted-foreground backdrop-blur-md">
-          <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-          🌸 Pensé avec des familles, pour des familles.
-        </span>
-      </motion.div>
-
-      <motion.h1
-        {...fadeUp}
-        className="mt-8 font-serif text-[clamp(2.25rem,6vw,4.5rem)] leading-[1.05] tracking-[-0.02em] text-night"
-      >
-        Enfin un endroit qui t'aide à porter
-        <br />
-        <span className="italic text-primary-dark">
-          un peu moins la charge mentale.
-        </span>
-      </motion.h1>
-
-      <motion.p
-        {...fadeUp}
-        transition={{ ...fadeUp.transition, delay: 0.1 }}
-        className="mt-6 max-w-2xl text-[clamp(1.05rem,1.6vw,1.25rem)] leading-relaxed text-foreground/80"
-      >
-        Éclosia rassemble dans un seul espace tout ce qui compte pour
-        accompagner ton enfant au quotidien, retrouver facilement les
-        informations importantes et créer des supports adaptés à ses besoins.
-      </motion.p>
-
-      <motion.div
-        {...fadeUp}
-        transition={{ ...fadeUp.transition, delay: 0.25 }}
-        className="mt-10 flex flex-wrap items-center justify-center gap-3"
-      >
-        <PrimaryCTA onClick={onCTA} disabled={loading}>
-          Découvrir Éclosia
-        </PrimaryCTA>
-        <GhostCTA href="#demonstration">Voir la démonstration</GhostCTA>
-      </motion.div>
-
-      <motion.ul
-        {...fadeUp}
-        transition={{ ...fadeUp.transition, delay: 0.35 }}
-        className="mt-8 flex flex-wrap items-center justify-center gap-2"
-      >
-        {[
-          "Accès à vie",
-          "Toutes les mises à jour incluses",
-          "Sans abonnement",
-          "Paiement en plusieurs fois avec Klarna",
-        ].map((r) => (
-          <li
-            key={r}
-            className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/70 px-4 py-2 text-[13px] text-foreground/85 backdrop-blur-md"
-          >
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/15">
-              <Check className="h-3 w-3 text-primary-dark" aria-hidden="true" />
-            </span>
-            {r}
-          </li>
-        ))}
-      </motion.ul>
-
-    </div>
-
-    {/* Hero mockup */}
-    <motion.div
-      initial={{ opacity: 0, y: 60 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 1.2, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
-      className="relative mx-auto mt-10 w-full max-w-[230px] px-6 sm:max-w-[260px]"
-    >
-      <div className="relative">
-        <div className="absolute -inset-8 -z-10 rounded-[3rem] bg-gradient-to-b from-primary/20 to-transparent blur-2xl" />
-        <div className="rounded-[2.5rem] border border-border/60 bg-card p-2 shadow-[0_50px_120px_-40px_hsl(var(--night)/0.35)]">
-          <img
-            src={dashboardShot.url}
-            alt="Aperçu du tableau de bord Eclosia"
-            className="w-full rounded-[2rem]"
-          />
-        </div>
-      </div>
-    </motion.div>
-  </section>
-);
-
-/* ---------------------------- Quotidien -------------------------------- */
-
-const Quotidien = () => {
-  const pensees = [
-    "Les rendez-vous.",
-    "Les traitements.",
-    "Les dossiers.",
-    "Les papiers.",
-    "Les émotions.",
-    "Les listes.",
-    "Les crises.",
-    "Les courses.",
-    "Les démarches.",
-  ];
-
-  return (
-    <Section id="quotidien" className="bg-card">
-      <motion.div {...fadeUp} className="mx-auto max-w-2xl text-center">
-        <Eyebrow>Le quotidien</Eyebrow>
-        <h2 className="mt-4 font-serif text-[clamp(1.75rem,4vw,3rem)] leading-[1.1] tracking-tight text-night">
-          Si tu es arrivée ici…
-          <br />
-          <span className="italic text-primary-dark">
-            ce n'est probablement pas par hasard.
-          </span>
-        </h2>
-        <p className="mt-6 text-[15px] leading-relaxed text-muted-foreground">
-          Tu penses à tout. Tout le temps. Pour tout le monde.
-        </p>
-      </motion.div>
-
-      <motion.ul
-        {...fadeUp}
-        className="mx-auto mt-14 flex max-w-3xl flex-wrap justify-center gap-2"
-      >
-        {pensees.map((p, i) => (
-          <motion.li
-            key={p}
-            initial={{ opacity: 0, y: 8 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: i * 0.05 }}
-            className="rounded-full border border-border/60 bg-background px-4 py-2 text-sm text-foreground/80"
-          >
-            {p}
-          </motion.li>
-        ))}
-      </motion.ul>
-
-      <motion.div {...fadeUp} className="mx-auto mt-16 max-w-xl text-center">
-        <p className="font-serif text-2xl italic leading-relaxed text-night md:text-3xl">
-          Et pendant ce temps…
-          <br />
-          qui pense à toi ?
-        </p>
-        <div className="mx-auto mt-10 h-px w-16 bg-border" />
-        <p className="mt-10 text-[15px] leading-relaxed text-foreground/80">
-          Tu n'as pas besoin d'en faire plus.
-          <br />
-          <span className="font-medium text-night">
-            Tu as besoin d'être mieux accompagnée.
-          </span>
-        </p>
-      </motion.div>
-    </Section>
-  );
-};
-
-/* ---------------------- Présentation Eclosia --------------------------- */
-
-const Presentation = () => {
-  const pillars = [
-    "l'organisation",
-    "la santé",
-    "les émotions",
-    "les documents",
-    "les ressources",
-    "la communauté",
-  ];
-
-  return (
-    <Section id="eclosia">
-      <div className="grid items-center gap-16 md:grid-cols-2 md:gap-20">
-        <motion.div {...fadeUp}>
-          <Eyebrow>Voici Eclosia</Eyebrow>
-          <h2 className="mt-4 font-serif text-[clamp(2rem,4.5vw,3.5rem)] leading-[1.05] tracking-tight text-night">
-            Un compagnon
-            <br />
-            <span className="italic text-primary-dark">du quotidien.</span>
-          </h2>
-          <p className="mt-6 text-[15px] leading-relaxed text-foreground/80">
-            Eclosia est une application créée pour les familles qui vivent
-            autrement. Elle rassemble enfin, dans un seul endroit, tout ce qui
-            pèse chaque jour :
-          </p>
-          <ul className="mt-8 grid grid-cols-2 gap-3">
-            {pillars.map((p) => (
-              <li
-                key={p}
-                className="flex items-center gap-2 rounded-2xl border border-border/60 bg-card px-4 py-3 text-sm text-foreground"
-              >
-                <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-                {p}
-              </li>
-            ))}
-          </ul>
-          <p className="mt-8 text-[15px] leading-relaxed text-muted-foreground">
-            Tout est pensé pour simplifier le quotidien et permettre aux
-            parents de retrouver un peu de sérénité.
-          </p>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, scale: 0.96 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-          className="relative"
-        >
-          <div className="absolute -inset-6 -z-10 rounded-[3rem] bg-gradient-to-tr from-primary/25 via-secondary/40 to-accent/10 blur-2xl" />
-          <div className="rounded-[2rem] border border-border/60 bg-card p-2 shadow-[0_40px_100px_-40px_hsl(var(--night)/0.3)]">
-            <img
-              src={journalShot.url}
-              alt="Interface Eclosia"
-              className="w-full rounded-[1.5rem]"
-            />
-          </div>
-        </motion.div>
-      </div>
-    </Section>
-  );
-};
-
-/* ---------------------------- Transformations -------------------------- */
-
-const Transformations = () => {
-  const cards = [
-    {
-      icon: Heart,
-      emoji: "❤️",
-      title: "Retrouver de la sérénité",
-      desc: "Tout ce qui compte, au même endroit.",
-      more: "Agenda, tâches, courses, notes et rappels de la famille réunis dans un seul espace calme, au lieu d'être éparpillés dans ta tête et dans dix applications.",
-    },
-    {
-      icon: Stethoscope,
-      emoji: "🩺",
-      title: "Ne plus oublier l'essentiel",
-      desc: "Rendez-vous, traitements, suivis.",
-      more: "Une fiche par enfant : ordonnances, vaccins, bilans, comptes rendus, contacts des praticiens. Les rappels partent avant le rendez-vous et avant chaque prise de traitement.",
-    },
-    {
-      icon: FolderLock,
-      emoji: "📂",
-      title: "Tout retrouver immédiatement",
-      desc: "Tes documents, à l'abri, en un geste.",
-      more: "Un coffre-fort sécurisé pour les papiers importants, avec dates d'expiration, favoris et notes protégées. Plus de dossier perdu la veille d'un rendez-vous.",
-    },
-    {
-      icon: Sparkles,
-      emoji: "🌱",
-      title: "Comprendre ton enfant",
-      desc: "Des ressources adaptées à son profil.",
-      more: "Guides neuroatypie, activités, supports d'autonomie et pistes concrètes pour les jours difficiles, écrits pour des familles qui vivent l'autisme, la dyspraxie ou les troubles de l'attention.",
-    },
-    {
-      icon: Users,
-      emoji: "🤝",
-      title: "Ne plus avancer seule",
-      desc: "Une communauté qui comprend.",
-      more: "Un espace d'échange bienveillant et modéré, entre parents qui vivent la même chose. Tu peux aussi inviter tes proches et choisir ce qu'ils voient.",
-    },
-    {
-      icon: ShieldAlert,
-      emoji: "🚨",
-      title: "Être prête quand tout déborde",
-      desc: "Les informations vitales à portée.",
-      more: "Fiche d'urgence partageable, protocoles de crise, contacts essentiels : ce qu'il faut sous les yeux au moment où on n'a plus la tête à chercher.",
-    },
-  ];
-
-  const [open, setOpen] = useState<string | null>(cards[0].title);
-
-  return (
-    <Section id="modules" className="bg-card">
-      <motion.div {...fadeUp} className="mx-auto max-w-xl text-center">
-        <Eyebrow>Ce que tu tiens dès le premier jour</Eyebrow>
-        <h2 className="mt-4 font-serif text-[clamp(1.75rem,4vw,2.75rem)] leading-[1.1] tracking-tight text-night">
-          Six choses en moins
-          <br />
-          <span className="italic text-primary-dark">à porter toute seule.</span>
-        </h2>
-        <p className="mt-4 text-[14.5px] leading-relaxed text-muted-foreground">
-          Pour libérer de l'espace dans ta tête, et retrouver ton souffle.
-        </p>
-      </motion.div>
-
-      <div className="mx-auto mt-10 max-w-xl">
-        {cards.map(({ icon: Icon, title, desc, more }, i) => {
-          const isOpen = open === title;
-          return (
-            <motion.article
-              key={title}
-              initial={{ opacity: 0, y: 18 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{
-                duration: 0.6,
-                delay: i * 0.05,
-                ease: [0.22, 1, 0.36, 1],
-              }}
-              className="border-b border-night/10"
-            >
-              <button
-                type="button"
-                onClick={() => setOpen(isOpen ? null : title)}
-                aria-expanded={isOpen}
-                className="flex w-full items-center justify-between gap-4 py-5 text-left"
-              >
-                <span className="flex items-center gap-4">
-                  <span className="font-serif text-sm italic text-primary-dark">
-                    {String(i + 1).padStart(2, "0")}.
-                  </span>
-                  <span className="font-serif text-[17px] leading-tight text-night">
-                    {title}
-                  </span>
-                </span>
-                <span
-                  aria-hidden
-                  className={`shrink-0 text-primary-dark transition-transform duration-300 ${
-                    isOpen ? "rotate-45" : ""
-                  }`}
-                >
-                  <svg width="14" height="14" viewBox="0 0 12 12" fill="none">
-                    <path
-                      d="M6 0V12M0 6H12"
-                      stroke="currentColor"
-                      strokeWidth="1.4"
-                    />
-                  </svg>
-                </span>
-              </button>
-              {isOpen && (
-                <div className="animate-fade-in pb-6 pl-10 pr-2">
-                  <div className="flex items-start gap-3">
-                    <Icon className="mt-0.5 h-4 w-4 shrink-0 text-primary-dark/70" />
-                    <div>
-                      <p className="text-[14px] leading-relaxed text-night/80">
-                        {desc}
-                      </p>
-                      <p className="mt-2 text-[13.5px] leading-relaxed text-muted-foreground">
-                        {more}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </motion.article>
-          );
-        })}
-      </div>
-    </Section>
-  );
-};
-
-
-
-
-/* ------------------------------ Fondatrice ----------------------------- */
-
-const Fondatrice = ({ onCTA, loading }: { onCTA: () => void; loading: boolean }) => {
-  const [suite, setSuite] = useState(false);
-
-  return (
-  <Section id="fondatrice" className="bg-card">
-    {/* Courte vidéo : la fondatrice et ses enfants, visages floutés. */}
-    <motion.div {...fadeUp} className="mx-auto mb-12 max-w-xl">
-      <div className="relative">
-        <div className="absolute -inset-5 -z-10 rounded-[3rem] bg-gradient-to-br from-primary/20 to-accent/10 blur-2xl" />
-        <div className="overflow-hidden rounded-[2rem] border border-border/60 bg-background p-2 shadow-[0_50px_120px_-45px_hsl(var(--night)/0.35)]">
-          <video
-            className="aspect-video w-full rounded-[1.6rem] bg-secondary/40 object-cover"
-            controls
-            playsInline
-            preload="metadata"
-            poster={fondatricePoster.url}
-            aria-label="Quarante secondes : pourquoi Éclosia existe, raconté à voix haute"
-          >
-            <source src={fondatriceVideo.url} type="video/mp4" />
-            Ton navigateur ne peut pas lire cette vidéo.
-          </video>
-        </div>
-      </div>
-      <p className="mt-5 text-center text-[13px] text-muted-foreground">
-        Une minute et demie, avec le son : pourquoi Éclosia existe, et ce que vous y trouvez.
-      </p>
-    </motion.div>
-
-    <div className="grid items-center gap-10 md:grid-cols-2 md:gap-14">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.96 }}
-        whileInView={{ opacity: 1, scale: 1 }}
-        viewport={{ once: true, amount: 0.3 }}
-        transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-        className="relative"
-      >
-        <div className="absolute -inset-4 -z-10 rounded-[3rem] bg-gradient-to-br from-primary/25 to-accent/10 blur-2xl" />
-        <div className="overflow-hidden rounded-[2rem] border border-border/60 bg-background">
-          <img
-            src={famille1.url}
-            alt="Elodie, la fondatrice d'Eclosia, avec ses enfants"
-            className="aspect-[4/3] w-full object-cover"
-          />
-        </div>
-        <div className="mt-3 grid grid-cols-2 gap-3">
-          {[famille2, famille3].map((photo, i) => (
-            <div
-              key={i}
-              className="overflow-hidden rounded-[1.25rem] border border-border/60 bg-background"
-            >
-              <img
-                src={photo.url}
-                alt="La fondatrice d'Eclosia et ses enfants, visages préservés"
-                className="aspect-[4/3] w-full object-cover"
-              />
-            </div>
-          ))}
-        </div>
-        <p className="mt-3 text-[12px] leading-relaxed text-muted-foreground">
-          Vous ne verrez pas leurs visages, et c'est voulu : ce sont mes enfants
-          avant d'être une histoire à raconter. Éclosia est né de ce réflexe-là
-          — protéger ce qui compte, et tout garder au même endroit, à l'abri.
-        </p>
-
-      </motion.div>
-
-      <motion.div {...fadeUp}>
-        <Eyebrow>La fondatrice</Eyebrow>
-        <h2 className="mt-4 font-serif text-[clamp(1.75rem,4vw,3rem)] leading-[1.1] tracking-tight text-night">
-          Pourquoi j'ai créé
-          <br />
-          <span className="italic text-primary-dark">Eclosia.</span>
-        </h2>
-        <div className="mt-6 space-y-4 text-[15px] leading-relaxed text-foreground/80">
-          <p>
-            Il y a eu un moment où j'ai réalisé que ma tête était devenue un
-            deuxième agenda.
-          </p>
-          <p>
-            Je suis maman de trois enfants, et nous sommes cinq enfants à la
-            maison. Mes deux grands, mon Loulou et ma Bichette, vivent tous les
-            deux avec un trouble du spectre autistique, une dyspraxie et une
-            ataxie. Mon petit Koala, ma dernière, est asthmatique et une
-            suspicion de trouble du neurodéveloppement est en cours. Mon
-            beau-fils est également autiste, ma belle-fille n'a pas de trouble
-            apparent. Et mon mari est en formation.
-          </p>
-          <p>
-            Ce sont des années de rendez-vous, de suivis, de bilans, de mots
-            compliqués à retenir et de papiers à ne jamais perdre. C'est aussi
-            pour eux qu'Éclosia existe.
-          </p>
-          {suite && (
-            <>
-              <p>
-                Les rendez-vous. Les dossiers. Les traitements. Les documents.
-                Les émotions. Les listes. Les démarches. Tout était dans ma
-                tête.
-              </p>
-              <p>
-                Et plus j'essayais de tout retenir, plus j'avais l'impression
-                de porter seule toute la charge mentale de notre famille.
-              </p>
-              <p>
-                Je ne cherchais pas une nouvelle application. Je cherchais
-                simplement un endroit où enfin déposer tout ce que je portais
-                chaque jour. Un endroit où retrouver facilement les
-                informations importantes. Un endroit qui m'aiderait à respirer
-                un peu.
-              </p>
-              <p>Cet endroit n'existait pas. Alors je l'ai créé.</p>
-            </>
-          )}
-          <p className="font-medium text-night">
-            Éclosia n'est pas née d'une idée marketing. Elle est née d'un
-            besoin réel. Celui d'un parent qui voulait arrêter de tout porter
-            seul.
-          </p>
-        </div>
-        <button
-          type="button"
-          onClick={() => setSuite((s) => !s)}
-          aria-expanded={suite}
-          className="mt-4 text-[13px] font-semibold text-primary-dark underline decoration-primary/40 underline-offset-4"
-        >
-          {suite ? "Replier mon histoire" : "Lire la suite de mon histoire"}
-        </button>
-        <div className="mt-6">
-          <PrimaryCTA onClick={onCTA} disabled={loading}>
-            Découvrir Eclosia
-          </PrimaryCTA>
-        </div>
-
-      </motion.div>
-    </div>
-  </Section>
-  );
-};
-
-
-/* ---------------------- Ce qui est inclus dans Eclosia ---------------- */
-
-const Inclus = () => {
-  const groups = [
-    {
-      icon: Zap,
-      title: "PULSE, ton moteur du jour",
-      items: [
-        "État de ta tête : GO, Moyen, Saturé, KO",
-        "Une seule prochaine action",
-        "Dictée vocale",
-        "Suivi « Mon rythme » : courbe et aperçu du mois",
-      ],
-    },
-    {
-      icon: CalendarDays,
-      title: "Organisation familiale",
-      items: ["Agenda", "Tâches", "Liste de courses", "Notes", "Rappels"],
-    },
-    {
-      icon: Heart,
-      title: "Suivi des émotions",
-      items: ["Journal privé", "Portrait mensuel", "Frise d'évolution"],
-    },
-    {
-      icon: Stethoscope,
-      title: "Santé",
-      items: ["Traitements", "Rendez-vous", "Documents médicaux"],
-    },
-    {
-      icon: FolderLock,
-      title: "Coffre-fort sécurisé",
-      items: ["Documents importants", "Papiers officiels", "Accès rapide"],
-    },
-    {
-      icon: Wallet,
-      title: "Budget",
-      items: ["Suivi des dépenses", "Catégories familiales", "Factures"],
-    },
-    {
-      icon: BookHeart,
-      title: "Ressources neuroatypie",
-      items: ["Guides de crise", "Activités", "LSF"],
-    },
-    {
-      icon: Sparkles,
-      title: "Studio d'autonomie",
-      items: [
-        "Plannings et séquentiels",
-        "Supports visuels à imprimer",
-        "Bibliothèque adaptée",
-      ],
-    },
-    {
-      icon: Stars,
-      title: "Assistant Éclosia",
-      items: [
-        "Il t'aide à formuler et à trier",
-        "Disponible quand tu en as besoin",
-      ],
-    },
-
-    {
-      icon: Users,
-      title: "Communauté",
-      items: ["Échanges bienveillants", "Retours d'expérience"],
-    },
-    {
-      icon: BarChart3,
-      title: "Statistiques",
-      items: ["Progression", "Habitudes", "Mon rythme jour après jour"],
-    },
-    {
-      icon: RefreshCw,
-      title: "Mises à jour incluses",
-      items: ["Nouvelles fonctionnalités", "Améliorations continues"],
-    },
-    {
-      icon: InfinityIcon,
-      title: "Accès à vie",
-      items: ["Un seul paiement", "Aucun abonnement"],
-    },
-  ];
-
-  return (
-    <Section id="inclus">
-      <motion.div {...fadeUp} className="mx-auto max-w-2xl text-center">
-        <Eyebrow>Ce que contient vraiment Eclosia</Eyebrow>
-        <h2 className="mt-4 font-serif text-[clamp(1.75rem,4vw,3rem)] leading-[1.1] tracking-tight text-night">
-          Tout ce qui est inclus
-          <br />
-          <span className="italic text-primary-dark">dans Eclosia.</span>
-        </h2>
-      </motion.div>
-
-      <div className="mt-16 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {groups.map(({ icon: Icon, title, items }, i) => (
-          <motion.article
-            key={title}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.6, delay: i * 0.05 }}
-            className="rounded-[1.5rem] border border-border/60 bg-card p-6 transition-all duration-500 hover:-translate-y-1 hover:border-primary/40 hover:shadow-[0_20px_60px_-30px_hsl(var(--night)/0.2)]"
-          >
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/15">
-              <Icon className="h-5 w-5 text-primary-dark" />
-            </div>
-            <h3 className="mt-5 font-serif text-lg leading-tight text-night">
-              {title}
-            </h3>
-            <ul className="mt-3 space-y-1.5">
-              {items.map((it) => (
-                <li
-                  key={it}
-                  className="flex items-start gap-2 text-[13.5px] leading-relaxed text-muted-foreground"
-                >
-                  <Check className="mt-[3px] h-3.5 w-3.5 flex-shrink-0 text-primary-dark/80" />
-                  <span>{it}</span>
-                </li>
-              ))}
-            </ul>
-          </motion.article>
-        ))}
-      </div>
-
-      <motion.p
-        {...fadeUp}
-        className="mx-auto mt-14 max-w-xl text-center font-serif text-xl italic leading-relaxed text-night md:text-2xl"
-      >
-        Un seul espace pour retrouver ce qui compte vraiment.
-      </motion.p>
-    </Section>
-  );
-};
-
-
-
-/* -------------------------- Réassurance -------------------------------- */
-
-const Unique = () => {
-  const items = [
-    {
-      icon: InfinityIcon,
-      title: "Accès à vie",
-      desc: "Un paiement unique. Eclosia t'accompagne pour toutes les années à venir.",
-    },
-    {
-      icon: BadgeCheck,
-      title: "Aucune publicité",
-      desc: "Un espace calme, sans distractions, entièrement dédié à ta famille.",
-    },
-    {
-      icon: Wallet,
-      title: "Paiement unique",
-      desc: "97 € une seule fois. Aucun abonnement, aucun renouvellement.",
-    },
-    {
-      icon: Lock,
-      title: "Données confidentielles",
-      desc: "Tes informations restent les tiennes, protégées et chiffrées.",
-    },
-    {
-      icon: RefreshCw,
-      title: "Mises à jour incluses",
-      desc: "Chaque nouvelle fonctionnalité arrive automatiquement dans ton espace.",
-    },
-    {
-      icon: Heart,
-      title: "Support humain",
-      desc: "Une vraie personne te répond quand tu en as besoin.",
-    },
-    {
-      icon: HeartHandshake,
-      title: "Pensée pour les familles neuroatypiques",
-      desc: "TSA, TDAH, DYS, hypersensibilité — nos outils s'y adaptent avec douceur.",
-    },
-    {
-      icon: FolderLock,
-      title: "Tout au même endroit",
-      desc: "Santé, budget, émotions, documents. Fini de chercher partout.",
-    },
-  ];
-
-  return (
-    <Section id="reassurance">
-      <motion.div {...fadeUp} className="mx-auto max-w-2xl text-center">
-        <Eyebrow>Réassurance</Eyebrow>
-        <h2 className="mt-4 font-serif text-[clamp(1.75rem,4vw,3rem)] leading-[1.1] tracking-tight text-night">
-          Pourquoi tant de familles
-          <br />
-          <span className="italic text-primary-dark">choisissent Eclosia.</span>
-        </h2>
-      </motion.div>
-
-      <div className="mt-16 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {items.map(({ icon: Icon, title, desc }, i) => (
-          <motion.div
-            key={title}
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.6, delay: i * 0.05 }}
-            className="flex flex-col gap-3 rounded-2xl border border-border/60 bg-card p-6"
-          >
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/15">
-              <Icon className="h-4 w-4 text-primary-dark" />
-            </div>
-            <p className="text-sm font-medium text-night leading-snug">
-              {title}
-            </p>
-            <p className="text-[13px] leading-relaxed text-muted-foreground">
-              {desc}
-            </p>
-          </motion.div>
-        ))}
-      </div>
-    </Section>
-  );
-};
-
-/* --------------------------- Bridge before price ---------------------- */
-
-const PreTarif = () => (
-  <section className="px-6 py-24 md:py-32">
-    <motion.div {...fadeUp} className="mx-auto max-w-2xl text-center">
-      <Stars className="mx-auto h-6 w-6 text-primary-dark/70" />
-      <h2 className="mt-6 font-serif text-[clamp(1.75rem,4vw,3rem)] leading-[1.1] tracking-tight text-night">
-        Tu n'achètes pas simplement
-        <br />
-        <span className="italic text-primary-dark">une application.</span>
-      </h2>
-      <p className="mx-auto mt-6 max-w-xl text-[15px] leading-relaxed text-muted-foreground md:text-base">
-        Tu investis dans un outil qui t'accompagnera pendant des années et qui
-        évoluera avec ta famille.
-      </p>
-    </motion.div>
-  </section>
-);
-
-/* ------------------------------- Tarif -------------------------------- */
-
-const Tarif = ({ onCTA, loading }: { onCTA: () => void; loading: boolean }) => (
-  <Section id="tarif">
-    <motion.div
-      {...fadeUp}
-      className="relative mx-auto max-w-3xl overflow-hidden rounded-[2.5rem] border border-border/60 bg-card p-10 text-center md:p-16"
-    >
-      <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute -top-24 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-primary/20 blur-3xl" />
-        <div className="absolute -bottom-24 right-0 h-72 w-72 rounded-full bg-accent/15 blur-3xl" />
-      </div>
-
-      <Eyebrow>Tarif</Eyebrow>
-      <h2 className="mt-4 font-serif text-[clamp(1.75rem,4vw,3rem)] leading-[1.1] tracking-tight text-night">
-        Un seul achat.
-        <br />
-        <span className="italic text-primary-dark">
-          Pour des années de sérénité.
-        </span>
-      </h2>
-      <p className="mx-auto mt-6 max-w-lg text-[15px] leading-relaxed text-muted-foreground">
-        Eclosia t'accompagne chaque jour. Pas seulement aujourd'hui. L'accès
-        est valable à vie.
-      </p>
-
-      <FoundingPrice />
-      <p className="mt-2 text-xs uppercase tracking-[0.2em] text-muted-foreground">
-        Paiement unique · Aucun abonnement
-      </p>
-      <p className="mx-auto mt-3 max-w-md text-[13px] leading-relaxed text-muted-foreground">
-        Paiement unique. Aucun abonnement. Toutes les futures mises à jour sont
-        incluses.
-      </p>
-
-      <div className="mt-10 flex flex-col items-center gap-3">
-        <PrimaryCTA onClick={onCTA} disabled={loading}>
-          Découvrir Eclosia
-        </PrimaryCTA>
-        <div className="w-full max-w-xs">
-          <KlarnaPayButton className="w-full rounded-full border border-primary/30 bg-background px-6 py-3 text-sm font-medium text-primary-dark transition-colors hover:bg-primary/5" />
-        </div>
-        <p className="text-[11px] text-muted-foreground">
-          Ou paie en plusieurs fois avec Klarna
-        </p>
-      </div>
-
-      <FoundingFamiliesBanner className="mt-10 text-left" />
-
-
-
-      <ul className="mx-auto mt-10 grid max-w-lg gap-2.5 sm:grid-cols-2">
-        {[
-          "Accès immédiat",
-          "Mises à jour incluses",
-          "Support humain",
-          "Paiement sécurisé",
-        ].map((b) => (
-          <li
-            key={b}
-            className="flex items-center gap-2.5 rounded-2xl border border-border/50 bg-background/60 px-4 py-2.5 text-left text-sm text-foreground/90"
-          >
-            <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-primary/15">
-              <Check className="h-3.5 w-3.5 text-primary-dark" />
-            </span>
-            {b}
-          </li>
-        ))}
-      </ul>
-    </motion.div>
-  </Section>
-);
-
-
-/* ---------------------- Ce que tu retrouveras -------------------------- */
-
-const Serenite = () => {
-  const items = [
-    "Toute ta vie familiale au même endroit.",
-    "Les informations importantes toujours accessibles.",
-    "Un Studio d'Autonomie pour créer facilement des supports adaptés.",
-    "Des outils pensés pour accompagner ton enfant.",
-    "Un espace qui évolue avec toi.",
-  ];
-
-  return (
-    <Section id="serenite">
-      <motion.div {...fadeUp} className="mx-auto max-w-2xl text-center">
-        <Eyebrow>Ce que tu retrouveras</Eyebrow>
-        <h2 className="mt-4 font-serif text-[clamp(1.75rem,4vw,3rem)] leading-[1.1] tracking-tight text-night">
-          Ce que tu retrouveras
-          <br />
-          <span className="italic text-primary-dark">avec Eclosia.</span>
-        </h2>
-        <p className="mt-6 text-[15px] leading-relaxed text-muted-foreground">
-          Tu ne retrouveras pas seulement des outils. Tu retrouveras surtout un
-          peu plus de sérénité.
-        </p>
-      </motion.div>
-      <div className="mx-auto mt-14 grid max-w-3xl gap-3 sm:grid-cols-2">
-        {items.map((t, i) => (
-          <motion.div
-            key={t}
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.6, delay: i * 0.06 }}
-            className="flex items-start gap-3 rounded-2xl border border-border/60 bg-card px-5 py-4"
-          >
-            <span className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-primary/15">
-              <Check className="h-3.5 w-3.5 text-primary-dark" />
-            </span>
-            <p className="text-[14.5px] leading-relaxed text-foreground/85">{t}</p>
-          </motion.div>
-        ))}
-      </div>
-    </Section>
-  );
-};
-
-/* ------------------ Pourquoi un paiement unique ----------------------- */
-
-const PaiementUniqueCard = () => (
-  <section className="px-6 py-16 md:py-24">
-    <motion.div
-      {...fadeUp}
-      className="mx-auto max-w-2xl overflow-hidden rounded-[2rem] border border-border/60 bg-card p-8 text-center md:p-12"
-    >
-      <Eyebrow>Notre engagement</Eyebrow>
-      <h2 className="mt-4 font-serif text-[clamp(1.5rem,3.5vw,2.25rem)] leading-tight text-night">
-        Pourquoi un paiement unique ?
-      </h2>
-      <div className="mt-6 space-y-4 text-[15px] leading-relaxed text-foreground/80">
-        <p>
-          La plupart des applications demandent un abonnement tous les mois.
-          J'ai fait un choix différent.
-        </p>
-        <p>
-          Tu achètes Éclosia une seule fois. Toutes les futures mises à jour
-          sont incluses. Aucun abonnement. Aucun renouvellement.
-        </p>
-        <p className="font-medium text-night">
-          Éclosia évolue avec toi et avec ta famille.
-        </p>
-      </div>
-      <ul className="mx-auto mt-8 grid max-w-md gap-2.5 text-left sm:grid-cols-2">
-        {[
-          "Toutes les futures mises à jour incluses",
-          "Aucun abonnement",
-          "Aucun renouvellement",
-          "Éclosia évolue avec toi",
-        ].map((b) => (
-          <li
-            key={b}
-            className="flex items-center gap-2.5 rounded-2xl border border-border/50 bg-background/60 px-4 py-2.5 text-sm text-foreground/90"
-          >
-            <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-primary/15">
-              <Check className="h-3.5 w-3.5 text-primary-dark" aria-hidden="true" />
-            </span>
-            {b}
-          </li>
-        ))}
-      </ul>
-
-    </motion.div>
-  </section>
-);
-
-/* ---------------------- Ambassadeur teaser ---------------------------- */
-
-const AmbassadeurTeaser = () => (
-  <Section id="ambassadeur" className="bg-card">
-    <motion.div {...fadeUp} className="mx-auto max-w-2xl text-center">
-      <Eyebrow>Programme ambassadrice</Eyebrow>
-      <h2 className="mt-4 font-serif text-[clamp(1.75rem,4vw,3rem)] leading-[1.1] tracking-tight text-night">
-        Faire découvrir Eclosia
-        <br />
-        <span className="italic text-primary-dark">peut aussi te remercier.</span>
-      </h2>
-      <div className="mt-6 space-y-4 text-[15px] leading-relaxed text-muted-foreground">
-        <p>
-          Certaines familles utilisent simplement Eclosia. D'autres choisissent
-          aussi d'en parler autour d'elles.
-        </p>
-        <p>
-          Si tu souhaites partager un outil qui t'aide réellement, tu peux
-          rejoindre gratuitement notre programme ambassadrice. Tu recevras un
-          lien personnel. Lorsque quelqu'un découvre Eclosia grâce à toi, tu
-          reçois une commission.
-        </p>
-        <p className="font-medium text-night">
-          L'objectif reste d'aider d'autres familles. Jamais de vendre à tout
-          prix.
-        </p>
-      </div>
-      <div className="mt-8">
-        <Link
-          to="/devenir-ambassadrice"
-          className="group inline-flex items-center justify-center gap-2 rounded-full border border-border/70 bg-background px-7 py-3.5 text-sm font-medium text-foreground transition-all duration-300 hover:border-primary/40 hover:bg-card"
-        >
-          Découvrir le programme ambassadrice
-          <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
-        </Link>
-      </div>
-    </motion.div>
-  </Section>
-);
-
-
-
-/* ------------------------------- Page --------------------------------- */
-
 const Index = () => {
   const { startPayment, loading } = useMolliePayment();
   const onCTA = () => startPayment();
 
+  useEffect(() => {
+    track("landing_view");
+  }, []);
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Nav onCTA={onCTA} loading={loading} />
-      <main>
-        <Hero onCTA={onCTA} loading={loading} />
-        <Quotidien />
-        <Transformations />
-        <PulseSection />
-        <DemoSection />
-        <PourQuiSection />
-        <Inclus />
-        <Fondatrice onCTA={onCTA} loading={loading} />
-        <Unique />
-        <Tarif onCTA={onCTA} loading={loading} />
-        <AmbassadeurTeaser />
-        <HomeFAQ />
-        <FinalCTA onCTA={onCTA} loading={loading} />
 
+      <main className="pb-24 md:pb-0">
+        <HeroV3 onCTA={onCTA} loading={loading} />
+        <ReconnaisSection />
+        <AvantApresSection />
+        <DemoV3 onCTA={onCTA} loading={loading} />
+        <StudioHeroSection onCTA={onCTA} loading={loading} />
+        <CasUsageSection />
+        <FonctionnalitesSection />
+        <PourQuiV3 />
+        <FondatriceV3 onCTA={onCTA} loading={loading} />
+        <ConfianceSection />
+        <PreuveSection />
+        <OffreFondatricesSection onCTA={onCTA} loading={loading} />
+        <PrixSection onCTA={onCTA} loading={loading} />
+        <FAQV3 />
+        <AmbassadriceTeaser />
+        <FinalCTA onCTA={onCTA} loading={loading} />
       </main>
 
       <Footer />
+      <MobileStickyCTA onCTA={onCTA} loading={loading} />
     </div>
   );
 };
-
-
 
 export default Index;
