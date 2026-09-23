@@ -169,22 +169,22 @@ const BottomNav = () => {
 
   return (
     <>
-      <div aria-hidden className="h-24 w-full" />
+      <div aria-hidden className="h-[calc(4.5rem+env(safe-area-inset-bottom))] w-full" />
       <nav
-        className="fixed bottom-0 left-0 right-0 z-40 border-t border-border/60 bg-background/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-md"
+        className="fixed bottom-0 left-0 right-0 z-40 border-t border-border/50 bg-background/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl"
         aria-label="Navigation principale"
       >
-        <ul className="relative mx-auto flex max-w-lg items-stretch justify-around px-2 py-2">
+        <ul className="relative mx-auto flex h-14 max-w-lg items-center justify-around px-1">
           {left.map(renderTab)}
 
-          <li className="flex w-16 shrink-0 items-start justify-center">
+          <li className="flex w-14 shrink-0 items-center justify-center">
             <button
               type="button"
               onClick={() => setOpen(true)}
               aria-label="Créer"
-              className="-mt-7 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-[0_12px_28px_-12px_hsl(var(--foreground)/0.45)] transition-transform active:scale-95"
+              className="-mt-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground ring-4 ring-background shadow-[0_8px_18px_-10px_hsl(var(--foreground)/0.4)] transition-transform active:scale-95"
             >
-              <Plus className="h-6 w-6" strokeWidth={2} />
+              <Plus className="h-5 w-5" strokeWidth={2} />
             </button>
           </li>
 
