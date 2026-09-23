@@ -12,12 +12,12 @@ const HistoireV4 = () => {
         <div>
           <Eyebrow>Mon histoire</Eyebrow>
           <H2>Pourquoi j'ai créé Éclosia.</H2>
-          <p className="mt-2 text-[14.5px] leading-relaxed text-foreground/80">
+          <p className="mt-1.5 text-[14.5px] leading-relaxed text-foreground/80">
             Je ne voulais pas créer une application de plus. Je voulais créer
             l'endroit que j'aurais aimé avoir quand tout devenait trop lourd à
             gérer.
           </p>
-          <p className="mt-1.5 text-[13.5px] text-muted-foreground">
+          <p className="mt-1 text-[13.5px] text-muted-foreground">
             Élodie — fondatrice d'Éclosia
           </p>
 
@@ -41,7 +41,7 @@ const HistoireV4 = () => {
 
           <button
             onClick={() => setOpen((v) => !v)}
-            className="mt-2.5 text-[13.5px] font-medium text-primary-dark underline underline-offset-4"
+            className="mt-2 text-[13.5px] font-medium text-primary-dark underline underline-offset-4"
           >
             {open ? "Replier" : "Découvrir mon histoire →"}
           </button>
@@ -58,7 +58,7 @@ const HistoireV4 = () => {
               className="w-full rounded-[0.9rem]"
             />
           </div>
-          <p className="mt-2 text-center text-[12px] text-muted-foreground">
+          <p className="mt-1.5 text-center text-[12px] text-muted-foreground">
             Une minute et demie, avec le son : pourquoi Éclosia existe.
           </p>
         </div>
