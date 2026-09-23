@@ -20,6 +20,8 @@ const HIDDEN = [
   "/unsubscribe", "/paywall", "/comparaison", "/aller-plus-loin",
   "/payment-success", "/payment-pending", "/payment-canceled",
   "/post-flow", "/devenir-ambassadrice", "/onboarding",
+  // Sur « Aujourd'hui », le bloc PULSE dit déjà la même chose.
+  "/aujourdhui",
 ];
 
 const NextActionBadge = () => {

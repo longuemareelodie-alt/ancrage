@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { emitBrainState, onBrainState } from "@/lib/pulseBus";
 
 /**
  * « Comment fonctionne ton cerveau aujourd'hui ? »
@@ -50,8 +51,12 @@ export function usePulseState() {
     };
   }, []);
 
+  // Le bloc PULSE et le badge flottant partagent le même état du jour.
+  useEffect(() => onBrainState(setState), []);
+
   const save = useCallback(async (next: BrainState) => {
     setState(next);
+    emitBrainState(next);
     navigator.vibrate?.(10);
     const { data: auth } = await supabase.auth.getUser();
     const uid = auth.user?.id;

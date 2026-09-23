@@ -5,28 +5,19 @@
  * Aucune donnée n'est inventée : on ne fait que retirer ou couper.
  */
 
-const FILLERS = new Set([
-  "euh",
-  "euhh",
-  "heu",
-  "hum",
-  "hmm",
-  "ben",
-  "bah",
-  "bon",
-  "voilà",
-  "genre",
-  "quoi",
-  "donc",
-  "alors",
-]);
+/**
+ * Uniquement de vraies hésitations : on ne touche jamais à des mots qui
+ * portent du sens (« bon » de cantine, « alors », « donc », « quoi »…),
+ * sinon la tâche enregistrée ne veut plus rien dire.
+ */
+const FILLERS = new Set(["euh", "euhh", "euhhh", "heu", "heuu", "hum", "hmm", "hein"]);
 
 /** Expressions qui annulent tout ce qui précède. */
 const RESTART = /\b(?:efface tout|recommence|annule tout|oublie tout|reprends? du début)\b/i;
 
 /** Expressions qui annulent seulement la fin de la phrase. */
 const CORRECTION =
-  /\b(?:non(?:,)? (?:plutôt|pardon|en fait|attends)|pardon(?:,)? (?:plutôt|non)?|enfin non|je veux dire|plutôt)\b/i;
+  /\b(?:non,? (?:plutôt|pardon|en fait|attends)|pardon,? (?:plutôt|non)|enfin non|je veux dire)\b/i;
 
 /** Ponctuation dictée à voix haute. */
 const SPOKEN_PUNCT: [RegExp, string][] = [
