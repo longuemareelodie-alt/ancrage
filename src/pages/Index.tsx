@@ -465,39 +465,47 @@ const Transformations = () => {
       icon: Heart,
       emoji: "❤️",
       title: "Retrouver de la sérénité",
-      desc: "Tu centralises enfin ce qui compte, au même endroit.",
+      desc: "Tout ce qui compte, au même endroit.",
+      more: "Agenda, tâches, courses, notes et rappels de la famille réunis dans un seul espace calme, au lieu d'être éparpillés dans ta tête et dans dix applications.",
     },
     {
       icon: Stethoscope,
       emoji: "🩺",
       title: "Ne plus oublier l'essentiel",
-      desc: "Rendez-vous, traitements, suivis médicaux — tout est là.",
+      desc: "Rendez-vous, traitements, suivis.",
+      more: "Une fiche par enfant : ordonnances, vaccins, bilans, comptes rendus, contacts des praticiens. Les rappels partent avant le rendez-vous et avant chaque prise de traitement.",
     },
     {
       icon: FolderLock,
       emoji: "📂",
       title: "Tout retrouver immédiatement",
-      desc: "Tes documents importants, sécurisés et accessibles en un geste.",
+      desc: "Tes documents, à l'abri, en un geste.",
+      more: "Un coffre-fort sécurisé pour les papiers importants, avec dates d'expiration, favoris et notes protégées. Plus de dossier perdu la veille d'un rendez-vous.",
     },
     {
       icon: Sparkles,
       emoji: "🌱",
       title: "Comprendre ton enfant",
-      desc: "Ressources, guides, activités et outils adaptés à son profil.",
+      desc: "Des ressources adaptées à son profil.",
+      more: "Guides neuroatypie, activités, supports d'autonomie et pistes concrètes pour les jours difficiles, écrits pour des familles qui vivent l'autisme, la dyspraxie ou les troubles de l'attention.",
     },
     {
       icon: Users,
       emoji: "🤝",
       title: "Ne plus avancer seule",
-      desc: "Une communauté bienveillante qui comprend ton quotidien.",
+      desc: "Une communauté qui comprend.",
+      more: "Un espace d'échange bienveillant et modéré, entre parents qui vivent la même chose. Tu peux aussi inviter tes proches et choisir ce qu'ils voient.",
     },
     {
       icon: ShieldAlert,
       emoji: "🚨",
       title: "Être prête quand tout déborde",
-      desc: "Gestion de crise, protocoles, informations essentielles à portée.",
+      desc: "Les informations vitales à portée.",
+      more: "Fiche d'urgence partageable, protocoles de crise, contacts essentiels : ce qu'il faut sous les yeux au moment où on n'a plus la tête à chercher.",
     },
   ];
+
+  const [open, setOpen] = useState<string | null>(null);
 
   return (
     <Section id="modules" className="bg-card">
