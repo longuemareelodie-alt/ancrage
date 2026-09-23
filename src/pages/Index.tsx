@@ -1218,10 +1218,7 @@ const Index = () => {
         <Unique />
         <Tarif onCTA={onCTA} loading={loading} />
         <AmbassadeurTeaser />
-        <div id="faq">
-          <HomeFAQ />
-          <FaqExtras />
-        </div>
+        <HomeFAQ />
         <FinalCTA onCTA={onCTA} loading={loading} />
 
       </main>
