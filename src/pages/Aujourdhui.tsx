@@ -21,6 +21,7 @@ import { useWidgetSync } from "@/hooks/useWidgetSync";
 
 import SoftWhisper from "@/components/SoftWhisper";
 import PulseBlock from "@/components/pulse/PulseBlock";
+import demoVideo from "@/assets/video/eclosia-demo-son.mp4.asset.json";
 import { celebrate } from "@/lib/gentleBadges";
 
 import { useProgressStats } from "@/hooks/useProgressStats";
@@ -356,6 +357,18 @@ const Aujourdhui = () => {
             </ul>
           </motion.section>
         )}
+
+        {/* Démo : parcours d'une famille, repliée par défaut */}
+        <motion.details {...fade(5)} className="group mt-6 rounded-2xl border border-border/60 bg-card/50 px-4 py-2.5">
+          <summary className="flex cursor-pointer list-none items-center justify-between text-[13px] font-medium text-foreground">
+            <span>▶ Voir le parcours d'une famille</span>
+            <span className="text-muted-foreground transition-transform group-open:rotate-45">+</span>
+          </summary>
+          <div className="mx-auto mt-3 max-w-[230px] overflow-hidden rounded-[1.2rem] border border-border/60">
+            <video src={demoVideo.url} controls playsInline preload="none" className="block w-full" />
+          </div>
+          <p className="mt-2 text-center text-[11px] text-muted-foreground">Avec le son · environ une minute et demie</p>
+        </motion.details>
 
         {/* 6 — Progression : trois repères doux, jamais de statistique anxiogène */}
         <motion.section {...fade(5)} className="mt-6 flex items-center justify-between gap-2 rounded-2xl border border-border/60 bg-card/50 px-4 py-2.5">
