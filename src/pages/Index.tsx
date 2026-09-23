@@ -85,7 +85,7 @@ const Section = ({
   className?: string;
   id?: string;
 }) => (
-  <section id={id} className={`px-6 py-14 md:py-20 ${className}`}>
+  <section id={id} className={`px-6 py-9 md:py-14 ${className}`}>
     <div className="mx-auto w-full max-w-[1180px]">{children}</div>
   </section>
 );
