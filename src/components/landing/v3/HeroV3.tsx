@@ -105,14 +105,14 @@ const HeroV3 = ({ onCTA, loading }: { onCTA: () => void; loading: boolean }) => 
 );
 
 const HeroMockup = ({ desktop = false }: { desktop?: boolean }) => (
-  <div className={`relative mx-auto ${desktop ? "max-w-[300px]" : "max-w-[220px]"}`}>
+  <div className={`relative mx-auto ${desktop ? "max-w-[300px]" : "max-w-[190px]"}`}>
     <div className="absolute -inset-6 -z-10 rounded-[3rem] bg-gradient-to-b from-primary/20 to-transparent blur-2xl" />
     <div className="rounded-[2.2rem] border border-border/60 bg-card p-1.5 shadow-[0_40px_100px_-40px_hsl(var(--night)/0.35)]">
       <img
         src={dashboardShot.url}
         alt="L'écran Aujourd'hui d'Éclosia sur un téléphone"
-        width={600}
-        height={1200}
+        width={840}
+        height={1400}
         loading={desktop ? "lazy" : "eager"}
         decoding="async"
         className="w-full rounded-[1.8rem]"
