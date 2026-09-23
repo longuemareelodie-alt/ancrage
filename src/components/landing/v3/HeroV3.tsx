@@ -111,8 +111,8 @@ const HeroMockup = ({ desktop = false }: { desktop?: boolean }) => (
       <img
         src={dashboardShot.url}
         alt="L'écran Aujourd'hui d'Éclosia sur un téléphone"
-        width={600}
-        height={1200}
+        width={840}
+        height={1400}
         loading={desktop ? "lazy" : "eager"}
         decoding="async"
         className="w-full rounded-[1.8rem]"
