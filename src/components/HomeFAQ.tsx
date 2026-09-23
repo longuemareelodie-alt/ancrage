@@ -8,14 +8,7 @@ import {
 import { Link } from "react-router-dom";
 import { useTranslation, Trans } from "react-i18next";
 
-const ITEM_KEYS = [
-  "who",
-  "medical",
-  "duration",
-  "privacy",
-  "refund",
-  "devices",
-] as const;
+const ITEM_KEYS = ["who", "medical", "privacy", "refund"] as const;
 
 const HomeFAQ = () => {
   const { t } = useTranslation();
@@ -35,7 +28,7 @@ const HomeFAQ = () => {
 
   return (
     <SectionBlock>
-      <div id="faq" className="space-y-6 scroll-mt-20">
+      <div id="faq" className="space-y-4 scroll-mt-20">
         <div className="space-y-2 text-center">
           <h2 className="text-xl font-bold md:text-2xl">{t("faq.title")}</h2>
           <p className="text-sm text-muted-foreground">{t("faq.intro")}</p>

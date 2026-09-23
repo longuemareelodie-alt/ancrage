@@ -85,7 +85,7 @@ const Section = ({
   className?: string;
   id?: string;
 }) => (
-  <section id={id} className={`px-6 py-14 md:py-20 ${className}`}>
+  <section id={id} className={`px-6 py-9 md:py-14 ${className}`}>
     <div className="mx-auto w-full max-w-[1180px]">{children}</div>
   </section>
 );
@@ -1200,40 +1200,20 @@ const AmbassadeurTeaser = () => (
 const FAQ_EXTRAS = [
   {
     q: "Pourquoi un accès à vie ?",
-    a: "Parce qu'un abonnement de plus, c'est une charge de plus. Tu paies une seule fois et Éclosia reste à toi, pour toutes les années à venir.",
-  },
-  {
-    q: "Pourquoi le prix augmente ?",
-    a: "Les premières familles rejoignent Éclosia au tout début, quand tout reste à construire. Le tarif fondateur les remercie de cette confiance, puis il remonte progressivement vers le tarif normal de 97 €.",
+    a: "Parce qu'un abonnement de plus, c'est une charge de plus. Tu paies une seule fois et Éclosia reste à toi.",
   },
   {
     q: "Comment fonctionne le tarif fondateur ?",
-    a: "Il est automatique : 5 Familles Fondatrices à 29 €, 10 Familles Pionnières à 49 €, 20 Premières Familles à 69 €, 20 familles suivantes à 79 €, puis 97 €. Le compteur n'avance qu'avec des paiements réellement validés, et le nombre de places restantes est affiché en temps réel.",
+    a: "Il monte par paliers, de 29 € à 97 €, et les places restantes sont affichées en temps réel.",
   },
   {
     q: "Puis-je payer en plusieurs fois ?",
     a: "Oui, avec Klarna lorsque c'est disponible dans ton pays. Le bouton apparaît juste sous le paiement classique.",
   },
-  {
-    q: "Toutes les mises à jour sont-elles incluses ?",
-    a: "Oui, toutes. Chaque nouvelle fonctionnalité arrive automatiquement dans ton espace, sans supplément.",
-  },
-  {
-    q: "Comment fonctionne le programme Ambassadeur ?",
-    a: "Il est gratuit et facultatif. Tu reçois un lien personnel : lorsqu'une famille découvre Éclosia grâce à toi, tu reçois une commission. Tu peux aussi utiliser Éclosia sans jamais y participer.",
-  },
-  {
-    q: "Puis-je utiliser Éclosia sur plusieurs appareils ?",
-    a: "Oui. Téléphone, tablette, ordinateur : tu te connectes avec le même compte et tout se synchronise.",
-  },
-  {
-    q: "Mes données sont-elles sécurisées ?",
-    a: "Oui. Tes données sont chiffrées, hébergées en Europe, et personne d'autre que toi n'y a accès — sauf les proches que tu invites, avec les droits que tu choisis. Aucune publicité, aucune revente.",
-  },
 ];
 
 const FaqExtras = () => (
-  <section className="px-6 pb-12">
+  <section className="px-6 pb-8">
     <div className="mx-auto max-w-2xl">
       <Accordion type="single" collapsible className="w-full">
         {FAQ_EXTRAS.map((item, i) => (

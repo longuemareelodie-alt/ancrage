@@ -28,7 +28,7 @@ const SectionBlock = ({ variant = "light", children, className = "" }: SectionBl
     return (
       <section
         ref={ref}
-        className={`px-6 py-12 md:py-16 ${className}`}
+        className={`px-6 py-8 md:py-12 ${className}`}
         style={{ opacity: 0 }}
         aria-hidden="true"
       >
@@ -39,7 +39,7 @@ const SectionBlock = ({ variant = "light", children, className = "" }: SectionBl
 
   if (initiallyVisible || prefersReducedMotion) {
     return (
-      <section className={`px-6 py-12 md:py-16 ${className}`}>
+      <section className={`px-6 py-8 md:py-12 ${className}`}>
         <div className="mx-auto max-w-lg">{children}</div>
       </section>
     );
@@ -53,7 +53,7 @@ const SectionBlock = ({ variant = "light", children, className = "" }: SectionBl
       viewport={{ once: true, amount: 0.15, margin: "0px 0px -10% 0px" }}
       transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
       style={{ willChange: "opacity, transform", transform: "translateZ(0)" }}
-      className={`px-6 py-12 md:py-16 ${className}`}
+      className={`px-6 py-8 md:py-12 ${className}`}
     >
       <div className="mx-auto max-w-lg">{children}</div>
     </motion.section>
