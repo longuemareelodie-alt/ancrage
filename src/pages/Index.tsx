@@ -179,7 +179,13 @@ const Nav = ({ onCTA, loading }: { onCTA: () => void; loading: boolean }) => {
           ))}
         </nav>
 
-        <div className="hidden md:block">
+        <div className="hidden items-center gap-4 md:flex">
+          <Link
+            to="/connexion"
+            className="text-[13px] font-medium text-night/70 transition-colors hover:text-night"
+          >
+            Je me connecte
+          </Link>
           <button
             onClick={onCTA}
             disabled={loading}
@@ -211,6 +217,13 @@ const Nav = ({ onCTA, loading }: { onCTA: () => void; loading: boolean }) => {
                 {l.label}
               </a>
             ))}
+            <Link
+              to="/connexion"
+              onClick={() => setOpen(false)}
+              className="rounded-lg px-2 py-2.5 text-sm text-foreground hover:bg-card"
+            >
+              Je me connecte
+            </Link>
             <button
               onClick={() => {
                 setOpen(false);

@@ -15,7 +15,7 @@ import MascotAvatar from "@/components/pulse/MascotAvatar";
  * Aucune donnée nouvelle : tout vient des tâches et rendez-vous existants.
  */
 const HIDDEN = [
-  "/", "/auth", "/reset-password", "/set-password",
+  "/", "/auth", "/connexion", "/reset-password", "/set-password",
   "/cgv", "/confidentialite", "/mentions-legales",
   "/unsubscribe", "/paywall", "/comparaison", "/aller-plus-loin",
   "/payment-success", "/payment-pending", "/payment-canceled",

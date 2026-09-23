@@ -23,7 +23,7 @@ const Auth = () => {
   const [info, setInfo] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const redirectTo = searchParams.get("redirect") || "/dashboard";
+  const redirectTo = searchParams.get("redirect") || "/aujourdhui";
   const action = searchParams.get("action");
   const invitationToken = searchParams.get("invitation");
   const [invitationHint, setInvitationHint] = useState<string | null>(null);

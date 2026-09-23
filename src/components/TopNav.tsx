@@ -17,6 +17,7 @@ const PUBLIC_PATHS = new Set<string>([
   "/paywall",
   "/aller-plus-loin",
   "/auth",
+  "/connexion",
   "/reset-password",
   "/set-password",
   "/unsubscribe",
