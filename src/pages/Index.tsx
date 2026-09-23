@@ -533,21 +533,34 @@ const Transformations = () => {
               delay: i * 0.07,
               ease: [0.22, 1, 0.36, 1],
             }}
-            className="group relative overflow-hidden rounded-[1.75rem] border border-border/60 bg-background p-7 transition-all duration-500 hover:-translate-y-1 hover:border-primary/40 hover:shadow-[0_30px_80px_-40px_hsl(var(--night)/0.25)]"
+            className="group relative overflow-hidden rounded-[1.75rem] border border-border/60 bg-background p-6 transition-all duration-500 hover:border-primary/40 hover:shadow-[0_30px_80px_-40px_hsl(var(--night)/0.25)]"
           >
             <div className="absolute inset-x-0 -top-24 h-40 bg-gradient-to-b from-primary/15 to-transparent opacity-0 blur-2xl transition-opacity duration-700 group-hover:opacity-100" />
-            <div className="relative flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/15">
+            <div className="relative flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/15">
               <Icon className="h-5 w-5 text-primary-dark" />
             </div>
-            <h3 className="relative mt-6 font-serif text-xl leading-tight text-night">
+            <h3 className="relative mt-4 font-serif text-lg leading-tight text-night">
               <span aria-hidden className="mr-2">
                 {emoji}
               </span>
               {title}
             </h3>
-            <p className="relative mt-3 text-[14px] leading-relaxed text-muted-foreground">
+            <p className="relative mt-2 text-[14px] leading-relaxed text-muted-foreground">
               {desc}
             </p>
+            <button
+              type="button"
+              onClick={() => setOpen(open === title ? null : title)}
+              aria-expanded={open === title}
+              className="relative mt-3 text-[13px] font-semibold text-primary-dark underline decoration-primary/40 underline-offset-4"
+            >
+              {open === title ? "Replier" : "En savoir plus"}
+            </button>
+            {open === title && (
+              <p className="relative mt-3 text-[13.5px] leading-relaxed text-muted-foreground">
+                {more}
+              </p>
+            )}
           </motion.article>
         ))}
       </div>
