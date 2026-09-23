@@ -601,7 +601,7 @@ const Fondatrice = ({ onCTA, loading }: { onCTA: () => void; loading: boolean })
       </p>
     </motion.div>
 
-    <div className="grid items-center gap-16 md:grid-cols-2 md:gap-20">
+    <div className="grid items-center gap-10 md:grid-cols-2 md:gap-14">
       <motion.div
         initial={{ opacity: 0, scale: 0.96 }}
         whileInView={{ opacity: 1, scale: 1 }}
