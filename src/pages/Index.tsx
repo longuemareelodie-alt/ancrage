@@ -665,29 +665,42 @@ const Fondatrice = ({ onCTA, loading }: { onCTA: () => void; loading: boolean })
             compliqués à retenir et de papiers à ne jamais perdre. C'est aussi
             pour eux qu'Éclosia existe.
           </p>
-          <p>
-            Les rendez-vous. Les dossiers. Les traitements. Les documents. Les
-            émotions. Les listes. Les démarches. Tout était dans ma tête.
-          </p>
-          <p>
-            Et plus j'essayais de tout retenir, plus j'avais l'impression de
-            porter seule toute la charge mentale de notre famille.
-          </p>
-          <p>
-            Je ne cherchais pas une nouvelle application. Je cherchais
-            simplement un endroit où enfin déposer tout ce que je portais
-            chaque jour. Un endroit où retrouver facilement les informations
-            importantes. Un endroit qui m'aiderait à respirer un peu.
-          </p>
-          <p>Cet endroit n'existait pas. Alors je l'ai créé.</p>
+          {suite && (
+            <>
+              <p>
+                Les rendez-vous. Les dossiers. Les traitements. Les documents.
+                Les émotions. Les listes. Les démarches. Tout était dans ma
+                tête.
+              </p>
+              <p>
+                Et plus j'essayais de tout retenir, plus j'avais l'impression
+                de porter seule toute la charge mentale de notre famille.
+              </p>
+              <p>
+                Je ne cherchais pas une nouvelle application. Je cherchais
+                simplement un endroit où enfin déposer tout ce que je portais
+                chaque jour. Un endroit où retrouver facilement les
+                informations importantes. Un endroit qui m'aiderait à respirer
+                un peu.
+              </p>
+              <p>Cet endroit n'existait pas. Alors je l'ai créé.</p>
+            </>
+          )}
           <p className="font-medium text-night">
             Éclosia n'est pas née d'une idée marketing. Elle est née d'un
             besoin réel. Celui d'un parent qui voulait arrêter de tout porter
             seul.
           </p>
-
         </div>
-        <div className="mt-8">
+        <button
+          type="button"
+          onClick={() => setSuite((s) => !s)}
+          aria-expanded={suite}
+          className="mt-4 text-[13px] font-semibold text-primary-dark underline decoration-primary/40 underline-offset-4"
+        >
+          {suite ? "Replier mon histoire" : "Lire la suite de mon histoire"}
+        </button>
+        <div className="mt-6">
           <PrimaryCTA onClick={onCTA} disabled={loading}>
             Découvrir Eclosia
           </PrimaryCTA>
@@ -696,7 +709,8 @@ const Fondatrice = ({ onCTA, loading }: { onCTA: () => void; loading: boolean })
       </motion.div>
     </div>
   </Section>
-);
+  );
+};
 
 
 /* ---------------------- Ce qui est inclus dans Eclosia ---------------- */
