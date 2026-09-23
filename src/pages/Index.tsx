@@ -614,7 +614,7 @@ const Fondatrice = ({ onCTA, loading }: { onCTA: () => void; loading: boolean })
           <img
             src={famille1.url}
             alt="Elodie, la fondatrice d'Eclosia, avec ses enfants"
-            className="aspect-[4/5] w-full object-cover"
+            className="aspect-[4/3] w-full object-cover"
           />
         </div>
         <div className="mt-3 grid grid-cols-2 gap-3">
