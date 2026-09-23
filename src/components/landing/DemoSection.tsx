@@ -51,37 +51,24 @@ const TOUR = [
 ];
 
 const MiniTour = () => (
-  <motion.div {...fadeUp} className="mx-auto mt-12 max-w-4xl">
-    <p className="text-center text-xs font-semibold uppercase tracking-[0.2em] text-primary-dark">
-      La visite en 3 étapes
-    </p>
-    <ol className="mt-8 grid gap-5 md:grid-cols-3">
-      {TOUR.map(({ step, space, title, text, example }, i) => (
+  <motion.div {...fadeUp} className="mx-auto mt-8 max-w-3xl">
+    <ol className="grid gap-3 md:grid-cols-3">
+      {TOUR.map(({ step, space, title }, i) => (
         <motion.li
           key={step}
-          initial={{ opacity: 0, y: 16 }}
+          initial={{ opacity: 0, y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.7, delay: i * 0.12, ease: [0.22, 1, 0.36, 1] }}
-          className="flex flex-col rounded-3xl border border-border/60 bg-background p-6 shadow-[0_30px_70px_-55px_hsl(var(--night)/0.5)]"
+          transition={{ duration: 0.6, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
+          className="flex items-center gap-3 rounded-2xl border border-border/60 bg-background px-4 py-3"
         >
-          <div className="flex items-center gap-3">
-            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/15 text-sm font-semibold text-primary-dark">
-              {step}
-            </span>
-            <span className="text-[13px] font-medium text-muted-foreground">
-              {space}
-            </span>
-          </div>
-          <h3 className="mt-4 font-serif text-lg leading-snug text-night">
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/15 text-xs font-semibold text-primary-dark">
+            {step}
+          </span>
+          <span className="text-sm leading-snug text-foreground/85">
             {title}
-          </h3>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            {text}
-          </p>
-          <p className="mt-4 rounded-2xl bg-secondary/40 px-4 py-3 text-[13px] italic leading-relaxed text-foreground/80">
-            {example}
-          </p>
+            <span className="text-muted-foreground"> · {space}</span>
+          </span>
         </motion.li>
       ))}
     </ol>
