@@ -54,7 +54,7 @@ const HeroV4 = ({ onCTA, loading }: { onCTA: () => void; loading: boolean }) => 
           </div>
         </div>
 
-        <div className="mx-auto w-full max-w-[420px]">
+        <div className="mx-auto w-full max-w-[290px] sm:max-w-[420px]">
           <div className="overflow-hidden rounded-[1.4rem] border border-border/60 bg-card p-1.5 shadow-[0_24px_60px_-34px_hsl(var(--night)/0.4)]">
             <video
               src={DEMO_VIDEO_URL}
@@ -64,7 +64,7 @@ const HeroV4 = ({ onCTA, loading }: { onCTA: () => void; loading: boolean }) => 
               preload="none"
               onPlay={() => track("demo_video_start")}
               onEnded={() => track("demo_video_complete")}
-              className="w-full rounded-[1.1rem] bg-secondary/40"
+              className="max-h-[38vh] w-full rounded-[1.1rem] bg-secondary/40 object-contain sm:max-h-none"
             />
           </div>
           <p className="mt-2 text-center text-[12px] text-muted-foreground">

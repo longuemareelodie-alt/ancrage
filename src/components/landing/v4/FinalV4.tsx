@@ -6,7 +6,7 @@ const FinalV4 = ({ onCTA, loading }: { onCTA: () => void; loading: boolean }) =>
   const price = priceLabel(useFoundingOffer());
 
   return (
-    <section id="rejoindre" className="px-5 pb-8 pt-2 md:px-6 md:pb-12 md:pt-4">
+    <section id="rejoindre" className="px-5 pb-4 pt-2 md:px-6 md:pb-8 md:pt-4">
       <div className="mx-auto max-w-2xl text-center">
         <h2 className="font-serif text-[clamp(1.5rem,4vw,2.4rem)] leading-[1.12] text-night">
           Tu n'as pas besoin de tout gérer aujourd'hui.
