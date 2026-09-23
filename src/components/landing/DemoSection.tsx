@@ -97,20 +97,19 @@ const DemoSection = () => (
         <br />
         <span className="italic text-primary-dark">avant de lire la page.</span>
       </SectionTitle>
-      <p className="mt-6 text-[15px] leading-relaxed text-muted-foreground">
-        Quarante secondes calmes, racontées à voix haute : tu dis comment va ta
-        tête, Éclosia sort une seule action, et tu peux tout dicter à la voix.
-        Mets le son.
+      <p className="mt-4 text-[15px] leading-relaxed text-muted-foreground">
+        Quarante secondes, avec le son : tu dis comment va ta tête, Éclosia sort
+        une seule action.
       </p>
     </motion.div>
 
-    <motion.div {...fadeUp} className="mx-auto mt-10 max-w-xl">
+    <motion.div {...fadeUp} className="mx-auto mt-6 max-w-[230px] sm:max-w-[280px]">
       <div className="relative">
-        <div className="absolute -inset-6 -z-10 rounded-[3rem] bg-gradient-to-b from-primary/20 to-transparent blur-2xl" />
-        <div className="overflow-hidden rounded-[2rem] border border-border/60 bg-background p-2 shadow-[0_50px_120px_-45px_hsl(var(--night)/0.35)]">
+        <div className="absolute -inset-4 -z-10 rounded-[2rem] bg-gradient-to-b from-primary/20 to-transparent blur-2xl" />
+        <div className="overflow-hidden rounded-[1.5rem] border border-border/60 bg-background p-1.5 shadow-[0_30px_80px_-40px_hsl(var(--night)/0.35)]">
           {DEMO_VIDEO_URL ? (
             <video
-              className="w-full rounded-[1.6rem]"
+              className="w-full rounded-[1.2rem]"
               controls
               playsInline
               preload="metadata"
