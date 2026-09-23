@@ -46,12 +46,21 @@ const HistoireV4 = () => {
           </button>
         </div>
 
-        <img
-          src={famille.url}
-          alt="La fondatrice d'Éclosia avec ses enfants, visages volontairement floutés"
-          loading="lazy"
-          className="w-full rounded-2xl border border-border/60 object-cover shadow-[0_20px_50px_-32px_hsl(var(--night)/0.4)]"
-        />
+        <div>
+          <div className="overflow-hidden rounded-2xl border border-border/60 bg-card p-1.5 shadow-[0_20px_50px_-32px_hsl(var(--night)/0.4)]">
+            <video
+              src={fondatriceVideo.url}
+              poster={famille.url}
+              controls
+              playsInline
+              preload="none"
+              className="w-full rounded-[0.9rem]"
+            />
+          </div>
+          <p className="mt-2 text-center text-[12px] text-muted-foreground">
+            Une minute et demie, avec le son : pourquoi Éclosia existe.
+          </p>
+        </div>
       </div>
     </Band>
   );
