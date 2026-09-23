@@ -31,7 +31,7 @@ const MONTH_DEMO: (keyof typeof STATE_COLOR | null)[] = [
 const PulseSection = () => (
   <Section id="pulse" className="bg-night/[0.03]">
     {/* La vidéo PULSE : les états du jour, la prochaine action, les six compagnons. */}
-    <motion.div {...fadeUp} className="mx-auto mb-16 max-w-4xl">
+    <motion.div {...fadeUp} className="mx-auto mb-12 max-w-xl">
       <div className="relative">
         <div className="absolute -inset-6 -z-10 rounded-[3rem] bg-gradient-to-b from-primary/20 to-transparent blur-2xl" />
         <div className="overflow-hidden rounded-[2rem] border border-border/60 bg-background p-2 shadow-[0_50px_120px_-45px_hsl(var(--night)/0.35)]">

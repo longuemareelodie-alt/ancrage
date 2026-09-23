@@ -85,7 +85,7 @@ const Section = ({
   className?: string;
   id?: string;
 }) => (
-  <section id={id} className={`px-6 py-24 md:py-36 ${className}`}>
+  <section id={id} className={`px-6 py-14 md:py-20 ${className}`}>
     <div className="mx-auto w-full max-w-[1180px]">{children}</div>
   </section>
 );
@@ -465,39 +465,47 @@ const Transformations = () => {
       icon: Heart,
       emoji: "❤️",
       title: "Retrouver de la sérénité",
-      desc: "Tu centralises enfin ce qui compte, au même endroit.",
+      desc: "Tout ce qui compte, au même endroit.",
+      more: "Agenda, tâches, courses, notes et rappels de la famille réunis dans un seul espace calme, au lieu d'être éparpillés dans ta tête et dans dix applications.",
     },
     {
       icon: Stethoscope,
       emoji: "🩺",
       title: "Ne plus oublier l'essentiel",
-      desc: "Rendez-vous, traitements, suivis médicaux — tout est là.",
+      desc: "Rendez-vous, traitements, suivis.",
+      more: "Une fiche par enfant : ordonnances, vaccins, bilans, comptes rendus, contacts des praticiens. Les rappels partent avant le rendez-vous et avant chaque prise de traitement.",
     },
     {
       icon: FolderLock,
       emoji: "📂",
       title: "Tout retrouver immédiatement",
-      desc: "Tes documents importants, sécurisés et accessibles en un geste.",
+      desc: "Tes documents, à l'abri, en un geste.",
+      more: "Un coffre-fort sécurisé pour les papiers importants, avec dates d'expiration, favoris et notes protégées. Plus de dossier perdu la veille d'un rendez-vous.",
     },
     {
       icon: Sparkles,
       emoji: "🌱",
       title: "Comprendre ton enfant",
-      desc: "Ressources, guides, activités et outils adaptés à son profil.",
+      desc: "Des ressources adaptées à son profil.",
+      more: "Guides neuroatypie, activités, supports d'autonomie et pistes concrètes pour les jours difficiles, écrits pour des familles qui vivent l'autisme, la dyspraxie ou les troubles de l'attention.",
     },
     {
       icon: Users,
       emoji: "🤝",
       title: "Ne plus avancer seule",
-      desc: "Une communauté bienveillante qui comprend ton quotidien.",
+      desc: "Une communauté qui comprend.",
+      more: "Un espace d'échange bienveillant et modéré, entre parents qui vivent la même chose. Tu peux aussi inviter tes proches et choisir ce qu'ils voient.",
     },
     {
       icon: ShieldAlert,
       emoji: "🚨",
       title: "Être prête quand tout déborde",
-      desc: "Gestion de crise, protocoles, informations essentielles à portée.",
+      desc: "Les informations vitales à portée.",
+      more: "Fiche d'urgence partageable, protocoles de crise, contacts essentiels : ce qu'il faut sous les yeux au moment où on n'a plus la tête à chercher.",
     },
   ];
+
+  const [open, setOpen] = useState<string | null>(null);
 
   return (
     <Section id="modules" className="bg-card">
@@ -513,8 +521,8 @@ const Transformations = () => {
 
       </motion.div>
 
-      <div className="mt-16 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-        {cards.map(({ icon: Icon, emoji, title, desc }, i) => (
+      <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {cards.map(({ icon: Icon, emoji, title, desc, more }, i) => (
           <motion.article
             key={title}
             initial={{ opacity: 0, y: 24 }}
@@ -525,21 +533,34 @@ const Transformations = () => {
               delay: i * 0.07,
               ease: [0.22, 1, 0.36, 1],
             }}
-            className="group relative overflow-hidden rounded-[1.75rem] border border-border/60 bg-background p-7 transition-all duration-500 hover:-translate-y-1 hover:border-primary/40 hover:shadow-[0_30px_80px_-40px_hsl(var(--night)/0.25)]"
+            className="group relative overflow-hidden rounded-[1.75rem] border border-border/60 bg-background p-6 transition-all duration-500 hover:border-primary/40 hover:shadow-[0_30px_80px_-40px_hsl(var(--night)/0.25)]"
           >
             <div className="absolute inset-x-0 -top-24 h-40 bg-gradient-to-b from-primary/15 to-transparent opacity-0 blur-2xl transition-opacity duration-700 group-hover:opacity-100" />
-            <div className="relative flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/15">
+            <div className="relative flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/15">
               <Icon className="h-5 w-5 text-primary-dark" />
             </div>
-            <h3 className="relative mt-6 font-serif text-xl leading-tight text-night">
+            <h3 className="relative mt-4 font-serif text-lg leading-tight text-night">
               <span aria-hidden className="mr-2">
                 {emoji}
               </span>
               {title}
             </h3>
-            <p className="relative mt-3 text-[14px] leading-relaxed text-muted-foreground">
+            <p className="relative mt-2 text-[14px] leading-relaxed text-muted-foreground">
               {desc}
             </p>
+            <button
+              type="button"
+              onClick={() => setOpen(open === title ? null : title)}
+              aria-expanded={open === title}
+              className="relative mt-3 text-[13px] font-semibold text-primary-dark underline decoration-primary/40 underline-offset-4"
+            >
+              {open === title ? "Replier" : "En savoir plus"}
+            </button>
+            {open === title && (
+              <p className="relative mt-3 text-[13.5px] leading-relaxed text-muted-foreground">
+                {more}
+              </p>
+            )}
           </motion.article>
         ))}
       </div>
@@ -552,10 +573,13 @@ const Transformations = () => {
 
 /* ------------------------------ Fondatrice ----------------------------- */
 
-const Fondatrice = ({ onCTA, loading }: { onCTA: () => void; loading: boolean }) => (
+const Fondatrice = ({ onCTA, loading }: { onCTA: () => void; loading: boolean }) => {
+  const [suite, setSuite] = useState(false);
+
+  return (
   <Section id="fondatrice" className="bg-card">
     {/* Courte vidéo : la fondatrice et ses enfants, visages floutés. */}
-    <motion.div {...fadeUp} className="mx-auto mb-16 max-w-3xl">
+    <motion.div {...fadeUp} className="mx-auto mb-12 max-w-xl">
       <div className="relative">
         <div className="absolute -inset-5 -z-10 rounded-[3rem] bg-gradient-to-br from-primary/20 to-accent/10 blur-2xl" />
         <div className="overflow-hidden rounded-[2rem] border border-border/60 bg-background p-2 shadow-[0_50px_120px_-45px_hsl(var(--night)/0.35)]">
@@ -577,7 +601,7 @@ const Fondatrice = ({ onCTA, loading }: { onCTA: () => void; loading: boolean })
       </p>
     </motion.div>
 
-    <div className="grid items-center gap-16 md:grid-cols-2 md:gap-20">
+    <div className="grid items-center gap-10 md:grid-cols-2 md:gap-14">
       <motion.div
         initial={{ opacity: 0, scale: 0.96 }}
         whileInView={{ opacity: 1, scale: 1 }}
@@ -590,7 +614,7 @@ const Fondatrice = ({ onCTA, loading }: { onCTA: () => void; loading: boolean })
           <img
             src={famille1.url}
             alt="Elodie, la fondatrice d'Eclosia, avec ses enfants"
-            className="aspect-[4/5] w-full object-cover"
+            className="aspect-[4/3] w-full object-cover"
           />
         </div>
         <div className="mt-3 grid grid-cols-2 gap-3">
@@ -641,29 +665,42 @@ const Fondatrice = ({ onCTA, loading }: { onCTA: () => void; loading: boolean })
             compliqués à retenir et de papiers à ne jamais perdre. C'est aussi
             pour eux qu'Éclosia existe.
           </p>
-          <p>
-            Les rendez-vous. Les dossiers. Les traitements. Les documents. Les
-            émotions. Les listes. Les démarches. Tout était dans ma tête.
-          </p>
-          <p>
-            Et plus j'essayais de tout retenir, plus j'avais l'impression de
-            porter seule toute la charge mentale de notre famille.
-          </p>
-          <p>
-            Je ne cherchais pas une nouvelle application. Je cherchais
-            simplement un endroit où enfin déposer tout ce que je portais
-            chaque jour. Un endroit où retrouver facilement les informations
-            importantes. Un endroit qui m'aiderait à respirer un peu.
-          </p>
-          <p>Cet endroit n'existait pas. Alors je l'ai créé.</p>
+          {suite && (
+            <>
+              <p>
+                Les rendez-vous. Les dossiers. Les traitements. Les documents.
+                Les émotions. Les listes. Les démarches. Tout était dans ma
+                tête.
+              </p>
+              <p>
+                Et plus j'essayais de tout retenir, plus j'avais l'impression
+                de porter seule toute la charge mentale de notre famille.
+              </p>
+              <p>
+                Je ne cherchais pas une nouvelle application. Je cherchais
+                simplement un endroit où enfin déposer tout ce que je portais
+                chaque jour. Un endroit où retrouver facilement les
+                informations importantes. Un endroit qui m'aiderait à respirer
+                un peu.
+              </p>
+              <p>Cet endroit n'existait pas. Alors je l'ai créé.</p>
+            </>
+          )}
           <p className="font-medium text-night">
             Éclosia n'est pas née d'une idée marketing. Elle est née d'un
             besoin réel. Celui d'un parent qui voulait arrêter de tout porter
             seul.
           </p>
-
         </div>
-        <div className="mt-8">
+        <button
+          type="button"
+          onClick={() => setSuite((s) => !s)}
+          aria-expanded={suite}
+          className="mt-4 text-[13px] font-semibold text-primary-dark underline decoration-primary/40 underline-offset-4"
+        >
+          {suite ? "Replier mon histoire" : "Lire la suite de mon histoire"}
+        </button>
+        <div className="mt-6">
           <PrimaryCTA onClick={onCTA} disabled={loading}>
             Découvrir Eclosia
           </PrimaryCTA>
@@ -672,7 +709,8 @@ const Fondatrice = ({ onCTA, loading }: { onCTA: () => void; loading: boolean })
       </motion.div>
     </div>
   </Section>
-);
+  );
+};
 
 
 /* ---------------------- Ce qui est inclus dans Eclosia ---------------- */
