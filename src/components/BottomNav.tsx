@@ -169,22 +169,22 @@ const BottomNav = () => {
 
   return (
     <>
-      <div aria-hidden className="h-[calc(4.75rem+env(safe-area-inset-bottom))] w-full" />
+      <div aria-hidden className="h-[calc(5.25rem+env(safe-area-inset-bottom))] w-full" />
       <nav
-        className="fixed bottom-0 left-0 right-0 z-40 border-t border-border/50 bg-background/90 pb-[max(env(safe-area-inset-bottom),0.375rem)] backdrop-blur-xl"
+        className="fixed bottom-0 left-0 right-0 z-40 px-3 pb-[max(env(safe-area-inset-bottom),0.625rem)]"
         aria-label="Navigation principale"
       >
-        <ul className="mx-auto grid h-16 max-w-lg grid-cols-6 items-stretch">
+        <ul className="mx-auto grid h-[60px] max-w-lg grid-cols-6 items-stretch rounded-[22px] border border-border/60 bg-card/95 px-1 shadow-[0_10px_30px_-14px_hsl(var(--foreground)/0.28)] backdrop-blur-xl">
           {left.map(renderTab)}
 
-          <li className="flex min-w-0 items-start justify-center">
+          <li className="flex min-w-0 items-center justify-center">
             <button
               type="button"
               onClick={() => setOpen(true)}
               aria-label="Créer"
-              className="-mt-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground ring-4 ring-background shadow-[0_8px_18px_-10px_hsl(var(--foreground)/0.4)] transition-transform active:scale-95"
+              className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-[0_6px_14px_-8px_hsl(var(--primary-dark)/0.6)] transition-transform active:scale-95"
             >
-              <Plus className="h-5 w-5" strokeWidth={2} />
+              <Plus className="h-5 w-5" strokeWidth={2.2} />
             </button>
           </li>
 
