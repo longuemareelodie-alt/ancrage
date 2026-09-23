@@ -19,7 +19,7 @@ const CompagnonsV4 = () => (
             <div
               className={`mascot-tap mx-auto flex h-14 w-14 items-center justify-center rounded-full ${m.tint}`}
             >
-              <span className={mascotAliveClass(m.domain)} style={mascotDelay(i)}>
+              <span className={`inline-block ${mascotAliveClass(m.domain)}`} style={mascotDelay(i)}>
                 <img
                   src={m.image}
                   alt={m.name}
