@@ -1,3 +1,4 @@
+import { sendAppEmail } from "../_shared/transactional-email-templates/send-app-email.ts";
 // retry-account-emails
 //
 // Scheduled worker (pg_cron, every 5 minutes) that drains
@@ -103,17 +104,12 @@ Deno.serve(async (req) => {
       if (!actionLink) throw new Error("no_action_link");
 
       // 2. Send the welcome-initiation email
-      const { error: sendErr } = await supabase.functions.invoke(
-        "send-transactional-email",
-        {
-          body: {
+      const { error: sendErr } = await sendAppEmail({
             templateName: row.template_name,
             recipientEmail: row.email,
             idempotencyKey: `account-activation-${row.payment_id}-r${newAttempts}`,
             templateData: { firstName: "", actionUrl: actionLink },
-          },
-        },
-      );
+          });
       if (sendErr) throw sendErr;
 
       // 3. Mark sent

@@ -1,3 +1,4 @@
+import { sendAppEmail } from "../_shared/transactional-email-templates/send-app-email.ts";
 // send-activation-to-existing
 //
 // One-shot admin tool: for every premium user that signed up via Google OAuth
@@ -124,14 +125,12 @@ Deno.serve(async (req) => {
         ?? null;
       if (!actionLink) throw new Error("no_action_link");
 
-      const { error: sendErr } = await supabase.functions.invoke("send-transactional-email", {
-        body: {
+      const { error: sendErr } = await sendAppEmail({
           templateName: "welcome-initiation",
           recipientEmail: c.email,
           idempotencyKey: `activation-existing-${c.id}-${Date.now()}`,
           templateData: { firstName: "", actionUrl: actionLink },
-        },
-      });
+        });
       if (sendErr) throw sendErr;
       results.push({ email: c.email, status: "sent" });
     } catch (err) {

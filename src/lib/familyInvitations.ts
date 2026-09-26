@@ -112,18 +112,12 @@ export async function sendInvitation(params: {
   const url = invitationUrl(result.token);
 
   const { error: mailError } = await supabase.functions.invoke(
-    "send-transactional-email",
+    "send-family-invitation",
     {
       body: {
-        templateName: "invitation-proche",
-        recipientEmail: params.email.trim().toLowerCase(),
-        idempotencyKey: `invitation-proche-${result.token}`,
-        templateData: {
-          inviterFirstName: params.inviterFirstName ?? null,
-          roleLabel: roleLabel(result.role),
-          personalNote: params.note ?? "",
-          inviteUrl: url,
-        },
+        token: result.token,
+        inviterFirstName: params.inviterFirstName ?? null,
+        roleLabel: roleLabel(result.role),
       },
     },
   );

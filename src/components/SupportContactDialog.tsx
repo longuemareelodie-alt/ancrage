@@ -56,11 +56,10 @@ const SupportContactDialog = ({
     setSubmitting(true);
     try {
       const { data, error } = await supabase.functions.invoke(
-        "send-transactional-email",
+        "send-support-request",
         {
           body: {
-            templateName: "support-request",
-            templateData: {
+            ...{
               fromName: name.trim() || null,
               fromEmail: email.trim(),
               message: message.trim(),

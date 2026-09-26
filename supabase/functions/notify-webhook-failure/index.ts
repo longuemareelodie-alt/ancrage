@@ -5,6 +5,7 @@
 // with a per-window debounce to avoid spam.
 
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { EmailAPIError, sendLovableEmail } from "npm:@lovable.dev/email-js@0.1.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -204,24 +205,30 @@ async function sendEmailAlert(
   `;
 
   const messageId = `webhook-alert-${Date.now()}-${crypto.randomUUID()}`;
-  const payload = {
-    to: ALERT_EMAIL_TO,
-    from: `${ALERT_FROM_NAME} <alerts@${ALERT_FROM_DOMAIN}>`,
-    sender_domain: ALERT_FROM_DOMAIN,
-    subject: `[Eclosia] ⚠️ Webhook Mollie : ${failures.length} erreurs en ${WINDOW_MINUTES} min`,
-    html,
-    text,
-    label: "webhook_alert",
-    purpose: "transactional",
-    message_id: messageId,
-    queued_at: new Date().toISOString(),
-  };
-
-  const { error } = await supabase.rpc("enqueue_email", {
-    queue_name: "email_transactional",
-    payload,
-  });
-  return { ok: !error, error: error?.message };
+  const apiKey = Deno.env.get("LOVABLE_API_KEY");
+  if (!apiKey) return { ok: false, error: "LOVABLE_API_KEY is not configured" };
+  try {
+    await sendLovableEmail(
+      {
+        to: ALERT_EMAIL_TO,
+        from: `${ALERT_FROM_NAME} <alerts@${ALERT_FROM_DOMAIN}>`,
+        sender_domain: ALERT_FROM_DOMAIN,
+        subject: `[Eclosia] ⚠️ Webhook Mollie : ${failures.length} erreurs en ${WINDOW_MINUTES} min`,
+        html,
+        text,
+        label: "webhook_alert",
+        purpose: "transactional",
+        idempotency_key: messageId,
+      },
+      { apiKey, sendUrl: Deno.env.get("LOVABLE_SEND_URL") },
+    );
+  } catch (e) {
+    if (e instanceof EmailAPIError && e.code === "recipient_suppressed") {
+      return { ok: false, error: "recipient_suppressed" };
+    }
+    return { ok: false, error: e instanceof Error ? e.message : String(e) };
+  }
+  return { ok: true, error: undefined };
 }
 
 Deno.serve(async (req) => {

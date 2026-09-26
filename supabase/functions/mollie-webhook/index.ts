@@ -1,3 +1,4 @@
+import { sendAppEmail } from "../_shared/transactional-email-templates/send-app-email.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import {
   PRODUCT_CATALOG,
@@ -1074,17 +1075,12 @@ export const handleMollieWebhook = async (req: Request): Promise<Response> => {
         if (actionLink) {
           // Try to send immediately — but await so we can fall back on failure.
           try {
-            const { error: sendErr } = await supabase.functions.invoke(
-              "send-transactional-email",
-              {
-                body: {
+            const { error: sendErr } = await sendAppEmail({
                   templateName: "welcome-initiation",
                   recipientEmail: email,
                   idempotencyKey: `account-activation-${paymentId}`,
                   templateData: { firstName: "", actionUrl: actionLink },
-                },
-              },
-            );
+                });
             if (sendErr) throw sendErr;
           } catch (sendErr) {
             logError("activation email send failed, queuing retry", sendErr, { paymentId });
@@ -1221,14 +1217,12 @@ export const handleMollieWebhook = async (req: Request): Promise<Response> => {
 
         const initRecipient = updatedProfile.email || email;
         if (initRecipient) {
-          await supabase.functions.invoke("send-transactional-email", {
-            body: {
+          await sendAppEmail({
               templateName: "welcome-initiation",
               recipientEmail: initRecipient,
               idempotencyKey: `welcome-initiation-${paymentId}`,
               templateData: { firstName: initProfileData?.first_name || "" },
-            },
-          });
+            });
         } else {
           logDebug("Skipped welcome-initiation email: no recipient", { paymentId });
         }
@@ -1238,8 +1232,7 @@ export const handleMollieWebhook = async (req: Request): Promise<Response> => {
 
       // Admin notification
       try {
-        await supabase.functions.invoke("send-transactional-email", {
-          body: {
+        await sendAppEmail({
             templateName: "admin-payment-notification",
             recipientEmail: "longuemareelodie9@gmail.com",
             idempotencyKey: `admin-notify-${paymentId}`,
@@ -1249,8 +1242,7 @@ export const handleMollieWebhook = async (req: Request): Promise<Response> => {
               amount: payment?.amount ? `${payment.amount.value} ${payment.amount.currency}` : "",
               paymentId: paymentId,
             },
-          },
-        });
+          });
       } catch (emailErr) {
         logError("Failed to send initiation admin notification (non-fatal)", emailErr, { paymentId });
       }
@@ -1443,20 +1435,17 @@ export const handleMollieWebhook = async (req: Request): Promise<Response> => {
 
       const recipientEmail = updatedProfile.email || email;
       if (recipientEmail) {
-        await supabase.functions.invoke("send-transactional-email", {
-          body: {
+        await sendAppEmail({
             templateName: "welcome-premium",
             recipientEmail,
             idempotencyKey: `welcome-premium-${paymentId}`,
             templateData: { firstName: profileData?.first_name || "" },
-          },
-        });
+          });
         logDebug("Welcome premium email sent", { recipientEmail, paymentId });
       }
 
       // Send admin notification email
-      await supabase.functions.invoke("send-transactional-email", {
-        body: {
+      await sendAppEmail({
           templateName: "admin-payment-notification",
           recipientEmail: "longuemareelodie9@gmail.com",
           idempotencyKey: `admin-notify-${paymentId}`,
@@ -1466,8 +1455,7 @@ export const handleMollieWebhook = async (req: Request): Promise<Response> => {
             amount: payment?.amount ? `${payment.amount.value} ${payment.amount.currency}` : "",
             paymentId: paymentId,
           },
-        },
-      });
+        });
       logDebug("Admin payment notification sent", { paymentId });
     } catch (emailErr) {
       logError("Failed to send email notifications (non-fatal)", emailErr, { paymentId });

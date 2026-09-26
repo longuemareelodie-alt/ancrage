@@ -1,3 +1,4 @@
+import { sendAppEmail } from "../_shared/transactional-email-templates/send-app-email.ts";
 // Envoie les emails de notification aux ambassadrices d'un batch payé
 // Appelé par l'admin après "Marquer comme payé"
 import { createClient } from 'npm:@supabase/supabase-js@2'
@@ -68,8 +69,7 @@ Deno.serve(async (req) => {
     for (const r of (recipients ?? []) as any[]) {
       if (!r.email) continue
       const amountEuros = (r.amount_cents / 100).toFixed(2).replace('.', ',')
-      await supabase.functions.invoke('send-transactional-email', {
-        body: {
+      await sendAppEmail({
           templateName: 'ambassador-payout-sent',
           recipientEmail: r.email,
           idempotencyKey: `payout-${batchId}-${r.ambassador_user_id}`,
@@ -81,8 +81,7 @@ Deno.serve(async (req) => {
             periodLabel: periodFromCreatedAt(r.payout_created_at),
             referralCode: r.referral_code,
           },
-        },
-      })
+        })
       sent++
     }
 
