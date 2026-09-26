@@ -28,3 +28,6 @@ verify_jwt = false
 
 [functions.handle-email-events]
 verify_jwt = false
+
+[functions.send-first-use-welcome]
+verify_jwt = false

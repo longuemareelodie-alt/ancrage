@@ -81,8 +81,15 @@ const Onboarding = () => {
     else void finish();
   };
 
+  const sendWelcome = () => {
+    void supabase.functions
+      .invoke("send-first-use-welcome", { body: { firstName: firstName || undefined } })
+      .catch(() => {});
+  };
+
   const later = () => {
     markOnboardingDone();
+    sendWelcome();
     toast({ description: "Tu peux reprendre quand tu veux, c'est gardé." });
     navigate("/aujourdhui");
   };
@@ -94,6 +101,7 @@ const Onboarding = () => {
     if (!res.ok) {
       markOnboardingDone();
     }
+    sendWelcome();
     toast({ description: "C'est prêt. Éclosia s'adapte à toi. 🌸" });
     navigate("/aujourdhui");
   };
