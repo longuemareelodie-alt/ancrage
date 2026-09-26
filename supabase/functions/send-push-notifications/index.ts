@@ -453,6 +453,16 @@ Deno.serve(async (req) => {
       });
     }
 
+    try {
+      decodeVapidPrivateKey(vapidPrivateKey);
+    } catch (e) {
+      console.error("VAPID_PRIVATE_KEY unreadable:", (e as Error).message);
+      return new Response(JSON.stringify({ error: "VAPID key invalid" }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, serviceRoleKey);
