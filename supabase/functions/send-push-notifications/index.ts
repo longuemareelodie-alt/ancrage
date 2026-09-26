@@ -141,10 +141,7 @@ async function sendWebPush(
 
   const unsignedToken = `${header}.${claimSet}`;
 
-  const privKeyBytes = Uint8Array.from(
-    atob(vapidPrivateKey.replace(/-/g, "+").replace(/_/g, "/")),
-    (c) => c.charCodeAt(0),
-  );
+  const privKeyBytes = decodeVapidPrivateKey(vapidPrivateKey);
   const cryptoKey = await crypto.subtle.importKey(
     "pkcs8",
     await convertRawToP8(privKeyBytes),
@@ -176,6 +173,26 @@ async function sendWebPush(
   });
 
   return response.ok;
+}
+
+function decodeVapidPrivateKey(input: string): Uint8Array {
+  let v = input.trim().replace(/^["']|["']$/g, "").trim();
+  if (v.startsWith("{")) {
+    try { v = String(JSON.parse(v).d ?? v); } catch { /* keep */ }
+  }
+  if (/^[0-9a-fA-F]{64}$/.test(v)) {
+    return Uint8Array.from(v.match(/../g)!.map((h) => parseInt(h, 16)));
+  }
+  v = v.replace(/-----[^-]+-----/g, "").replace(/\s+/g, "")
+    .replace(/-/g, "+").replace(/_/g, "/").replace(/=+$/, "");
+  v += "=".repeat((4 - (v.length % 4)) % 4);
+  const bytes = Uint8Array.from(atob(v), (c) => c.charCodeAt(0));
+  if (bytes.length === 32) return bytes;
+  // PKCS8 / SEC1 DER: take the 32-byte scalar after 0x04 0x20
+  for (let i = 0; i < bytes.length - 33; i++) {
+    if (bytes[i] === 0x04 && bytes[i + 1] === 0x20) return bytes.slice(i + 2, i + 34);
+  }
+  throw new Error(`VAPID_PRIVATE_KEY invalid (decoded ${bytes.length} bytes, expected 32)`);
 }
 
 async function convertRawToP8(raw: Uint8Array): Promise<ArrayBuffer> {
@@ -431,6 +448,16 @@ Deno.serve(async (req) => {
     const vapidPrivateKey = Deno.env.get("VAPID_PRIVATE_KEY");
     if (!vapidPrivateKey) {
       return new Response(JSON.stringify({ error: "VAPID key not configured" }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    try {
+      decodeVapidPrivateKey(vapidPrivateKey);
+    } catch (e) {
+      console.error("VAPID_PRIVATE_KEY unreadable:", (e as Error).message);
+      return new Response(JSON.stringify({ error: "VAPID key invalid" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
