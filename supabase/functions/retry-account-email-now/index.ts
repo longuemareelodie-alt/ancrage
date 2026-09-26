@@ -1,3 +1,4 @@
+import { sendAppEmail } from "../_shared/transactional-email-templates/send-app-email.ts";
 // retry-account-email-now
 //
 // Permet à un admin de relancer manuellement un email d'activation en attente
@@ -144,17 +145,12 @@ Deno.serve(async (req) => {
 
     // 2) Envoi via send-transactional-email (idempotency key inclut "manual"
     //    pour éviter collision avec les retries automatiques du cron)
-    const { error: sendErr } = await admin.functions.invoke(
-      "send-transactional-email",
-      {
-        body: {
+    const { error: sendErr } = await sendAppEmail({
           templateName: row.template_name,
           recipientEmail: row.email,
           idempotencyKey: `account-activation-${row.payment_id}-manual-${callerId}-${Date.now()}`,
           templateData: { firstName: "", actionUrl: actionLink },
-        },
-      },
-    );
+        });
     if (sendErr) throw sendErr;
 
     // 3) Marque envoyé

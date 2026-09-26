@@ -1,3 +1,4 @@
+import { sendAppEmail } from "../_shared/transactional-email-templates/send-app-email.ts";
 import { corsHeaders } from "https://esm.sh/@supabase/supabase-js@2.95.0/cors";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.95.0";
 
@@ -332,14 +333,12 @@ async function sendEmail(
   idempotencyKey: string,
 ): Promise<boolean> {
   try {
-    const { error } = await supabase.functions.invoke("send-transactional-email", {
-      body: {
+    const { error } = await sendAppEmail({
         templateName: "health-reminder",
         recipientEmail: to,
         idempotencyKey: `${idempotencyKey}-v3`,
         templateData: { subject, ...data },
-      },
-    });
+      });
     if (error) {
       console.error("send-transactional-email failed", error);
       return false;

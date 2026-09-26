@@ -1,3 +1,4 @@
+import { sendAppEmail } from "../_shared/transactional-email-templates/send-app-email.ts";
 // Génère un fichier SEPA pain.001.001.03 pour les commissions ambassadrices validées
 // Déclenché par cron mensuel ou manuellement par admin
 import { createClient } from 'npm:@supabase/supabase-js@2'
@@ -276,8 +277,7 @@ Deno.serve(async (req) => {
       .createSignedUrl(filePath, 60 * 60 * 24 * 30)
 
     // 9. Email admin
-    await supabase.functions.invoke('send-transactional-email', {
-      body: {
+    await sendAppEmail({
         templateName: 'sepa-batch-ready',
         recipientEmail: ADMIN_EMAIL,
         idempotencyKey: `sepa-batch-${batchId}`,
@@ -289,8 +289,7 @@ Deno.serve(async (req) => {
           downloadUrl: signed?.signedUrl ?? '',
           skippedCount: skipped.length,
         },
-      },
-    })
+      })
 
     return new Response(
       JSON.stringify({
