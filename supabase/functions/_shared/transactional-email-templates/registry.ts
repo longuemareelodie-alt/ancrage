@@ -18,6 +18,7 @@ import { template as ambassadorPayoutSent } from './ambassador-payout-sent.tsx'
 import { template as ambassadorWelcome } from './ambassador-welcome.tsx'
 import { template as invitationProche } from './invitation-proche.tsx'
 import { template as healthReminder } from './health-reminder.tsx'
+import { template as welcomeFirstUse } from './welcome-first-use.tsx'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'welcome-premium': welcomePremium,
@@ -29,4 +30,5 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'ambassador-welcome': ambassadorWelcome,
   'invitation-proche': invitationProche,
   'health-reminder': healthReminder,
+  'welcome-first-use': welcomeFirstUse,
 }
