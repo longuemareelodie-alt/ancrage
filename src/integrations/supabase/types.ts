@@ -2472,6 +2472,16 @@ export type Database = {
         Args: { _token: string }
         Returns: Json
       }
+      get_founder_orders_admin: {
+        Args: never
+        Returns: {
+          amount: number
+          created_at: string
+          email: string
+          payment_id: string
+          status: string
+        }[]
+      }
       get_founding_offer: { Args: never; Returns: Json }
       get_is_premium: { Args: { _user_id: string }; Returns: boolean }
       get_medical_record_by_token: { Args: { _token: string }; Returns: Json }
