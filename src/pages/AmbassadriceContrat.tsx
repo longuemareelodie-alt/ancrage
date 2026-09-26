@@ -78,12 +78,9 @@ export default function AmbassadriceContrat() {
         day: "numeric", month: "long", year: "numeric",
       });
       if (user?.email) {
-        await supabase.functions.invoke("send-transactional-email", {
+        await supabase.functions.invoke("send-ambassador-welcome", {
           body: {
-            templateName: "ambassador-welcome",
-            recipientEmail: user.email,
-            idempotencyKey: `ambassador-welcome-${user.id}-${CURRENT_CONTRACT_VERSION}`,
-            templateData: {
+            ...{
               firstName: fullName.trim().split(" ")[0],
               referralCode,
               contractVersion: CURRENT_CONTRACT_VERSION,
