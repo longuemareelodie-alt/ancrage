@@ -17,7 +17,7 @@ import { STYLE_FOR_STATE, voiceForChild } from "@/data/softVoices";
 const PulseBlock = ({ onChange }: { onChange?: () => void }) => {
   const navigate = useNavigate();
   const { state, save } = usePulseState();
-  const { next, remaining, complete, skip, rename } = useNextAction(state);
+  const { next, others, remaining, complete, skip, rename } = useNextAction(state);
 
   const hint = BRAIN_STATES.find((s) => s.id === state)?.hint;
 
@@ -91,9 +91,16 @@ const PulseBlock = ({ onChange }: { onChange?: () => void }) => {
               onClick={() => navigate("/moi/apaisement")}
               className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground transition-transform active:scale-[0.98]"
             >
-              Prendre 3 minutes pour moi
+              M'apaiser
               <ArrowRight className="h-4 w-4" strokeWidth={2} />
             </button>
+            <Link
+              to="/pulse/vider-ma-tete"
+              className="mt-2 flex w-full items-center justify-center gap-2 rounded-full border border-border/70 px-5 py-3 text-sm font-semibold text-foreground transition-transform active:scale-[0.98]"
+            >
+              <Sparkles className="h-4 w-4" strokeWidth={1.75} />
+              Vider ma tête
+            </Link>
           </>
         ) : next ? (
           <>
@@ -141,12 +148,31 @@ const PulseBlock = ({ onChange }: { onChange?: () => void }) => {
               )}
               <button
                 onClick={() => skip(next)}
-                aria-label="Plus tard"
-                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-border/70 text-muted-foreground transition-transform active:scale-95"
+                aria-label="Reporter"
+                className="flex h-11 shrink-0 items-center justify-center gap-1.5 rounded-full border border-border/70 px-3.5 text-xs font-semibold text-muted-foreground transition-transform active:scale-95"
               >
-                <RotateCcw className="h-4 w-4" strokeWidth={1.75} />
+                Reporter
+                <RotateCcw className="h-3.5 w-3.5" strokeWidth={1.75} />
               </button>
             </div>
+
+            {state === "go" && others.length > 0 && (
+              <details className="mt-3 group">
+                <summary className="cursor-pointer list-none text-xs font-semibold text-primary">
+                  Voir {others.length} autre{others.length > 1 ? "s" : ""}
+                </summary>
+                <ul className="mt-2 space-y-1.5">
+                  {others.map((o) => (
+                    <li key={o.id}>
+                      <Link to={o.to} className="flex items-center justify-between gap-3 rounded-xl border border-border/60 bg-card px-3 py-2 text-sm text-foreground">
+                        <span className="min-w-0 truncate">{o.label}</span>
+                        <span className="shrink-0 text-xs text-muted-foreground">{o.minutes} min</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </details>
+            )}
           </>
         ) : (
           <>

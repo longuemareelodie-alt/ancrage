@@ -23,7 +23,7 @@ import { emitPulseChange, onPulseChange } from "@/lib/pulseBus";
  */
 export type NextAction = {
   id: string;
-  source: "tache" | "rdv" | "famille";
+  source: "tache" | "rdv" | "famille" | "business" | "habitude";
   rowId: string;
   label: string;
   minutes: number;
@@ -80,7 +80,7 @@ export function useNextAction(brainState: BrainState | null) {
       const dayEnd = new Date(iso + "T23:59:59").toISOString();
       const horizon = new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 10);
 
-      const [todos, appts, events, samples, profiles, vaccins, medEvents, skips] =
+      const [todos, appts, events, samples, profiles, vaccins, medEvents, skips, relances, habits, checks] =
         await Promise.all([
           supabase
             .from("todo_items")
@@ -125,6 +125,16 @@ export function useNextAction(brainState: BrainState | null) {
             .select("action_key")
             .gte("created_at", iso + "T00:00:00")
             .limit(200),
+          // 💼 Business : les relances prévues jusqu'à aujourd'hui.
+          supabase
+            .from("business_contacts")
+            .select("id, first_name, next_action, followup_date, kind")
+            .not("followup_date", "is", null)
+            .lte("followup_date", iso)
+            .order("followup_date")
+            .limit(10),
+          supabase.from("habits").select("id, name").eq("archived", false).limit(20),
+          supabase.from("habit_checks").select("habit_id").eq("day", iso).limit(50),
         ]);
 
       if (cancelled) return;
@@ -238,6 +248,31 @@ export function useNextAction(brainState: BrainState | null) {
         );
       });
 
+      (relances.data ?? []).forEach((c) => {
+        const late = (c.followup_date as string) < iso;
+        push(
+          "b",
+          "business",
+          c.id,
+          c.next_action ? `${c.next_action} — ${c.first_name}` : `Relancer ${c.first_name}`,
+          "argent",
+          null,
+          "/business/relances",
+          true,
+          late ? 1 : 2,
+        );
+      });
+
+      // 🌿 Habitudes : seulement quand la tête a de la place (GO / Moyen).
+      if (brainState === "go" || brainState === "moyen") {
+        const done = new Set((checks.data ?? []).map((c) => c.habit_id as string));
+        (habits.data ?? [])
+          .filter((h) => !done.has(h.id))
+          .forEach((h) =>
+            push("h", "habitude", h.id, h.name, "moi", null, "/moi/habitudes", true, 5),
+          );
+      }
+
       // Reporté aujourd'hui → on le garde, mais en fin de file.
       const skipped = new Set((skips.data ?? []).map((s) => s.action_key as string));
 
@@ -277,6 +312,23 @@ export function useNextAction(brainState: BrainState | null) {
 
     if (action.source === "tache") {
       await supabase.from("todo_items").update({ done: true }).eq("id", action.rowId);
+    } else if (action.source === "business" || action.source === "habitude") {
+      const { data: auth } = await supabase.auth.getUser();
+      const uid = auth.user?.id;
+      const today = new Date().toISOString().slice(0, 10);
+      if (uid && action.source === "business") {
+        await supabase
+          .from("business_contacts")
+          .update({ last_exchange_date: today, followup_date: null, next_action: null })
+          .eq("id", action.rowId);
+        await supabase
+          .from("business_interactions")
+          .insert({ user_id: uid, contact_id: action.rowId, type: "relance" });
+      } else if (uid) {
+        await supabase
+          .from("habit_checks")
+          .upsert({ user_id: uid, habit_id: action.rowId, day: today }, { onConflict: "habit_id,day" });
+      }
     }
 
     // Mesure crédible seulement : entre 20 secondes et 1 h 30.
@@ -342,6 +394,8 @@ export function useNextAction(brainState: BrainState | null) {
 
   return {
     next: queue[0] ?? null,
+    /** Les deux suivantes, montrées seulement les jours GO. */
+    others: queue.slice(1, 3),
     remaining: queue.length,
     loading,
     complete,

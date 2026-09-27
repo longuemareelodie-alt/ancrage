@@ -432,6 +432,119 @@ export type Database = {
         }
         Relationships: []
       }
+      business_contacts: {
+        Row: {
+          created_at: string
+          email: string | null
+          first_contact_date: string | null
+          first_name: string
+          followup_date: string | null
+          id: string
+          instagram: string | null
+          kind: string
+          last_exchange_date: string | null
+          last_name: string | null
+          next_action: string | null
+          notes: string | null
+          offer: string | null
+          personal_goal: string | null
+          pipeline_model: string
+          source: string | null
+          stage: string
+          status: string | null
+          tiktok: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          first_contact_date?: string | null
+          first_name: string
+          followup_date?: string | null
+          id?: string
+          instagram?: string | null
+          kind?: string
+          last_exchange_date?: string | null
+          last_name?: string | null
+          next_action?: string | null
+          notes?: string | null
+          offer?: string | null
+          personal_goal?: string | null
+          pipeline_model?: string
+          source?: string | null
+          stage?: string
+          status?: string | null
+          tiktok?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          first_contact_date?: string | null
+          first_name?: string
+          followup_date?: string | null
+          id?: string
+          instagram?: string | null
+          kind?: string
+          last_exchange_date?: string | null
+          last_name?: string | null
+          next_action?: string | null
+          notes?: string | null
+          offer?: string | null
+          personal_goal?: string | null
+          pipeline_model?: string
+          source?: string | null
+          stage?: string
+          status?: string | null
+          tiktok?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      business_interactions: {
+        Row: {
+          amount_cents: number | null
+          contact_id: string | null
+          created_at: string
+          happened_on: string
+          id: string
+          note: string | null
+          type: string
+          user_id: string
+        }
+        Insert: {
+          amount_cents?: number | null
+          contact_id?: string | null
+          created_at?: string
+          happened_on?: string
+          id?: string
+          note?: string | null
+          type: string
+          user_id: string
+        }
+        Update: {
+          amount_cents?: number | null
+          contact_id?: string | null
+          created_at?: string
+          happened_on?: string
+          id?: string
+          note?: string | null
+          type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_interactions_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "business_contacts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       child_contacts: {
         Row: {
           created_at: string
@@ -1173,6 +1286,68 @@ export type Database = {
         }
         Relationships: []
       }
+      habit_checks: {
+        Row: {
+          created_at: string
+          day: string
+          habit_id: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          day: string
+          habit_id: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          day?: string
+          habit_id?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "habit_checks_habit_id_fkey"
+            columns: ["habit_id"]
+            isOneToOne: false
+            referencedRelation: "habits"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      habits: {
+        Row: {
+          archived: boolean
+          created_at: string
+          icon: string
+          id: string
+          name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          archived?: boolean
+          created_at?: string
+          icon?: string
+          id?: string
+          name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          archived?: boolean
+          created_at?: string
+          icon?: string
+          id?: string
+          name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       lsf_progress: {
         Row: {
           id: string
@@ -1504,9 +1679,11 @@ export type Database = {
           done: boolean
           id: string
           kind: string
+          steps: Json
           title: string
           updated_at: string
           user_id: string
+          why: string | null
         }
         Insert: {
           achieved_at?: string | null
@@ -1514,9 +1691,11 @@ export type Database = {
           done?: boolean
           id?: string
           kind?: string
+          steps?: Json
           title: string
           updated_at?: string
           user_id: string
+          why?: string | null
         }
         Update: {
           achieved_at?: string | null
@@ -1524,9 +1703,11 @@ export type Database = {
           done?: boolean
           id?: string
           kind?: string
+          steps?: Json
           title?: string
           updated_at?: string
           user_id?: string
+          why?: string | null
         }
         Relationships: []
       }

@@ -11,6 +11,7 @@ import {
   Sprout,
   Search,
   LifeBuoy,
+  Briefcase,
 } from "lucide-react";
 import HubShell from "@/components/hub/HubShell";
 import HubCard from "@/components/hub/HubCard";
@@ -22,6 +23,13 @@ const Plus = () => (
       icon={Search}
       title="Recherche universelle"
       desc="Un enfant, un document, un support, une note…"
+    />
+
+    <HubCard
+      to="/business"
+      icon={Briefcase}
+      title="Business"
+      desc="Contacts, relances, clientes. Privé, sans pression."
     />
 
     <p className="pb-1 pt-6 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">

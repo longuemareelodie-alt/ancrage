@@ -120,6 +120,8 @@ import MonRythme from "./pages/pulse/MonRythme";
 import Onboarding from "./pages/Onboarding";
 import MoiEmotions from "./pages/moi/MoiEmotions";
 import MoiObjectifs from "./pages/moi/MoiObjectifs";
+import MoiHabitudes from "./pages/moi/MoiHabitudes";
+import Business from "./pages/business/Business";
 import FicheMembre from "./pages/famille/FicheMembre";
 import StudioHome from "./pages/autonomie/StudioHome";
 import SupportEditor from "./pages/autonomie/SupportEditor";
@@ -251,6 +253,9 @@ const AnimatedRoutes = () => {
         <Route path="/moi/chemin" element={<PaidRoute><PageTransition><MoiChemin /></PageTransition></PaidRoute>} />
         <Route path="/moi/emotions" element={<PaidRoute><PageTransition><MoiEmotions /></PageTransition></PaidRoute>} />
         <Route path="/moi/objectifs" element={<PaidRoute><PageTransition><MoiObjectifs /></PageTransition></PaidRoute>} />
+        <Route path="/moi/habitudes" element={<PaidRoute><PageTransition><MoiHabitudes /></PageTransition></PaidRoute>} />
+        <Route path="/business" element={<PaidRoute><PageTransition><Business /></PageTransition></PaidRoute>} />
+        <Route path="/business/:tab" element={<PaidRoute><PageTransition><Business /></PageTransition></PaidRoute>} />
         <Route path="/moi/badges" element={<PaidRoute><PageTransition><MesBadges /></PageTransition></PaidRoute>} />
         <Route path="/moi/journal" element={<Navigate to="/lies-autrement/journal" replace />} />
         <Route path="/parcours" element={<Navigate to="/moi/apaisement" replace />} />
