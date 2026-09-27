@@ -5,7 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Check, Circle, Plus, Trash2 } from "lucide-react";
 
-type Goal = { id: string; title: string; kind: string; done: boolean };
+type Step = { t: string; done: boolean };
+type Goal = { id: string; title: string; kind: string; done: boolean; why: string | null; steps: Step[] };
 
 /**
  * `/moi/objectifs` — le manque le plus criant côté parent : voir sa propre
@@ -18,9 +19,9 @@ const MoiObjectifs = () => {
   const load = async () => {
     const { data } = await supabase
       .from("personal_goals")
-      .select("id, title, kind, done")
+      .select("id, title, kind, done, why, steps")
       .order("created_at", { ascending: false });
-    setGoals(data ?? []);
+    setGoals(((data ?? []) as unknown as Goal[]).map((g) => ({ ...g, steps: Array.isArray(g.steps) ? g.steps : [] })));
   };
 
   useEffect(() => {
@@ -57,6 +58,12 @@ const MoiObjectifs = () => {
     load();
   };
 
+  const [openId, setOpenId] = useState<string | null>(null);
+  const [stepDraft, setStepDraft] = useState("");
+  const patch = async (g: Goal, fields: Partial<Pick<Goal, "why" | "steps">>) => {
+    setGoals((all) => all.map((x) => (x.id === g.id ? { ...x, ...fields } : x)));
+    await supabase.from("personal_goals").update(fields as never).eq("id", g.id);
+  };
   const open = goals.filter((g) => !g.done);
   const wins = goals.filter((g) => g.done);
 
@@ -90,15 +97,50 @@ const MoiObjectifs = () => {
       {open.map((g) => (
         <div
           key={g.id}
-          className="flex items-center gap-3 rounded-[20px] border border-border/70 bg-card px-5 py-3"
+          className="flex flex-wrap items-center gap-3 rounded-[20px] border border-border/70 bg-card px-5 py-3"
         >
           <button onClick={() => toggle(g)} aria-label="Marquer comme réussi">
             <Circle className="h-4 w-4 text-muted-foreground" strokeWidth={1.75} />
           </button>
-          <span className="flex-1 text-sm text-foreground">{g.title}</span>
+          <button onClick={() => setOpenId(openId === g.id ? null : g.id)} className="flex-1 text-left text-sm text-foreground">
+            {g.title}
+            {g.steps.length > 0 && (
+              <span className="mt-1.5 block h-1 overflow-hidden rounded-full bg-secondary/50">
+                <span className="block h-full rounded-full bg-primary/70 transition-all duration-700" style={{ width: `${(g.steps.filter((x) => x.done).length / g.steps.length) * 100}%` }} />
+              </span>
+            )}
+          </button>
           <button onClick={() => remove(g.id)} aria-label="Supprimer">
             <Trash2 className="h-3.5 w-3.5 text-muted-foreground" strokeWidth={1.75} />
           </button>
+          {openId === g.id && (
+            <div className="basis-full space-y-2 pt-2">
+              <Input
+                defaultValue={g.why ?? ""}
+                onBlur={(e) => patch(g, { why: e.target.value || null })}
+                placeholder="Pourquoi c'est important pour toi ?"
+                className="h-9 text-sm"
+              />
+              {g.steps.map((st, i) => (
+                <button
+                  key={i}
+                  onClick={() => patch(g, { steps: g.steps.map((x, j) => (j === i ? { ...x, done: !x.done } : x)) })}
+                  className="flex w-full items-center gap-2 text-left text-sm"
+                >
+                  {st.done ? <Check className="h-4 w-4 text-primary-dark" /> : <Circle className="h-4 w-4 text-muted-foreground" strokeWidth={1.75} />}
+                  <span className={st.done ? "text-muted-foreground line-through" : "text-foreground"}>Étape {i + 1} · {st.t}</span>
+                </button>
+              ))}
+              {g.steps.length < 5 && (
+                <div className="flex gap-2">
+                  <Input value={stepDraft} onChange={(e) => setStepDraft(e.target.value)} placeholder={`Étape ${g.steps.length + 1}`} className="h-9 text-sm" />
+                  <Button size="sm" disabled={!stepDraft.trim()} onClick={() => { patch(g, { steps: [...g.steps, { t: stepDraft.trim(), done: false }] }); setStepDraft(""); }}>
+                    <Plus className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       ))}
 
