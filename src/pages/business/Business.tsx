@@ -296,7 +296,7 @@ const Business = () => {
                 <p className="text-xs font-semibold text-foreground">
                   {stage} <span className="text-muted-foreground">· {list.length}</span>
                 </p>
-                <div className="mt-2 space-y-1.5">
+                {list.length > 0 && <div className="mt-2 space-y-1.5">
                   {list.map((c) => (
                     <div key={c.id} className="flex items-center gap-2 rounded-xl bg-secondary/25 px-3 py-2">
                       <button onClick={() => setEditing(c)} className="min-w-0 flex-1 truncate text-left text-sm text-foreground">
@@ -306,7 +306,7 @@ const Business = () => {
                       <button onClick={() => moveStage(c, 1)} aria-label="Étape suivante" className="h-8 w-8 rounded-full border border-border/60 text-xs">→</button>
                     </div>
                   ))}
-                </div>
+                </div>}
               </div>
             );
           })}
