@@ -15,7 +15,7 @@ const corsHeaders = {
 }
 
 // Configuration
-const SITE_NAME = "Anchor Point"
+const SITE_NAME = "Éclosia"
 const SENDER_DOMAIN = "notify.digitalmamanlibre.com"
 const ROOT_DOMAIN = "digitalmamanlibre.com"
 const FROM_DOMAIN = "digitalmamanlibre.com"
