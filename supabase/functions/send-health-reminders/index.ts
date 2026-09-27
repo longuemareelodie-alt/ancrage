@@ -38,7 +38,14 @@ Deno.serve(async (req) => {
       return false;
     }
   })();
-  if (!isServiceRole) {
+  let cronOk = false;
+  const cronToken = req.headers.get("x-cron-token");
+  if (!isServiceRole && cronToken) {
+    const { data: row } = await createClient(supabaseUrl, serviceKey)
+      .from("internal_cron_tokens").select("token").eq("name", "health-reminders").maybeSingle();
+    cronOk = !!row?.token && row.token === cronToken;
+  }
+  if (!isServiceRole && !cronOk) {
     return new Response(JSON.stringify({ error: "unauthorized" }), {
       status: 401,
       headers: { ...corsHeaders, "Content-Type": "application/json" },

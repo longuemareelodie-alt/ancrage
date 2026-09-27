@@ -2,7 +2,7 @@
 
 import * as React from 'npm:react@18.3.1'
 import {
-  Body, Container, Head, Heading, Html, Preview, Section, Text, Hr, Link,
+  Body, Container, Img, Head, Heading, Html, Preview, Section, Text, Hr, Link,
 } from 'npm:@react-email/components@0.0.22'
 import type { TemplateEntry } from './registry.ts'
 
@@ -33,6 +33,7 @@ const HealthReminderEmail = ({
     <Preview>{headline || title}</Preview>
     <Body style={main}>
       <Container style={container}>
+        <Img src="https://digitalmamanlibre.com/icons/icon-192.png" width="56" height="56" alt="Éclosia" style={{ borderRadius: "14px", margin: "0 0 20px" }} />
         <Section style={logoSection}>
           <Text style={logoText}>ÉCLOSIA</Text>
         </Section>
