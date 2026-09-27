@@ -33,6 +33,7 @@ const HealthReminderEmail = ({
     <Preview>{headline || title}</Preview>
     <Body style={main}>
       <Container style={container}>
+        <Img src="https://digitalmamanlibre.com/icons/icon-192.png" width="56" height="56" alt="Éclosia" style={{ borderRadius: "14px", margin: "0 0 20px" }} />
         <Section style={logoSection}>
           <Text style={logoText}>ÉCLOSIA</Text>
         </Section>

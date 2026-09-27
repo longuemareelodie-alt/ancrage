@@ -8,6 +8,7 @@ import {
   Container,
   Head,
   Heading,
+  Img,
   Html,
   Link,
   Preview,
@@ -32,6 +33,7 @@ export const InviteEmail = ({
     <Preview>Tu es invitée à rejoindre {siteName}</Preview>
     <Body style={main}>
       <Container style={container}>
+        <Img src="https://digitalmamanlibre.com/icons/icon-192.png" width="56" height="56" alt="Éclosia" style={{ borderRadius: "14px", margin: "0 0 20px" }} />
         <Heading style={h1}>Tu es invitée 💛</Heading>
         <Text style={text}>
           Tu es invitée à rejoindre{' '}

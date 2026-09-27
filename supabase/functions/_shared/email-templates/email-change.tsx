@@ -8,6 +8,7 @@ import {
   Container,
   Head,
   Heading,
+  Img,
   Html,
   Link,
   Preview,
@@ -39,6 +40,7 @@ export const EmailChangeEmail = ({
     <Preview>Confirme ton changement d'email sur {siteName}</Preview>
     <Body style={main}>
       <Container style={container}>
+        <Img src="https://digitalmamanlibre.com/icons/icon-192.png" width="56" height="56" alt="Éclosia" style={{ borderRadius: "14px", margin: "0 0 20px" }} />
         <Heading style={h1}>Confirme ton nouvel email</Heading>
         <Text style={text}>
           Tu as demandé à changer ton adresse email sur {siteName}, de{' '}

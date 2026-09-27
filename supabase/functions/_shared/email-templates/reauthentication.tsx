@@ -7,6 +7,7 @@ import {
   Container,
   Head,
   Heading,
+  Img,
   Html,
   Preview,
   Text,
@@ -22,6 +23,7 @@ export const ReauthenticationEmail = ({ token }: ReauthenticationEmailProps) => 
     <Preview>Ton code de vérification</Preview>
     <Body style={main}>
       <Container style={container}>
+        <Img src="https://digitalmamanlibre.com/icons/icon-192.png" width="56" height="56" alt="Éclosia" style={{ borderRadius: "14px", margin: "0 0 20px" }} />
         <Heading style={h1}>Confirme que c'est bien toi</Heading>
         <Text style={text}>Voici ton code :</Text>
         <Text style={codeStyle}>{token}</Text>

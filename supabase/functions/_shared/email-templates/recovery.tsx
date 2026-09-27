@@ -8,6 +8,7 @@ import {
   Container,
   Head,
   Heading,
+  Img,
   Html,
   Preview,
   Text,
@@ -29,6 +30,7 @@ export const RecoveryEmail = ({
     <Preview>Choisis un nouveau mot de passe pour {siteName}</Preview>
     <Body style={main}>
       <Container style={container}>
+        <Img src="https://digitalmamanlibre.com/icons/icon-192.png" width="56" height="56" alt="Éclosia" style={{ borderRadius: "14px", margin: "0 0 20px" }} />
         <Heading style={h1}>Nouveau mot de passe</Heading>
         <Text style={text}>
           Tu as demandé à changer ton mot de passe {siteName}. Touche le bouton ci-dessous pour en choisir un nouveau.

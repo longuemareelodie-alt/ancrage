@@ -8,6 +8,7 @@ import {
   Container,
   Head,
   Heading,
+  Img,
   Html,
   Preview,
   Text,
@@ -29,6 +30,7 @@ export const MagicLinkEmail = ({
     <Preview>Ton lien de connexion à {siteName}</Preview>
     <Body style={main}>
       <Container style={container}>
+        <Img src="https://digitalmamanlibre.com/icons/icon-192.png" width="56" height="56" alt="Éclosia" style={{ borderRadius: "14px", margin: "0 0 20px" }} />
         <Heading style={h1}>Ton lien de connexion</Heading>
         <Text style={text}>
           Touche le bouton ci-dessous pour te connecter à {siteName}. Ce lien expire bientôt.
