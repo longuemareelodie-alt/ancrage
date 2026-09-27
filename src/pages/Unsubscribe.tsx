@@ -71,7 +71,7 @@ const Unsubscribe = () => {
         {status === "valid" && (
           <div className="space-y-4">
             <p className="text-muted-foreground">
-              Tu es sur le point de te désabonner des emails d'ANCRAGE.
+              Tu es sur le point de te désabonner des emails d'Éclosia.
             </p>
             <button
               onClick={handleUnsubscribe}
