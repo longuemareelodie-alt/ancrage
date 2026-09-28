@@ -67,7 +67,9 @@ const SanteFicheMedicale = () => {
   const save = async () => {
     if (!user) return;
     setSaving(true);
-    const payload = { ...record, user_id: user.id, birth_date: record.birth_date || null };
+    // Le code secret du lien est géré uniquement par le serveur.
+    const { public_token: _omit, ...rest } = record;
+    const payload = { ...rest, user_id: user.id, birth_date: record.birth_date || null };
     const { data, error } = await supabase
       .from("medical_records")
       .upsert(payload, { onConflict: "user_id" })
