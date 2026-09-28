@@ -1386,6 +1386,7 @@ export type Database = {
       }
       medical_records: {
         Row: {
+          access_code: string | null
           allergies: string | null
           birth_date: string | null
           blood_type: string | null
@@ -1407,6 +1408,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          access_code?: string | null
           allergies?: string | null
           birth_date?: string | null
           blood_type?: string | null
@@ -1428,6 +1430,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          access_code?: string | null
           allergies?: string | null
           birth_date?: string | null
           blood_type?: string | null
@@ -2651,6 +2654,7 @@ export type Database = {
         Returns: Json
       }
       ensure_ambassador_profile: { Args: { _user_id: string }; Returns: string }
+      gen_medical_access_code: { Args: never; Returns: string }
       generate_referral_code: { Args: never; Returns: string }
       get_batch_recipients_admin: { Args: { _batch_id: string }; Returns: Json }
       get_community_authors: { Args: { _user_ids: string[] }; Returns: Json }
@@ -2671,7 +2675,10 @@ export type Database = {
       }
       get_founding_offer: { Args: never; Returns: Json }
       get_is_premium: { Args: { _user_id: string }; Returns: boolean }
-      get_medical_record_by_token: { Args: { _token: string }; Returns: Json }
+      get_medical_record_by_token: {
+        Args: { _code: string; _token: string }
+        Returns: Json
+      }
       get_my_ambassador_impact: { Args: never; Returns: Json }
       get_my_contract_status: { Args: never; Returns: Json }
       get_my_founding_status: { Args: never; Returns: Json }
