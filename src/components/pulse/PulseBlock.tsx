@@ -29,12 +29,12 @@ const PulseBlock = ({ onChange }: { onChange?: () => void }) => {
   };
 
   return (
-    <section className="rounded-[24px] border border-border/70 bg-card px-6 py-6">
+    <section className="rounded-[24px] border border-border/70 bg-card px-5 py-5">
       {/* 1 — État du cerveau du jour */}
       <p className="text-sm font-semibold text-foreground">
         Comment fonctionne ta tête aujourd'hui ?
       </p>
-      <div className="mt-4 grid grid-cols-4 gap-2">
+      <div className="mt-3 grid grid-cols-4 gap-2">
         {BRAIN_STATES.map((s) => {
           const active = state === s.id;
           return (
@@ -43,7 +43,7 @@ const PulseBlock = ({ onChange }: { onChange?: () => void }) => {
               whileTap={{ scale: 0.92 }}
               onClick={() => save(s.id)}
               aria-pressed={active}
-              className={`flex flex-col items-center gap-1.5 rounded-2xl border py-3 transition-colors ${
+              className={`flex flex-col items-center gap-1.5 rounded-2xl border py-2.5 transition-colors ${
                 active
                   ? "border-primary bg-primary/10"
                   : "border-border/60 bg-secondary/30 hover:border-primary/40"
@@ -77,7 +77,7 @@ const PulseBlock = ({ onChange }: { onChange?: () => void }) => {
 
 
       {/* 2 — Prochaine action : une seule, jamais une liste */}
-      <div className="mt-6 rounded-[20px] border border-border/60 bg-secondary/25 px-5 py-5">
+      <div className="mt-4 rounded-[20px] border border-border/60 bg-secondary/25 px-4 py-4">
         <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
           ⚡ Prochaine action
         </p>
@@ -206,7 +206,7 @@ const PulseBlock = ({ onChange }: { onChange?: () => void }) => {
       </div>
 
       {/* 3 — L'équipe : six compagnons, six domaines */}
-      <div className="mt-6">
+      <div className="mt-4">
         <p className="pb-3 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
           Ton équipe
         </p>

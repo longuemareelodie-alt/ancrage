@@ -146,7 +146,7 @@ const Aujourdhui = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="mx-auto w-full max-w-lg px-6 pb-10 pt-10">
+      <div className="mx-auto w-full max-w-lg px-6 pt-10 pb-[calc(60px+0.625rem+env(safe-area-inset-bottom)+3rem)]">
         {/* 1 — Salutation + phrase du jour */}
         <motion.header {...fade(0)} className="mb-8 flex items-start justify-between gap-4">
           <div className="min-w-0">
@@ -293,7 +293,7 @@ const Aujourdhui = () => {
           <div className="grid grid-cols-2 gap-3">
             <Link
               to="/moi/apaisement"
-              className="flex flex-col gap-3 rounded-[24px] border border-border/70 bg-card px-5 py-6 transition-all active:scale-[0.98]"
+              className="flex flex-col gap-2.5 rounded-[24px] border border-border/70 bg-card px-5 py-5 transition-all active:scale-[0.98]"
             >
               <Moon className="h-5 w-5 text-foreground" strokeWidth={1.75} />
               <span>
@@ -303,7 +303,7 @@ const Aujourdhui = () => {
             </Link>
             <Link
               to="/autonomie/studio"
-              className="flex flex-col gap-3 rounded-[24px] border border-border/70 bg-card px-5 py-6 transition-all active:scale-[0.98]"
+              className="flex flex-col gap-2.5 rounded-[24px] border border-border/70 bg-card px-5 py-5 transition-all active:scale-[0.98]"
             >
               <Sprout className="h-5 w-5 text-foreground" strokeWidth={1.75} />
               <span>
@@ -348,7 +348,7 @@ const Aujourdhui = () => {
                     </span>
                     <span className="min-w-0 flex-1">
                       <span className="block text-sm font-semibold text-foreground">{k.name}</span>
-                      <span className="mt-0.5 block truncate text-xs text-muted-foreground">{k.action}</span>
+                      <span className="mt-0.5 block line-clamp-2 break-words text-xs leading-snug text-muted-foreground">{k.action}</span>
                     </span>
                     <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" strokeWidth={1.75} />
                   </Link>
