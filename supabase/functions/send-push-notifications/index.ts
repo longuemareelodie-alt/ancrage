@@ -5,7 +5,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const VAPID_PUBLIC_KEY = "BJ8BYifl7YJiA-6ZhmzPZMO6aTTdHTNJzIEyZsLf10JXumrvmvxpANpLsY-y2XmewaDzOfhdd1ssc8nic8k1g_8";
+const VAPID_PUBLIC_KEY = "BNjoAzMxuUV7iQ-jMeEh32HHGoBtB2iIeEMWi1ubXkaJbTA3AKKBo7BW7Xie9dcD0mzPMH1h2Prg7-TLoSWvYvc";
 
 // ─── NON-PREMIUM: emotional pain + curiosity → conversion ───
 const nonPremiumMessages = [
@@ -120,59 +120,82 @@ function pick(arr: string[]): string {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
-// Minimal Web Push implementation using raw crypto
+// ─── Web Push (RFC 8291 aes128gcm + RFC 8292 VAPID) ───
+const b64url = (u: Uint8Array) =>
+  btoa(String.fromCharCode(...u)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+const fromB64url = (s: string) => {
+  const v = s.replace(/-/g, "+").replace(/_/g, "/");
+  return Uint8Array.from(atob(v + "=".repeat((4 - (v.length % 4)) % 4)), (c) => c.charCodeAt(0));
+};
+const concat = (...parts: Uint8Array[]) => {
+  const out = new Uint8Array(parts.reduce((n, p) => n + p.length, 0));
+  let o = 0;
+  for (const p of parts) { out.set(p, o); o += p.length; }
+  return out;
+};
+async function hkdf(salt: Uint8Array, ikm: Uint8Array, info: Uint8Array, len: number) {
+  const key = await crypto.subtle.importKey("raw", ikm, "HKDF", false, ["deriveBits"]);
+  return new Uint8Array(await crypto.subtle.deriveBits({ name: "HKDF", hash: "SHA-256", salt, info }, key, len * 8));
+}
+
+/** Chiffre le contenu pour l'appareil (exporté pour les tests). */
+export async function encryptPayload(p256dh: string, authSecret: string, payload: string) {
+  const uaPublic = fromB64url(p256dh);
+  const auth = fromB64url(authSecret);
+  const local = await crypto.subtle.generateKey({ name: "ECDH", namedCurve: "P-256" }, true, ["deriveBits"]);
+  const asPublic = new Uint8Array(await crypto.subtle.exportKey("raw", local.publicKey));
+  const uaKey = await crypto.subtle.importKey("raw", uaPublic, { name: "ECDH", namedCurve: "P-256" }, false, []);
+  const shared = new Uint8Array(await crypto.subtle.deriveBits({ name: "ECDH", public: uaKey }, local.privateKey, 256));
+  const enc = new TextEncoder();
+  const ikm = await hkdf(auth, shared, concat(enc.encode("WebPush: info\0"), uaPublic, asPublic), 32);
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const cek = await hkdf(salt, ikm, enc.encode("Content-Encoding: aes128gcm\0"), 16);
+  const nonce = await hkdf(salt, ikm, enc.encode("Content-Encoding: nonce\0"), 12);
+  const aes = await crypto.subtle.importKey("raw", cek, "AES-GCM", false, ["encrypt"]);
+  const plain = concat(enc.encode(payload), new Uint8Array([2]));
+  const cipher = new Uint8Array(await crypto.subtle.encrypt({ name: "AES-GCM", iv: nonce }, aes, plain));
+  const rs = new Uint8Array([0, 0, 0x10, 0]); // 4096
+  return concat(salt, rs, new Uint8Array([asPublic.length]), asPublic, cipher);
+}
+
 async function sendWebPush(
   subscription: { endpoint: string; p256dh: string; auth: string },
-  _payload: string,
+  payload: string,
   vapidPrivateKey: string,
-) {
+): Promise<number> {
   const url = new URL(subscription.endpoint);
-  const audience = `${url.protocol}//${url.host}`;
-
-  const header = btoa(JSON.stringify({ typ: "JWT", alg: "ES256" }))
-    .replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
-
+  const enc = new TextEncoder();
+  const header = b64url(enc.encode(JSON.stringify({ typ: "JWT", alg: "ES256" })));
   const now = Math.floor(Date.now() / 1000);
-  const claimSet = btoa(JSON.stringify({
-    aud: audience,
-    exp: now + 3600,
-    sub: "mailto:contact@ancrage.app",
-  })).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
-
-  const unsignedToken = `${header}.${claimSet}`;
-
-  const privKeyBytes = decodeVapidPrivateKey(vapidPrivateKey);
+  const claims = b64url(enc.encode(JSON.stringify({
+    aud: `${url.protocol}//${url.host}`,
+    exp: now + 12 * 3600,
+    sub: "mailto:contact@digitalmamanlibre.com",
+  })));
+  const unsigned = `${header}.${claims}`;
   const cryptoKey = await crypto.subtle.importKey(
     "pkcs8",
-    await convertRawToP8(privKeyBytes),
+    await convertRawToP8(decodeVapidPrivateKey(vapidPrivateKey)),
     { name: "ECDSA", namedCurve: "P-256" },
     false,
     ["sign"],
   );
-
-  const signature = await crypto.subtle.sign(
-    { name: "ECDSA", hash: "SHA-256" },
-    cryptoKey,
-    new TextEncoder().encode(unsignedToken),
-  );
-
-  const sigBytes = new Uint8Array(signature);
-  const sigB64 = btoa(String.fromCharCode(...sigBytes))
-    .replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
-
-  const jwt = `${unsignedToken}.${sigB64}`;
+  const sig = new Uint8Array(await crypto.subtle.sign({ name: "ECDSA", hash: "SHA-256" }, cryptoKey, enc.encode(unsigned)));
+  const body = await encryptPayload(subscription.p256dh, subscription.auth, payload);
 
   const response = await fetch(subscription.endpoint, {
     method: "POST",
     headers: {
-      Authorization: `vapid t=${jwt}, k=${VAPID_PUBLIC_KEY}`,
+      Authorization: `vapid t=${unsigned}.${b64url(sig)}, k=${VAPID_PUBLIC_KEY}`,
+      "Content-Encoding": "aes128gcm",
       "Content-Type": "application/octet-stream",
       TTL: "86400",
-      "Content-Length": "0",
+      Urgency: "normal",
     },
+    body,
   });
-
-  return response.ok;
+  await response.body?.cancel();
+  return response.status;
 }
 
 function decodeVapidPrivateKey(input: string): Uint8Array {
@@ -415,20 +438,17 @@ function buildNotification(ctx: UserContext): { title: string; body: string; url
 
 // ─── Main handler ───
 function callerIsServiceRole(authHeader: string | null): boolean {
-  if (!authHeader) return false
+  if (!authHeader) return false;
   const token = authHeader.replace(/^Bearer\s+/i, "");
-  // Fast path: exact match against the service role key
-  if (token === Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")) return true;
-  const parts = token.split(".");
-  if (parts.length < 2) return false;
-  try {
-    const b64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
-    const padded = b64 + "=".repeat((4 - (b64.length % 4)) % 4);
-    const payload = JSON.parse(atob(padded));
-    return payload.role === "service_role";
-  } catch {
-    return false;
-  }
+  const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  return !!key && token === key;
+}
+
+async function callerHasCronToken(token: string | null): Promise<boolean> {
+  if (!token) return false;
+  const db = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+  const { data } = await db.from("internal_cron_tokens").select("token").eq("name", "push-notifications").maybeSingle();
+  return !!data?.token && data.token === token;
 }
 
 Deno.serve(async (req) => {
@@ -437,7 +457,10 @@ Deno.serve(async (req) => {
   }
 
   // Restrict to internal callers only (cron job + server-side edge functions).
-  if (!callerIsServiceRole(req.headers.get("Authorization"))) {
+  if (
+    !callerIsServiceRole(req.headers.get("Authorization")) &&
+    !(await callerHasCronToken(req.headers.get("x-cron-token")))
+  ) {
     return new Response(JSON.stringify({ error: "Unauthorized" }), {
       status: 401,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -445,7 +468,7 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const vapidPrivateKey = Deno.env.get("VAPID_PRIVATE_KEY");
+    const vapidPrivateKey = Deno.env.get("VAPID_PRIVATE_KEY_V2");
     if (!vapidPrivateKey) {
       return new Response(JSON.stringify({ error: "VAPID key not configured" }), {
         status: 500,
@@ -467,7 +490,7 @@ Deno.serve(async (req) => {
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, serviceRoleKey);
 
-    const { type = "morning" } = await req.json().catch(() => ({ type: "morning" }));
+    const { type = "morning", dry_run = false } = await req.json().catch(() => ({ type: "morning" }));
 
     // Fetch subscriptions
     const { data: subscriptions } = await supabase
@@ -539,11 +562,22 @@ Deno.serve(async (req) => {
         buildNotification(ctx);
 
       try {
-        const ok = await sendWebPush(
+        if (dry_run) {
+          // Test sans envoi : on chiffre seulement pour valider la chaîne.
+          await encryptPayload(sub.p256dh, sub.auth, JSON.stringify(notification));
+          skipped++;
+          continue;
+        }
+        const status = await sendWebPush(
           { endpoint: sub.endpoint, p256dh: sub.p256dh, auth: sub.auth },
           JSON.stringify(notification),
           vapidPrivateKey,
         );
+        // Abonnement expiré ou créé avec l'ancienne clé : on le retire.
+        if (status === 403 || status === 404 || status === 410) {
+          await supabase.from("push_subscriptions").delete().eq("endpoint", sub.endpoint);
+        }
+        const ok = status >= 200 && status < 300;
         if (ok) {
           sent++;
           notifiedUsers.add(sub.user_id);
