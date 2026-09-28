@@ -32,6 +32,7 @@ interface Record {
   medical_history: string;
   social_security_number: string;
   public_token: string;
+  access_code?: string | null;
   is_public: boolean;
 }
 
@@ -68,7 +69,7 @@ const SanteFicheMedicale = () => {
     if (!user) return;
     setSaving(true);
     // Le code secret du lien est géré uniquement par le serveur.
-    const { public_token: _omit, ...rest } = record;
+    const { public_token: _omit, access_code: _omitCode, ...rest } = record;
     const payload = { ...rest, user_id: user.id, birth_date: record.birth_date || null };
     const { data, error } = await supabase
       .from("medical_records")
@@ -100,7 +101,8 @@ const SanteFicheMedicale = () => {
       return;
     }
     if (result.token) {
-      setRecord((p) => ({ ...p, public_token: result.token! }));
+      const { data: fresh } = await supabase.from("medical_records").select("public_token, access_code").eq("user_id", user!.id).maybeSingle();
+      setRecord((p) => ({ ...p, public_token: result.token!, access_code: (fresh as any)?.access_code ?? p.access_code }));
       toast.success("Nouveau lien généré, l'ancien ne fonctionne plus");
     }
   };
@@ -151,6 +153,12 @@ const SanteFicheMedicale = () => {
               <div className="mt-4 flex flex-col items-center gap-3 rounded-xl bg-white p-6">
                 <QRCodeSVG value={publicUrl} size={200} level="M" />
                 <p className="text-center text-[10px] text-muted-foreground break-all">{publicUrl}</p>
+                {record.access_code && (
+                  <div className="w-full rounded-lg border border-primary/20 bg-primary/5 px-3 py-2 text-center">
+                    <p className="text-[11px] text-muted-foreground">Code d'accès à donner avec le lien</p>
+                    <p className="mt-0.5 font-mono text-lg font-bold tracking-[0.2em] text-foreground">{record.access_code}</p>
+                  </div>
+                )}
                 <div className="flex w-full gap-2">
                   <button
                     onClick={copyLink}
