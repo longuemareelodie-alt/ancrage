@@ -204,12 +204,16 @@ const Business = () => {
 
   return (
     <HubShell title="Business" subtitle="Ton activité, rangée. Privée, et sans pression.">
-      <nav className="-mx-1 flex gap-1.5 overflow-x-auto pb-1">
+      <nav
+        aria-label="Onglets Business"
+        className="-mx-6 flex snap-x gap-1.5 overflow-x-auto scroll-px-6 px-6 pb-1 [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      >
         {TABS.map(([k, l]) => (
           <Link
             key={k}
+            ref={tab === k ? (el) => el?.scrollIntoView({ block: "nearest", inline: "nearest" }) : undefined}
             to={`/business/${k}`}
-            className={`shrink-0 rounded-full border px-3 py-1.5 text-xs font-semibold ${
+            className={`shrink-0 snap-start whitespace-nowrap rounded-full border px-3.5 py-1.5 text-xs font-semibold ${
               tab === k ? "border-primary bg-primary text-primary-foreground" : "border-border/70 bg-card text-foreground"
             }`}
           >
@@ -235,6 +239,18 @@ const Business = () => {
                 : `${due.length} personne${due.length > 1 ? "s" : ""} à relancer aujourd'hui. Elles apparaissent aussi dans ta prochaine action.`}
             </p>
           </div>
+          {contacts.length === 0 && (
+            <div className="rounded-[20px] border border-dashed border-border/70 px-5 py-4 text-center">
+              <p className="text-sm font-semibold text-foreground">Ton espace Business est prêt. 🌸</p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Ajoute ton premier contact pour organiser simplement tes conversations, relances et clientes.
+              </p>
+              <Button variant="outline" size="sm" className="mt-3 rounded-full" onClick={() => setEditing(empty("prospect", model))}>
+                <Plus className="mr-1 h-4 w-4" />
+                Ajouter mon premier contact
+              </Button>
+            </div>
+          )}
           {due.map((c) => (
             <div key={c.id} className="flex items-center gap-2">
               <div className="min-w-0 flex-1">
