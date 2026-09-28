@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 
-const VAPID_PUBLIC_KEY = "BJ8BYifl7YJiA-6ZhmzPZMO6aTTdHTNJzIEyZsLf10JXumrvmvxpANpLsY-y2XmewaDzOfhdd1ssc8nic8k1g_8";
+const VAPID_PUBLIC_KEY = "BNjoAzMxuUV7iQ-jMeEh32HHGoBtB2iIeEMWi1ubXkaJbTA3AKKBo7BW7Xie9dcD0mzPMH1h2Prg7-TLoSWvYvc";
 
 function urlBase64ToUint8Array(base64String: string) {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
@@ -13,6 +13,15 @@ function urlBase64ToUint8Array(base64String: string) {
     outputArray[i] = rawData.charCodeAt(i);
   }
   return outputArray;
+}
+
+/** True si l'abonnement a été créé avec la clé actuelle. */
+function usesCurrentKey(sub: PushSubscription): boolean {
+  const k = sub.options?.applicationServerKey;
+  if (!k) return true;
+  const a = new Uint8Array(k);
+  const b = urlBase64ToUint8Array(VAPID_PUBLIC_KEY);
+  return a.length === b.length && a.every((v, i) => v === b[i]);
 }
 
 export const usePushNotifications = () => {
@@ -35,6 +44,15 @@ export const usePushNotifications = () => {
       const registration = await navigator.serviceWorker.getRegistration("/sw.js");
       if (registration) {
         const subscription = await registration.pushManager.getSubscription();
+        if (subscription && !usesCurrentKey(subscription)) {
+          // Ancienne clé : l'abonnement ne peut plus recevoir. On le retire
+          // pour que le parent puisse réactiver en un geste.
+          await subscription.unsubscribe().catch(() => {});
+          await supabase.from("push_subscriptions").delete()
+            .eq("user_id", user!.id).eq("endpoint", subscription.endpoint);
+          setIsSubscribed(false);
+          return;
+        }
         setIsSubscribed(!!subscription);
       }
     } catch {
@@ -48,6 +66,9 @@ export const usePushNotifications = () => {
     try {
       const registration = await navigator.serviceWorker.register("/sw.js");
       await navigator.serviceWorker.ready;
+
+      const existing = await registration.pushManager.getSubscription();
+      if (existing && !usesCurrentKey(existing)) await existing.unsubscribe().catch(() => {});
 
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
