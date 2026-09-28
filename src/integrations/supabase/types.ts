@@ -1384,6 +1384,38 @@ export type Database = {
         }
         Relationships: []
       }
+      medical_record_access_log: {
+        Row: {
+          accessed_at: string
+          event: string
+          id: string
+          ip_hash: string | null
+          record_id: string | null
+        }
+        Insert: {
+          accessed_at?: string
+          event: string
+          id?: string
+          ip_hash?: string | null
+          record_id?: string | null
+        }
+        Update: {
+          accessed_at?: string
+          event?: string
+          id?: string
+          ip_hash?: string | null
+          record_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "medical_record_access_log_record_id_fkey"
+            columns: ["record_id"]
+            isOneToOne: false
+            referencedRelation: "medical_records"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       medical_records: {
         Row: {
           access_code: string | null
@@ -1396,6 +1428,7 @@ export type Database = {
           doctor_phone: string | null
           emergency_contact_name: string | null
           emergency_contact_phone: string | null
+          emergency_notes: string | null
           first_name: string | null
           id: string
           is_public: boolean
@@ -1403,6 +1436,7 @@ export type Database = {
           last_token_regen_at: string | null
           medical_history: string | null
           public_token: string
+          shared_fields: string[]
           social_security_number: string | null
           updated_at: string
           user_id: string
@@ -1418,6 +1452,7 @@ export type Database = {
           doctor_phone?: string | null
           emergency_contact_name?: string | null
           emergency_contact_phone?: string | null
+          emergency_notes?: string | null
           first_name?: string | null
           id?: string
           is_public?: boolean
@@ -1425,6 +1460,7 @@ export type Database = {
           last_token_regen_at?: string | null
           medical_history?: string | null
           public_token?: string
+          shared_fields?: string[]
           social_security_number?: string | null
           updated_at?: string
           user_id: string
@@ -1440,6 +1476,7 @@ export type Database = {
           doctor_phone?: string | null
           emergency_contact_name?: string | null
           emergency_contact_phone?: string | null
+          emergency_notes?: string | null
           first_name?: string | null
           id?: string
           is_public?: boolean
@@ -1447,6 +1484,7 @@ export type Database = {
           last_token_regen_at?: string | null
           medical_history?: string | null
           public_token?: string
+          shared_fields?: string[]
           social_security_number?: string | null
           updated_at?: string
           user_id?: string
@@ -2658,6 +2696,7 @@ export type Database = {
       generate_referral_code: { Args: never; Returns: string }
       get_batch_recipients_admin: { Args: { _batch_id: string }; Returns: Json }
       get_community_authors: { Args: { _user_ids: string[] }; Returns: Json }
+      get_emergency_sheet: { Args: { _token: string }; Returns: Json }
       get_emergency_usage: { Args: never; Returns: Json }
       get_family_invitation_by_token: {
         Args: { _token: string }
@@ -2675,10 +2714,6 @@ export type Database = {
       }
       get_founding_offer: { Args: never; Returns: Json }
       get_is_premium: { Args: { _user_id: string }; Returns: boolean }
-      get_medical_record_by_token: {
-        Args: { _code: string; _token: string }
-        Returns: Json
-      }
       get_my_ambassador_impact: { Args: never; Returns: Json }
       get_my_contract_status: { Args: never; Returns: Json }
       get_my_founding_status: { Args: never; Returns: Json }

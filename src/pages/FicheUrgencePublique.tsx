@@ -1,146 +1,97 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { HeartPulse, Phone, AlertTriangle } from "lucide-react";
+import { HeartPulse, Phone, AlertTriangle, Lock } from "lucide-react";
 
-interface PublicRecord {
-  first_name: string;
-  last_name: string;
-  birth_date: string | null;
-  blood_type: string;
-  allergies: string;
-  current_treatments: string;
-  doctor_name: string;
-  doctor_phone: string;
-  emergency_contact_name: string;
-  emergency_contact_phone: string;
-  medical_history: string;
-  updated_at: string;
+export interface EmergencySheet {
+  first_name?: string;
+  last_name?: string;
+  birth_date?: string | null;
+  blood_type?: string;
+  allergies?: string;
+  current_treatments?: string;
+  medical_history?: string;
+  emergency_notes?: string;
+  doctor_name?: string;
+  doctor_phone?: string;
+  emergency_contact_name?: string;
+  emergency_contact_phone?: string;
+  updated_at?: string;
 }
+
+type Status = "loading" | "ok" | "invalid" | "disabled" | "rate_limited";
 
 const FicheUrgencePublique = () => {
   const { token } = useParams<{ token: string }>();
-  const [record, setRecord] = useState<PublicRecord | null>(null);
-  const [code, setCode] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
+  const [status, setStatus] = useState<Status>("loading");
+  const [sheet, setSheet] = useState<EmergencySheet | null>(null);
 
-  const submit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!token || code.trim().length < 8) { setError(true); return; }
-    setLoading(true);
-    setError(false);
-    const { data, error } = await supabase.rpc("get_medical_record_by_token", { _token: token, _code: code });
-    if (error || !data) setError(true);
-    else setRecord(data as any);
-    setLoading(false);
-  };
+  useEffect(() => {
+    supabase.rpc("get_emergency_sheet" as any, { _token: token ?? "" }).then(({ data, error }) => {
+      const d = data as any;
+      if (error || !d) { setStatus("invalid"); return; }
+      if (d.status === "ok") { setSheet(d); setStatus("ok"); }
+      else setStatus(d.status);
+    });
+  }, [token]);
 
-  if (!record) {
+  if (status === "loading") {
+    return <div className="flex min-h-screen items-center justify-center bg-white text-sm text-gray-500">Chargement…</div>;
+  }
+  if (status !== "ok" || !sheet) {
+    const msg = status === "disabled"
+      ? "Cette fiche d'urgence n'est plus disponible."
+      : status === "rate_limited"
+      ? "Trop de consultations en peu de temps. Réessaie dans quelques minutes."
+      : "Ce QR code n'est pas valide ou a été remplacé.";
     return (
-      <div className="flex min-h-screen items-center justify-center bg-white p-6 text-black">
-        <form onSubmit={submit} className="w-full max-w-sm text-center">
-          <HeartPulse className="mx-auto h-10 w-10 text-red-600" />
-          <h1 className="mt-4 text-xl font-bold">Fiche médicale d'urgence protégée</h1>
-          <p className="mt-2 text-sm text-gray-600">Entre le code d'accès fourni avec ce lien.</p>
-          <input
-            value={code}
-            onChange={(e) => setCode(e.target.value.toUpperCase())}
-            maxLength={16}
-            autoComplete="off"
-            aria-label="Code d'accès"
-            placeholder="Code d'accès"
-            className="mt-5 w-full rounded-xl border border-gray-300 px-4 py-3 text-center font-mono text-lg tracking-[0.2em]"
-          />
-          {error && (
-            <p className="mt-3 flex items-center justify-center gap-1 text-sm text-red-600">
-              <AlertTriangle className="h-4 w-4" /> Code incorrect ou lien plus valide.
-            </p>
-          )}
-          <button type="submit" disabled={loading} className="mt-4 w-full rounded-xl bg-red-600 px-4 py-3 font-semibold text-white disabled:opacity-60">
-            {loading ? "Vérification..." : "Ouvrir la fiche"}
-          </button>
-        </form>
+      <div className="flex min-h-screen items-center justify-center bg-white p-6 text-center text-black">
+        <div className="max-w-sm">
+          <Lock className="mx-auto h-10 w-10 text-red-600" />
+          <h1 className="mt-4 text-xl font-bold">🆘 Fiche d'urgence Éclosia</h1>
+          <p className="mt-2 text-sm text-gray-600">{msg}</p>
+        </div>
       </div>
     );
   }
+  return <EmergencySheetView sheet={sheet} />;
+};
 
-  const age = record.birth_date
-    ? Math.floor((Date.now() - new Date(record.birth_date).getTime()) / (365.25 * 24 * 3600 * 1000))
+export const EmergencySheetView = ({ sheet }: { sheet: EmergencySheet }) => {
+  const age = sheet.birth_date
+    ? Math.floor((Date.now() - new Date(sheet.birth_date).getTime()) / (365.25 * 24 * 3600 * 1000))
     : null;
-
+  const name = [sheet.first_name, sheet.last_name].filter(Boolean).join(" ");
   return (
-    <div className="min-h-screen bg-white text-black">
-      {/* Header rouge bien visible pour les secours */}
-      <div className="bg-red-600 px-6 py-6 text-white">
-        <div className="mx-auto max-w-2xl">
-          <div className="flex items-center gap-3">
-            <HeartPulse className="h-8 w-8" />
-            <div>
-              <p className="text-xs uppercase tracking-wide opacity-90">Fiche médicale d'urgence</p>
-              <h1 className="text-2xl font-bold">
-                {record.first_name} {record.last_name}
-              </h1>
-              {age !== null && <p className="text-sm opacity-90">{age} ans</p>}
-            </div>
+    <div className="bg-white text-black">
+      <div className="bg-red-600 px-6 py-5 text-white">
+        <div className="mx-auto max-w-2xl flex items-center gap-3">
+          <HeartPulse className="h-8 w-8 shrink-0" />
+          <div>
+            <p className="text-xs uppercase tracking-wide opacity-90">🆘 Fiche d'urgence Éclosia</p>
+            {name && <h1 className="text-2xl font-bold">{name}</h1>}
+            {age !== null && <p className="text-sm opacity-90">{age} ans · née le {new Date(sheet.birth_date!).toLocaleDateString("fr-FR")}</p>}
           </div>
         </div>
       </div>
-
-      <div className="mx-auto max-w-2xl space-y-4 p-6">
-        {/* Infos vitales */}
-        <Section title="Infos vitales" highlight>
-          <Row label="Groupe sanguin" value={record.blood_type || "Non renseigné"} big />
-          <Row label="Date de naissance" value={record.birth_date || "Non renseignée"} />
-        </Section>
-
-        {/* Allergies — TRES important */}
-        {record.allergies && (
-          <Section title="⚠️ Allergies médicamenteuses" warning>
-            <p className="whitespace-pre-line text-sm font-medium">{record.allergies}</p>
+      <div className="mx-auto max-w-2xl space-y-3 p-5">
+        <p className="text-xs text-gray-600">Informations mises à disposition par la personne pour faciliter sa prise en charge en cas d'urgence.</p>
+        {sheet.blood_type && <Section title="Groupe sanguin" highlight><p className="text-xl font-bold text-red-600">{sheet.blood_type}</p></Section>}
+        {sheet.allergies && <Section title="⚠️ Allergies" warning><p className="whitespace-pre-line text-sm font-medium">{sheet.allergies}</p></Section>}
+        {sheet.current_treatments && <Section title="Traitements importants"><p className="whitespace-pre-line text-sm">{sheet.current_treatments}</p></Section>}
+        {sheet.medical_history && <Section title="Antécédents essentiels"><p className="whitespace-pre-line text-sm">{sheet.medical_history}</p></Section>}
+        {sheet.emergency_notes && <Section title="Informations importantes"><p className="whitespace-pre-line text-sm">{sheet.emergency_notes}</p></Section>}
+        {(sheet.emergency_contact_name || sheet.doctor_name) && (
+          <Section title="Contacts">
+            {sheet.emergency_contact_name && <ContactRow label="Contact d'urgence" name={sheet.emergency_contact_name} phone={sheet.emergency_contact_phone} />}
+            {sheet.doctor_name && <ContactRow label="Médecin" name={sheet.doctor_name} phone={sheet.doctor_phone} />}
           </Section>
         )}
-
-        {/* Traitements */}
-        {record.current_treatments && (
-          <Section title="Traitements en cours">
-            <p className="whitespace-pre-line text-sm">{record.current_treatments}</p>
-          </Section>
-        )}
-
-        {/* Antécédents */}
-        {record.medical_history && (
-          <Section title="Antécédents importants">
-            <p className="whitespace-pre-line text-sm">{record.medical_history}</p>
-          </Section>
-        )}
-
-        {/* Contacts */}
-        <Section title="Contacts">
-          {record.doctor_name && (
-            <ContactRow label="Médecin traitant" name={record.doctor_name} phone={record.doctor_phone} />
-          )}
-          {record.emergency_contact_name && (
-            <ContactRow label="Personne à prévenir" name={record.emergency_contact_name} phone={record.emergency_contact_phone} />
-          )}
-        </Section>
-
-        {/* Avis sur l'expiration du lien */}
-        <div className="rounded-xl border border-amber-300 bg-amber-50 p-3">
-          <div className="flex gap-2">
-            <AlertTriangle className="h-4 w-4 shrink-0 text-amber-600" />
-            <div className="text-[11px] leading-relaxed text-amber-900">
-              <p className="font-semibold">Lien sécurisé temporaire</p>
-              <p className="mt-1">
-                Ce lien signé peut être révoqué à tout moment par la titulaire de la fiche. Si elle régénère son lien, cette page ne sera plus accessible et un nouveau QR code devra être utilisé.
-              </p>
-            </div>
-          </div>
+        <div className="flex gap-2 rounded-xl border border-amber-300 bg-amber-50 p-3 text-[11px] leading-relaxed text-amber-900">
+          <AlertTriangle className="h-4 w-4 shrink-0 text-amber-600" />
+          <p>Ces informations sont fournies par l'utilisateur et ne remplacent pas un dossier médical ni l'évaluation d'un professionnel de santé.</p>
         </div>
-
-        <p className="text-center text-[10px] text-gray-400">
-          Mise à jour : {new Date(record.updated_at).toLocaleDateString("fr-FR")}
-        </p>
+        {sheet.updated_at && <p className="text-center text-[10px] text-gray-400">Mise à jour : {new Date(sheet.updated_at).toLocaleDateString("fr-FR")}</p>}
       </div>
     </div>
   );
@@ -148,22 +99,15 @@ const FicheUrgencePublique = () => {
 
 const Section = ({ title, children, highlight, warning }: any) => (
   <div className={`rounded-xl border p-4 ${warning ? "border-red-300 bg-red-50" : highlight ? "border-blue-300 bg-blue-50" : "border-gray-200 bg-gray-50"}`}>
-    <h2 className={`mb-2 text-sm font-bold ${warning ? "text-red-700" : "text-gray-800"}`}>{title}</h2>
+    <h2 className={`mb-1.5 text-sm font-bold ${warning ? "text-red-700" : "text-gray-800"}`}>{title}</h2>
     {children}
   </div>
 );
 
-const Row = ({ label, value, big }: { label: string; value: string; big?: boolean }) => (
-  <div className="flex items-baseline justify-between border-b border-gray-200 py-2 last:border-0">
-    <span className="text-xs text-gray-600">{label}</span>
-    <span className={`font-semibold ${big ? "text-xl text-red-600" : "text-sm"}`}>{value}</span>
-  </div>
-);
-
-const ContactRow = ({ label, name, phone }: { label: string; name: string; phone: string }) => (
+const ContactRow = ({ label, name, phone }: { label: string; name: string; phone?: string }) => (
   <div className="border-b border-gray-200 py-2 last:border-0">
     <p className="text-xs text-gray-600">{label}</p>
-    <p className="mt-1 text-sm font-semibold">{name}</p>
+    <p className="mt-0.5 text-sm font-semibold">{name}</p>
     {phone && (
       <a href={`tel:${phone.replace(/\s/g, "")}`} className="mt-1 inline-flex items-center gap-1 rounded-full bg-blue-600 px-3 py-1 text-xs font-semibold text-white">
         <Phone className="h-3 w-3" /> {phone}
