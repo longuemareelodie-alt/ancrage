@@ -27,19 +27,8 @@ export async function sendAppEmail(params: {
     if (error) console.error('email_send_log write failed', { code: error.code, message: error.message })
   }
   try {
-    // Désabonnements faits depuis les anciens liens « Se désabonner » : on les respecte.
-    if (recipient) {
-      const { data: optOut } = await db
-        .from('suppressed_emails')
-        .select('id')
-        .eq('email', recipient.toLowerCase())
-        .limit(1)
-        .maybeSingle()
-      if (optOut) {
-        await log('suppressed', 'unsubscribed')
-        return { error: null, sent: false }
-      }
-    }
+    // Suppression is enforced by the managed email service; no app-side gate.
+
     const r = await sendTemplateEmail(templateName, recipientEmail, { templateData, idempotencyKey })
     if (r.sent) {
       await log('sent')
