@@ -169,7 +169,8 @@ const BottomNav = () => {
 
   return (
     <>
-      <div aria-hidden className="h-[calc(5.25rem+env(safe-area-inset-bottom))] w-full" />
+      {/* Espace global : hauteur barre (60px) + safe-area réelle + marge confortable */}
+      <div aria-hidden className="h-[calc(60px+max(env(safe-area-inset-bottom),0.625rem)+2rem)] w-full shrink-0" />
       <nav
         className="fixed bottom-0 left-0 right-0 z-40 px-2 pb-[max(env(safe-area-inset-bottom),0.625rem)]"
         aria-label="Navigation principale"

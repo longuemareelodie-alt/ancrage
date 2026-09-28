@@ -21,7 +21,7 @@ const HubShell = ({ title, subtitle, children, clearBottomNav }: Props) => (
       transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
       className={`mx-auto w-full max-w-lg px-6 pt-10 ${
         clearBottomNav
-          ? "pb-[calc(60px+0.625rem+env(safe-area-inset-bottom)+3rem)]"
+          ? "pb-10"
           : "pb-10"
       }`}
     >

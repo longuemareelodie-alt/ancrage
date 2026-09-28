@@ -146,7 +146,7 @@ const Aujourdhui = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="mx-auto w-full max-w-lg px-6 pt-10 pb-[calc(60px+0.625rem+env(safe-area-inset-bottom)+3rem)]">
+      <div className="mx-auto w-full max-w-lg px-6 pt-10 pb-10">
         {/* 1 — Salutation + phrase du jour */}
         <motion.header {...fade(0)} className="mb-8 flex items-start justify-between gap-4">
           <div className="min-w-0">
