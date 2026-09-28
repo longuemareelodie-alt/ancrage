@@ -173,9 +173,15 @@ async function sendWebPush(
     sub: "mailto:contact@digitalmamanlibre.com",
   })));
   const unsigned = `${header}.${claims}`;
+  const pub = fromB64url(VAPID_PUBLIC_KEY);
   const cryptoKey = await crypto.subtle.importKey(
-    "pkcs8",
-    await convertRawToP8(decodeVapidPrivateKey(vapidPrivateKey)),
+    "jwk",
+    {
+      kty: "EC", crv: "P-256", ext: true,
+      d: b64url(decodeVapidPrivateKey(vapidPrivateKey)),
+      x: b64url(pub.slice(1, 33)),
+      y: b64url(pub.slice(33, 65)),
+    },
     { name: "ECDSA", namedCurve: "P-256" },
     false,
     ["sign"],
