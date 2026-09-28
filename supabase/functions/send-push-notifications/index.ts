@@ -173,9 +173,15 @@ async function sendWebPush(
     sub: "mailto:contact@digitalmamanlibre.com",
   })));
   const unsigned = `${header}.${claims}`;
+  const pub = fromB64url(VAPID_PUBLIC_KEY);
   const cryptoKey = await crypto.subtle.importKey(
-    "pkcs8",
-    await convertRawToP8(decodeVapidPrivateKey(vapidPrivateKey)),
+    "jwk",
+    {
+      kty: "EC", crv: "P-256", ext: true,
+      d: b64url(decodeVapidPrivateKey(vapidPrivateKey)),
+      x: b64url(pub.slice(1, 33)),
+      y: b64url(pub.slice(33, 65)),
+    },
     { name: "ECDSA", namedCurve: "P-256" },
     false,
     ["sign"],
@@ -490,7 +496,29 @@ Deno.serve(async (req) => {
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, serviceRoleKey);
 
-    const { type = "morning", dry_run = false } = await req.json().catch(() => ({ type: "morning" }));
+    const { type = "morning", dry_run = false, test_subscription_id } = await req.json().catch(() => ({ type: "morning" }));
+
+    // Test interne : un seul appareil, message fixe, sans toucher aux préférences.
+    if (typeof test_subscription_id === "string") {
+      const { data: sub } = await supabase
+        .from("push_subscriptions")
+        .select("endpoint, p256dh, auth")
+        .eq("id", test_subscription_id)
+        .maybeSingle();
+      if (!sub) {
+        return new Response(JSON.stringify({ error: "not found" }), {
+          status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      const status = await sendWebPush(
+        sub,
+        JSON.stringify({ title: "Éclosia", body: "Test : tes notifications fonctionnent 🌸", url: "/" }),
+        vapidPrivateKey,
+      );
+      return new Response(JSON.stringify({ test_status: status }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     // Fetch subscriptions
     const { data: subscriptions } = await supabase
