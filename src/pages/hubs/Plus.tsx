@@ -17,7 +17,7 @@ import HubShell from "@/components/hub/HubShell";
 import HubCard from "@/components/hub/HubCard";
 
 const Plus = () => (
-  <HubShell title="Plus" subtitle="Tout le reste, rangé par besoin.">
+  <HubShell title="Plus" subtitle="Tout le reste, rangé par besoin." clearBottomNav>
     <HubCard
       to="/recherche"
       icon={Search}
