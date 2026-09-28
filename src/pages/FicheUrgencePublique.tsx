@@ -21,38 +21,46 @@ interface PublicRecord {
 const FicheUrgencePublique = () => {
   const { token } = useParams<{ token: string }>();
   const [record, setRecord] = useState<PublicRecord | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [code, setCode] = useState("");
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 
-  useEffect(() => {
-    if (!token) return;
-    supabase
-      .rpc("get_medical_record_by_token", { _token: token })
-      .then(({ data, error }) => {
-        if (error || !data) setError(true);
-        else setRecord(data as any);
-        setLoading(false);
-      });
-  }, [token]);
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!token || code.trim().length < 8) { setError(true); return; }
+    setLoading(true);
+    setError(false);
+    const { data, error } = await supabase.rpc("get_medical_record_by_token", { _token: token, _code: code });
+    if (error || !data) setError(true);
+    else setRecord(data as any);
+    setLoading(false);
+  };
 
-  if (loading) {
+  if (!record) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-white">
-        <p className="text-gray-500">Chargement de la fiche...</p>
-      </div>
-    );
-  }
-
-  if (error || !record) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-white p-6">
-        <div className="text-center">
-          <AlertTriangle className="mx-auto h-12 w-12 text-red-500" />
-          <h1 className="mt-4 text-xl font-bold">Fiche introuvable</h1>
-          <p className="mt-2 text-sm text-gray-600">
-            Ce lien n'est pas valide ou la fiche n'est plus accessible.
-          </p>
-        </div>
+      <div className="flex min-h-screen items-center justify-center bg-white p-6 text-black">
+        <form onSubmit={submit} className="w-full max-w-sm text-center">
+          <HeartPulse className="mx-auto h-10 w-10 text-red-600" />
+          <h1 className="mt-4 text-xl font-bold">Fiche médicale d'urgence protégée</h1>
+          <p className="mt-2 text-sm text-gray-600">Entre le code d'accès fourni avec ce lien.</p>
+          <input
+            value={code}
+            onChange={(e) => setCode(e.target.value.toUpperCase())}
+            maxLength={16}
+            autoComplete="off"
+            aria-label="Code d'accès"
+            placeholder="Code d'accès"
+            className="mt-5 w-full rounded-xl border border-gray-300 px-4 py-3 text-center font-mono text-lg tracking-[0.2em]"
+          />
+          {error && (
+            <p className="mt-3 flex items-center justify-center gap-1 text-sm text-red-600">
+              <AlertTriangle className="h-4 w-4" /> Code incorrect ou lien plus valide.
+            </p>
+          )}
+          <button type="submit" disabled={loading} className="mt-4 w-full rounded-xl bg-red-600 px-4 py-3 font-semibold text-white disabled:opacity-60">
+            {loading ? "Vérification..." : "Ouvrir la fiche"}
+          </button>
+        </form>
       </div>
     );
   }
