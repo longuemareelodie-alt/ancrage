@@ -1,3 +1,181 @@
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import SectionBlock from "@/components/SectionBlock";
+import { ArrowLeft, Save, QrCode, Eye, RefreshCw, Copy, Check, AlertTriangle, Printer, EyeOff } from "lucide-react";
+import { toast } from "sonner";
+import { QRCodeSVG } from "qrcode.react";
+import { EmergencySheetView, type EmergencySheet } from "./FicheUrgencePublique";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
+interface Record {
+  id?: string;
+  first_name: string;
+  last_name: string;
+  birth_date: string | null;
+  blood_type: string;
+  allergies: string;
+  current_treatments: string;
+  doctor_name: string;
+  doctor_phone: string;
+  emergency_contact_name: string;
+  emergency_contact_phone: string;
+  medical_history: string;
+  emergency_notes: string;
+  social_security_number: string;
+  public_token: string;
+  access_code?: string | null;
+  is_public: boolean;
+  shared_fields: string[];
+}
+
+const SHAREABLE: { key: string; label: string }[] = [
+  { key: "first_name", label: "Prénom" },
+  { key: "last_name", label: "Nom" },
+  { key: "birth_date", label: "Date de naissance" },
+  { key: "blood_type", label: "Groupe sanguin" },
+  { key: "allergies", label: "Allergies" },
+  { key: "current_treatments", label: "Traitements" },
+  { key: "medical_history", label: "Antécédents" },
+  { key: "emergency_notes", label: "Infos importantes" },
+  { key: "emergency_contact", label: "Contact d'urgence" },
+  { key: "doctor", label: "Médecin" },
+];
+const DEFAULT_SHARED = ["first_name", "last_name", "blood_type", "allergies", "current_treatments", "medical_history", "emergency_notes", "emergency_contact"];
+
+const emptyRecord: Record = {
+  first_name: "", last_name: "", birth_date: null, blood_type: "",
+  allergies: "", current_treatments: "", doctor_name: "", doctor_phone: "",
+  emergency_contact_name: "", emergency_contact_phone: "", emergency_notes: "",
+  medical_history: "", social_security_number: "", public_token: "", is_public: true,
+  shared_fields: DEFAULT_SHARED,
+};
+
+const buildPreview = (r: Record): EmergencySheet => {
+  const f = r.shared_fields ?? [];
+  const s: EmergencySheet = {};
+  if (f.includes("first_name")) s.first_name = r.first_name;
+  if (f.includes("last_name")) s.last_name = r.last_name;
+  if (f.includes("birth_date")) s.birth_date = r.birth_date;
+  if (f.includes("blood_type")) s.blood_type = r.blood_type;
+  if (f.includes("allergies")) s.allergies = r.allergies;
+  if (f.includes("current_treatments")) s.current_treatments = r.current_treatments;
+  if (f.includes("medical_history")) s.medical_history = r.medical_history;
+  if (f.includes("emergency_notes")) s.emergency_notes = r.emergency_notes;
+  if (f.includes("emergency_contact")) { s.emergency_contact_name = r.emergency_contact_name; s.emergency_contact_phone = r.emergency_contact_phone; }
+  if (f.includes("doctor")) { s.doctor_name = r.doctor_name; s.doctor_phone = r.doctor_phone; }
+  return s;
+};
+
+const normalize = (d: any): Record => ({ ...emptyRecord, ...d, emergency_notes: d?.emergency_notes ?? "" });
+
+const SanteFicheMedicale = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [record, setRecord] = useState<Record>(emptyRecord);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [showQR, setShowQR] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [accesses, setAccesses] = useState<{ event: string; accessed_at: string }[]>([]);
+
+  const loadAccesses = async (id?: string) => {
+    if (!id) return;
+    const { data } = await supabase
+      .from("medical_record_access_log" as any)
+      .select("event, accessed_at")
+      .eq("record_id", id)
+      .order("accessed_at", { ascending: false })
+      .limit(10);
+    setAccesses((data as any) ?? []);
+  };
+
+  useEffect(() => {
+    if (!user) return;
+    supabase
+      .from("medical_records")
+      .select("*")
+      .eq("user_id", user.id)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (data) {
+          setRecord(normalize(data));
+          loadAccesses((data as any).id);
+        }
+        setLoading(false);
+      });
+  }, [user]);
+
+  const persist = async (next: Record, okMsg: string) => {
+    if (!user) return;
+    setSaving(true);
+    // Le lien est géré uniquement par le serveur.
+    const { public_token: _omit, access_code: _omitCode, id: _id, ...rest } = next as any;
+    const payload = { ...rest, user_id: user.id, birth_date: next.birth_date || null };
+    const { data, error } = await supabase
+      .from("medical_records")
+      .upsert(payload, { onConflict: "user_id" })
+      .select()
+      .single();
+    if (error) toast.error("Erreur lors de l'enregistrement");
+    else {
+      toast.success(okMsg);
+      if (data) setRecord(normalize(data));
+    }
+    setSaving(false);
+  };
+
+  const save = () => persist(record, "Fiche enregistrée ✨");
+  const setActive = (v: boolean) => persist({ ...record, is_public: v }, v ? "Fiche d'urgence activée" : "Fiche d'urgence désactivée : le QR ne montre plus rien");
+  const toggleField = (k: string) => {
+    const f = record.shared_fields.includes(k) ? record.shared_fields.filter((x) => x !== k) : [...record.shared_fields, k];
+    setRecord({ ...record, shared_fields: f });
+  };
+
+  const regenerateToken = async () => {
+    const { data, error } = await supabase.rpc("regenerate_medical_token");
+    if (error || !data) {
+      toast.error("Erreur lors de la régénération");
+      return;
+    }
+    const result = data as { success: boolean; token?: string; retry_after_seconds?: number };
+    if (!result.success) {
+      const wait = result.retry_after_seconds ?? 0;
+      const minutes = Math.ceil(wait / 60);
+      toast.error(`Trop de régénérations. Réessaie dans ${minutes > 1 ? `${minutes} minutes` : `${wait} secondes`}.`);
+      return;
+    }
+    if (result.token) {
+      setRecord((p) => ({ ...p, public_token: result.token! }));
+      toast.success("Nouveau QR généré, l'ancien ne fonctionne plus");
+    }
+  };
+
+  const publicUrl = record.public_token
+    ? `${window.location.origin}/fiche-urgence/${record.public_token}`
+    : "";
+
+  const copyLink = () => {
+    navigator.clipboard.writeText(publicUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  if (loading) {
+    return <div className="flex min-h-screen items-center justify-center"><p className="text-muted-foreground">Chargement...</p></div>;
+  }
 
   const printQR = () => {
     const svg = document.getElementById("sos-qr")?.outerHTML ?? "";
