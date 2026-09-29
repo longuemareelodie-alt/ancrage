@@ -1,125 +1,17 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/integrations/supabase/client";
-import SectionBlock from "@/components/SectionBlock";
-import { ArrowLeft, Save, QrCode, Eye, RefreshCw, Copy, Check, AlertTriangle } from "lucide-react";
-import { toast } from "sonner";
-import { QRCodeSVG } from "qrcode.react";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 
-interface Record {
-  first_name: string;
-  last_name: string;
-  birth_date: string | null;
-  blood_type: string;
-  allergies: string;
-  current_treatments: string;
-  doctor_name: string;
-  doctor_phone: string;
-  emergency_contact_name: string;
-  emergency_contact_phone: string;
-  medical_history: string;
-  social_security_number: string;
-  public_token: string;
-  access_code?: string | null;
-  is_public: boolean;
-}
-
-const emptyRecord: Record = {
-  first_name: "", last_name: "", birth_date: null, blood_type: "",
-  allergies: "", current_treatments: "", doctor_name: "", doctor_phone: "",
-  emergency_contact_name: "", emergency_contact_phone: "",
-  medical_history: "", social_security_number: "", public_token: "", is_public: true,
-};
-
-const SanteFicheMedicale = () => {
-  const { user } = useAuth();
-  const navigate = useNavigate();
-  const [record, setRecord] = useState<Record>(emptyRecord);
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [showQR, setShowQR] = useState(false);
-  const [copied, setCopied] = useState(false);
-
-  useEffect(() => {
-    if (!user) return;
-    supabase
-      .from("medical_records")
-      .select("*")
-      .eq("user_id", user.id)
-      .maybeSingle()
-      .then(({ data }) => {
-        if (data) setRecord(data as any);
-        setLoading(false);
-      });
-  }, [user]);
-
-  const save = async () => {
-    if (!user) return;
-    setSaving(true);
-    // Le code secret du lien est géré uniquement par le serveur.
-    const { public_token: _omit, access_code: _omitCode, ...rest } = record;
-    const payload = { ...rest, user_id: user.id, birth_date: record.birth_date || null };
-    const { data, error } = await supabase
-      .from("medical_records")
-      .upsert(payload, { onConflict: "user_id" })
-      .select()
-      .single();
-    if (error) toast.error("Erreur lors de l'enregistrement");
-    else {
-      toast.success("Fiche enregistrée ✨");
-      if (data) setRecord(data as any);
-    }
-    setSaving(false);
+  const printQR = () => {
+    const svg = document.getElementById("sos-qr")?.outerHTML ?? "";
+    const w = window.open("", "_blank");
+    if (!w) return;
+    w.document.write(`<html><head><title>Fiche d'urgence</title></head><body style="font-family:sans-serif;text-align:center;padding:40px">
+      <h1>🆘 FICHE D'URGENCE</h1><p>Scannez ce QR code pour consulter les informations essentielles.</p>
+      <div style="margin:24px auto;width:240px">${svg.replace(/width="\d+"/, 'width="240"').replace(/height="\d+"/, 'height="240"')}</div>
+      <p style="font-size:12px;color:#555">Informations destinées à faciliter la prise en charge en cas d'urgence.</p>
+      <script>window.onload=()=>window.print()</script></body></html>`);
+    w.document.close();
   };
 
-  const regenerateToken = async () => {
-    const { data, error } = await supabase.rpc("regenerate_medical_token");
-    if (error || !data) {
-      toast.error("Erreur lors de la régénération");
-      return;
-    }
-    const result = data as { success: boolean; token?: string; retry_after_seconds?: number; cooldown_seconds?: number };
-    if (!result.success) {
-      const wait = result.retry_after_seconds ?? 0;
-      const minutes = Math.ceil(wait / 60);
-      toast.error(
-        `Trop de régénérations. Réessaie dans ${minutes > 1 ? `${minutes} minutes` : `${wait} secondes`}.`,
-        { description: "Pour éviter les abus, le lien ne peut être régénéré qu'une fois toutes les 5 minutes." }
-      );
-      return;
-    }
-    if (result.token) {
-      const { data: fresh } = await supabase.from("medical_records").select("public_token, access_code").eq("user_id", user!.id).maybeSingle();
-      setRecord((p) => ({ ...p, public_token: result.token!, access_code: (fresh as any)?.access_code ?? p.access_code }));
-      toast.success("Nouveau lien généré, l'ancien ne fonctionne plus");
-    }
-  };
-
-  const publicUrl = record.public_token
-    ? `${window.location.origin}/fiche-urgence/${record.public_token}`
-    : "";
-
-  const copyLink = () => {
-    navigator.clipboard.writeText(publicUrl);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  if (loading) {
-    return <div className="flex min-h-screen items-center justify-center"><p className="text-muted-foreground">Chargement...</p></div>;
-  }
+  const lastView = accesses.find((a) => a.event === "view");
 
   return (
     <div className="min-h-screen bg-background">
@@ -127,108 +19,104 @@ const SanteFicheMedicale = () => {
         <button onClick={() => navigate("/sante")} className="mb-3 flex items-center gap-1 text-xs text-muted-foreground">
           <ArrowLeft className="h-3.5 w-3.5" /> Retour
         </button>
-        <h1 className="text-2xl font-bold">🆘 Fiche Médicale d'Urgence</h1>
+        <h1 className="text-2xl font-bold">🆘 Ma fiche d'urgence</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          En cas d'urgence, les secours peuvent scanner ton QR code pour accéder à tes infos vitales.
+          📱 Le QR ouvre uniquement les informations que tu coches. Ton dossier médical complet reste privé 🔒
         </p>
       </SectionBlock>
 
       {record.public_token && (
         <SectionBlock>
-          <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-semibold">Ma fiche publique</p>
-                <p className="mt-0.5 text-xs text-muted-foreground">Partage ce QR avec tes proches ou affiche-le</p>
+          <div className="space-y-4 rounded-2xl border border-primary/20 bg-primary/5 p-4">
+            <label className="flex items-center justify-between gap-3">
+              <span>
+                <span className="block text-sm font-semibold">Activer ma fiche d'urgence</span>
+                <span className="block text-xs text-muted-foreground">{record.is_public ? "Le QR fonctionne sans connexion." : "Désactivée : le QR n'affiche plus rien."}</span>
+              </span>
+              <input type="checkbox" checked={record.is_public} disabled={saving} onChange={(e) => setActive(e.target.checked)} className="h-5 w-5" aria-label="Activer ma fiche d'urgence" />
+            </label>
+
+            <div>
+              <p className="text-sm font-semibold">Informations affichées</p>
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                {SHAREABLE.map((s) => {
+                  const on = record.shared_fields.includes(s.key);
+                  return (
+                    <button key={s.key} type="button" onClick={() => toggleField(s.key)} aria-pressed={on}
+                      className={`rounded-full border px-3 py-1 text-xs ${on ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background text-muted-foreground"}`}>
+                      {on ? "✓ " : ""}{s.label}
+                    </button>
+                  );
+                })}
               </div>
-              <button
-                onClick={() => setShowQR(!showQR)}
-                className="flex items-center gap-1 rounded-lg bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground"
-              >
-                <QrCode className="h-4 w-4" /> {showQR ? "Masquer" : "Voir QR"}
+              <p className="mt-2 text-[11px] text-muted-foreground">Jamais partagés : numéro de sécurité sociale, adresse, documents, ordonnances. Pense à enregistrer après ton choix.</p>
+            </div>
+
+            <div className="flex gap-2">
+              <button onClick={() => setShowQR(!showQR)} className="flex flex-1 items-center justify-center gap-1 rounded-lg bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground">
+                <QrCode className="h-4 w-4" /> {showQR ? "Masquer le QR" : "Générer mon QR d'urgence"}
+              </button>
+              <button onClick={() => setShowPreview(!showPreview)} className="flex items-center justify-center gap-1 rounded-lg bg-secondary px-3 py-2 text-xs font-medium">
+                {showPreview ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />} Aperçu
               </button>
             </div>
 
+            {showPreview && (
+              <div>
+                <p className="mb-2 text-xs text-muted-foreground">Voici ce que verra une personne qui scanne ton QR.</p>
+                <div className="overflow-hidden rounded-xl border border-border"><EmergencySheetView sheet={buildPreview(record)} /></div>
+              </div>
+            )}
+
             {showQR && (
-              <div className="mt-4 flex flex-col items-center gap-3 rounded-xl bg-white p-6">
-                <QRCodeSVG value={publicUrl} size={200} level="M" />
+              <div className="flex flex-col items-center gap-3 rounded-xl bg-white p-5">
+                <QRCodeSVG id="sos-qr" value={publicUrl} size={200} level="M" />
                 <p className="text-center text-[10px] text-muted-foreground break-all">{publicUrl}</p>
-                {record.access_code && (
-                  <div className="w-full rounded-lg border border-primary/20 bg-primary/5 px-3 py-2 text-center">
-                    <p className="text-[11px] text-muted-foreground">Code d'accès à donner avec le lien</p>
-                    <p className="mt-0.5 font-mono text-lg font-bold tracking-[0.2em] text-foreground">{record.access_code}</p>
-                  </div>
-                )}
                 <div className="flex w-full gap-2">
-                  <button
-                    onClick={copyLink}
-                    className="flex flex-1 items-center justify-center gap-1 rounded-lg bg-secondary px-3 py-2 text-xs font-medium"
-                  >
-                    {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
-                    {copied ? "Copié" : "Copier le lien"}
+                  <button onClick={copyLink} className="flex flex-1 items-center justify-center gap-1 rounded-lg bg-secondary px-3 py-2 text-xs font-medium">
+                    {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />} {copied ? "Copié" : "Copier le lien"}
                   </button>
-                  <a
-                    href={publicUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex flex-1 items-center justify-center gap-1 rounded-lg bg-secondary px-3 py-2 text-xs font-medium"
-                  >
-                    <Eye className="h-3.5 w-3.5" /> Aperçu
-                  </a>
+                  <button onClick={printQR} className="flex flex-1 items-center justify-center gap-1 rounded-lg bg-secondary px-3 py-2 text-xs font-medium">
+                    <Printer className="h-3.5 w-3.5" /> Imprimer
+                  </button>
                 </div>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <button
-                      className="flex items-center gap-1 text-[11px] text-muted-foreground underline"
-                    >
-                      <RefreshCw className="h-3 w-3" /> Générer un nouveau lien
+                    <button className="flex items-center gap-1 text-[11px] text-muted-foreground underline">
+                      <RefreshCw className="h-3 w-3" /> Régénérer mon QR
                     </button>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
                       <AlertDialogTitle className="flex items-center gap-2">
-                        <AlertTriangle className="h-5 w-5 text-amber-500" />
-                        Régénérer le lien d'urgence ?
+                        <AlertTriangle className="h-5 w-5 text-amber-500" /> Régénérer le QR d'urgence ?
                       </AlertDialogTitle>
-                      <AlertDialogDescription className="space-y-2">
-                        <span className="block">
-                          L'ancien lien et le QR code actuel cesseront immédiatement de fonctionner.
-                        </span>
-                        <span className="block font-medium text-foreground">
-                          Tous tes proches et secours qui possèdent l'ancien QR ne pourront plus accéder à ta fiche. Tu devras leur partager le nouveau.
-                        </span>
-                        <span className="block text-xs">
-                          ⏱️ Limite : 1 régénération toutes les 5 minutes.
-                        </span>
+                      <AlertDialogDescription>
+                        L'ancien QR cessera immédiatement de fonctionner. Limite : 1 régénération toutes les 5 minutes.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel>Annuler</AlertDialogCancel>
-                      <AlertDialogAction onClick={regenerateToken}>
-                        Confirmer et régénérer
-                      </AlertDialogAction>
+                      <AlertDialogAction onClick={regenerateToken}>Confirmer et régénérer</AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
                 </AlertDialog>
               </div>
             )}
 
-            <div className="mt-3 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 p-2">
-              <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-600" />
-              <p className="text-[11px] leading-relaxed text-amber-900">
-                Ce lien signé reste actif tant que tu ne le régénères pas. Si tu perds ton QR ou doutes qu'il soit entre de mauvaises mains, régénère-le pour révoquer l'ancien.
+            <div className="rounded-lg bg-background/60 p-3">
+              <p className="text-xs font-semibold">🔒 Activité de ma fiche d'urgence</p>
+              <p className="mt-1 text-[11px] text-muted-foreground">
+                {lastView ? `Dernier accès : ${new Date(lastView.accessed_at).toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" })}` : "Aucun accès pour l'instant."}
               </p>
+              {accesses.length > 1 && (
+                <ul className="mt-1 space-y-0.5 text-[11px] text-muted-foreground">
+                  {accesses.slice(1, 6).map((a, i) => (
+                    <li key={i}>{new Date(a.accessed_at).toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" })} · {a.event === "view" ? "consultée" : "tentative (fiche désactivée)"}</li>
+                  ))}
+                </ul>
+              )}
             </div>
-
-            <label className="mt-4 flex items-center gap-2 text-xs">
-              <input
-                type="checkbox"
-                checked={record.is_public}
-                onChange={(e) => setRecord({ ...record, is_public: e.target.checked })}
-                className="h-4 w-4"
-              />
-              <span>Fiche accessible publiquement via le lien</span>
-            </label>
           </div>
         </SectionBlock>
       )}
@@ -244,12 +132,13 @@ const SanteFicheMedicale = () => {
             <Field label="Date de naissance" type="date" value={record.birth_date || ""} onChange={(v) => setRecord({ ...record, birth_date: v })} />
             <Field label="Groupe sanguin" placeholder="A+, O-..." value={record.blood_type} onChange={(v) => setRecord({ ...record, blood_type: v })} />
           </div>
-          <Field label="Numéro de sécurité sociale" value={record.social_security_number} onChange={(v) => setRecord({ ...record, social_security_number: v })} />
+          <Field label="Numéro de sécurité sociale (privé, jamais partagé)" value={record.social_security_number} onChange={(v) => setRecord({ ...record, social_security_number: v })} />
 
           <h2 className="pt-2 text-sm font-bold">Médical</h2>
           <Field label="Allergies médicamenteuses" multiline value={record.allergies} onChange={(v) => setRecord({ ...record, allergies: v })} />
           <Field label="Traitements en cours" multiline value={record.current_treatments} onChange={(v) => setRecord({ ...record, current_treatments: v })} />
           <Field label="Antécédents importants" multiline value={record.medical_history} onChange={(v) => setRecord({ ...record, medical_history: v })} />
+          <Field label="Informations importantes en cas d'urgence" multiline value={record.emergency_notes} onChange={(v) => setRecord({ ...record, emergency_notes: v })} />
 
           <h2 className="pt-2 text-sm font-bold">Contacts</h2>
           <div className="grid grid-cols-2 gap-2">
@@ -261,11 +150,7 @@ const SanteFicheMedicale = () => {
             <Field label="Téléphone" type="tel" value={record.emergency_contact_phone} onChange={(v) => setRecord({ ...record, emergency_contact_phone: v })} />
           </div>
 
-          <button
-            onClick={save}
-            disabled={saving}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground disabled:opacity-50"
-          >
+          <button onClick={save} disabled={saving} className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground disabled:opacity-50">
             <Save className="h-4 w-4" /> {saving ? "Enregistrement..." : "Enregistrer la fiche"}
           </button>
         </div>
