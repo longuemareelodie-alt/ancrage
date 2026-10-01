@@ -21,6 +21,7 @@ import { useWidgetSync } from "@/hooks/useWidgetSync";
 
 import SoftWhisper from "@/components/SoftWhisper";
 import PulseBlock from "@/components/pulse/PulseBlock";
+import PersonalizeBanner from "@/components/PersonalizeBanner";
 import demoVideo from "@/assets/video/eclosia-demo-son.mp4.asset.json";
 import { celebrate } from "@/lib/gentleBadges";
 
@@ -170,6 +171,8 @@ const Aujourdhui = () => {
         <div className="mb-6">
           <SoftWhisper />
         </div>
+
+        <PersonalizeBanner />
 
         {/* PULSE — état du jour + une seule prochaine action */}
         <motion.div {...fade(1)} className="mb-8">
