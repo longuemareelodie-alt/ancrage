@@ -118,6 +118,8 @@ import Aujourdhui from "./pages/Aujourdhui";
 import ViderMaTete from "./pages/pulse/ViderMaTete";
 import MonRythme from "./pages/pulse/MonRythme";
 import Onboarding from "./pages/Onboarding";
+import MonEclosia from "./pages/MonEclosia";
+import MesEspaces from "./pages/MesEspaces";
 import MoiEmotions from "./pages/moi/MoiEmotions";
 import MoiObjectifs from "./pages/moi/MoiObjectifs";
 import MoiHabitudes from "./pages/moi/MoiHabitudes";
@@ -272,6 +274,8 @@ const AnimatedRoutes = () => {
         <Route path="/autonomie/crise" element={<Navigate to="/lies-autrement/crise" replace />} />
         <Route path="/ressources" element={<PaidRoute><PageTransition><Ressources /></PageTransition></PaidRoute>} />
         <Route path="/recherche" element={<PaidRoute><PageTransition><RechercheGlobale /></PageTransition></PaidRoute>} />
+        <Route path="/mon-eclosia" element={<PaidRoute><PageTransition><MonEclosia /></PageTransition></PaidRoute>} />
+        <Route path="/mes-espaces" element={<PaidRoute><PageTransition><MesEspaces /></PageTransition></PaidRoute>} />
         <Route path="/plus" element={<PaidRoute><PageTransition><PlusHub /></PageTransition></PaidRoute>} />
         <Route path="/plus/organisation" element={<Navigate to="/organisation" replace />} />
         <Route path="/plus/budget" element={<Navigate to="/budget" replace />} />

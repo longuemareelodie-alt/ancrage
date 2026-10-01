@@ -12,6 +12,8 @@ import {
   Search,
   LifeBuoy,
   Briefcase,
+  SlidersHorizontal,
+  LayoutGrid,
 } from "lucide-react";
 import HubShell from "@/components/hub/HubShell";
 import HubCard from "@/components/hub/HubCard";
@@ -24,6 +26,14 @@ const Plus = () => (
       title="Recherche universelle"
       desc="Un enfant, un document, un support, une note…"
     />
+
+    <HubCard
+      to="/mon-eclosia"
+      icon={SlidersHorizontal}
+      title="Personnaliser mon Éclosia"
+      desc="Choisis ce que tu veux voir au quotidien."
+    />
+    <HubCard to="/mes-espaces" icon={LayoutGrid} title="Voir tous mes espaces" desc="Tout reste là, même masqué." />
 
     <HubCard
       to="/business"

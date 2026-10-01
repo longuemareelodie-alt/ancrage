@@ -27,6 +27,8 @@ import {
 
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useActiveSpaces, navSpaces, type SpaceId } from "@/lib/spaces";
+import { Briefcase, HeartPulse, CalendarDays } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 
 type Action = { to: string; label: string; icon: LucideIcon };
@@ -41,6 +43,7 @@ const BottomNav = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const prefs = useActiveSpaces();
 
   const hiddenRoutes = [
     "/", "/auth", "/connexion", "/reset-password", "/set-password",
@@ -53,15 +56,21 @@ const BottomNav = () => {
   if (hiddenRoutes.includes(location.pathname)) return null;
   if (location.pathname.startsWith("/fiche-urgence/")) return null;
 
-  const left = [
-    { to: "/aujourdhui", label: "Aujourd'hui", icon: Home },
-    { to: "/moi", label: "Moi", icon: Heart },
-  ];
-  const right = [
-    { to: "/famille", label: "Famille", icon: Users },
-    { to: "/autonomie", label: "Autonomie", icon: Sprout },
-    { to: "/plus", label: "Plus", icon: MoreHorizontal },
-  ];
+  const TAB: Record<SpaceId, { to: string; label: string; icon: LucideIcon }> = {
+    moi: { to: "/moi", label: "Moi", icon: Heart },
+    famille: { to: "/famille", label: "Famille", icon: Users },
+    sante: { to: "/sante", label: "Santé", icon: HeartPulse },
+    organisation: { to: "/organisation", label: "Agenda", icon: CalendarDays },
+    autonomie: { to: "/autonomie", label: "Autonomie", icon: Sprout },
+    business: { to: "/business", label: "Business", icon: Briefcase },
+  };
+  // Aujourd'hui · espaces actifs (3 max) · Plus — le « + » reste au centre.
+  const tabs = navSpaces(prefs).map((id) => TAB[id]);
+  const all = [{ to: "/aujourdhui", label: "Aujourd'hui", icon: Home }, ...tabs, { to: "/plus", label: "Plus", icon: MoreHorizontal }];
+  const half = Math.ceil(all.length / 2);
+  const left = all.slice(0, half);
+  const right = all.slice(half);
+  const cols = ["", "", "", "grid-cols-3", "grid-cols-4", "grid-cols-5", "grid-cols-6"][all.length + 1];
 
   // Le menu de création est contextuel : il propose exactement ce que l'on
   // vient faire depuis l'onglet où l'on se trouve.
@@ -175,7 +184,7 @@ const BottomNav = () => {
         className="fixed bottom-0 left-0 right-0 z-40 px-2 pb-[max(env(safe-area-inset-bottom),0.625rem)]"
         aria-label="Navigation principale"
       >
-        <ul className="mx-auto grid h-[60px] max-w-lg grid-cols-6 items-stretch rounded-[22px] border border-border/60 bg-card/95 shadow-[0_10px_30px_-14px_hsl(var(--foreground)/0.28)] backdrop-blur-xl">
+        <ul className={`mx-auto grid h-[60px] max-w-lg ${cols} items-stretch rounded-[22px] border border-border/60 bg-card/95 shadow-[0_10px_30px_-14px_hsl(var(--foreground)/0.28)] backdrop-blur-xl`}>
           {left.map(renderTab)}
 
           <li className="flex min-w-0 items-center justify-center">
