@@ -55,7 +55,7 @@ const Onboarding = () => {
   const [params] = useSearchParams();
   const needsOnly = params.get("besoins") === "1";
   const TOTAL = needsOnly ? 5 : 8;
-  const { setState: setBrain } = usePulseState();
+  const { save: setBrain } = usePulseState();
   const [needs, setNeeds] = useState<Needs>(() => {
     try {
       return { places: [], difficulties: [], goals: [], energy: null, ...JSON.parse(localStorage.getItem(NEEDS_KEY) || "{}") };
@@ -80,7 +80,7 @@ const Onboarding = () => {
       challenges: needs.difficulties,
       organization_goal: needs.goals,
     });
-    if (needs.energy) setBrain(needs.energy);
+    if (needs.energy) void setBrain(needs.energy);
   };
 
   useEffect(() => {

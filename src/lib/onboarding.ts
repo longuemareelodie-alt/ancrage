@@ -233,7 +233,6 @@ export async function persistOnboarding(
         caregiver_role: state.role,
         address_style: state.addressStyle,
         address_custom: state.addressCustom || null,
-        challenges: state.challenges,
         onboarding_completed_at: new Date().toISOString(),
       })
       .eq("user_id", uid);
