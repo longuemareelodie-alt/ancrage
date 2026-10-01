@@ -1835,6 +1835,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          active_spaces: string[]
           address_custom: string | null
           address_style: string | null
           caregiver_role: string | null
@@ -1850,9 +1851,13 @@ export type Database = {
           last_emotion: string | null
           longest_streak: number
           onboarding_completed_at: string | null
+          organization_goal: string[]
           parent_type: string | null
           parent_type_synced_at: string | null
+          personalization_prefs: Json
+          personalization_version: number
           plan_type: string
+          preferred_needs: string[]
           preferred_style: string | null
           preferred_style_synced_at: string | null
           reminders_enabled: boolean
@@ -1860,6 +1865,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          active_spaces?: string[]
           address_custom?: string | null
           address_style?: string | null
           caregiver_role?: string | null
@@ -1875,9 +1881,13 @@ export type Database = {
           last_emotion?: string | null
           longest_streak?: number
           onboarding_completed_at?: string | null
+          organization_goal?: string[]
           parent_type?: string | null
           parent_type_synced_at?: string | null
+          personalization_prefs?: Json
+          personalization_version?: number
           plan_type?: string
+          preferred_needs?: string[]
           preferred_style?: string | null
           preferred_style_synced_at?: string | null
           reminders_enabled?: boolean
@@ -1885,6 +1895,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          active_spaces?: string[]
           address_custom?: string | null
           address_style?: string | null
           caregiver_role?: string | null
@@ -1900,9 +1911,13 @@ export type Database = {
           last_emotion?: string | null
           longest_streak?: number
           onboarding_completed_at?: string | null
+          organization_goal?: string[]
           parent_type?: string | null
           parent_type_synced_at?: string | null
+          personalization_prefs?: Json
+          personalization_version?: number
           plan_type?: string
+          preferred_needs?: string[]
           preferred_style?: string | null
           preferred_style_synced_at?: string | null
           reminders_enabled?: boolean
