@@ -17,13 +17,26 @@ import {
 } from "@/lib/onboarding";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import { useSearchParams } from "react-router-dom";
+import { DIFFICULTY_OPTIONS, GOAL_OPTIONS, PLACE_OPTIONS, computeSpaces, saveSpaces } from "@/lib/spaces";
+import { usePulseState, type BrainState } from "@/hooks/usePulseState";
+
+const ENERGY: { id: BrainState; dot: string; label: string; hint: string; symbol: string }[] = [
+  { id: "go", dot: "🟢", symbol: "▲", label: "GO", hint: "J'ai de l'énergie" },
+  { id: "moyen", dot: "🟡", symbol: "●", label: "MOYEN", hint: "Je peux faire quelques choses" },
+  { id: "sature", dot: "🟠", symbol: "◆", label: "SATURÉ", hint: "J'ai besoin qu'on simplifie" },
+  { id: "ko", dot: "🔴", symbol: "■", label: "KO", hint: "J'ai besoin du strict minimum" },
+];
+
+type Needs = { places: string[]; difficulties: string[]; goals: string[]; energy: BrainState | null };
+const NEEDS_KEY = "eclosia_needs_draft";
 
 /**
  * Accueil Éclosia — une expérience en 5 respirations, pas un formulaire.
  * On peut quitter à tout moment : tout est conservé et repris plus tard.
  */
 
-const TOTAL = 5;
+
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -39,6 +52,36 @@ const Onboarding = () => {
   const [children, setChildren] = useState<ChildDraft[]>([emptyChild()]);
   const [firstName, setFirstName] = useState("");
   const [saving, setSaving] = useState(false);
+  const [params] = useSearchParams();
+  const needsOnly = params.get("besoins") === "1";
+  const TOTAL = needsOnly ? 5 : 8;
+  const { setState: setBrain } = usePulseState();
+  const [needs, setNeeds] = useState<Needs>(() => {
+    try {
+      return { places: [], difficulties: [], goals: [], energy: null, ...JSON.parse(localStorage.getItem(NEEDS_KEY) || "{}") };
+    } catch {
+      return { places: [], difficulties: [], goals: [], energy: null };
+    }
+  });
+  useEffect(() => {
+    try { localStorage.setItem(NEEDS_KEY, JSON.stringify(needs)); } catch { /* ignore */ }
+  }, [needs]);
+  useEffect(() => {
+    if (needsOnly) setState((s) => ({ ...s, step: params.get("refaire") === "1" ? 0 : 1 }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  const toggleNeed = (k: "places" | "difficulties" | "goals", id: string) =>
+    setNeeds((n) => ({ ...n, [k]: n[k].includes(id) ? n[k].filter((x) => x !== id) : [...n[k], id] }));
+
+  /** Enregistre les besoins et recalcule les espaces visibles. Aucune donnée supprimée. */
+  const saveNeeds = async () => {
+    await saveSpaces(computeSpaces(needs.places, needs.difficulties, needs.goals), {
+      preferred_needs: needs.places,
+      challenges: needs.difficulties,
+      organization_goal: needs.goals,
+    });
+    if (needs.energy) setBrain(needs.energy);
+  };
 
   useEffect(() => {
     let alive = true;
@@ -71,12 +114,24 @@ const Onboarding = () => {
   );
 
   const canContinue = () => {
-    if (step === 1) return !!state.role;
-    if (step === 2) return !!state.addressStyle;
+    if (step === 1) return needs.places.length > 0;
+    if (step === 5) return !!state.role;
+    if (step === 6) return !!state.addressStyle;
     return true;
   };
 
-  const next = () => {
+  const next = async () => {
+    if (step === 4) {
+      setSaving(true);
+      await saveNeeds();
+      setSaving(false);
+      if (needsOnly) {
+        set({ step: 0 });
+        toast({ description: "Ton Éclosia est à jour. 🌸" });
+        navigate("/mon-eclosia");
+        return;
+      }
+    }
     if (step < TOTAL - 1) set({ step: step + 1 });
     else void finish();
   };
@@ -88,6 +143,7 @@ const Onboarding = () => {
   };
 
   const later = () => {
+    if (needsOnly) { navigate("/mon-eclosia"); return; }
     markOnboardingDone();
     sendWelcome();
     toast({ description: "Tu peux reprendre quand tu veux, c'est gardé." });
@@ -172,20 +228,81 @@ const Onboarding = () => {
                   🌸
                 </motion.div>
                 <h1 className="font-serif text-3xl leading-snug text-foreground">
-                  Tu n'as pas besoin de tout porter seule.
+                  Bienvenue dans Éclosia 🌸
                 </h1>
-                <p className="mx-auto mt-4 max-w-sm text-sm leading-relaxed text-muted-foreground">
-                  Éclosia n'est pas une application de plus à gérer. C'est un endroit où
-                  déposer ce que tu portes — et souffler.
-                </p>
-                <p className="mt-6 text-xs text-muted-foreground/80">
-                  Quelques questions douces, à ton rythme.
+                <p className="mx-auto mt-4 max-w-sm text-base leading-relaxed text-muted-foreground">
+                  On ne va pas tout te montrer.
+                  <br />
+                  Juste ce dont tu as besoin.
                 </p>
               </div>
             )}
 
+            {step >= 1 && step <= 3 && (() => {
+              const cfg = [
+                null,
+                { k: "places" as const, title: "Qu'est-ce qui prend le plus de place dans ta tête actuellement ?", opts: PLACE_OPTIONS },
+                { k: "difficulties" as const, title: "Qu'est-ce qui te pèse le plus en ce moment ?", opts: DIFFICULTY_OPTIONS },
+                { k: "goals" as const, title: "Qu'aimerais-tu qu'Éclosia t'aide à faire en premier ?", opts: GOAL_OPTIONS },
+              ][step]!;
+              return (
+                <div>
+                  <h1 className="font-serif text-2xl leading-snug text-foreground">{cfg.title}</h1>
+                  <p className="mt-2 text-sm text-muted-foreground">Plusieurs réponses possibles.</p>
+                  <div className="mt-6 space-y-2.5">
+                    {cfg.opts.map((o) => {
+                      const on = needs[cfg.k].includes(o.id);
+                      return (
+                        <button
+                          key={o.id}
+                          type="button"
+                          aria-pressed={on}
+                          onClick={() => toggleNeed(cfg.k, o.id)}
+                          className={`${cardBase} ${on ? selected : ""} flex min-h-[52px] items-center gap-3`}
+                        >
+                          <span className="text-xl" aria-hidden="true">{o.emoji}</span>
+                          <span className="flex-1 text-sm font-medium text-foreground">{o.label}</span>
+                          {on && <Check className="h-4 w-4 text-primary" />}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })()}
+
+            {step === 4 && (
+              <div>
+                <h1 className="font-serif text-2xl leading-snug text-foreground">Et aujourd'hui, tu te sens comment ?</h1>
+                <p className="mt-2 text-sm text-muted-foreground">Éclosia adapte ta journée à ton énergie.</p>
+                <div className="mt-6 space-y-2.5">
+                  {ENERGY.map((e) => {
+                    const on = needs.energy === e.id;
+                    return (
+                      <button
+                        key={e.id}
+                        type="button"
+                        aria-pressed={on}
+                        onClick={() => setNeeds((n) => ({ ...n, energy: e.id }))}
+                        className={`${cardBase} ${on ? selected : ""} flex min-h-[60px] items-center gap-3`}
+                      >
+                        <span className="text-xl" aria-hidden="true">{e.dot}</span>
+                        <span className="flex-1">
+                          <span className="block text-sm font-semibold text-foreground">
+                            <span aria-hidden="true" className="mr-1.5 text-xs">{e.symbol}</span>{e.label}
+                          </span>
+                          <span className="block text-xs text-muted-foreground">« {e.hint} »</span>
+                        </span>
+                        {on && <Check className="h-4 w-4 text-primary" />}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             {/* 2 — Rôle */}
-            {step === 1 && (
+            {step === 5 && (
               <div>
                 <h1 className="font-serif text-2xl leading-snug text-foreground">
                   Quel est ton rôle auprès de l'enfant ?
@@ -213,7 +330,7 @@ const Onboarding = () => {
             )}
 
             {/* 3 — Formule d'appel */}
-            {step === 2 && (
+            {step === 6 && (
               <div>
                 <h1 className="font-serif text-2xl leading-snug text-foreground">
                   Comment souhaites-tu être appelée ?
@@ -256,7 +373,7 @@ const Onboarding = () => {
             )}
 
             {/* 4 — Enfants */}
-            {step === 3 && (
+            {step === 7 && (
               <div>
                 <h1 className="font-serif text-2xl leading-snug text-foreground">
                   Parle-moi de ton enfant.
@@ -350,40 +467,6 @@ const Onboarding = () => {
               </div>
             )}
 
-            {/* 5 — Défis */}
-            {step === 4 && (
-              <div>
-                <h1 className="font-serif text-2xl leading-snug text-foreground">
-                  Qu'est-ce qui pèse le plus, aujourd'hui ?
-                </h1>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  Choisis ce qui te parle. Éclosia organisera ton tableau de bord autour de ça.
-                </p>
-                <div className="mt-6 flex flex-wrap gap-2">
-                  {CHALLENGES.map((c) => {
-                    const on = state.challenges.includes(c.id);
-                    return (
-                      <button
-                        key={c.id}
-                        type="button"
-                        onClick={() => toggleChallenge(c.id)}
-                        aria-pressed={on}
-                        className={`rounded-full border px-4 py-2.5 text-sm transition-all duration-300 ${
-                          on
-                            ? "border-primary bg-primary/15 text-foreground"
-                            : "border-border/70 bg-card text-muted-foreground hover:border-primary/50"
-                        }`}
-                      >
-                        <span className="mr-1.5" aria-hidden="true">
-                          {c.emoji}
-                        </span>
-                        {c.label}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
           </motion.div>
         </AnimatePresence>
 
@@ -391,7 +474,7 @@ const Onboarding = () => {
         <div className="mt-8 space-y-3">
           <button
             type="button"
-            onClick={next}
+            onClick={() => void next()}
             disabled={!canContinue() || saving}
             className="flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-4 text-sm font-semibold text-primary-foreground transition-opacity disabled:opacity-40"
           >
@@ -400,7 +483,9 @@ const Onboarding = () => {
             ) : (
               <>
                 {step === 0
-                  ? "Commencer en douceur"
+                  ? "Personnaliser mon Éclosia"
+                  : needsOnly && step === 4
+                    ? "Enregistrer"
                   : step === TOTAL - 1
                     ? "Entrer dans Éclosia"
                     : "Continuer"}
