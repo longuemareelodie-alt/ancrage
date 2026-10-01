@@ -85,7 +85,8 @@ const PulseBlock = ({ onChange }: { onChange?: () => void }) => {
         {state === "ko" ? (
           <>
             <p className="mt-3 text-sm leading-relaxed text-foreground">
-              Aujourd'hui, rien n'est attendu de toi. Tenir, c'est déjà beaucoup.
+              <span className="block font-semibold">On fait simple aujourd'hui. ❤️</span>
+              Rien n'est attendu de toi. Tenir, c'est déjà beaucoup.
             </p>
             <button
               onClick={() => navigate("/moi/apaisement")}

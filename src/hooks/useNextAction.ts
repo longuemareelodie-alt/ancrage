@@ -1,3 +1,4 @@
+import { isSpaceActive } from "@/lib/spaces";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { guessDomain, type PulseDomain } from "@/data/pulseMascots";
@@ -248,7 +249,8 @@ export function useNextAction(brainState: BrainState | null) {
         );
       });
 
-      (relances.data ?? []).forEach((c) => {
+      // Business masqué : ses relances restent gardées mais ne remontent pas.
+      (isSpaceActive("business") ? relances.data ?? [] : []).forEach((c) => {
         const late = (c.followup_date as string) < iso;
         push(
           "b",
