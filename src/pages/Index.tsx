@@ -142,7 +142,7 @@ const Nav = ({ onCTA, loading }: { onCTA: () => void; loading: boolean }) => {
 
 const Index = () => {
   const { startPayment, loading } = useMolliePayment();
-  const onCTA = () => startPayment();
+  const onCTA = (promoCode?: string) => startPayment({ promoCode });
 
   useEffect(() => {
     track("landing_view");

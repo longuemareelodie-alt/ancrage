@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Check } from "lucide-react";
 import KlarnaPayButton from "@/components/KlarnaPayButton";
 import { FOUNDING_TIERS, getFoundingTier } from "@/lib/foundingFamilies";
@@ -13,7 +14,9 @@ const AVANTAGES = [
   "Pas d'abonnement",
 ];
 
-const OffreV4 = ({ onCTA, loading }: { onCTA: () => void; loading: boolean }) => {
+const OffreV4 = ({ onCTA, loading }: { onCTA: (promoCode?: string) => void; loading: boolean }) => {
+  const [promo, setPromo] = useState("");
+  const promoOk = promo.trim().toUpperCase() === "ELO19";
   const offer = useFoundingOffer();
   const price = priceLabel(offer);
   const tier = getFoundingTier(offer?.tierKey);
@@ -49,16 +52,27 @@ const OffreV4 = ({ onCTA, loading }: { onCTA: () => void; loading: boolean }) =>
           {FOUNDING_TIERS.map((t) => formatEurAmount(t.priceCents / 100)).join(" → ")}
         </p>
 
+        <label className="mx-auto mt-4 block max-w-xs text-left">
+          <span className="text-[12px] text-muted-foreground">Code promo</span>
+          <input
+            value={promo}
+            onChange={(e) => setPromo(e.target.value)}
+            placeholder="Ton code"
+            autoComplete="off"
+            className="mt-1 w-full rounded-full border border-border bg-background px-4 py-2.5 text-center text-sm uppercase tracking-wider outline-none focus:ring-2 focus:ring-primary/30"
+          />
+        </label>
+
         <button
           onClick={() => {
             track("founder_cta_click", { from: "offre" });
             track("checkout_start", { from: "offre" });
-            onCTA();
+            onCTA(promo.trim() || undefined);
           }}
           disabled={loading}
           className="mt-4 inline-flex min-h-[52px] w-full items-center justify-center rounded-full bg-night px-6 text-[15px] font-medium text-night-foreground transition-transform hover:-translate-y-[1px] disabled:opacity-60"
         >
-          🌸 Je rejoins Éclosia{price ? ` — ${price}` : ""}
+          🌸 Je rejoins Éclosia{promoOk ? " — 4,50\u00A0€" : price ? ` — ${price}` : ""}
         </button>
 
         <p className="mt-3 text-[12px] text-muted-foreground">
