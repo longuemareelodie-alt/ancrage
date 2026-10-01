@@ -6,7 +6,8 @@ import { mascotOf, type PulseDomain } from "@/data/pulseMascots";
 import MascotPicker from "@/components/pulse/MascotPicker";
 import { useVoiceDictation } from "@/hooks/useVoiceDictation";
 import { usePulseState } from "@/hooks/usePulseState";
-import { parseBrainDump, prettyDate, type DumpItem, type FamilyPerson } from "@/lib/brainDump";
+import { linkBusiness, parseBrainDump, prettyDate, type BizContact, type DumpItem, type FamilyPerson } from "@/lib/brainDump";
+import { isSpaceActive } from "@/lib/spaces";
 import { toast } from "@/hooks/use-toast";
 
 /**
@@ -19,6 +20,7 @@ const KIND_LABEL: Record<DumpItem["kind"], string> = {
   tache: "Tâche",
   rdv: "Rendez-vous",
   note: "À garder",
+  relance: "Relance Business",
 };
 
 const ViderMaTete = () => {
@@ -28,6 +30,7 @@ const ViderMaTete = () => {
   const [items, setItems] = useState<DumpItem[] | null>(null);
   const [saving, setSaving] = useState(false);
   const [people, setPeople] = useState<FamilyPerson[]>([]);
+  const [contacts, setContacts] = useState<BizContact[]>([]);
 
   const dictation = useVoiceDictation({
     onDone: (spoken) =>
@@ -45,13 +48,15 @@ const ViderMaTete = () => {
         .select("id, first_name")
         .eq("user_id", uid);
       setPeople((data ?? []) as FamilyPerson[]);
+      const { data: biz } = await supabase.from("business_contacts").select("id, first_name").eq("user_id", uid);
+      setContacts((biz ?? []) as BizContact[]);
     })();
   }, []);
 
   const calm = state === "sature" || state === "ko";
 
   const organise = () => {
-    const parsed = parseBrainDump(text, people);
+    const parsed = linkBusiness(parseBrainDump(text, people), contacts);
     if (!parsed.length) {
       toast({ description: "Écris ou dicte au moins une chose, je m'occupe du reste." });
       return;
@@ -91,6 +96,9 @@ const ViderMaTete = () => {
     const tasks = items.filter((i) => i.kind === "tache" || (i.kind === "rdv" && !i.date));
     const rdvs = items.filter((i) => i.kind === "rdv" && i.date);
     const notes = items.filter((i) => i.kind === "note");
+    const relances = items.filter((i) => i.kind === "relance" && i.contactId);
+    // « relance » sans contact connu : gardée comme tâche, rien n'est perdu.
+    items.filter((i) => i.kind === "relance" && !i.contactId).forEach((i) => tasks.push(i));
 
     const errors: string[] = [];
 
@@ -125,6 +133,21 @@ const ViderMaTete = () => {
         notes.map((i) => ({ user_id: uid, content: i.title, pinned: false })),
       );
       if (error) errors.push("notes");
+    }
+
+    if (relances.length) {
+      const today = new Date().toISOString().slice(0, 10);
+      for (const r of relances) {
+        const { error } = await supabase
+          .from("business_contacts")
+          .update({ followup_date: r.date ?? today, next_action: r.title })
+          .eq("id", r.contactId!)
+          .eq("user_id", uid);
+        if (error) errors.push("relances");
+      }
+      if (!isSpaceActive("business")) {
+        toast({ description: "Relance gardée dans Business (espace masqué, tu le retrouves dans Tous mes espaces)." });
+      }
     }
 
     // Historique discret : le vrac d'origine, retrouvable dans les notes.
@@ -267,7 +290,7 @@ const ViderMaTete = () => {
                               aria-label="Type"
                               className="rounded-full border border-border/60 bg-transparent px-3 py-1.5 text-xs text-foreground"
                             >
-                              {(["tache", "rdv", "note"] as const).map((k) => (
+                              {(it.contactId ? (["relance", "tache", "rdv", "note"] as const) : (["tache", "rdv", "note"] as const)).map((k) => (
                                 <option key={k} value={k}>
                                   {KIND_LABEL[k]}
                                 </option>
@@ -306,6 +329,14 @@ const ViderMaTete = () => {
                             )}
                           </div>
 
+                          {it.kind === "relance" && it.contactName && (
+                            <p className="mt-2 text-xs font-medium text-foreground/80">
+                              🐝 Business → {it.contactName} → Relance
+                            </p>
+                          )}
+                          {it.kind === "rdv" && it.domain === "sante" && (
+                            <p className="mt-2 text-xs font-medium text-foreground/80">🦌 Rendez-vous / Santé</p>
+                          )}
                           {it.date ? (
                             <p className="mt-2 text-xs text-muted-foreground">
                               {prettyDate(it.date, it.time)}

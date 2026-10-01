@@ -10,7 +10,7 @@
  */
 import { guessDomain, type PulseDomain } from "@/data/pulseMascots";
 
-export type DumpKind = "tache" | "rdv" | "note";
+export type DumpKind = "tache" | "rdv" | "note" | "relance";
 
 export type DumpItem = {
   /** identifiant local, le temps de la confirmation */
@@ -27,6 +27,9 @@ export type DumpItem = {
   profileName: string | null;
   /** true quand il manque une date pour en faire un vrai rendez-vous */
   needsDate: boolean;
+  /** contact Business existant reconnu dans la phrase */
+  contactId?: string | null;
+  contactName?: string | null;
 };
 
 /** Petits mots de départ qu'on enlève pour garder une action lisible. */
@@ -189,4 +192,21 @@ export function prettyDate(date: string | null, time: string | null): string | n
   const d = new Date(`${date}T12:00:00`);
   const label = d.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
   return time ? `${label} à ${time.replace(":", "h")}` : label;
+}
+
+export type BizContact = { id: string; first_name: string };
+const BIZ_VERB = /\b(relanc\w*|rappeler|recontacter|écrire à|ecrire a|message|répondre|repondre|envoyer|devis|commande|activité|activite|business|cliente?|prospect)\b/i;
+const norm = (v: string) => v.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+/** Rattache une phrase à un contact Business existant plutôt qu'à une tâche générique. */
+export function linkBusiness(items: DumpItem[], contacts: BizContact[]): DumpItem[] {
+  if (!contacts.length) return items;
+  return items.map((it) => {
+    const t = norm(it.title);
+    const c = contacts.find((c) => c.first_name && new RegExp(`\\b${norm(c.first_name).replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`).test(t));
+    if (!c || !(BIZ_VERB.test(it.title) || it.domain === "argent")) return it;
+    // Un prénom aussi présent dans la famille reste à la famille, sauf mot d'activité explicite.
+    if (it.profileId && !BIZ_VERB.test(it.title)) return it;
+    return { ...it, kind: "relance", domain: "argent", contactId: c.id, contactName: c.first_name, profileId: null, profileName: null, needsDate: false };
+  });
 }
