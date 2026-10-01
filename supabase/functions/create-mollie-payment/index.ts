@@ -137,6 +137,7 @@ Deno.serve(async (req) => {
     // Promos only apply to the premium product.
     const PROMO_CATALOG: Record<string, { discountCents: number; label: string }> = {
       ANCRAGE15: { discountCents: 1500, label: "Ancrage15 (-15€)" },
+      ELO19: { discountCents: 9250, label: "ELO19 (4,50 €)" },
     };
 
     const normalizedPromo = (rawPromoCode ?? "").trim().toUpperCase();
