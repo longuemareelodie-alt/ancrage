@@ -1,0 +1,1 @@
+- Visible spaces are stored per account on `profiles.active_spaces` (version 0 = legacy full nav); hiding a space only changes navigation, never business data — keeps existing accounts unchanged and data safe.
