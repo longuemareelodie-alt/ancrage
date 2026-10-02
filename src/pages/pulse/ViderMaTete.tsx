@@ -101,6 +101,7 @@ const ViderMaTete = () => {
     const relances = items.filter((i) => i.kind === "relance" && i.contactId);
     // « relance » sans contact connu : gardée comme tâche, rien n'est perdu.
     items.filter((i) => i.kind === "relance" && !i.contactId).forEach((i) => tasks.push(i));
+    items.filter((i) => i.kind === "observation" && !i.profileId).forEach((i) => tasks.push(i));
 
     const errors: string[] = [];
 
@@ -139,7 +140,7 @@ const ViderMaTete = () => {
 
     const observations = items.filter((i) => i.kind === "observation");
     for (const o of observations) {
-      if (!o.profileId) { tasks.push(o); continue; }
+      if (!o.profileId) continue;
       const tpl = situationByKey(o.situationKey);
       const { data: sit, error } = await supabase
         .from("child_situations")
