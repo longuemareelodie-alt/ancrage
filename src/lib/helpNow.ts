@@ -48,7 +48,7 @@ const fmt = (d: string | null) =>
 
 const W = {
   business: ["relanc", "activite", "client", "prospect", "business", "devis", "commande", "vente", "partenaire"],
-  overwhelm: ["trop de choses", "tete pleine", "perdue?", "sais pas par quoi", "sais plus quoi", "quoi faire aujourd", "deborde", "submerge", "par ou commencer"],
+  overwhelm: ["trop de choses", "tete pleine", "perdue?", "sais pas par quoi", "sais plus quoi", "sais pas quoi faire", "quoi faire aujourd", "deborde", "submerge", "par ou commencer"],
   dump: ["trop de choses en tete", "tete pleine", "plein la tete"],
   transition: ["refuse", "habiller", "chaussure", "partir", "depart", "crise", "colere", "hurle", "pleure", "bloque", "transition", "veut pas", "s oppose", "dents", "bain", "coucher", "ecran"],
   sante: ["medecin", "docteur", "pediatre", "dentiste", "ordonnance", "vaccin", "pharmacie", "traitement", "medicament", "orthophon", "psy", "kine", "hopital", "sante", "fievre", "malade"],
@@ -175,7 +175,7 @@ export function helpNow(input: string, ctx: HelpContext): HelpResult {
   }
 
   // 5 — Appel sans contexte : UNE question.
-  if (has(t, W.call) && !has(t, W.admin) && !has(t, W.ecole)) {
+  if (has(t, W.call) && !t.includes("__autre") && !has(t, W.admin) && !has(t, W.ecole)) {
     return {
       type: "question",
       question: "Tu veux parler d'un rendez-vous médical, administratif ou autre ?",
