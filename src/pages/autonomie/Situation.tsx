@@ -10,7 +10,7 @@ import PictoChoice, { SpeakLine } from "@/components/child/PictoChoice";
 import { loadChildPhotos } from "@/lib/childPhotos";
 import { presentationFor, type ChildComm } from "@/lib/childAdapt";
 import {
-  QUESTIONS, SITUATIONS, isRepeatedText, matchSituation, situationByKey,
+  QUESTIONS, SITUATIONS, MAY_DECLINE, factualSummary, isRepeatedText, questionChoices, questionText, matchSituation, situationByKey,
   type Answer, type AnswerSource, type SituationTemplate,
 } from "@/data/situationTemplates";
 
@@ -87,7 +87,8 @@ const Situation = () => {
   const q = QUESTIONS[qs[qi]];
 
   const choicesFor = (keys: string[]) => {
-    const extra = ["reponses:je-ne-sais-pas", ...(tpl?.sensitive ? ["reponses:pas-repondre"] : [])];
+    const decline = tpl?.sensitive || (q && MAY_DECLINE.includes(q.key));
+    const extra = ["reponses:je-ne-sais-pas", ...(decline ? ["reponses:pas-repondre"] : [])];
     return [...keys.slice(0, Math.max(1, pres.maxChoices - 1)), ...extra];
   };
 
@@ -110,7 +111,14 @@ const Situation = () => {
 
   const unsafe = answers.some((a) => a.answer_key === "reponses:securite-non");
   const repeated = answers.some((a) => a.answer_key === "reponses:plusieurs-fois") || isRepeatedText(freeText + " " + words);
-  const wantsHelp = answers.some((a) => a.question_key === "aide" && a.answer_key === "reponses:oui");
+  const wantsHelp =
+    answers.some((a) => a.question_key === "aide" && a.answer_key === "reponses:oui") ||
+    answers.some((a) => a.question_key === "action" && ["actions:parler-adulte", "actions:demander-aide", "actions:retrouver-adulte"].includes(a.answer_key));
+  const actionKey = answers.find((a) => a.question_key === "action")?.answer_key;
+  const summary = factualSummary(tpl, answers, who === "enfant" ? words : "");
+  const prevSimilar = existing.find((e) => e.template_key === tpl?.key && e.id !== situationId) ?? (situationId ? existing.find((e) => e.id === situationId) : undefined);
+  const [task, setTask] = useState("");
+  const [taskDone, setTaskDone] = useState<string | null>(null);
 
   const save = async () => {
     if (!childId || !tpl) return;
@@ -137,10 +145,36 @@ const Situation = () => {
       child_words: who === "enfant" ? words || null : null,
       parent_note: [who === "parent" && words ? words : "", note.parent_note].filter(Boolean).join(" — ") || null,
       helped: note.helped || null, not_helped: note.not_helped || null, felt_unsafe: unsafe,
+      action_taken: actionKey ?? null,
+      comm_snapshot: (child ? { picto_mode: child.picto_mode, communication_modes: child.communication_modes, question_prefs: child.question_prefs, answer_prefs: child.answer_prefs, max_choices: pres.maxChoices, band: pres.band } : null) as never,
     });
     if (error) return toast({ description: "Enregistrement impossible.", variant: "destructive" });
     setSaved(true);
     toast({ description: "C'est gardé en mémoire." });
+  };
+
+  /** Tâche ou rappel liés à l'enfant et à la situation. Enregistre d'abord la situation si besoin. */
+  const linked = async (kind: "tache" | "rappel" | "preparer") => {
+    const { data: auth } = await supabase.auth.getUser();
+    const uid = auth.user?.id;
+    if (!uid || !childId) return;
+    if (!saved) await save();
+    const sid = situationId;
+    const title = task.trim() || `En parler : ${tpl?.title ?? "situation"} (${child?.first_name ?? ""})`;
+    if (kind === "preparer") {
+      const body = ["Ce que je veux dire :", ...summary, note.parent_note ? `Ce que j'ai observé : ${note.parent_note}` : ""].filter(Boolean).join("\n");
+      const { error } = await supabase.from("organisation_notes").insert({ user_id: uid, title: `Préparer : ${tpl?.title ?? "situation"} — ${child?.first_name ?? ""}`, content: body } as never);
+      if (error) return toast({ description: "Note impossible à créer.", variant: "destructive" });
+      setTaskDone("Note « Préparer ce que je veux dire » créée dans Organisation.");
+      return;
+    }
+    const tomorrow = new Date(Date.now() + 86400000).toISOString().slice(0, 10);
+    const { error } = await supabase.from("todo_items").insert({
+      user_id: uid, title: title.slice(0, 200), profile_id: childId, situation_id: sid, domain: "famille",
+      due_date: kind === "rappel" ? tomorrow : null, ...(kind === "rappel" ? { reminder_offset_hours: 12 } : {}),
+    } as never);
+    if (error) return toast({ description: "Tâche impossible à créer.", variant: "destructive" });
+    setTaskDone(kind === "rappel" ? "Rappel ajouté pour demain." : "Tâche ajoutée dans Aujourd'hui.");
   };
 
   const back = () => navigate(childId ? `/famille/${childId}?onglet=situations` : "/autonomie");
@@ -227,8 +261,8 @@ const Situation = () => {
             {qs.map((_, i) => <span key={i} className={`h-1 flex-1 rounded-full ${i <= qi ? "bg-primary" : "bg-border"}`} />)}
           </div>
           <div className="flex items-start justify-between gap-3">
-            <p className={`font-semibold leading-snug text-foreground ${pres.big ? "text-xl" : "text-base"}`}>{q.text[pres.band]}</p>
-            <SpeakLine text={q.text[pres.band]} />
+            <p className={`font-semibold leading-snug text-foreground ${pres.big ? "text-xl" : "text-base"}`}>{questionText(tpl, q.key, pres.band)}</p>
+            <SpeakLine text={questionText(tpl, q.key, pres.band)} />
           </div>
           {q.key === "pourquoi" && (
             <p className="text-xs text-muted-foreground">Tu n'es pas obligé de savoir pourquoi. On peut regarder ce qui s'est passé et comment tu te sens.</p>
@@ -246,7 +280,7 @@ const Situation = () => {
               <PictoChoice keys={choicesFor([])} pres={pres} photos={photos} onPick={(k) => answer(k)} />
             </div>
           ) : (
-            <PictoChoice keys={choicesFor(q.choices)} pres={pres} photos={photos} onPick={(k) => answer(k)} />
+            <PictoChoice keys={choicesFor(questionChoices(tpl, q.key, pres.band))} pres={pres} photos={photos} onPick={(k) => answer(k)} />
           )}
           {qi > 0 && (
             <button onClick={() => setQi(qi - 1)} className="text-xs text-muted-foreground">← Question précédente</button>
@@ -259,6 +293,8 @@ const Situation = () => {
           {unsafe && (
             <div className="space-y-2 rounded-[20px] border-2 border-primary/60 bg-card px-5 py-5">
               <p className="text-sm font-semibold text-foreground">Tu n'es pas seul. Va voir un adulte de confiance maintenant.</p>
+              <Link to={`/famille/${childId}?onglet=contacts`} className="block rounded-full bg-primary py-2.5 text-center text-sm font-semibold text-primary-foreground">❤️ Chercher un adulte de confiance</Link>
+              <a href="tel:119" className="block rounded-full border border-border/70 py-2.5 text-center text-sm font-semibold text-foreground">Demander de l'aide maintenant (119)</a>
               {trusted.map((t) => (
                 <p key={t.id} className="flex items-center justify-between text-sm text-foreground">
                   {t.name} <span className="text-xs text-muted-foreground">{t.role}</span>
@@ -270,6 +306,19 @@ const Situation = () => {
                 <a href="tel:17" className="font-semibold text-foreground">17</a> Police · <a href="tel:15" className="font-semibold text-foreground">15</a> Samu ·{" "}
                 <a href="tel:112" className="font-semibold text-foreground">112</a> Urgences. Éclosia n'est pas un service d'urgence.
               </p>
+            </div>
+          )}
+          {summary.length > 0 && (
+            <div className="space-y-1 rounded-[20px] border border-border/70 bg-card px-5 py-5">
+              <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Ce qui a été dit</p>
+              {summary.map((l) => <p key={l} className="text-sm text-foreground">{l}</p>)}
+              <SpeakLine text={summary.join(" ")} />
+            </div>
+          )}
+          {repeated && prevSimilar && (
+            <div className="space-y-2 rounded-[20px] border border-border/70 bg-card px-5 py-4">
+              <p className="text-sm text-foreground">Cela ressemble peut-être à une situation déjà enregistrée, le {fmt(prevSimilar.occurred_on)}.</p>
+              <Link to={`/famille/${childId}?onglet=situations`} className="block rounded-full border border-border/70 py-2 text-center text-xs font-semibold text-foreground">Voir l'historique</Link>
             </div>
           )}
           <div className="space-y-2 rounded-[20px] border border-border/70 bg-card px-5 py-5">
@@ -290,6 +339,16 @@ const Situation = () => {
           ) : (
             <p className="text-center text-sm text-muted-foreground">C'est gardé dans « Mes situations ».</p>
           )}
+          <div className="space-y-2 rounded-[20px] border border-border/70 bg-card px-5 py-4">
+            <p className="text-xs font-semibold text-foreground">Une suite à donner ? (facultatif)</p>
+            <Textarea value={task} onChange={(e) => setTask(e.target.value)} placeholder="Ex. En parler à la maîtresse demain" className="min-h-[44px] text-sm" />
+            <div className="grid grid-cols-3 gap-2">
+              <Button size="sm" variant="outline" onClick={() => linked("tache")}>Créer une tâche</Button>
+              <Button size="sm" variant="outline" onClick={() => linked("rappel")}>Rappel demain</Button>
+              <Button size="sm" variant="outline" onClick={() => linked("preparer")}>Préparer quoi dire</Button>
+            </div>
+            {taskDone && <p className="text-xs text-muted-foreground">{taskDone}</p>}
+          </div>
           <div className="grid grid-cols-1 gap-2">
             {(wantsHelp || tpl.sensitive || repeated) && (
               <Link to={`/famille/${childId}?onglet=contacts`} className="rounded-full border border-border/70 py-2.5 text-center text-sm font-semibold text-foreground">
