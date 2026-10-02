@@ -678,6 +678,41 @@ export type Database = {
           },
         ]
       }
+      child_picto_photos: {
+        Row: {
+          created_at: string
+          id: string
+          picto_key: string
+          profile_id: string
+          storage_path: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          picto_key: string
+          profile_id: string
+          storage_path: string
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          picto_key?: string
+          profile_id?: string
+          storage_path?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "child_picto_photos_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "family_medical_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       child_situation_observations: {
         Row: {
           action_taken: string | null
