@@ -120,11 +120,11 @@ const Situation = () => {
   const [task, setTask] = useState("");
   const [taskDone, setTaskDone] = useState<string | null>(null);
 
-  const save = async () => {
-    if (!childId || !tpl) return;
+  const save = async (): Promise<string | null> => {
+    if (!childId || !tpl) return null;
     const { data: auth } = await supabase.auth.getUser();
     const uid = auth.user?.id;
-    if (!uid) return;
+    if (!uid) return null;
     let sid = situationId;
     if (!sid) {
       const { data, error } = await supabase
@@ -132,7 +132,7 @@ const Situation = () => {
         .insert({ user_id: uid, profile_id: childId, template_key: tpl.key === "libre" ? null : tpl.key, title: tpl.key === "libre" ? freeText.slice(0, 120) || "Situation" : tpl.title, context: freeText || null })
         .select("id")
         .single();
-      if (error || !data) return toast({ description: "Enregistrement impossible.", variant: "destructive" });
+      if (error || !data) { toast({ description: "Enregistrement impossible.", variant: "destructive" }); return null; }
       sid = data.id;
       setSituationId(sid);
     } else {
@@ -148,9 +148,10 @@ const Situation = () => {
       action_taken: actionKey ?? null,
       comm_snapshot: (child ? { picto_mode: child.picto_mode, communication_modes: child.communication_modes, question_prefs: child.question_prefs, answer_prefs: child.answer_prefs, max_choices: pres.maxChoices, band: pres.band } : null) as never,
     });
-    if (error) return toast({ description: "Enregistrement impossible.", variant: "destructive" });
+    if (error) { toast({ description: "Enregistrement impossible.", variant: "destructive" }); return null; }
     setSaved(true);
     toast({ description: "C'est gardé en mémoire." });
+    return sid;
   };
 
   /** Tâche ou rappel liés à l'enfant et à la situation. Enregistre d'abord la situation si besoin. */
@@ -158,12 +159,12 @@ const Situation = () => {
     const { data: auth } = await supabase.auth.getUser();
     const uid = auth.user?.id;
     if (!uid || !childId) return;
-    if (!saved) await save();
-    const sid = situationId;
+    const sid = saved ? situationId : await save();
+    if (!sid) return;
     const title = task.trim() || `En parler : ${tpl?.title ?? "situation"} (${child?.first_name ?? ""})`;
     if (kind === "preparer") {
       const body = ["Ce que je veux dire :", ...summary, note.parent_note ? `Ce que j'ai observé : ${note.parent_note}` : ""].filter(Boolean).join("\n");
-      const { error } = await supabase.from("organisation_notes").insert({ user_id: uid, title: `Préparer : ${tpl?.title ?? "situation"} — ${child?.first_name ?? ""}`, content: body } as never);
+      const { error } = await supabase.from("organisation_notes").insert({ user_id: uid, content: `Préparer : ${tpl?.title ?? "situation"} — ${child?.first_name ?? ""}\n${body}`, pinned: false });
       if (error) return toast({ description: "Note impossible à créer.", variant: "destructive" });
       setTaskDone("Note « Préparer ce que je veux dire » créée dans Organisation.");
       return;
@@ -334,7 +335,7 @@ const Situation = () => {
               <Textarea value={note.parent_note} onChange={(e) => setNote({ ...note, parent_note: e.target.value })} placeholder="Ce que j'ai observé" className="text-sm" />
               <Textarea value={note.helped} onChange={(e) => setNote({ ...note, helped: e.target.value })} placeholder="Ce qui a aidé" className="text-sm" />
               <Textarea value={note.not_helped} onChange={(e) => setNote({ ...note, not_helped: e.target.value })} placeholder="Ce qui n'a pas aidé" className="text-sm" />
-              <Button className="w-full" onClick={save}>Enregistrer ce que je veux garder en mémoire</Button>
+              <Button className="w-full" onClick={() => save()}>Enregistrer ce que je veux garder en mémoire</Button>
             </div>
           ) : (
             <p className="text-center text-sm text-muted-foreground">C'est gardé dans « Mes situations ».</p>
