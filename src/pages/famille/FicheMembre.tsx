@@ -20,6 +20,9 @@ import {
 import { toast } from "@/hooks/use-toast";
 import { SUPPORT_TYPES } from "@/data/supportTemplates";
 import EnfantJour from "@/components/famille/EnfantJour";
+import ChildCommSettings from "@/components/child/ChildCommSettings";
+import ChildSituations from "@/components/child/ChildSituations";
+import type { ChildComm } from "@/lib/childAdapt";
 
 type Profile = {
   id: string;
@@ -41,13 +44,15 @@ type Profile = {
   preferences: string;
 };
 
-type Contact = { id: string; name: string; role: string; phone: string | null; email: string | null };
+type Contact = { id: string; name: string; role: string; phone: string | null; email: string | null; is_trusted: boolean };
 type Support = { id: string; title: string; support_type: string };
 
 const TABS = [
   { key: "apercu", label: "Aperçu" },
   { key: "jour", label: "Son jour" },
   { key: "profil", label: "Profil" },
+  { key: "communication", label: "Communication" },
+  { key: "situations", label: "Situations" },
   { key: "sante", label: "Santé" },
   { key: "documents", label: "Documents" },
   { key: "contacts", label: "Contacts" },
@@ -92,7 +97,7 @@ const FicheMembre = () => {
       supabase.from("family_medical_profiles").select("id, first_name").order("created_at"),
       supabase
         .from("child_contacts")
-        .select("id, name, role, phone, email")
+        .select("id, name, role, phone, email, is_trusted")
         .eq("profile_id", profileId!)
         .order("created_at"),
       supabase
@@ -378,8 +383,15 @@ const FicheMembre = () => {
         </div>
       )}
 
+      {tab === "communication" && (
+        <ChildCommSettings child={profile as unknown as ChildComm} onSaved={load} />
+      )}
+
+      {tab === "situations" && <ChildSituations profileId={profile.id} firstName={profile.first_name} />}
+
       {tab === "contacts" && (
         <div className="space-y-2 pt-2">
+          <p className="px-1 text-xs text-muted-foreground">Touche ⭐ pour marquer un adulte de confiance. Cette liste reste privée.</p>
           {(profile.doctor_name || profile.emergency_contact_name) && (
             <div className="rounded-[20px] border border-border/70 bg-card px-5 py-4">
               {profile.doctor_name && (
@@ -416,6 +428,17 @@ const FicheMembre = () => {
                 <span className="block text-sm font-medium text-foreground">{c.name}</span>
                 <span className="block text-xs text-muted-foreground">{c.role}</span>
               </span>
+              <button
+                onClick={async () => {
+                  await supabase.from("child_contacts").update({ is_trusted: !c.is_trusted }).eq("id", c.id);
+                  load();
+                }}
+                aria-label={c.is_trusted ? "Retirer des adultes de confiance" : "Adulte de confiance"}
+                aria-pressed={c.is_trusted}
+                className={`text-base ${c.is_trusted ? "" : "opacity-30 grayscale"}`}
+              >
+                ⭐
+              </button>
               {c.phone && (
                 <a href={`tel:${c.phone}`} className="text-xs text-primary-dark">
                   <Phone className="h-3.5 w-3.5" />
