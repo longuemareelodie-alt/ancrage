@@ -56,6 +56,13 @@ const Situation = () => {
       setTrusted(all.filter((x) => x.is_trusted));
       const ex = (s ?? []) as Existing[];
       setExisting(ex);
+      const modele = situationByKey(params.get("modele"));
+      if (modele && !params.get("refaire")) {
+        setTpl(modele);
+        const sim = ex.find((e) => e.template_key === modele.key);
+        if (sim) setSimilar(sim);
+        setStep(sim ? "similar" : "intro");
+      }
       const r = params.get("refaire");
       if (r) {
         const found = ex.find((x) => x.id === r);
