@@ -5,6 +5,7 @@ import { BRAIN_STATES, usePulseState } from "@/hooks/usePulseState";
 import { useNextAction } from "@/hooks/useNextAction";
 import { MASCOTS, mascotOf } from "@/data/pulseMascots";
 import { toast } from "@/hooks/use-toast";
+import HelpNowBlock from "@/components/pulse/HelpNowBlock";
 import PulseDictation from "@/components/pulse/PulseDictation";
 import MascotAvatar from "@/components/pulse/MascotAvatar";
 import SpeakButton from "@/components/pulse/SpeakButton";
@@ -76,7 +77,10 @@ const PulseBlock = ({ onChange }: { onChange?: () => void }) => {
       </div>
 
 
-      {/* 2 — Prochaine action : une seule, jamais une liste */}
+      {/* 2 — Éclosia m'aide maintenant */}
+      <HelpNowBlock next={next ? { title: next.label, to: next.to } : null} />
+
+      {/* 3 — Prochaine action : une seule, jamais une liste */}
       <div className="mt-4 rounded-[20px] border border-border/60 bg-secondary/25 px-4 py-4">
         <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
           ⚡ Prochaine action
