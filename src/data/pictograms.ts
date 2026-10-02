@@ -48,6 +48,10 @@ const raw: [PictoCategory, string, string, string][] = [
   ["reponses", "securite-oui", "🟢", "Oui, je suis en sécurité"], ["reponses", "securite-non", "🔴", "Non, je ne me sens pas en sécurité"],
   ["reponses", "accident", "🍃", "Un accident"], ["reponses", "expres", "🎯", "Il voulait le faire"],
   ["reponses", "plusieurs-fois", "🔁", "Oui, plusieurs fois"],
+  ["reponses", "mal-non", "🙂", "Non"], ["reponses", "aime", "🙂", "J'ai aimé"], ["reponses", "pas-aime", "🙁", "Je n'ai pas aimé"],
+  ["actions", "parler-adulte", "❤️", "Parler à un adulte"], ["actions", "dire-stop", "🛑", "Dire STOP"],
+  ["actions", "demander-aide", "🙋", "Demander de l'aide"], ["actions", "retrouver-adulte", "🏠", "Aller retrouver un adulte"],
+  ["actions", "garder-trace", "📝", "Garder une trace"],
 ];
 
 export const PICTOGRAMS: Pictogram[] = raw.map(([category, key, emoji, label]) => ({ key: `${category}:${key}`, emoji, label, category, ...ECLOSIA }));
