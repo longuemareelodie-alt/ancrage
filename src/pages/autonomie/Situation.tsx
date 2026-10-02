@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import PictoChoice, { SpeakLine } from "@/components/child/PictoChoice";
+import { loadChildPhotos } from "@/lib/childPhotos";
 import { presentationFor, type ChildComm } from "@/lib/childAdapt";
 import {
   QUESTIONS, SITUATIONS, isRepeatedText, matchSituation, situationByKey,
@@ -37,6 +38,11 @@ const Situation = () => {
   const [trusted, setTrusted] = useState<Trusted[]>([]);
   const [note, setNote] = useState({ parent_note: "", helped: "", not_helped: "" });
   const [saved, setSaved] = useState(false);
+  const [photos, setPhotos] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    if (childId) loadChildPhotos(childId).then(setPhotos);
+  }, [childId]);
 
   useEffect(() => {
     supabase
@@ -237,10 +243,10 @@ const Situation = () => {
               <Button className="w-full" onClick={() => answer(words.trim() ? "libre" : "reponses:je-ne-sais-pas", words.trim() || undefined)}>
                 {words.trim() ? "Suivant" : "Passer"}
               </Button>
-              <PictoChoice keys={choicesFor([])} pres={pres} onPick={(k) => answer(k)} />
+              <PictoChoice keys={choicesFor([])} pres={pres} photos={photos} onPick={(k) => answer(k)} />
             </div>
           ) : (
-            <PictoChoice keys={choicesFor(q.choices)} pres={pres} onPick={(k) => answer(k)} />
+            <PictoChoice keys={choicesFor(q.choices)} pres={pres} photos={photos} onPick={(k) => answer(k)} />
           )}
           {qi > 0 && (
             <button onClick={() => setQi(qi - 1)} className="text-xs text-muted-foreground">← Question précédente</button>
