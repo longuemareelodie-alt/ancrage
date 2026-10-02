@@ -1,4 +1,5 @@
 import { forwardRef, ReactNode } from "react";
+import SituationPage from "./pages/autonomie/Situation";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -270,6 +271,7 @@ const AnimatedRoutes = () => {
 
         <Route path="/autonomie/assistant" element={<PaidRoute><PageTransition><Assistant /></PageTransition></PaidRoute>} />
 
+        <Route path="/autonomie/situation" element={<PaidRoute><PageTransition><SituationPage /></PageTransition></PaidRoute>} />
         <Route path="/autonomie/support/:supportId" element={<PaidRoute><PageTransition><SupportEditor /></PageTransition></PaidRoute>} />
         <Route path="/autonomie/crise" element={<Navigate to="/lies-autrement/crise" replace />} />
         <Route path="/ressources" element={<PaidRoute><PageTransition><Ressources /></PageTransition></PaidRoute>} />

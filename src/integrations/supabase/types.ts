@@ -550,6 +550,7 @@ export type Database = {
           created_at: string
           email: string | null
           id: string
+          is_trusted: boolean
           name: string
           notes: string | null
           phone: string | null
@@ -562,6 +563,7 @@ export type Database = {
           created_at?: string
           email?: string | null
           id?: string
+          is_trusted?: boolean
           name: string
           notes?: string | null
           phone?: string | null
@@ -574,6 +576,7 @@ export type Database = {
           created_at?: string
           email?: string | null
           id?: string
+          is_trusted?: boolean
           name?: string
           notes?: string | null
           phone?: string | null
@@ -668,6 +671,135 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "child_notes_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "family_medical_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      child_situation_observations: {
+        Row: {
+          action_taken: string | null
+          answers: Json
+          child_words: string | null
+          created_at: string
+          emotions: string[]
+          felt_unsafe: boolean
+          helped: string | null
+          id: string
+          interpretation: string | null
+          not_helped: string | null
+          parent_note: string | null
+          profile_id: string
+          situation_id: string
+          trusted_adult_id: string | null
+          user_id: string
+        }
+        Insert: {
+          action_taken?: string | null
+          answers?: Json
+          child_words?: string | null
+          created_at?: string
+          emotions?: string[]
+          felt_unsafe?: boolean
+          helped?: string | null
+          id?: string
+          interpretation?: string | null
+          not_helped?: string | null
+          parent_note?: string | null
+          profile_id: string
+          situation_id: string
+          trusted_adult_id?: string | null
+          user_id?: string
+        }
+        Update: {
+          action_taken?: string | null
+          answers?: Json
+          child_words?: string | null
+          created_at?: string
+          emotions?: string[]
+          felt_unsafe?: boolean
+          helped?: string | null
+          id?: string
+          interpretation?: string | null
+          not_helped?: string | null
+          parent_note?: string | null
+          profile_id?: string
+          situation_id?: string
+          trusted_adult_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "child_situation_observations_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "family_medical_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "child_situation_observations_situation_id_fkey"
+            columns: ["situation_id"]
+            isOneToOne: false
+            referencedRelation: "child_situations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "child_situation_observations_trusted_adult_id_fkey"
+            columns: ["trusted_adult_id"]
+            isOneToOne: false
+            referencedRelation: "child_contacts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      child_situations: {
+        Row: {
+          context: string | null
+          created_at: string
+          id: string
+          last_observed_at: string
+          occurred_on: string
+          place: string | null
+          profile_id: string
+          status: string
+          template_key: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          context?: string | null
+          created_at?: string
+          id?: string
+          last_observed_at?: string
+          occurred_on?: string
+          place?: string | null
+          profile_id: string
+          status?: string
+          template_key?: string | null
+          title: string
+          updated_at?: string
+          user_id?: string
+        }
+        Update: {
+          context?: string | null
+          created_at?: string
+          id?: string
+          last_observed_at?: string
+          occurred_on?: string
+          place?: string | null
+          profile_id?: string
+          status?: string
+          template_key?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "child_situations_profile_id_fkey"
             columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "family_medical_profiles"
@@ -1131,9 +1263,11 @@ export type Database = {
       family_medical_profiles: {
         Row: {
           allergies: string
+          answer_prefs: string[]
           avatar_url: string | null
           birth_date: string | null
           blood_type: string
+          communication_modes: string[]
           created_at: string
           current_treatments: string
           diagnoses: string
@@ -1145,9 +1279,14 @@ export type Database = {
           first_name: string
           id: string
           interests: string[]
+          max_choices: number | null
           medical_history: string
+          nickname: string | null
           notes: string
+          picto_mode: string
+          picto_show_text: boolean
           preferences: string
+          question_prefs: string[]
           relation: string
           sensitivities: string[]
           soothers: string[]
@@ -1156,9 +1295,11 @@ export type Database = {
         }
         Insert: {
           allergies?: string
+          answer_prefs?: string[]
           avatar_url?: string | null
           birth_date?: string | null
           blood_type?: string
+          communication_modes?: string[]
           created_at?: string
           current_treatments?: string
           diagnoses?: string
@@ -1170,9 +1311,14 @@ export type Database = {
           first_name?: string
           id?: string
           interests?: string[]
+          max_choices?: number | null
           medical_history?: string
+          nickname?: string | null
           notes?: string
+          picto_mode?: string
+          picto_show_text?: boolean
           preferences?: string
+          question_prefs?: string[]
           relation?: string
           sensitivities?: string[]
           soothers?: string[]
@@ -1181,9 +1327,11 @@ export type Database = {
         }
         Update: {
           allergies?: string
+          answer_prefs?: string[]
           avatar_url?: string | null
           birth_date?: string | null
           blood_type?: string
+          communication_modes?: string[]
           created_at?: string
           current_treatments?: string
           diagnoses?: string
@@ -1195,9 +1343,14 @@ export type Database = {
           first_name?: string
           id?: string
           interests?: string[]
+          max_choices?: number | null
           medical_history?: string
+          nickname?: string | null
           notes?: string
+          picto_mode?: string
+          picto_show_text?: boolean
           preferences?: string
+          question_prefs?: string[]
           relation?: string
           sensitivities?: string[]
           soothers?: string[]

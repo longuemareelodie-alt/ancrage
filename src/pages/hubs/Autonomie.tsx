@@ -1,4 +1,4 @@
-import { Sparkles, ShieldAlert, Rainbow, Wand2 } from "lucide-react";
+import { Sparkles, ShieldAlert, Rainbow, Wand2, Puzzle } from "lucide-react";
 import HubShell from "@/components/hub/HubShell";
 import HubCard from "@/components/hub/HubCard";
 
@@ -12,6 +12,12 @@ const Autonomie = () => (
       icon={Sparkles}
       title="Assistant Éclosia"
       desc="Décris une situation, les supports se créent pour toi."
+    />
+    <HubCard
+      to="/autonomie/situation"
+      icon={Puzzle}
+      title="Qu'est-ce que je fais dans cette situation ?"
+      desc="Comprendre ce qui s'est passé, ressentir, demander de l'aide."
     />
     <HubCard
       to="/autonomie/studio"
