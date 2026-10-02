@@ -133,6 +133,22 @@ export type SupportTemplate = {
 export const SUPPORT_TEMPLATES: SupportTemplate[] = [
   // ---------- Routines ----------
   {
+    slug: "routine-ecole-depart",
+    type: "routine",
+    title: "Se préparer pour l'école",
+    description: "Sept étapes, du réveil au départ.",
+    category: "ecole",
+    items: [
+      { label: "Toilettes" },
+      { label: "Se laver" },
+      { label: "S'habiller" },
+      { label: "Petit-déjeuner" },
+      { label: "Sac" },
+      { label: "Chaussures" },
+      { label: "Partir" },
+    ],
+  },
+  {
     slug: "routine-matin",
     type: "routine",
     title: "Routine du matin",
@@ -269,6 +285,20 @@ export const SUPPORT_TEMPLATES: SupportTemplate[] = [
   },
 
   // ---------- Histoires sociales ----------
+  {
+    slug: "histoire-pousse",
+    type: "histoire",
+    title: "Quand quelqu'un me pousse",
+    description: "Savoir dire stop et demander de l'aide.",
+    category: "emotions",
+    items: [
+      { label: "Je suis avec d'autres enfants." },
+      { label: "Quelqu'un peut me pousser." },
+      { label: "Je peux dire STOP." },
+      { label: "Je peux demander de l'aide." },
+      { label: "Un adulte peut m'aider." },
+    ],
+  },
   {
     slug: "histoire-docteur",
     type: "histoire",
