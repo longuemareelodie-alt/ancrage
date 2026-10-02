@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { situationByKey } from "@/data/situationTemplates";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, ArrowRight, Check, Loader2, Mic, Sparkles, Square, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -21,6 +22,7 @@ const KIND_LABEL: Record<DumpItem["kind"], string> = {
   rdv: "Rendez-vous",
   note: "À garder",
   relance: "Relance Business",
+  observation: "Observation enfant",
 };
 
 const ViderMaTete = () => {
@@ -133,6 +135,23 @@ const ViderMaTete = () => {
         notes.map((i) => ({ user_id: uid, content: i.title, pinned: false })),
       );
       if (error) errors.push("notes");
+    }
+
+    const observations = items.filter((i) => i.kind === "observation");
+    for (const o of observations) {
+      if (!o.profileId) { tasks.push(o); continue; }
+      const tpl = situationByKey(o.situationKey);
+      const { data: sit, error } = await supabase
+        .from("child_situations")
+        .insert({ user_id: uid, profile_id: o.profileId, template_key: tpl?.key ?? null, title: tpl?.title ?? o.title, context: o.title, occurred_on: o.date ?? undefined })
+        .select("id")
+        .single();
+      if (error || !sit) { errors.push("observations"); continue; }
+      // Noté par le parent : observation du parent, jamais une conclusion.
+      const { error: e2 } = await supabase.from("child_situation_observations").insert({
+        user_id: uid, situation_id: sit.id, profile_id: o.profileId, parent_note: o.title,
+      });
+      if (e2) errors.push("observations");
     }
 
     if (relances.length) {
@@ -290,7 +309,7 @@ const ViderMaTete = () => {
                               aria-label="Type"
                               className="rounded-full border border-border/60 bg-transparent px-3 py-1.5 text-xs text-foreground"
                             >
-                              {(it.contactId ? (["relance", "tache", "rdv", "note"] as const) : (["tache", "rdv", "note"] as const)).map((k) => (
+                              {([...(it.contactId ? ["relance"] : []), ...(it.situationKey || it.kind === "observation" ? ["observation"] : []), "tache", "rdv", "note"] as DumpItem["kind"][]).map((k) => (
                                 <option key={k} value={k}>
                                   {KIND_LABEL[k]}
                                 </option>
@@ -332,6 +351,11 @@ const ViderMaTete = () => {
                           {it.kind === "relance" && it.contactName && (
                             <p className="mt-2 text-xs font-medium text-foreground/80">
                               🐝 Business → {it.contactName} → Relance
+                            </p>
+                          )}
+                          {it.kind === "observation" && it.profileName && (
+                            <p className="mt-2 text-xs font-medium text-foreground/80">
+                              🧩 {it.profileName} → Situations → Observation
                             </p>
                           )}
                           {it.kind === "rdv" && it.domain === "sante" && (

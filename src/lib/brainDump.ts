@@ -9,8 +9,11 @@
  * Aucune IA ici : simple lecture de mots, tout se passe sur le téléphone.
  */
 import { guessDomain, type PulseDomain } from "@/data/pulseMascots";
+import { matchSituation } from "@/data/situationTemplates";
 
-export type DumpKind = "tache" | "rdv" | "note" | "relance";
+const CHILD_SITUATIONS = ["pousse", "frappe", "insulte", "objet-pris", "pas-jouer", "dispute", "calin-non", "secret", "non-pas-respecte"];
+
+export type DumpKind = "tache" | "rdv" | "note" | "relance" | "observation";
 
 export type DumpItem = {
   /** identifiant local, le temps de la confirmation */
@@ -30,6 +33,8 @@ export type DumpItem = {
   /** contact Business existant reconnu dans la phrase */
   contactId?: string | null;
   contactName?: string | null;
+  /** situation enfant reconnue (observation proposée) */
+  situationKey?: string | null;
 };
 
 /** Petits mots de départ qu'on enlève pour garder une action lisible. */
@@ -170,7 +175,9 @@ export function parseBrainDump(text: string, people: FamilyPerson[] = []): DumpI
     const date = findDate(segment);
     const time = findTime(segment);
     const isRdv = RDV_WORDS.test(segment) || (!!time && !!date);
-    const kind: DumpKind = isRdv ? "rdv" : NOTE_WORDS.test(segment) ? "note" : "tache";
+    const sit = person && !isRdv ? matchSituation(segment) : null;
+    const isObs = !!sit && CHILD_SITUATIONS.includes(sit.key);
+    const kind: DumpKind = isObs ? "observation" : isRdv ? "rdv" : NOTE_WORDS.test(segment) ? "note" : "tache";
 
     return {
       key: `${i}-${title}`,
@@ -182,6 +189,7 @@ export function parseBrainDump(text: string, people: FamilyPerson[] = []): DumpI
       profileId: person?.id ?? null,
       profileName: person?.first_name ?? null,
       needsDate: kind === "rdv" && !date,
+      situationKey: isObs ? sit!.key : null,
     };
   });
 }
