@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -35,6 +35,11 @@ const ChildCommSettings = ({ child, onSaved }: { child: ChildComm; onSaved: () =
     max_choices: child.max_choices ?? null,
   });
   const [saving, setSaving] = useState(false);
+  const [history, setHistory] = useState<{ id: string; created_at: string; snapshot: Record<string, unknown> }[]>([]);
+  const loadHistory = () =>
+    supabase.from("child_comm_history").select("id, created_at, snapshot").eq("profile_id", child.id).order("created_at", { ascending: false }).limit(10)
+      .then(({ data }) => setHistory((data ?? []) as never));
+  useEffect(() => { loadHistory(); }, [child.id]); // eslint-disable-line react-hooks/exhaustive-deps
   const pres = presentationFor({ ...child, ...f });
   const age = ageLabel(child.birth_date);
 
@@ -44,6 +49,13 @@ const ChildCommSettings = ({ child, onSaved }: { child: ChildComm; onSaved: () =
       .from("family_medical_profiles")
       .update({ ...f, nickname: f.nickname.trim() || null })
       .eq("id", child.id);
+    if (!error) {
+      const { data: auth } = await supabase.auth.getUser();
+      if (auth.user) {
+        await supabase.from("child_comm_history").insert({ user_id: auth.user.id, profile_id: child.id, snapshot: { ...f, max_choices: pres.maxChoices } as never });
+        loadHistory();
+      }
+    }
     setSaving(false);
     toast({ description: error ? "Enregistrement impossible." : "C'est noté.", variant: error ? "destructive" : undefined });
     if (!error) onSaved();
@@ -125,6 +137,20 @@ const ChildCommSettings = ({ child, onSaved }: { child: ChildComm; onSaved: () =
       </div>
 
       <Button onClick={save} disabled={saving} className="w-full">Enregistrer</Button>
+
+      {history.length > 0 && (
+        <div className="rounded-[20px] border border-border/70 bg-card px-5 py-4">
+          <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Historique des réglages</p>
+          {history.map((h) => (
+            <p key={h.id} className="text-xs text-foreground">
+              {new Date(h.created_at).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" })} : pictogrammes{" "}
+              {PICTO_MODES.find((m) => m.id === h.snapshot.picto_mode)?.label.toLowerCase() ?? "—"}, {String(h.snapshot.max_choices ?? "—")} choix
+              {Array.isArray(h.snapshot.question_prefs) && (h.snapshot.question_prefs as string[]).includes("audio") ? ", audio" : ""}
+            </p>
+          ))}
+          <p className="mt-1 text-[11px] text-muted-foreground">Les anciennes observations gardent les réglages de leur date.</p>
+        </div>
+      )}
 
       <ChildPhotos profileId={child.id} />
     </div>

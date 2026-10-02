@@ -545,6 +545,38 @@ export type Database = {
           },
         ]
       }
+      child_comm_history: {
+        Row: {
+          created_at: string
+          id: string
+          profile_id: string
+          snapshot: Json
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          profile_id: string
+          snapshot?: Json
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          profile_id?: string
+          snapshot?: Json
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "child_comm_history_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "family_medical_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       child_contacts: {
         Row: {
           created_at: string
@@ -718,6 +750,7 @@ export type Database = {
           action_taken: string | null
           answers: Json
           child_words: string | null
+          comm_snapshot: Json | null
           created_at: string
           emotions: string[]
           felt_unsafe: boolean
@@ -735,6 +768,7 @@ export type Database = {
           action_taken?: string | null
           answers?: Json
           child_words?: string | null
+          comm_snapshot?: Json | null
           created_at?: string
           emotions?: string[]
           felt_unsafe?: boolean
@@ -752,6 +786,7 @@ export type Database = {
           action_taken?: string | null
           answers?: Json
           child_words?: string | null
+          comm_snapshot?: Json | null
           created_at?: string
           emotions?: string[]
           felt_unsafe?: boolean
@@ -2503,6 +2538,7 @@ export type Database = {
           profile_id: string | null
           reminder_offset_hours: number
           reminder_sent_at: string | null
+          situation_id: string | null
           title: string
           updated_at: string
           user_id: string
@@ -2518,6 +2554,7 @@ export type Database = {
           profile_id?: string | null
           reminder_offset_hours?: number
           reminder_sent_at?: string | null
+          situation_id?: string | null
           title: string
           updated_at?: string
           user_id: string
@@ -2533,6 +2570,7 @@ export type Database = {
           profile_id?: string | null
           reminder_offset_hours?: number
           reminder_sent_at?: string | null
+          situation_id?: string | null
           title?: string
           updated_at?: string
           user_id?: string
@@ -2543,6 +2581,13 @@ export type Database = {
             columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "family_medical_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "todo_items_situation_id_fkey"
+            columns: ["situation_id"]
+            isOneToOne: false
+            referencedRelation: "child_situations"
             referencedColumns: ["id"]
           },
         ]

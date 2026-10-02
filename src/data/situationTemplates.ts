@@ -5,7 +5,7 @@
  */
 import type { AgeBand } from "@/lib/childAdapt";
 
-export type QuestionKey = "quoi" | "mal" | "ressens" | "envie" | "pourquoi" | "deja" | "securite" | "besoin" | "aide";
+export type QuestionKey = "fait" | "action" | "quoi" | "mal" | "ressens" | "envie" | "pourquoi" | "deja" | "securite" | "besoin" | "aide";
 
 export type Question = {
   key: QuestionKey;
@@ -17,6 +17,16 @@ export type Question = {
 };
 
 export const QUESTIONS: Record<QuestionKey, Question> = {
+  fait: {
+    key: "fait",
+    text: { petit: "Quelqu'un t'a poussé ?", enfant: "Est-ce que quelqu'un t'a poussé ?", ado: "Est-ce que quelqu'un t'a poussé ?" },
+    choices: ["reponses:oui", "reponses:non"],
+  },
+  action: {
+    key: "action",
+    text: { petit: "Tu veux faire quoi ?", enfant: "Qu'est-ce que tu veux faire maintenant ?", ado: "Qu'est-ce que tu veux faire maintenant ?" },
+    choices: ["actions:parler-adulte", "actions:dire-stop", "actions:demander-aide", "actions:retrouver-adulte", "actions:garder-trace"],
+  },
   quoi: {
     key: "quoi",
     text: { petit: "Qu'est-ce qui s'est passé ?", enfant: "Qu'est-ce qui s'est passé ?", ado: "Tu peux raconter ce qui s'est passé ?" },
@@ -25,7 +35,7 @@ export const QUESTIONS: Record<QuestionKey, Question> = {
   mal: {
     key: "mal",
     text: { petit: "Est-ce que ça t'a fait mal ?", enfant: "Est-ce que ça t'a fait mal ?", ado: "Est-ce que tu as eu mal ?" },
-    choices: ["reponses:mal-oui", "reponses:non"],
+    choices: ["reponses:mal-oui", "reponses:mal-non"],
   },
   ressens: {
     key: "ressens",
@@ -39,8 +49,8 @@ export const QUESTIONS: Record<QuestionKey, Question> = {
   },
   pourquoi: {
     key: "pourquoi",
-    text: { petit: "Tu sais pourquoi ?", enfant: "Tu penses que c'était un accident ou quelque chose qu'il voulait faire ?", ado: "Tu as une idée de pourquoi c'est arrivé ?" },
-    choices: ["reponses:accident", "reponses:expres"],
+    text: { petit: "Tu sais pourquoi ?", enfant: "Est-ce que tu sais pourquoi c'est arrivé ?", ado: "Tu as une idée de pourquoi c'est arrivé ?" },
+    choices: ["reponses:oui", "reponses:non"],
   },
   deja: {
     key: "deja",
@@ -76,15 +86,32 @@ export type SituationTemplate = {
   explain: string[];
   /** ce que l'enfant peut dire */
   sayIt?: string;
+  /** formulations propres à cette situation */
+  texts?: Partial<Record<QuestionKey, Partial<Record<AgeBand, string>>>>;
+  choicesFor?: Partial<Record<QuestionKey, Partial<Record<AgeBand, string[]>>>>;
 };
 
-const BODY = ["quoi", "mal", "ressens", "envie", "pourquoi", "deja", "securite", "besoin", "aide"] as QuestionKey[];
+/** Réponses où « Je ne veux pas répondre » est toujours proposé. */
+export const MAY_DECLINE: QuestionKey[] = ["envie", "mal", "pourquoi", "quoi", "securite"];
+
+export const questionText = (t: SituationTemplate | null, k: QuestionKey, band: AgeBand) =>
+  t?.texts?.[k]?.[band] ?? QUESTIONS[k].text[band];
+export const questionChoices = (t: SituationTemplate | null, k: QuestionKey, band: AgeBand) =>
+  t?.choicesFor?.[k]?.[band] ?? QUESTIONS[k].choices;
+
+const BODY = ["quoi", "mal", "ressens", "envie", "pourquoi", "deja", "securite", "besoin", "action"] as QuestionKey[];
 const FEEL = ["ressens", "besoin", "aide"] as QuestionKey[];
 const CONFLICT = ["quoi", "ressens", "pourquoi", "deja", "besoin"] as QuestionKey[];
 const PROTECT = "Ce que tu racontes est important. Tu n'as pas à garder pour toi une situation qui te fait peur ou te fait du mal.";
 
 export const SITUATIONS: SituationTemplate[] = [
-  { key: "pousse", emoji: "👉", title: "Quelqu'un m'a poussé", sensitive: false, questions: BODY,
+  { key: "pousse", emoji: "👉", title: "Quelqu'un m'a poussé", sensitive: false,
+    questions: ["fait", "envie", "mal", "ressens", "pourquoi", "deja", "securite", "action"],
+    texts: {
+      envie: { petit: "Tu as aimé qu'on te pousse ?", enfant: "Est-ce que tu as aimé qu'on te pousse ?", ado: "Est-ce que tu étais d'accord pour être poussé ?" },
+      pourquoi: { petit: "Tu sais pourquoi on t'a poussé ?", enfant: "Est-ce que tu sais pourquoi cette personne t'a poussé ?", ado: "Est-ce que tu sais pourquoi cette personne t'a poussé ?" },
+    },
+    choicesFor: { envie: { petit: ["reponses:aime", "reponses:pas-aime"] } },
     explain: ["Pousser quelqu'un sans qu'il soit d'accord n'est pas un comportement respectueux.", "Même si c'était un accident, tu as le droit de dire que tu n'as pas aimé."],
     sayIt: "« Arrête, je n'aime pas qu'on me pousse. »" },
   { key: "frappe", emoji: "✋", title: "Quelqu'un m'a frappé", sensitive: true, questions: BODY, protective: PROTECT,
@@ -160,3 +187,27 @@ export const SOURCE_LABEL: Record<AnswerSource, string> = {
 };
 
 export type Answer = { question_key: QuestionKey; answer_key: string; text?: string; source: AnswerSource };
+
+
+/** Résumé factuel : on répète ce qui a été dit, sans conclure sur l'intention. */
+export function factualSummary(t: SituationTemplate | null, answers: Answer[], words?: string): string[] {
+  const a = (k: QuestionKey) => answers.find((x) => x.question_key === k)?.answer_key;
+  const out: string[] = [];
+  if (a("fait") === "reponses:oui") out.push("Tu m'as dit qu'une personne t'a poussé.");
+  if (a("fait") === "reponses:non") out.push("Tu m'as dit que personne ne t'a poussé.");
+  if (words?.trim()) out.push(`Tu as raconté : « ${words.trim()} »`);
+  const e = a("envie");
+  if (e === "reponses:non" || e === "reponses:pas-aime") out.push(t?.key === "pousse" ? "Tu as dit que tu n'avais pas envie." : "Tu as dit que tu n'étais pas d'accord.");
+  if (e === "reponses:oui" || e === "reponses:aime") out.push("Tu as dit que tu étais d'accord.");
+  if (a("mal") === "reponses:mal-oui") out.push("Tu as dit que cela t'a fait mal.");
+  if (a("mal") === "reponses:mal-non") out.push("Tu as dit que cela ne t'a pas fait mal.");
+  const feel = answers.find((x) => x.question_key === "ressens" && x.answer_key.startsWith("emotions:"))?.answer_key;
+  const FEEL: Record<string, string> = {
+    "emotions:triste": "que tu étais triste", "emotions:colere": "que tu étais en colère", "emotions:peur": "que tu avais peur",
+    "emotions:inquiet": "que tu étais inquiet", "emotions:ca-va": "que ça va", "emotions:frustre": "que tu étais frustré", "emotions:depasse": "que c'était trop pour toi",
+  };
+  if (feel && FEEL[feel]) out.push(`Tu as dit ${FEEL[feel]}.`);
+  if (a("deja") === "reponses:plusieurs-fois") out.push("Tu me dis que cela arrive plusieurs fois.");
+  if (a("securite") === "reponses:securite-non") out.push("Tu as dit que tu ne te sens pas en sécurité.");
+  return out;
+}

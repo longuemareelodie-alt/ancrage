@@ -10,6 +10,8 @@ const EXTRA: [RegExp, string][] = [
   [/dent|brosse/, "🪥"], [/habill|vetement|pull|pantalon/, "👕"], [/chaussure|basket/, "👟"], [/manteau|veste/, "🧥"],
   [/petit.?dej|dejeuner|diner|repas|manger|gouter/, "🍽️"], [/douche|bain|laver|savon/, "🧼"], [/lit|dormir|coucher|sieste/, "🛌"],
   [/cartable|sac|ecole/, "🎒"], [/toilette|pipi|wc/, "🚽"], [/main/, "🙌"], [/livre|lire|histoire/, "📖"], [/ecran|tele|tablette/, "📺"],
+  [/stop/, "🛑"], [/demander de l.aide|aide/, "🙋"], [/adulte/, "❤️"], [/pouss/, "👤"], [/autres enfants|enfants/, "👧"],
+  [/partir/, "🚗"],
   [/jouer|jeu|jouet/, "🧸"], [/voiture/, "🚗"], [/ranger/, "🧹"], [/boire|eau/, "🥤"], [/calme|respir/, "🤫"], [/calin/, "🤗"],
 ];
 
@@ -28,6 +30,8 @@ const SupportPictoView = ({ items, profileId }: Props) => {
   const [child, setChild] = useState<ChildComm | null>(null);
   const [done, setDone] = useState<number[]>([]);
   const [photos, setPhotos] = useState<Record<string, string>>({});
+  const [mode, setMode] = useState<"etape" | "tout">("tout");
+  const [cur, setCur] = useState(0);
 
   useEffect(() => {
     if (!profileId) return setChild(null);
@@ -47,10 +51,45 @@ const SupportPictoView = ({ items, profileId }: Props) => {
   const pres = { ...presentationFor(child), visual: true };
   const steps = items.filter((i) => i.label.trim());
 
+  const photoFor = (label: string) => Object.entries(photos).find(([k]) => norm(label).includes(norm(k.split(":")[1] ?? "")))?.[1];
+
+  const Toggle = (
+    <div className="flex gap-2">
+      {([["etape", "Étape par étape"], ["tout", "Vue complète"]] as const).map(([k, l]) => (
+        <button key={k} type="button" onClick={() => { setMode(k); setCur(0); }}
+          className={`flex-1 rounded-full border px-3 py-1.5 text-xs font-medium ${mode === k ? "border-primary/60 bg-secondary/60 text-foreground" : "border-border/70 text-muted-foreground"}`}>
+          {l}
+        </button>
+      ))}
+    </div>
+  );
+
+  if (mode === "etape" && steps.length) {
+    const s = steps[Math.min(cur, steps.length - 1)];
+    const photo = photoFor(s.label);
+    const last = cur >= steps.length - 1;
+    return (
+      <div className="space-y-3">
+        {Toggle}
+        <p className="text-center text-xs text-muted-foreground">{cur + 1} / {steps.length}</p>
+        <button type="button" onClick={() => speakFr(s.label)}
+          className="flex w-full flex-col items-center gap-3 rounded-[26px] border-2 border-border/70 bg-card px-5 py-8 text-center">
+          {photo ? <img src={photo} alt="" className="h-28 w-28 rounded-2xl object-cover" /> : <span className="text-7xl" aria-hidden>{guessEmoji(s.label)}</span>}
+          {pres.showText && <span className="text-lg font-semibold text-foreground">{s.time ? `${s.time} · ` : ""}{s.label}</span>}
+        </button>
+        <div className="flex gap-2">
+          <button type="button" disabled={cur === 0} onClick={() => setCur(cur - 1)} className="flex-1 rounded-full border border-border/70 py-2.5 text-sm font-semibold text-foreground disabled:opacity-40">← Avant</button>
+          <button type="button" onClick={() => (last ? setMode("tout") : setCur(cur + 1))} className="flex-1 rounded-full bg-primary py-2.5 text-sm font-semibold text-primary-foreground">{last ? "Fini ✓" : "Suivant →"}</button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-2">
+      {Toggle}
       {steps.map((s, i) => {
-        const photo = Object.entries(photos).find(([k]) => norm(s.label).includes(norm(k.split(":")[1] ?? "")))?.[1];
+        const photo = photoFor(s.label);
         const on = done.includes(i);
         return (
           <button

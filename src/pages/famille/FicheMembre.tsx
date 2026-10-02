@@ -22,6 +22,7 @@ import { SUPPORT_TYPES } from "@/data/supportTemplates";
 import EnfantJour from "@/components/famille/EnfantJour";
 import ChildCommSettings from "@/components/child/ChildCommSettings";
 import ChildSituations from "@/components/child/ChildSituations";
+import ChildEvolution from "@/components/child/ChildEvolution";
 import type { ChildComm } from "@/lib/childAdapt";
 
 type Profile = {
@@ -53,6 +54,7 @@ const TABS = [
   { key: "profil", label: "Profil" },
   { key: "communication", label: "Communication" },
   { key: "situations", label: "Situations" },
+  { key: "evolution", label: "Évolution" },
   { key: "sante", label: "Santé" },
   { key: "documents", label: "Documents" },
   { key: "contacts", label: "Contacts" },
@@ -388,6 +390,7 @@ const FicheMembre = () => {
       )}
 
       {tab === "situations" && <ChildSituations profileId={profile.id} firstName={profile.first_name} />}
+      {tab === "evolution" && <ChildEvolution profileId={profile.id} firstName={profile.first_name} />}
 
       {tab === "contacts" && (
         <div className="space-y-2 pt-2">
