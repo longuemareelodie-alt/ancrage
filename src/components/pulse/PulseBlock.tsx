@@ -78,7 +78,7 @@ const PulseBlock = ({ onChange }: { onChange?: () => void }) => {
 
 
       {/* 2 — Éclosia m'aide maintenant */}
-      <HelpNowBlock next={next ? { title: next.title, to: next.to } : null} />
+      <HelpNowBlock next={next ? { title: next.label, to: next.to } : null} />
 
       {/* 3 — Prochaine action : une seule, jamais une liste */}
       <div className="mt-4 rounded-[20px] border border-border/60 bg-secondary/25 px-4 py-4">
