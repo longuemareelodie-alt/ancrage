@@ -5,6 +5,9 @@
  * Extensible : chaque règle est une fonction indépendante, testée dans l'ordre.
  */
 import { isSpaceActive, type SpaceId } from "@/lib/spaces";
+import { matchSituation } from "@/data/situationTemplates";
+
+const SOCIAL_SITUATIONS = ["pousse", "frappe", "insulte", "objet-pris", "pas-jouer", "dispute", "calin-non", "secret", "non-pas-respecte"];
 
 export type HelpContext = {
   family: { id: string; first_name: string }[];
@@ -123,6 +126,25 @@ export function helpNow(input: string, ctx: HelpContext): HelpResult {
         { kind: "go", label: "Vider ma tête", to: "/pulse/vider-ma-tete" },
         { kind: "go", label: "M'apaiser d'abord", to: "/moi/apaisement" },
       ],
+    };
+  }
+
+  // 2 bis — Situation vécue par un enfant (poussé, secret, « non » pas respecté…).
+  const sit = matchSituation(input);
+  if (sit && SOCIAL_SITUATIONS.includes(sit.key) && (personLabel || sit.sensitive || /\bm a\b|\bmoi\b|\bme\b/.test(t))) {
+    const q = new URLSearchParams({ modele: sit.key, ...(person ? { enfant: person.id } : {}) });
+    return {
+      type: "answer",
+      lead: sit.sensitive ? "Ce qui est raconté est important." : "On peut comprendre ensemble ce qui s'est passé.",
+      situation: sit.title,
+      person: personLabel,
+      firstAction: "Poser les questions une par une, sans chercher de coupable",
+      resource: "Qu'est-ce que je fais dans cette situation ?",
+      details: ["« Je ne sais pas » est une réponse complète."],
+      primary: { kind: "go", label: "Comprendre la situation", to: `/autonomie/situation?${q}` },
+      others: person ? [{ kind: "go", label: `Situations de ${person.first_name}`, to: `/famille/${person.id}?onglet=situations` }] : [],
+      hiddenSpace: hiddenIf("autonomie"),
+      caution: sit.sensitive ? "Si l'enfant n'est pas en sécurité : 119 (Allô Enfance en Danger) ou 17. Éclosia n'est pas un service d'urgence." : undefined,
     };
   }
 

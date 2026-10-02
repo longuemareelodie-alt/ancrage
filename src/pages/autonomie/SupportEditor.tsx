@@ -10,6 +10,7 @@ import { Printer, ArrowLeft, Star, Copy, Archive } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { describePersonalisation, softHaptic } from "@/lib/supportPersonalisation";
 import { readCachedSupport } from "@/lib/supportsCache";
+import SupportPictoView from "@/components/child/SupportPictoView";
 import SupportItemsReorder, {
   SupportRow,
   stripRowKeys,
@@ -26,6 +27,7 @@ const SupportEditor = () => {
   const [loading, setLoading] = useState(true);
   const [title, setTitle] = useState("");
   const [type, setType] = useState<SupportType>("routine");
+  const [childView, setChildView] = useState(false);
   const [items, setItems] = useState<SupportRow[]>([]);
   const [profileId, setProfileId] = useState<string | null>(null);
   const [profiles, setProfiles] = useState<Profile[]>([]);
@@ -213,12 +215,29 @@ const SupportEditor = () => {
         )}
       </div>
 
-      <SupportItemsReorder
-        items={items}
-        setItems={setItems}
-        itemLabel={def.itemLabel}
-        withTime={Boolean(def.withTime)}
-      />
+      <div className="flex gap-2 pt-1">
+        {([[false, "Modifier"], [true, "🖼️ Vue enfant"]] as const).map(([v, l]) => (
+          <button
+            key={l}
+            type="button"
+            onClick={() => setChildView(v)}
+            className={`flex-1 rounded-full border px-3 py-1.5 text-xs font-medium ${childView === v ? "border-primary/50 bg-secondary/60 text-foreground" : "border-border/70 text-muted-foreground"}`}
+          >
+            {l}
+          </button>
+        ))}
+      </div>
+
+      {childView ? (
+        <SupportPictoView items={items} profileId={profileId} />
+      ) : (
+        <SupportItemsReorder
+          items={items}
+          setItems={setItems}
+          itemLabel={def.itemLabel}
+          withTime={Boolean(def.withTime)}
+        />
+      )}
 
 
       <div className="flex items-center gap-2 pt-4">

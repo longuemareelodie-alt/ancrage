@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
+import ChildPhotos from "@/components/child/ChildPhotos";
 import {
   ANSWER_PREFS, COMMUNICATION_MODES, PICTO_MODES, QUESTION_PREFS, ageLabel, presentationFor, type ChildComm,
 } from "@/lib/childAdapt";
@@ -124,6 +125,8 @@ const ChildCommSettings = ({ child, onSaved }: { child: ChildComm; onSaved: () =
       </div>
 
       <Button onClick={save} disabled={saving} className="w-full">Enregistrer</Button>
+
+      <ChildPhotos profileId={child.id} />
     </div>
   );
 };
