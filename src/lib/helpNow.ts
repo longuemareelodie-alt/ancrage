@@ -129,6 +129,16 @@ export function helpNow(input: string, ctx: HelpContext): HelpResult {
     };
   }
 
+  // 2 ter — Plusieurs enfants, aucun prénom : on demande, on n'invente pas.
+  const sitGuess = matchSituation(input);
+  if (!person && childWords && ctx.family.length > 1 && (sitGuess || has(t, W.transition))) {
+    return {
+      type: "question",
+      question: "Pour quel enfant ?",
+      choices: ctx.family.slice(0, 6).map((f) => ({ label: f.first_name, append: ` ${f.first_name}` })),
+    };
+  }
+
   // 2 bis — Situation vécue par un enfant (poussé, secret, « non » pas respecté…).
   const sit = matchSituation(input);
   if (sit && SOCIAL_SITUATIONS.includes(sit.key) && (personLabel || sit.sensitive || /\bm a\b|\bmoi\b|\bme\b/.test(t))) {
