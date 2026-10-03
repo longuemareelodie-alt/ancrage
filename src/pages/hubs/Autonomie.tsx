@@ -1,4 +1,5 @@
-import { Sparkles, ShieldAlert, Rainbow, Wand2, Puzzle } from "lucide-react";
+import { Sparkles, ShieldAlert, Rainbow, Wand2, Puzzle, Images } from "lucide-react";
+import HelpNowBlock from "@/components/pulse/HelpNowBlock";
 import HubShell from "@/components/hub/HubShell";
 import HubCard from "@/components/hub/HubCard";
 
@@ -7,6 +8,7 @@ const Autonomie = () => (
     title="Autonomie"
     subtitle="Des supports concrets pour l'aider à faire seul, à son rythme."
   >
+    <HelpNowBlock next={null} />
     <HubCard
       to="/autonomie/assistant"
       icon={Sparkles}
@@ -18,6 +20,12 @@ const Autonomie = () => (
       icon={Puzzle}
       title="Qu'est-ce que je fais dans cette situation ?"
       desc="Comprendre ce qui s'est passé, ressentir, demander de l'aide."
+    />
+    <HubCard
+      to="/autonomie/choix"
+      icon={Images}
+      title="Tu préfères quoi ?"
+      desc="Montrer 2 à 4 images, l'enfant choisit en touchant."
     />
     <HubCard
       to="/autonomie/studio"
