@@ -18,7 +18,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { format, differenceInDays, endOfMonth, addDays, isBefore } from "date-fns";
+import { format, differenceInDays, endOfMonth, addDays, isBefore, addMonths, startOfMonth, isSameMonth } from "date-fns";
+import { ChevronLeft, ChevronRight, Copy } from "lucide-react";
 import { fr } from "date-fns/locale";
 
 type Kind = "income" | "fixed" | "variable";
@@ -29,7 +30,11 @@ interface Entry {
   category: string;
   label: string;
   amount_cents: number;
+  month: string | null;
+  created_at: string;
 }
+
+const monthKeyOf = (e: { month: string | null; created_at: string }) => (e.month ?? e.created_at).slice(0, 7);
 
 interface Bill {
   id: string;
@@ -101,11 +106,18 @@ const eurPrecise = (cents: number) =>
 
 export default function Budget() {
   const { user } = useAuth();
-  const [entries, setEntries] = useState<Entry[]>([]);
+  const [allEntries, setAllEntries] = useState<Entry[]>([]);
   const [bills, setBills] = useState<Bill[]>([]);
   const [loading, setLoading] = useState(true);
   const [openKind, setOpenKind] = useState<Kind | null>(null);
   const [openBill, setOpenBill] = useState(false);
+  const [selMonth, setSelMonth] = useState<Date>(() => startOfMonth(new Date()));
+  const [copying, setCopying] = useState(false);
+  const monthKey = format(selMonth, "yyyy-MM");
+  const prevKey = format(addMonths(selMonth, -1), "yyyy-MM");
+  const monthLabel = format(selMonth, "MMMM yyyy", { locale: fr });
+  const prevLabel = format(addMonths(selMonth, -1), "MMMM", { locale: fr });
+  const isCurrent = isSameMonth(selMonth, new Date());
 
   const load = async () => {
     if (!user) return;
@@ -114,7 +126,7 @@ export default function Budget() {
       supabase.from("budget_entries").select("*").eq("user_id", user.id).order("created_at", { ascending: false }),
       supabase.from("bills").select("*").eq("user_id", user.id).order("due_date", { ascending: true }),
     ]);
-    setEntries((e as Entry[]) || []);
+    setAllEntries((e as Entry[]) || []);
     setBills((b as Bill[]) || []);
     setLoading(false);
   };
@@ -124,6 +136,43 @@ export default function Budget() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id]);
 
+  const entries = useMemo(() => allEntries.filter((e) => monthKeyOf(e) === monthKey), [allEntries, monthKey]);
+  const monthBills = useMemo(() => bills.filter((b) => b.due_date.slice(0, 7) === monthKey), [bills, monthKey]);
+  const prevEntries = useMemo(() => allEntries.filter((e) => monthKeyOf(e) === prevKey && e.kind !== "variable"), [allEntries, prevKey]);
+  const prevBills = useMemo(() => bills.filter((b) => b.due_date.slice(0, 7) === prevKey), [bills, prevKey]);
+  const hasBase = entries.some((e) => e.kind !== "variable");
+
+  const history = useMemo(() => {
+    const out: { key: string; label: string; rest: number }[] = [];
+    for (let i = 1; i <= 6; i++) {
+      const d = addMonths(selMonth, -i);
+      const k = format(d, "yyyy-MM");
+      const list = allEntries.filter((e) => monthKeyOf(e) === k);
+      if (!list.length) continue;
+      const rest = list.reduce((s, e) => s + (e.kind === "income" ? e.amount_cents : -e.amount_cents), 0);
+      out.push({ key: k, label: format(d, "MMMM yyyy", { locale: fr }), rest });
+    }
+    return out;
+  }, [allEntries, selMonth]);
+
+  const copyPrevious = async () => {
+    if (!user || copying) return;
+    setCopying(true);
+    const month = format(selMonth, "yyyy-MM-01");
+    const rows = prevEntries.map((e) => ({ user_id: user.id, kind: e.kind, category: e.category, label: e.label, amount_cents: e.amount_cents, recurring: true, month }));
+    const billRows = prevBills
+      .filter((b) => !monthBills.some((m) => m.label === b.label))
+      .map((b) => ({ user_id: user.id, label: b.label, amount_cents: b.amount_cents, due_date: format(addMonths(new Date(b.due_date + "T12:00:00"), 1), "yyyy-MM-dd"), reminder_enabled: b.reminder_enabled, notes: b.notes }));
+    const [r1, r2] = await Promise.all([
+      rows.length ? supabase.from("budget_entries").insert(rows) : Promise.resolve({ error: null }),
+      billRows.length ? supabase.from("bills").insert(billRows) : Promise.resolve({ error: null }),
+    ]);
+    setCopying(false);
+    if (r1.error || r2.error) return toast.error("Impossible de reprendre le mois précédent. Réessaie.");
+    toast.success(`${monthLabel} est prêt 🌸 Vérifie juste les montants.`);
+    load();
+  };
+
   const totals = useMemo(() => {
     const income = entries.filter((x) => x.kind === "income").reduce((s, x) => s + x.amount_cents, 0);
     const fixed = entries.filter((x) => x.kind === "fixed").reduce((s, x) => s + x.amount_cents, 0);
@@ -132,7 +181,8 @@ export default function Budget() {
     const rest = income - expenses;
 
     const now = new Date();
-    const daysLeft = Math.max(1, differenceInDays(endOfMonth(now), now) + 1);
+    const ref = isCurrent ? now : selMonth;
+    const daysLeft = isBefore(endOfMonth(selMonth), now) ? 1 : Math.max(1, differenceInDays(endOfMonth(selMonth), ref) + 1);
     const perDay = rest > 0 ? Math.floor(rest / daysLeft) : 0;
     const perWeek = perDay * 7;
 
@@ -156,7 +206,7 @@ export default function Budget() {
       expenseRatio, fixedRatio, savingsRate,
       soon, soonTotal, overdue, overdueTotal,
     };
-  }, [entries, bills]);
+  }, [entries, bills, isCurrent, selMonth]);
 
   const byCategory = useMemo(() => {
     const map = new Map<string, { kind: Kind; value: number }>();
@@ -171,7 +221,7 @@ export default function Budget() {
 
   const removeEntry = async (id: string) => {
     await supabase.from("budget_entries").delete().eq("id", id);
-    setEntries((prev) => prev.filter((e) => e.id !== id));
+    setAllEntries((prev) => prev.filter((e) => e.id !== id));
   };
 
   const toggleBillPaid = async (bill: Bill) => {
@@ -201,6 +251,34 @@ export default function Budget() {
             Ton mois en un coup d'œil — reste à vivre, budget quotidien et hebdomadaire calculés en temps réel.
           </p>
         </motion.header>
+
+        {/* Mois par mois */}
+        <div className="mb-4 flex items-center justify-between rounded-2xl border bg-card p-2">
+          <Button size="icon" variant="ghost" aria-label="Mois précédent" onClick={() => setSelMonth((d) => addMonths(d, -1))}><ChevronLeft className="h-5 w-5" /></Button>
+          <div className="text-center">
+            <p className="font-semibold capitalize">{monthLabel}</p>
+            {!isCurrent && <button className="text-xs text-primary underline" onClick={() => setSelMonth(startOfMonth(new Date()))}>Revenir à ce mois-ci</button>}
+          </div>
+          <Button size="icon" variant="ghost" aria-label="Mois suivant" onClick={() => setSelMonth((d) => addMonths(d, 1))}><ChevronRight className="h-5 w-5" /></Button>
+        </div>
+
+        <Card className="mb-4">
+          <CardContent className="p-4 space-y-3">
+            <p className="text-sm font-semibold">Ton budget de {format(selMonth, "MMMM", { locale: fr })} en 3 étapes</p>
+            <Step done={hasBase} n={1} text="Revenus et dépenses fixes du mois">
+              {!hasBase && (prevEntries.length > 0 || prevBills.length > 0) && (
+                <Button size="sm" className="mt-2 w-full" onClick={copyPrevious} disabled={copying}>
+                  <Copy className="h-4 w-4 mr-1" /> {copying ? "Un instant…" : `Reprendre ceux de ${prevLabel}`}
+                </Button>
+              )}
+              {!hasBase && prevEntries.length === 0 && prevBills.length === 0 && (
+                <p className="text-xs text-muted-foreground mt-1">Ajoute-les une fois dans « Lignes ». Le mois suivant, un seul bouton les reprendra.</p>
+              )}
+            </Step>
+            <Step done={entries.some((e) => e.kind === "variable")} n={2} text="Noter les dépenses au fil du mois (courses, essence…)" />
+            <Step done={monthBills.length > 0 && monthBills.every((b) => b.is_paid)} n={3} text={monthBills.length ? `Cocher les factures payées (${monthBills.filter((b) => b.is_paid).length}/${monthBills.length})` : "Cocher les factures payées"} />
+          </CardContent>
+        </Card>
 
         {/* Alertes factures */}
         {(totals.overdue.length > 0 || totals.soon.length > 0) && (
@@ -336,6 +414,19 @@ export default function Budget() {
                 </CardContent>
               </Card>
             )}
+            {history.length > 0 && (
+              <Card>
+                <CardHeader className="pb-3"><CardTitle className="text-base">Les mois précédents</CardTitle></CardHeader>
+                <CardContent className="space-y-2 text-sm">
+                  {history.map((h) => (
+                    <button key={h.key} className="flex w-full justify-between capitalize" onClick={() => setSelMonth(startOfMonth(new Date(h.key + "-01T12:00:00")))}>
+                      <span className="text-muted-foreground">{h.label}</span>
+                      <span className="tabular-nums">Reste {eur(h.rest)}</span>
+                    </button>
+                  ))}
+                </CardContent>
+              </Card>
+            )}
           </TabsContent>
 
           <TabsContent value="entries" className="space-y-4">
@@ -387,8 +478,8 @@ export default function Budget() {
                 </Button>
               </CardHeader>
               <CardContent className="space-y-1">
-                {bills.length === 0 && <p className="text-sm text-muted-foreground py-2">Aucune facture enregistrée.</p>}
-                {bills.map((b) => {
+                {monthBills.length === 0 && <p className="text-sm text-muted-foreground py-2">Aucune facture ce mois-ci.</p>}
+                {monthBills.map((b) => {
                   const overdue = !b.is_paid && isBefore(new Date(b.due_date), new Date());
                   return (
                     <div key={b.id} className="flex items-center justify-between py-2 border-b last:border-0">
@@ -495,7 +586,7 @@ export default function Budget() {
         </Tabs>
       </div>
 
-      <EntryDialog open={openKind !== null} kind={openKind} onOpenChange={(v) => !v && setOpenKind(null)} onSaved={load} userId={user?.id} />
+      <EntryDialog month={format(selMonth, "yyyy-MM-01")} open={openKind !== null} kind={openKind} onOpenChange={(v) => !v && setOpenKind(null)} onSaved={load} userId={user?.id} />
       <BillDialog open={openBill} onOpenChange={setOpenBill} onSaved={load} userId={user?.id} />
     </div>
   );
@@ -511,6 +602,18 @@ function SummaryCard({ label, value, color, icon: Icon }: { label: string; value
         <p className={`text-lg font-semibold tabular-nums ${color}`}>{value}</p>
       </CardContent>
     </Card>
+  );
+}
+
+function Step({ done, n, text, children }: { done: boolean; n: number; text: string; children?: React.ReactNode }) {
+  return (
+    <div className="flex gap-3">
+      {done ? <CheckCircle2 className="h-5 w-5 shrink-0 text-primary" /> : <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border text-xs text-muted-foreground">{n}</span>}
+      <div className="flex-1 min-w-0">
+        <p className={`text-sm ${done ? "text-muted-foreground" : ""}`}>{text}</p>
+        {children}
+      </div>
+    </div>
   );
 }
 
@@ -531,7 +634,7 @@ function LegendDot({ color, label }: { color: string; label: string }) {
   );
 }
 
-function EntryDialog({ open, kind, onOpenChange, onSaved, userId }: { open: boolean; kind: Kind | null; onOpenChange: (v: boolean) => void; onSaved: () => void; userId?: string }) {
+function EntryDialog({ month, open, kind, onOpenChange, onSaved, userId }: { month: string; open: boolean; kind: Kind | null; onOpenChange: (v: boolean) => void; onSaved: () => void; userId?: string }) {
   const [label, setLabel] = useState("");
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState("");
@@ -549,7 +652,7 @@ function EntryDialog({ open, kind, onOpenChange, onSaved, userId }: { open: bool
     const cents = Math.round(parseFloat(amount.replace(",", ".")) * 100);
     if (!cents || cents < 0) return toast.error("Montant invalide");
     const { error } = await supabase.from("budget_entries").insert({
-      user_id: userId, kind, category, label, amount_cents: cents,
+      user_id: userId, kind, category, label, amount_cents: cents, month,
     });
     if (error) return toast.error("Erreur : " + error.message);
     toast.success("Ajouté");
