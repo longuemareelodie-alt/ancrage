@@ -114,9 +114,9 @@ export default function Budget() {
   const [selMonth, setSelMonth] = useState<Date>(() => startOfMonth(new Date()));
   const [copying, setCopying] = useState(false);
   const monthKey = format(selMonth, "yyyy-MM");
-  const prevKey = format(addMonths(selMonth, -1), "yyyy-MM");
+
   const monthLabel = format(selMonth, "MMMM yyyy", { locale: fr });
-  const prevLabel = format(addMonths(selMonth, -1), "MMMM", { locale: fr });
+
   const isCurrent = isSameMonth(selMonth, new Date());
 
   const load = async () => {
@@ -136,6 +136,11 @@ export default function Budget() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id]);
 
+  const prevKey = useMemo(() => {
+    const keys = [...allEntries.map(monthKeyOf), ...bills.map((b) => b.due_date.slice(0, 7))].filter((k) => k < monthKey).sort();
+    return keys[keys.length - 1] ?? format(addMonths(selMonth, -1), "yyyy-MM");
+  }, [allEntries, bills, monthKey, selMonth]);
+  const prevLabel = format(new Date(prevKey + "-01T12:00:00"), "MMMM", { locale: fr });
   const entries = useMemo(() => allEntries.filter((e) => monthKeyOf(e) === monthKey), [allEntries, monthKey]);
   const monthBills = useMemo(() => bills.filter((b) => b.due_date.slice(0, 7) === monthKey), [bills, monthKey]);
   const prevEntries = useMemo(() => allEntries.filter((e) => monthKeyOf(e) === prevKey && e.kind !== "variable"), [allEntries, prevKey]);
