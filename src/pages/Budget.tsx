@@ -167,7 +167,7 @@ export default function Budget() {
     const rows = prevEntries.map((e) => ({ user_id: user.id, kind: e.kind, category: e.category, label: e.label, amount_cents: e.amount_cents, recurring: true, month }));
     const billRows = prevBills
       .filter((b) => !monthBills.some((m) => m.label === b.label))
-      .map((b) => ({ user_id: user.id, label: b.label, amount_cents: b.amount_cents, due_date: format(addMonths(new Date(b.due_date + "T12:00:00"), 1), "yyyy-MM-dd"), reminder_enabled: b.reminder_enabled, notes: b.notes }));
+      .map((b) => ({ user_id: user.id, label: b.label, amount_cents: b.amount_cents, due_date: `${monthKey}-${String(Math.min(28, Number(b.due_date.slice(8, 10)))).padStart(2, "0")}`, reminder_enabled: b.reminder_enabled, notes: b.notes }));
     const [r1, r2] = await Promise.all([
       rows.length ? supabase.from("budget_entries").insert(rows) : Promise.resolve({ error: null }),
       billRows.length ? supabase.from("bills").insert(billRows) : Promise.resolve({ error: null }),
