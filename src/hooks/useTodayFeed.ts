@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { entriesForMonth } from "@/lib/budgetMonth";
 
 export type FeedItem = {
   id: string;
@@ -119,7 +120,7 @@ export function useTodayFeed(): TodaySnapshot {
         supabase.from("bills").select("id, label, amount_cents, due_date").eq("is_paid", false).lte("due_date", soon).order("due_date"),
         supabase.from("emotion_checkins").select("created_at, emotion, emotion_type").gte("created_at", twoWeeksAgo).order("created_at", { ascending: false }),
         supabase.from("autonomy_supports").select("id, title, support_type, profile_id").order("updated_at", { ascending: false }),
-        supabase.from("budget_entries").select("kind, amount_cents, month, recurring"),
+        supabase.from("budget_entries").select("kind, amount_cents, month, created_at"),
         supabase.from("family_medical_profiles").select("id, first_name").order("created_at"),
       ]);
 
@@ -225,7 +226,7 @@ export function useTodayFeed(): TodaySnapshot {
       let budgetLeftCents: number | null = null;
       const bRows = budget.data ?? [];
       if (bRows.length) {
-        const inMonth = bRows.filter((r) => r.recurring || (r.month ?? "").slice(0, 7) === monthStart.slice(0, 7));
+        const inMonth = entriesForMonth(bRows, monthStart);
         const income = inMonth.filter((r) => r.kind === "income").reduce((s, r) => s + r.amount_cents, 0);
         const expense = inMonth.filter((r) => r.kind !== "income").reduce((s, r) => s + r.amount_cents, 0);
         budgetLeftCents = income - expense;

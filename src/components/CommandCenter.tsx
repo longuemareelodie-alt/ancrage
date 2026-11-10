@@ -1,3 +1,4 @@
+import { entriesForMonth } from "@/lib/budgetMonth";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -91,7 +92,7 @@ export default function CommandCenter() {
           .limit(4),
         supabase
           .from("budget_entries")
-          .select("amount_cents,kind,recurring,month")
+          .select("amount_cents,kind,month,created_at")
           .eq("user_id", user.id),
         supabase
           .from("shopping_items")
@@ -106,12 +107,10 @@ export default function CommandCenter() {
           .limit(3),
       ]);
 
-      // Budget: revenus - dépenses du mois courant (récurrentes + du mois)
+      // Budget: revenus - dépenses du mois courant (même règle que la page Budget)
       let income = 0;
       let expense = 0;
-      (budgetRes.data || []).forEach((r: any) => {
-        const inMonth = r.recurring || (r.month && r.month.startsWith(monthKey.slice(0, 7)));
-        if (!inMonth) return;
+      entriesForMonth((budgetRes.data || []) as any[], monthKey).forEach((r: any) => {
         if (r.kind === "income") income += r.amount_cents;
         else expense += r.amount_cents;
       });

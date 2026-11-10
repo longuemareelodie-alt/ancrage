@@ -1,3 +1,4 @@
+import { entriesForMonth } from "@/lib/budgetMonth";
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { BarChart3, Heart, Wallet, CheckCircle2, BookOpen, Calendar, TrendingUp, TrendingDown, Sparkles } from "lucide-react";
@@ -20,7 +21,7 @@ const eur = (c: number) => (c / 100).toLocaleString("fr-FR", { style: "currency"
 interface Stats {
   emotions: { date: string; mood: string; created_at: string }[];
   moods: { mood: string; created_at: string }[];
-  budget: { kind: string; category: string; amount_cents: number }[];
+  budget: { kind: string; category: string; amount_cents: number; month: string | null; created_at: string }[];
   todos: { is_done: boolean; created_at: string; completed_at: string | null }[];
   journal: { created_at: string }[];
   agenda: { created_at: string; starts_at: string }[];
@@ -40,7 +41,7 @@ export default function Statistiques() {
       const [e, m, b, t, j, a, ap] = await Promise.all([
         supabase.from("emotion_checkins").select("date,mood,created_at").eq("user_id", user.id).gte("created_at", since).order("created_at"),
         supabase.from("mood_responses").select("mood,created_at").eq("user_id", user.id).gte("created_at", since).order("created_at"),
-        supabase.from("budget_entries").select("kind,category,amount_cents").eq("user_id", user.id),
+        supabase.from("budget_entries").select("kind,category,amount_cents,month,created_at").eq("user_id", user.id),
         supabase.from("todo_items").select("is_done,created_at,completed_at").eq("user_id", user.id).gte("created_at", since),
         supabase.from("private_journal_entries").select("created_at").eq("user_id", user.id).gte("created_at", since),
         supabase.from("agenda_events").select("created_at,starts_at").eq("user_id", user.id).gte("starts_at", since),
@@ -49,7 +50,7 @@ export default function Statistiques() {
       setData({
         emotions: (e.data as any) || [],
         moods: (m.data as any) || [],
-        budget: (b.data as any) || [],
+        budget: entriesForMonth((b.data as any) || []),
         todos: (t.data as any) || [],
         journal: (j.data as any) || [],
         agenda: (a.data as any) || [],

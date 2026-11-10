@@ -38,6 +38,7 @@ const Situation = () => {
   const [trusted, setTrusted] = useState<Trusted[]>([]);
   const [note, setNote] = useState({ parent_note: "", helped: "", not_helped: "" });
   const [saved, setSaved] = useState(false);
+  const [observationId, setObservationId] = useState<string | null>(null);
   const [photos, setPhotos] = useState<Record<string, string>>({});
 
   useEffect(() => {
@@ -120,7 +121,7 @@ const Situation = () => {
   const [task, setTask] = useState("");
   const [taskDone, setTaskDone] = useState<string | null>(null);
 
-  const save = async (): Promise<string | null> => {
+  const save = async (quiet = false): Promise<string | null> => {
     if (!childId || !tpl) return null;
     const { data: auth } = await supabase.auth.getUser();
     const uid = auth.user?.id;
@@ -138,19 +139,29 @@ const Situation = () => {
     } else {
       await supabase.from("child_situations").update({ last_observed_at: new Date().toISOString() }).eq("id", sid);
     }
+    const parentNote = [who === "parent" && words ? words : "", note.parent_note].filter(Boolean).join(" — ") || null;
+    if (observationId) {
+      // Observation déjà créée par un bouton de suivi : on complète les notes du parent.
+      const { error } = await supabase.from("child_situation_observations")
+        .update({ parent_note: parentNote, helped: note.helped || null, not_helped: note.not_helped || null })
+        .eq("id", observationId);
+      if (error) { toast({ description: "Enregistrement impossible.", variant: "destructive" }); return null; }
+      if (!quiet) { setSaved(true); toast({ description: "C'est gardé en mémoire." }); }
+      return sid;
+    }
     const emotions = answers.filter((a) => a.answer_key.startsWith("emotions:")).map((a) => a.answer_key);
-    const { error } = await supabase.from("child_situation_observations").insert({
+    const { data, error } = await supabase.from("child_situation_observations").insert({
       user_id: uid, situation_id: sid, profile_id: childId,
       answers: answers as never, emotions,
       child_words: who === "enfant" ? words || null : null,
-      parent_note: [who === "parent" && words ? words : "", note.parent_note].filter(Boolean).join(" — ") || null,
+      parent_note: parentNote,
       helped: note.helped || null, not_helped: note.not_helped || null, felt_unsafe: unsafe,
       action_taken: actionKey ?? null,
       comm_snapshot: (child ? { picto_mode: child.picto_mode, communication_modes: child.communication_modes, question_prefs: child.question_prefs, answer_prefs: child.answer_prefs, max_choices: pres.maxChoices, band: pres.band } : null) as never,
-    });
-    if (error) { toast({ description: "Enregistrement impossible.", variant: "destructive" }); return null; }
-    setSaved(true);
-    toast({ description: "C'est gardé en mémoire." });
+    }).select("id").single();
+    if (error || !data) { toast({ description: "Enregistrement impossible.", variant: "destructive" }); return null; }
+    setObservationId(data.id);
+    if (!quiet) { setSaved(true); toast({ description: "C'est gardé en mémoire." }); }
     return sid;
   };
 
@@ -159,7 +170,8 @@ const Situation = () => {
     const { data: auth } = await supabase.auth.getUser();
     const uid = auth.user?.id;
     if (!uid || !childId) return;
-    const sid = saved ? situationId : await save();
+    // Enregistre la situation sans fermer les notes du parent : elles restent modifiables.
+    const sid = saved || observationId ? situationId : await save(true);
     if (!sid) return;
     const title = task.trim() || `En parler : ${tpl?.title ?? "situation"} (${child?.first_name ?? ""})`;
     if (kind === "preparer") {
@@ -252,7 +264,7 @@ const Situation = () => {
               ))}
             </div>
           </div>
-          <Button className="w-full" onClick={() => { setQi(0); setAnswers([]); setStep("q"); }}>Commencer</Button>
+          <Button className="w-full" onClick={() => { setQi(0); setAnswers([]); setObservationId(null); setSaved(false); setStep("q"); }}>Commencer</Button>
         </div>
       )}
 
