@@ -37,6 +37,13 @@
 
     --sage: 122 18% 79%;
 
+    /* Couleurs des notes (Organisation) */
+    --note-ivoire: 36 45% 96%;
+    --note-rose: 345 70% 95%;
+    --note-bleu: 215 55% 93%;
+    --note-vert: 100 30% 91%;
+    --note-jaune: 48 85% 91%;
+
     --destructive: 4 71% 56%;
     --destructive-foreground: 0 0% 100%;
 
@@ -92,6 +99,12 @@
     --night-foreground: 30 24% 92%;
 
     --sage: 122 14% 58%;
+
+    --note-ivoire: 226 26% 18%;
+    --note-rose: 345 25% 22%;
+    --note-bleu: 215 30% 22%;
+    --note-vert: 110 16% 20%;
+    --note-jaune: 45 25% 21%;
 
     --destructive: 4 60% 58%;
     --destructive-foreground: 30 24% 96%;

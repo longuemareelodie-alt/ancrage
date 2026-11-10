@@ -45,6 +45,13 @@ export default {
           foreground: "hsl(var(--accent-foreground))",
         },
         sage: "hsl(var(--sage))",
+        note: {
+          ivoire: "hsl(var(--note-ivoire))",
+          rose: "hsl(var(--note-rose))",
+          bleu: "hsl(var(--note-bleu))",
+          vert: "hsl(var(--note-vert))",
+          jaune: "hsl(var(--note-jaune))",
+        },
         night: {
           DEFAULT: "hsl(var(--night))",
           foreground: "hsl(var(--night-foreground))",
