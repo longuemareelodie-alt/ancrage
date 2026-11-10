@@ -96,6 +96,45 @@ export const ScreenToday = () => (
   </>
 );
 
+/* 01 bis — Aujourd'hui en mode KO : l'écran se simplifie */
+export const ScreenTodayKO = () => (
+  <>
+    <Title sub="Mardi · prends soin de toi">Aujourd'hui</Title>
+    <div className="grid grid-cols-4 gap-1">
+      {[
+        ["🟢", "GO"],
+        ["🟡", "Moyen"],
+        ["🟠", "Saturé"],
+        ["🔴", "KO"],
+      ].map(([e, l]) => (
+        <span
+          key={l}
+          className={`rounded-xl py-1.5 text-center text-[8.5px] font-medium ${
+            l === "KO" ? "bg-night text-night-foreground" : "bg-card text-night"
+          }`}
+        >
+          <span className="block text-[11px]">{e}</span>
+          {l}
+        </span>
+      ))}
+    </div>
+    <div className="mt-3 rounded-2xl bg-primary/15 p-3.5 text-center">
+      <Mascot domain="moi" size={40} />
+      <p className="mt-2 font-serif text-[15px] italic leading-snug text-night">On fait simple aujourd'hui. ❤️</p>
+      <p className="mt-1 text-[9.5px] text-muted-foreground">Une seule chose, 5 minutes maximum.</p>
+    </div>
+    <div className="mt-2.5 rounded-2xl border border-primary/30 bg-card p-3">
+      <p className="text-[8.5px] font-semibold uppercase tracking-[0.16em] text-primary-dark">Ta prochaine action</p>
+      <p className="mt-1 text-[12px] font-semibold text-night">Boire un grand verre d'eau</p>
+      <p className="text-[9px] text-muted-foreground">≈ 2 min · Moi</p>
+    </div>
+    <div className="mt-2.5 flex gap-1.5">
+      <span className="flex-1 rounded-full bg-night py-2 text-center text-[9.5px] font-medium text-night-foreground">M'apaiser</span>
+      <span className="flex-1 rounded-full border border-border py-2 text-center text-[9.5px] text-night">Vider ma tête</span>
+    </div>
+  </>
+);
+
 /* 02 — Enfants */
 export const ScreenChild = () => (
   <>

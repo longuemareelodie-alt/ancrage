@@ -14,7 +14,7 @@ import { track, useSectionView } from "@/lib/landingAnalytics";
 import famille from "@/assets/famille/IMG_2117.jpg.asset.json";
 import fondatriceVideo from "@/assets/video/eclosia-fondatrice-son5.mp4.asset.json";
 import { priceLabel, useFoundingOffer } from "../v4/kit";
-import { Phone, ScreenBusiness, ScreenChild, ScreenDump, ScreenToday } from "./Phone";
+import { Phone, ScreenBusiness, ScreenChild, ScreenDump, ScreenToday, ScreenTodayKO } from "./Phone";
 
 type CTA = { onCTA: (promoCode?: string) => void; loading: boolean };
 
@@ -41,7 +41,13 @@ export const PillCTA = ({
         <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
       </span>
       <span className="rounded-full bg-night px-4 py-2.5 text-[14px] font-semibold text-night-foreground">
-        {price ?? "Accès"} <span className="text-[12px] font-normal opacity-75">/ à vie</span>
+        {price ? (
+          <>
+            {price} <span className="text-[12px] font-normal opacity-75">/ à vie</span>
+          </>
+        ) : (
+          "Accès à vie"
+        )}
       </span>
     </button>
   );
@@ -49,9 +55,9 @@ export const PillCTA = ({
 
 /* ---------- Hero ---------- */
 export const Hero = (p: CTA) => (
-  <section className="relative overflow-hidden px-5 pt-28 md:pt-36">
-    <div className="mx-auto max-w-[1100px] text-center">
-      <h1 className="font-wide text-[clamp(2.1rem,8vw,5.4rem)] font-bold uppercase leading-[0.98] tracking-[-0.01em]">
+  <section className="relative px-5 pt-28 md:pt-36">
+    <div className="mx-auto max-w-[1200px] text-center">
+      <h1 className="font-wide text-[clamp(1.9rem,7.6vw,4.1rem)] font-bold uppercase leading-[0.98] tracking-[-0.01em]">
         <span className="block text-night-foreground">Ta tête est pleine.</span>
         <span className="block text-primary">Éclosia fait le tri.</span>
       </h1>
@@ -65,7 +71,7 @@ export const Hero = (p: CTA) => (
       </div>
     </div>
 
-    <div className="relative mx-auto mt-12 flex max-w-[900px] items-end justify-center md:mt-16">
+    <div className="relative mx-auto mt-12 flex h-[430px] max-w-[900px] items-start justify-center overflow-hidden pt-4 [mask-image:linear-gradient(to_bottom,black_75%,transparent)] sm:h-[480px] md:mt-16 md:h-[520px]">
       <Phone className="-mr-16 hidden translate-y-10 -rotate-[8deg] opacity-90 sm:block md:-mr-8">
         <ScreenChild />
       </Phone>
@@ -87,7 +93,7 @@ const FEATURES = [
     title: "Une seule chose à faire.",
     text: "Tu dis comment va ta tête. Éclosia sort une seule prochaine action, à ta mesure. Le reste attend sans te peser.",
     chips: ["GO · Moyen · Saturé · KO", "Reporter", "M'apaiser", "Dictée"],
-    screen: <ScreenToday />,
+    screen: <ScreenTodayKO />,
   },
   {
     n: "02",
@@ -266,7 +272,7 @@ export const Prix = ({ onCTA, loading }: CTA) => {
             {tier.emoji} {tier.label}
           </p>
           <p className="mt-3 font-wide text-[clamp(2.6rem,9vw,3.6rem)] font-bold leading-none text-night">
-            {promoOk ? "4,50\u00A0€" : price ?? "—"}
+            {promoOk ? "4,50\u00A0€" : price ?? "Accès à vie"}
           </p>
           <p className="mt-1.5 text-[14px] text-muted-foreground">Un seul paiement. Accès à vie.</p>
 
@@ -359,9 +365,9 @@ export const Questions = () => (
           <AccordionItem key={i.q} value={i.q} className="border-night-foreground/15">
             <AccordionTrigger
               onClick={() => track("faq_open", { q: i.q })}
-              className="gap-3 py-4 text-left text-[16px] font-medium text-night-foreground hover:no-underline [&>svg]:shrink-0 [&>svg]:text-night-foreground/60"
+              className="faq-trigger gap-3 py-4 font-sans text-[16px] font-medium text-night-foreground hover:no-underline [&>svg]:shrink-0 [&>svg]:text-night-foreground/60"
             >
-              {i.q}
+              <span className="block flex-1">{i.q}</span>
             </AccordionTrigger>
             <AccordionContent className="pb-4 text-[15px] leading-relaxed text-night-foreground/70">
               {i.a ?? i.text}
