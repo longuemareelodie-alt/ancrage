@@ -58,6 +58,7 @@ import Historique from "./pages/Historique";
 import PostFlow from "./pages/PostFlow";
 import Paywall from "./pages/Paywall";
 import Comparison from "./pages/Comparison";
+import AppliOrganisationFamiliale from "./pages/AppliOrganisationFamiliale";
 import Unsubscribe from "./pages/Unsubscribe";
 import Emergency from "./pages/Emergency";
 import Sante from "./pages/Sante";
@@ -196,6 +197,7 @@ const AnimatedRoutes = () => {
         <Route path="/pack-sante-familial" element={<PageTransition><PackSanteFamilial /></PageTransition>} />
         <Route path="/charge-mentale" element={<PageTransition><ChargeMentale /></PageTransition>} />
         <Route path="/comparaison" element={<PageTransition><Comparison /></PageTransition>} />
+        <Route path="/appli-organisation-familiale" element={<PageTransition><AppliOrganisationFamiliale /></PageTransition>} />
         <Route path="/auth" element={<PageTransition><Auth /></PageTransition>} />
         <Route path="/connexion" element={<PageTransition><Auth /></PageTransition>} />
         <Route path="/invitation" element={<PageTransition><Invitation /></PageTransition>} />

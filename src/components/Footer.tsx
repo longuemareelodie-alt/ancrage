@@ -7,6 +7,9 @@ const Footer = () => {
     <footer className="border-t border-border px-6 py-8">
       <div className="mx-auto max-w-lg flex flex-col items-center gap-4">
         <div className="flex flex-wrap justify-center gap-4 text-xs text-muted-foreground">
+          <Link to="/appli-organisation-familiale" className="hover:text-foreground transition-colors">
+            Appli d'organisation familiale
+          </Link>
           <Link to="/cgv" className="hover:text-foreground transition-colors">
             {t("footer.terms")}
           </Link>
