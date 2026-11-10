@@ -13,4 +13,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://www.digitalmamanlibre.com/sitemap.xml
+Sitemap: https://digitalmamanlibre.com/sitemap.xml

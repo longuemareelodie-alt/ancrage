@@ -58,6 +58,9 @@ export const Hero = (p: CTA) => (
   <section className="relative px-5 pt-28 md:pt-36">
     <div className="mx-auto max-w-[1200px] text-center">
       <h1 className="font-wide text-[clamp(1.9rem,7.6vw,4.1rem)] font-bold uppercase leading-[0.98] tracking-[-0.01em]">
+        <span className="mb-4 block font-sans text-[12px] leading-normal font-semibold tracking-[0.2em] text-night-foreground/70 md:text-[13px]">
+          Éclosia, l'appli pour mamans
+        </span>
         <span className="block text-night-foreground">Ta tête est pleine.</span>
         <span className="block text-primary">Éclosia fait le tri.</span>
       </h1>
