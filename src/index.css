@@ -136,6 +136,23 @@
 }
 
 @layer utilities {
+  /* Page de vente : titres larges en capitales (ambiance éditoriale forte). */
+  .font-wide {
+    font-family: "Archivo", "Inter", system-ui, sans-serif;
+    font-stretch: 125%;
+    font-variation-settings: "wdth" 125;
+  }
+  /* Fond bleu nuit Éclosia avec halo rose poudré. */
+  .bg-landing {
+    background:
+      radial-gradient(70% 45% at 50% 0%, hsl(var(--primary) / 0.22), transparent 70%),
+      radial-gradient(50% 40% at 100% 60%, hsl(var(--primary-dark) / 0.12), transparent 70%),
+      hsl(var(--night));
+  }
+  .shadow-phone {
+    box-shadow: 0 40px 80px -30px hsl(var(--night) / 0.9), 0 0 0 1px hsl(var(--night-foreground) / 0.12);
+  }
+
   .shadow-soft {
     box-shadow: 0 8px 30px -12px hsl(226 32% 16% / 0.10), 0 2px 8px -2px hsl(226 32% 16% / 0.05);
   }
