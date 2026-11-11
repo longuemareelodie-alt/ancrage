@@ -67,10 +67,11 @@ const BottomNav = () => {
   // Aujourd'hui · espaces actifs (3 max) · Plus — le « + » reste au centre.
   const tabs = navSpaces(prefs).map((id) => TAB[id]);
   const all = [{ to: "/aujourdhui", label: "Aujourd'hui", icon: Home }, ...tabs, { to: "/plus", label: "Plus", icon: MoreHorizontal }];
-  const half = Math.ceil(all.length / 2);
+  // Deux groupes de même largeur de part et d'autre du « + » : le bouton
+  // reste exactement au centre, quel que soit le nombre d'onglets.
+  const half = Math.floor(all.length / 2);
   const left = all.slice(0, half);
   const right = all.slice(half);
-  const cols = ["", "", "", "grid-cols-3", "grid-cols-4", "grid-cols-5", "grid-cols-6"][all.length + 1];
 
   // Le menu de création est contextuel : il propose exactement ce que l'on
   // vient faire depuis l'onglet où l'on se trouve.
@@ -145,7 +146,7 @@ const BottomNav = () => {
     }`;
 
   const renderTab = (item: { to: string; label: string; icon: LucideIcon }) => (
-    <li key={item.to} className="min-w-0">
+    <div key={item.to} className="min-w-0 flex-1">
       <NavLink to={item.to} className={tabClass}>
         {({ isActive }) => (
           <>
@@ -157,7 +158,7 @@ const BottomNav = () => {
           </>
         )}
       </NavLink>
-    </li>
+    </div>
   );
 
   const renderAction = (a: Action, key: string) => (
@@ -184,22 +185,25 @@ const BottomNav = () => {
         className="fixed bottom-0 left-0 right-0 z-40 px-2 pb-[max(env(safe-area-inset-bottom),0.625rem)]"
         aria-label="Navigation principale"
       >
-        <ul className={`mx-auto grid h-[60px] max-w-lg ${cols} items-stretch rounded-[22px] border border-border/60 bg-card/95 shadow-[0_10px_30px_-14px_hsl(var(--foreground)/0.28)] backdrop-blur-xl`}>
-          {left.map(renderTab)}
+        <div className="relative mx-auto flex h-[60px] max-w-lg items-stretch rounded-[22px] border border-border/60 bg-card/95 shadow-[0_10px_30px_-14px_hsl(var(--foreground)/0.28)] backdrop-blur-xl">
+          <div className="flex min-w-0 flex-1 items-stretch">{left.map(renderTab)}</div>
 
-          <li className="flex min-w-0 items-center justify-center">
+          {/* Réserve la place du « + » pour que les onglets restent équilibrés */}
+          <div aria-hidden className="w-14 shrink-0" />
+
+          <div className="flex min-w-0 flex-1 items-stretch">{right.map(renderTab)}</div>
+
+          <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
             <button
               type="button"
               onClick={() => setOpen(true)}
               aria-label="Créer"
-              className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-[0_6px_14px_-8px_hsl(var(--primary-dark)/0.6)] transition-transform active:scale-95"
+              className="pointer-events-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-[0_8px_18px_-6px_hsl(var(--primary-dark)/0.65)] ring-4 ring-card transition-transform active:scale-95"
             >
               <Plus className="h-5 w-5" strokeWidth={2.2} />
             </button>
-          </li>
-
-          {right.map(renderTab)}
-        </ul>
+          </div>
+        </div>
       </nav>
 
       <Sheet open={open} onOpenChange={setOpen}>
