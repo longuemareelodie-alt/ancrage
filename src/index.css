@@ -34,6 +34,7 @@
     /* Bleu nuit signature */
     --night: 224 47% 22%;            /* #1E2B52 */
     --night-foreground: 30 27% 96%;
+    --light-surface-foreground: 224 47% 22%;
 
     --sage: 122 18% 79%;
 
@@ -194,6 +195,12 @@
   .dark .text-night\/80 { color: hsl(var(--foreground) / 0.8); }
   .dark .text-night\/70 { color: hsl(var(--foreground) / 0.7); }
   .dark .text-night\/60 { color: hsl(var(--foreground) / 0.6); }
+
+  /* Les surfaces claires restent claires la nuit : leur texte doit rester foncé. */
+  .bg-night-foreground.text-night,
+  .bg-night-foreground .text-night {
+    color: hsl(var(--light-surface-foreground));
+  }
 
   /* Surlignage manuscrit (doré doux sous un mot) */
   .underline-handwritten {
