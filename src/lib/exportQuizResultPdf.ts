@@ -41,7 +41,7 @@ export function exportQuizResultPdf(data: QuizResultPdfData) {
 
   // Intro
   if (data.firstName) {
-    doc.setFont("times", "italic");
+    doc.setFont("helvetica", "italic");
     doc.setFontSize(13);
     doc.setTextColor(...MUTED);
     doc.text(`${data.firstName}, voici ce que tes réponses racontent.`, M, y);
@@ -49,7 +49,7 @@ export function exportQuizResultPdf(data: QuizResultPdfData) {
   }
 
   // Headline
-  doc.setFont("times", "bold");
+  doc.setFont("helvetica", "bold");
   doc.setFontSize(28);
   doc.setTextColor(...TEXT);
   const headlineLines = doc.splitTextToSize(data.headline, CW);
@@ -65,7 +65,7 @@ export function exportQuizResultPdf(data: QuizResultPdfData) {
   y += 22;
 
   // Message
-  doc.setFont("times", "normal");
+  doc.setFont("helvetica", "normal");
   doc.setFontSize(12);
   doc.setTextColor(...TEXT);
   const msgLines = doc.splitTextToSize(data.message, CW);
@@ -82,7 +82,7 @@ export function exportQuizResultPdf(data: QuizResultPdfData) {
   doc.text("TA FEUILLE DE ROUTE", M, y, { charSpace: 2 });
   y += 20;
 
-  doc.setFont("times", "bold");
+  doc.setFont("helvetica", "bold");
   doc.setFontSize(18);
   doc.setTextColor(...TEXT);
   doc.text("Les espaces à activer en priorité", M, y);
@@ -96,12 +96,12 @@ export function exportQuizResultPdf(data: QuizResultPdfData) {
       doc.rect(0, 0, W, H, "F");
       y = M;
     }
-    doc.setFont("times", "bold");
+    doc.setFont("helvetica", "bold");
     doc.setFontSize(13);
     doc.setTextColor(...PRIMARY);
     doc.text(`✦  ${m.title}`, M, y);
     y += 18;
-    doc.setFont("times", "normal");
+    doc.setFont("helvetica", "normal");
     doc.setFontSize(11);
     doc.setTextColor(...TEXT);
     const dLines = doc.splitTextToSize(m.desc, CW - 20);
@@ -118,12 +118,12 @@ export function exportQuizResultPdf(data: QuizResultPdfData) {
   doc.setLineWidth(0.5);
   doc.line(M, footerY - 20, W - M, footerY - 20);
 
-  doc.setFont("times", "italic");
+  doc.setFont("helvetica", "italic");
   doc.setFontSize(11);
   doc.setTextColor(...MUTED);
   doc.text("Ta prochaine étape — Eclosia, accès à vie", M, footerY);
 
-  doc.setFont("times", "bold");
+  doc.setFont("helvetica", "bold");
   doc.setFontSize(16);
   doc.setTextColor(...TEXT);
   doc.text(data.priceLabel, M, footerY + 22);

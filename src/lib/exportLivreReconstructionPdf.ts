@@ -59,17 +59,17 @@ export function exportLivreReconstructionPdf(chapters: Chapter[], meta: LivreMet
   doc.rect(0, H - 8, W, 8, "F");
 
   doc.setTextColor(...PRIMARY);
-  doc.setFont("times", "italic");
+  doc.setFont("helvetica", "italic");
   doc.setFontSize(14);
   doc.text("Un récit de toi, pour toi", W / 2, H / 2 - 90, { align: "center" });
 
   doc.setTextColor(...TEXT);
-  doc.setFont("times", "bold");
+  doc.setFont("helvetica", "bold");
   doc.setFontSize(34);
   doc.text("Mon Livre de", W / 2, H / 2 - 30, { align: "center" });
   doc.text("Reconstruction", W / 2, H / 2 + 10, { align: "center" });
 
-  doc.setFont("times", "italic");
+  doc.setFont("helvetica", "italic");
   doc.setFontSize(28);
   doc.setTextColor(...ACCENT);
   doc.text("✦", W / 2, H / 2 + 50, { align: "center" });
@@ -106,7 +106,7 @@ export function exportLivreReconstructionPdf(chapters: Chapter[], meta: LivreMet
 
   const writeParagraph = (text: string, size = 11, color = TEXT, italic = false) => {
     if (!text) return;
-    doc.setFont("times", italic ? "italic" : "normal");
+    doc.setFont("helvetica", italic ? "italic" : "normal");
     doc.setFontSize(size);
     doc.setTextColor(...color);
     const lines = doc.splitTextToSize(text, CONTENT_W);
@@ -119,7 +119,7 @@ export function exportLivreReconstructionPdf(chapters: Chapter[], meta: LivreMet
 
   const writeHeading = (text: string, size: number, color: [number, number, number], italic = false) => {
     ensure(size + 12);
-    doc.setFont("times", italic ? "italic" : "bold");
+    doc.setFont("helvetica", italic ? "italic" : "bold");
     doc.setFontSize(size);
     doc.setTextColor(...color);
     doc.text(text, M, y);
@@ -136,13 +136,13 @@ export function exportLivreReconstructionPdf(chapters: Chapter[], meta: LivreMet
     doc.line(M, y, M + 60, y);
     y += 16;
 
-    doc.setFont("times", "italic");
+    doc.setFont("helvetica", "italic");
     doc.setFontSize(11);
     doc.setTextColor(...MUTED);
     doc.text(`Chapitre ${i + 1}`, M, y);
     y += 22;
 
-    doc.setFont("times", "bold");
+    doc.setFont("helvetica", "bold");
     doc.setFontSize(26);
     doc.setTextColor(...PRIMARY);
     doc.text(`${MONTHS[ch.month - 1]} ${ch.year}`, M, y);

@@ -15,7 +15,9 @@ export default {
     extend: {
       fontFamily: {
         sans: ["Inter", "system-ui", "sans-serif"],
-        serif: ["Playfair Display", "Georgia", "serif"],
+        // Règle Éclosia : jamais de police à empattements. `font-serif` reste
+        // utilisable mais rend la police des titres (sans empattements).
+        serif: ["-apple-system", "BlinkMacSystemFont", "SF Pro Display", "Inter", "system-ui", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",

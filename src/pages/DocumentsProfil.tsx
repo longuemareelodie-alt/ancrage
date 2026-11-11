@@ -141,7 +141,7 @@ export default function DocumentsProfil() {
       </div>
 
       <motion.header initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
-        <h1 className="text-3xl font-semibold tracking-tight" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+        <h1 className="text-3xl font-semibold tracking-tight">
           Documents & Ordonnances
         </h1>
         <p className="text-muted-foreground mt-1">
