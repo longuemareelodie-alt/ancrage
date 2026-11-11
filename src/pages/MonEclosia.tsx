@@ -39,7 +39,7 @@ const MonEclosia = () => {
   return (
     <HubShell
       title="Personnaliser mon Éclosia"
-      subtitle="Choisis ce que tu veux voir au quotidien. Tu peux modifier tes choix quand tu veux."
+      subtitle="Choisis les espaces qu'Éclosia te propose au quotidien. Rien ne disparaît : tout reste dans le Menu."
     >
       <p className="pb-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
         Mes espaces actifs

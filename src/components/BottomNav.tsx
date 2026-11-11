@@ -1,11 +1,10 @@
 import { useState } from "react";
-import { NavLink, useLocation, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Home,
   Heart,
   Users,
-  Sprout,
-  MoreHorizontal,
+  Menu as MenuIcon,
   Plus,
   CalendarPlus,
   FileUp,
@@ -16,188 +15,126 @@ import {
   Star,
   Moon,
   Target,
-  Syringe,
   Pill,
   Grid3x3,
   Brain,
-  Mic,
   Sparkles,
-  Wallet,
+  Sprout,
   LucideIcon,
-
 } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
-import { useActiveSpaces, navSpaces, type SpaceId } from "@/lib/spaces";
-import { Briefcase, HeartPulse, CalendarDays } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { useBottomNavVisible } from "@/lib/bottomNavVisibility";
 
 type Action = { to: string; label: string; icon: LucideIcon };
+type Tab = { to: string; label: string; icon: LucideIcon; match: string[] };
 
 /**
- * Navigation principale : 5 espaces + un bouton central de création.
- * Le « + » porte toute la création de l'app — c'est pour cela qu'aucun hub
- * n'a besoin de son propre bouton « ajouter ».
+ * Navigation principale, identique pour toutes :
+ * Aujourd'hui · Famille · [+] · Moi · Menu.
+ * Santé vit dans Famille, le reste dans Menu. Le « + » ne propose que des
+ * actions rapides — jamais une deuxième page de navigation.
  */
+const TABS_LEFT: Tab[] = [
+  { to: "/aujourdhui", label: "Aujourd'hui", icon: Home, match: ["/aujourdhui", "/pulse"] },
+  { to: "/famille", label: "Famille", icon: Users, match: ["/famille", "/sante"] },
+];
+const TABS_RIGHT: Tab[] = [
+  { to: "/moi", label: "Moi", icon: Heart, match: ["/moi", "/lies-autrement/journal", "/portrait-transformation", "/livre-reconstruction", "/frise-evolution"] },
+  { to: "/plus", label: "Menu", icon: MenuIcon, match: ["/plus", "/recherche", "/mon-eclosia", "/mes-espaces", "/parametres", "/profil"] },
+];
+
+/** Actions rapides par défaut : ce qui se fait en moins d'une minute. */
+const QUICK: Action[] = [
+  { to: "/moi/emotions", label: "Noter une émotion", icon: Heart },
+  { to: "/lies-autrement/journal", label: "Écrire dans mon journal", icon: PenLine },
+  { to: "/moi/objectifs", label: "Ajouter une priorité ou un objectif", icon: Target },
+  { to: "/moi/apaisement", label: "M'apaiser maintenant", icon: Moon },
+  { to: "/autonomie/studio", label: "Créer un support", icon: Sprout },
+  { to: "/pulse/vider-ma-tete", label: "Vider ma tête", icon: Brain },
+];
+
+const MENUS: { match: string[]; title: string; actions: Action[] }[] = [
+  {
+    match: ["/famille", "/sante"],
+    title: "Pour ta famille",
+    actions: [
+      { to: "/famille?nouveau=1", label: "Ajouter un membre", icon: Users },
+      { to: "/famille/coffre", label: "Scanner un document", icon: FileUp },
+      { to: "/sante/rendez-vous", label: "Ajouter un rendez-vous médical", icon: CalendarPlus },
+      { to: "/sante/medicaments", label: "Ajouter un traitement", icon: Pill },
+      { to: "/autonomie/studio", label: "Créer un support", icon: Sprout },
+    ],
+  },
+  {
+    match: ["/autonomie"],
+    title: "Créer un support",
+    actions: [
+      { to: "/autonomie/assistant", label: "Créer avec l'Assistant Éclosia", icon: Sparkles },
+      { to: "/autonomie/studio", label: "Nouvelle routine", icon: Repeat },
+      { to: "/autonomie/studio", label: "Nouvelle histoire sociale", icon: BookHeart },
+      { to: "/autonomie/studio", label: "Nouvelle check-list", icon: ListChecks },
+      { to: "/autonomie/studio", label: "Nouveau tableau de récompenses", icon: Star },
+      { to: "/autonomie/studio", label: "Nouvelle carte visuelle", icon: Grid3x3 },
+    ],
+  },
+];
+
 const BottomNav = () => {
-  const { user, loading, isPaid } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
-  const prefs = useActiveSpaces();
+  const visible = useBottomNavVisible();
 
-  const hiddenRoutes = [
-    "/", "/auth", "/connexion", "/reset-password", "/set-password",
-    "/cgv", "/confidentialite", "/mentions-legales",
-    "/unsubscribe", "/paywall", "/comparaison", "/aller-plus-loin",
-    "/payment-success", "/post-flow", "/devenir-ambassadrice",
-  ];
+  if (!visible) return null;
 
-  if (loading || !user || !isPaid) return null;
-  if (hiddenRoutes.includes(location.pathname)) return null;
-  if (location.pathname.startsWith("/fiche-urgence/")) return null;
-
-  const TAB: Record<SpaceId, { to: string; label: string; icon: LucideIcon }> = {
-    moi: { to: "/moi", label: "Moi", icon: Heart },
-    famille: { to: "/famille", label: "Famille", icon: Users },
-    sante: { to: "/sante", label: "Santé", icon: HeartPulse },
-    organisation: { to: "/organisation", label: "Agenda", icon: CalendarDays },
-    autonomie: { to: "/autonomie", label: "Autonomie", icon: Sprout },
-    business: { to: "/business", label: "Business", icon: Briefcase },
-  };
-  // Aujourd'hui · espaces actifs (3 max) · Plus — le « + » reste au centre.
-  const tabs = navSpaces(prefs).map((id) => TAB[id]);
-  const all = [{ to: "/aujourdhui", label: "Aujourd'hui", icon: Home }, ...tabs, { to: "/plus", label: "Plus", icon: MoreHorizontal }];
-  // Deux groupes de même largeur de part et d'autre du « + » : le bouton
-  // reste exactement au centre, quel que soit le nombre d'onglets.
-  const half = Math.floor(all.length / 2);
-  const left = all.slice(0, half);
-  const right = all.slice(half);
-
-  // Le menu de création est contextuel : il propose exactement ce que l'on
-  // vient faire depuis l'onglet où l'on se trouve.
   const path = location.pathname;
+  const isActive = (t: Tab) => t.match.some((m) => path === m || path.startsWith(m + "/"));
+  const menu =
+    MENUS.find((m) => m.match.some((p) => path === p || path.startsWith(p + "/"))) ??
+    { title: "Pour toi", actions: QUICK };
 
-  const MENUS: { match: string; title: string; actions: Action[] }[] = [
-    {
-      match: "/moi",
-      title: "Pour toi",
-      actions: [
-        { to: "/moi/emotions", label: "Noter une émotion", icon: Heart },
-        { to: "/lies-autrement/journal", label: "Écrire dans mon journal", icon: PenLine },
-        { to: "/moi/objectifs", label: "Ajouter un objectif", icon: Target },
-        { to: "/moi/apaisement", label: "M'apaiser maintenant", icon: Moon },
-      ],
-    },
-    {
-      match: "/famille",
-      title: "Pour ta famille",
-      actions: [
-        { to: "/famille", label: "Ajouter un enfant", icon: Users },
-        { to: "/famille/coffre", label: "Scanner un document", icon: FileUp },
-        { to: "/organisation", label: "Ajouter un rendez-vous", icon: CalendarPlus },
-        { to: "/sante/medicaments", label: "Ajouter un traitement", icon: Pill },
-      ],
-    },
-    {
-      match: "/autonomie",
-      title: "Créer un support",
-      actions: [
-        { to: "/autonomie/assistant", label: "Créer avec l'Assistant Éclosia", icon: Sparkles },
-        { to: "/autonomie/studio", label: "Nouvelle routine", icon: Repeat },
-        { to: "/autonomie/studio", label: "Nouvelle histoire sociale", icon: BookHeart },
-        { to: "/autonomie/studio", label: "Nouvelle check-list", icon: ListChecks },
-        { to: "/autonomie/studio", label: "Nouveau tableau de récompenses", icon: Star },
-        { to: "/autonomie/studio", label: "Nouvelle carte visuelle", icon: Grid3x3 },
-      ],
-    },
-    {
-      match: "/plus",
-      title: "Tous les raccourcis",
-      actions: [
-        { to: "/pulse/vider-ma-tete", label: "Vider ma tête", icon: Brain },
-        { to: "/recherche", label: "Rechercher dans Éclosia", icon: Grid3x3 },
-        { to: "/moi/emotions", label: "Noter une émotion", icon: Heart },
-        { to: "/lies-autrement/journal", label: "Écrire dans mon journal", icon: PenLine },
-        { to: "/organisation", label: "Ajouter un rendez-vous", icon: CalendarPlus },
-        { to: "/budget", label: "Ajouter une dépense", icon: Wallet },
-        { to: "/famille/coffre", label: "Déposer un document", icon: FileUp },
-      ],
-    },
-  ];
-
-  const fallback = {
-    title: "Que souhaites-tu faire ?",
-    actions: [
-      { to: "/pulse/vider-ma-tete", label: "Vider ma tête", icon: Brain },
-      { to: "/plus/organisation", label: "Ajouter une tâche", icon: ListChecks },
-      { to: "/organisation", label: "Ajouter un rendez-vous", icon: CalendarPlus },
-      { to: "/moi/emotions", label: "Noter une émotion", icon: Heart },
-      { to: "/famille/coffre", label: "Déposer un document", icon: FileUp },
-      { to: "/pulse/vider-ma-tete", label: "Parler (bientôt)", icon: Mic },
-    ] as Action[],
+  const renderTab = (t: Tab) => {
+    const active = isActive(t);
+    return (
+      <div key={t.to} className="min-w-0 flex-1">
+        <Link
+          to={t.to}
+          aria-current={active ? "page" : undefined}
+          className={`flex h-full w-full flex-col items-center justify-center gap-0.5 text-[10.5px] font-medium transition-colors ${
+            active ? "text-primary-dark" : "text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          <span
+            className={`flex h-7 w-11 items-center justify-center rounded-full transition-colors ${
+              active ? "bg-secondary/70" : ""
+            }`}
+          >
+            <t.icon className="h-[18px] w-[18px]" strokeWidth={active ? 2.2 : 1.75} />
+          </span>
+          <span className="max-w-full truncate leading-none tracking-[-0.01em]">{t.label}</span>
+        </Link>
+      </div>
+    );
   };
-
-  const menu = MENUS.find((m) => path.startsWith(m.match)) ?? fallback;
-
-
-  const tabClass = ({ isActive }: { isActive: boolean }) =>
-    `flex h-full w-full flex-col items-center justify-center gap-1 text-[10px] font-medium transition-colors ${
-      isActive ? "text-primary-dark" : "text-muted-foreground hover:text-foreground"
-    }`;
-
-  const renderTab = (item: { to: string; label: string; icon: LucideIcon }) => (
-    <div key={item.to} className="min-w-0 flex-1">
-      <NavLink to={item.to} className={tabClass}>
-        {({ isActive }) => (
-          <>
-            <item.icon
-              className="h-[18px] w-[18px] transition-transform"
-              strokeWidth={isActive ? 2.2 : 1.75}
-            />
-            <span className="max-w-full truncate leading-none tracking-[-0.01em]">{item.label}</span>
-          </>
-        )}
-      </NavLink>
-    </div>
-  );
-
-  const renderAction = (a: Action, key: string) => (
-    <button
-      key={key}
-      onClick={() => {
-        setOpen(false);
-        navigate(a.to);
-      }}
-      className="flex w-full items-center gap-4 rounded-[20px] border border-border/70 bg-card px-5 py-3.5 text-left transition-all active:scale-[0.99]"
-    >
-      <span className="flex h-9 w-9 items-center justify-center rounded-2xl bg-secondary/60">
-        <a.icon className="h-[17px] w-[17px]" strokeWidth={1.75} />
-      </span>
-      <span className="text-sm font-medium text-foreground">{a.label}</span>
-    </button>
-  );
 
   return (
     <>
-      {/* Espace global : hauteur barre (60px) + safe-area réelle + marge confortable */}
-      <div aria-hidden className="h-[calc(60px+max(env(safe-area-inset-bottom),0.625rem)+2rem)] w-full shrink-0" />
+      {/* Espace réservé : hauteur barre (56px) + safe-area réelle + marge — rien ne passe dessous */}
+      <div aria-hidden className="h-[calc(56px+max(env(safe-area-inset-bottom),0.625rem)+2rem)] w-full shrink-0" />
       <nav
         className="fixed bottom-0 left-0 right-0 z-40 px-2 pb-[max(env(safe-area-inset-bottom),0.625rem)]"
         aria-label="Navigation principale"
       >
-        <div className="relative mx-auto flex h-[60px] max-w-lg items-stretch rounded-[22px] border border-border/60 bg-card/95 shadow-[0_10px_30px_-14px_hsl(var(--foreground)/0.28)] backdrop-blur-xl">
-          <div className="flex min-w-0 flex-1 items-stretch">{left.map(renderTab)}</div>
-
-          {/* Réserve la place du « + » pour que les onglets restent équilibrés */}
-          <div aria-hidden className="w-14 shrink-0" />
-
-          <div className="flex min-w-0 flex-1 items-stretch">{right.map(renderTab)}</div>
+        <div className="relative mx-auto flex h-14 max-w-lg items-stretch rounded-[22px] border border-border/60 bg-card/95 shadow-[0_10px_30px_-14px_hsl(var(--foreground)/0.28)] backdrop-blur-xl">
+          <div className="flex min-w-0 flex-1 items-stretch">{TABS_LEFT.map(renderTab)}</div>
+          <div aria-hidden className="w-16 shrink-0" />
+          <div className="flex min-w-0 flex-1 items-stretch">{TABS_RIGHT.map(renderTab)}</div>
 
           <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
             <button
               type="button"
               onClick={() => setOpen(true)}
-              aria-label="Créer"
+              aria-label="Actions rapides"
               className="pointer-events-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-[0_8px_18px_-6px_hsl(var(--primary-dark)/0.65)] ring-4 ring-card transition-transform active:scale-95"
             >
               <Plus className="h-5 w-5" strokeWidth={2.2} />
@@ -209,13 +146,25 @@ const BottomNav = () => {
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent side="bottom" className="max-h-[85vh] overflow-y-auto rounded-t-3xl">
           <SheetHeader className="mb-4">
-            <SheetTitle className="text-left font-serif text-2xl">{menu.title}</SheetTitle>
+            <SheetTitle className="text-left text-2xl">{menu.title}</SheetTitle>
           </SheetHeader>
-
           <div className="space-y-2 pb-8">
-            {menu.actions.map((a, i) => renderAction(a, "a" + i))}
+            {menu.actions.map((a, i) => (
+              <button
+                key={a.label + i}
+                onClick={() => {
+                  setOpen(false);
+                  navigate(a.to);
+                }}
+                className="flex min-h-[56px] w-full items-center gap-4 rounded-[20px] border border-border/70 bg-card px-5 py-3 text-left transition-all active:scale-[0.99]"
+              >
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-secondary/60">
+                  <a.icon className="h-[17px] w-[17px]" strokeWidth={1.75} />
+                </span>
+                <span className="text-sm font-medium text-foreground">{a.label}</span>
+              </button>
+            ))}
           </div>
-
         </SheetContent>
       </Sheet>
     </>

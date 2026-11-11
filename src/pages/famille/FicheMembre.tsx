@@ -96,7 +96,7 @@ const FicheMembre = () => {
   const load = async () => {
     const [{ data: p }, { data: all }, { data: c }, { data: s }, { count }] = await Promise.all([
       supabase.from("family_medical_profiles").select("*").eq("id", profileId!).maybeSingle(),
-      supabase.from("family_medical_profiles").select("id, first_name").order("created_at"),
+      supabase.from("family_medical_profiles").select("id, first_name, user_id").order("created_at"),
       supabase
         .from("child_contacts")
         .select("id, name, role, phone, email, is_trusted")
@@ -123,7 +123,9 @@ const FicheMembre = () => {
         preferences: prof.preferences ?? "",
       });
     }
-    setSiblings(all ?? []);
+    // Uniquement les membres du même foyer (jamais les fiches partagées par un autre compte).
+    const owner = (p as { user_id?: string } | null)?.user_id;
+    setSiblings((all ?? []).filter((x) => !owner || x.user_id === owner));
     setContacts(c ?? []);
     setSupports(s ?? []);
     setDocCount(count ?? 0);

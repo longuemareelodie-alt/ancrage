@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import {
   Search,
   Users,
@@ -9,8 +9,10 @@ import {
   CalendarDays,
   Pill,
   Phone,
+  LayoutGrid,
   LucideIcon,
 } from "lucide-react";
+import { searchTools } from "@/data/toolsIndex";
 import { supabase } from "@/integrations/supabase/client";
 
 /**
@@ -31,7 +33,8 @@ type Result = {
 const like = (q: string) => `%${q.replace(/[%_]/g, "")}%`;
 
 const RechercheGlobale = () => {
-  const [query, setQuery] = useState("");
+  const [params] = useSearchParams();
+  const [query, setQuery] = useState(() => params.get("q") ?? "");
   const [results, setResults] = useState<Result[]>([]);
   const [loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -64,6 +67,15 @@ const RechercheGlobale = () => {
       if (!alive) return;
 
       const out: Result[] = [
+        // Les outils d'abord : « où est le budget ? » doit trouver le Budget.
+        ...searchTools(q).map((t) => ({
+          id: `tool-${t.to}`,
+          label: t.label,
+          detail: t.desc,
+          group: "Outils",
+          icon: LayoutGrid,
+          to: t.to,
+        })),
         ...(kids.data ?? []).map((r) => ({
           id: `kid-${r.id}`,
           label: r.first_name,
@@ -145,7 +157,7 @@ const RechercheGlobale = () => {
       <div className="mx-auto w-full max-w-lg px-6 pb-10 pt-10">
         <h1 className="font-serif text-3xl text-foreground">Rechercher</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Un enfant, un document, un support, une note… tout est ici.
+          Un outil, un enfant, un document, une note… tout est ici.
         </p>
 
         <div className="mt-6 flex items-center gap-3 rounded-[20px] border border-border/70 bg-card px-4 py-3">

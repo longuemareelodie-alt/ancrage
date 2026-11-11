@@ -211,11 +211,11 @@ const PulseBlock = ({ onChange }: { onChange?: () => void }) => {
       </div>
 
       {/* 3 — L'équipe : six compagnons, six domaines */}
-      <div className="mt-4">
-        <p className="pb-3 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+      <div className="mt-4 border-t border-border/60 pt-3">
+        <p className="pb-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
           Ton équipe
         </p>
-        <div className="grid grid-cols-6 gap-2">
+        <div className="grid grid-cols-6 gap-1.5">
           {MASCOTS.map((m, i) => (
             <Link
               key={m.domain}
@@ -223,8 +223,8 @@ const PulseBlock = ({ onChange }: { onChange?: () => void }) => {
               aria-label={`${m.name} — ${m.label}`}
               className="flex flex-col items-center gap-1"
             >
-              <MascotAvatar mascot={m} size={44} alive index={i} className="mascot-tap" />
-              <span className="text-[10px] leading-tight text-muted-foreground">{m.label}</span>
+              <MascotAvatar mascot={m} size={34} alive index={i} className="mascot-tap" />
+              <span className="text-[9.5px] leading-tight text-muted-foreground">{m.label}</span>
             </Link>
           ))}
         </div>

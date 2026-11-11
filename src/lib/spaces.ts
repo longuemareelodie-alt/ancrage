@@ -1,6 +1,7 @@
 /**
- * Espaces Éclosia — ce qui est visible au quotidien, propre à chaque compte.
- * Masquer un espace = le retirer de la navigation. Aucune donnée n'est touchée.
+ * Espaces Éclosia — ce qu'Éclosia te propose au quotidien, propre à chaque compte.
+ * Masquer un espace = ne plus le suggérer (prochaine action, aides). La barre du
+ * bas reste la même pour toutes et tout reste dans le Menu. Aucune donnée n'est touchée.
  */
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -24,7 +25,6 @@ export const SPACES: {
 
 /** Expérience d'avant la personnalisation : rien ne change pour les comptes existants. */
 export const LEGACY_SPACES: SpaceId[] = ["moi", "famille", "autonomie", "organisation", "sante", "business"];
-export const LEGACY_NAV: SpaceId[] = ["moi", "famille", "autonomie"];
 
 const ORDER = SPACES.map((s) => s.id);
 export const sortSpaces = (ids: SpaceId[]) =>
@@ -168,12 +168,6 @@ export function useActiveSpaces() {
     [],
   );
   return { ...prefs, toggle };
-}
-
-/** Espaces affichés dans la barre du bas (3 au maximum, pour qu'elle respire). */
-export function navSpaces(p: Prefs): SpaceId[] {
-  if (!p.personalized) return LEGACY_NAV;
-  return p.spaces.slice(0, 3);
 }
 
 export const bannerDismissKey = (uid: string) => `eclosia_personalize_later_${uid}`;

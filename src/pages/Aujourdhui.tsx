@@ -8,10 +8,6 @@ import {
   Pill,
   CheckCircle2,
   Receipt,
-  Moon,
-  Sprout,
-  PenLine,
-  Heart,
   ArrowUpRight,
   ArrowDownRight,
 } from "lucide-react";
@@ -28,6 +24,7 @@ import { celebrate } from "@/lib/gentleBadges";
 import { useProgressStats } from "@/hooks/useProgressStats";
 import { toast } from "@/hooks/use-toast";
 import { getCachedAddressLabel, hasCompletedOnboarding } from "@/lib/onboarding";
+import { DayNightButton } from "@/components/DayNightToggle";
 
 /**
  * « Aujourd'hui » — le cockpit d'Éclosia.
@@ -149,7 +146,7 @@ const Aujourdhui = () => {
     <div className="min-h-screen bg-background">
       <div className="mx-auto w-full max-w-lg px-6 pt-10 pb-10">
         {/* 1 — Salutation + phrase du jour */}
-        <motion.header {...fade(0)} className="mb-8 flex items-start justify-between gap-4">
+        <motion.header {...fade(0)} className="mb-6 flex items-start justify-between gap-4">
           <div className="min-w-0">
             <h1 className="font-serif text-3xl text-foreground">
               {greeting()}
@@ -158,31 +155,35 @@ const Aujourdhui = () => {
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{phrase}</p>
             <p className="mt-1 text-xs capitalize text-muted-foreground/70">{dateLabel}</p>
           </div>
-          <Link
-            to="/parametres"
-            aria-label="Réglages"
-            className="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border/70 text-muted-foreground"
-          >
-            <Settings className="h-4 w-4" strokeWidth={1.75} />
-          </Link>
+          <div className="mt-1 flex shrink-0 items-center gap-2">
+            <DayNightButton />
+            <Link
+              to="/parametres"
+              aria-label="Réglages"
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border/70 text-muted-foreground transition hover:text-foreground"
+            >
+              <Settings className="h-4 w-4" strokeWidth={1.75} />
+            </Link>
+          </div>
         </motion.header>
 
         {/* Un petit mot inattendu, jamais plus d'une fois par jour */}
-        <div className="mb-6">
+        <div className="mb-5">
           <SoftWhisper />
         </div>
 
         <PersonalizeBanner />
 
         {/* PULSE — état du jour + une seule prochaine action */}
-        <motion.div {...fade(1)} className="mb-8">
+        <motion.div {...fade(1)} className="mb-6">
           <PulseBlock onChange={feed.reload} />
         </motion.div>
 
-        {/* 2 — Émotion : une seule pression suffit */}
+        {/* 2 — Ta journée : émotion du jour + priorités, dans une seule carte */}
         <motion.section
           {...fade(1)}
-          className="rounded-[24px] border border-border/70 bg-card px-6 py-6"
+          aria-label="Ta journée"
+          className="rounded-[24px] border border-border/70 bg-card px-5 py-5"
         >
           {done && calm !== null ? (
             <Link to="/moi/emotions" className="block">
@@ -191,7 +192,7 @@ const Aujourdhui = () => {
                   <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
                     {calmLabel(calm)}
                   </p>
-                  <p className="mt-1 font-serif text-5xl leading-none text-foreground tabular-nums">
+                  <p className="mt-1 font-serif text-4xl leading-none text-foreground tabular-nums">
                     {calm}
                     <span className="ml-1 align-top text-lg text-muted-foreground">%</span>
                   </p>
@@ -211,7 +212,7 @@ const Aujourdhui = () => {
                   </span>
                 )}
               </div>
-              <div className="mt-5 h-2 w-full overflow-hidden rounded-full bg-secondary">
+              <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-secondary">
                 <motion.span
                   className="block h-full rounded-full bg-primary"
                   initial={{ width: 0 }}
@@ -249,14 +250,13 @@ const Aujourdhui = () => {
               </div>
             </>
           )}
-        </motion.section>
 
-        {/* 3 — Priorités du jour : trois cartes maximum */}
-        <motion.section {...fade(2)} className="mt-8">
-          <p className="pb-3 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-            Priorités du jour
-          </p>
-          {feed.now.length > 0 ? (
+          {/* Priorités du jour : trois maximum */}
+          <div className="mt-5 border-t border-border/60 pt-4">
+            <p className="pb-2.5 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+              Priorités du jour
+            </p>
+            {feed.now.length > 0 ? (
             <ul className="space-y-2">
               {feed.now.map((item, i) => {
                 const Icon = KIND_ICON[item.kind];
@@ -264,7 +264,7 @@ const Aujourdhui = () => {
                   <motion.li key={item.id} {...fade(2 + i * 0.4)}>
                     <Link
                       to={item.to}
-                      className="flex items-center gap-3 rounded-[20px] border border-border/70 bg-card px-4 py-4 transition-all active:scale-[0.99]"
+                      className="flex items-center gap-3 rounded-2xl border border-border/60 bg-secondary/20 px-3.5 py-3 transition-all active:scale-[0.99]"
                     >
                       <Icon
                         className={`h-4 w-4 shrink-0 ${item.urgent ? "text-destructive" : "text-muted-foreground"}`}
@@ -285,57 +285,16 @@ const Aujourdhui = () => {
               })}
             </ul>
           ) : (
-            <p className="rounded-[20px] border border-dashed border-border bg-card/50 px-5 py-6 text-center text-sm text-muted-foreground">
+            <p className="rounded-2xl border border-dashed border-border bg-secondary/10 px-4 py-4 text-center text-sm text-muted-foreground">
               Aujourd'hui est une journée légère 🌸
             </p>
           )}
-        </motion.section>
-
-        {/* 4 — Accès rapides : deux gestes forts, puis deux discrets */}
-        <motion.section {...fade(3)} className="mt-8">
-          <div className="grid grid-cols-2 gap-3">
-            <Link
-              to="/moi/apaisement"
-              className="flex flex-col gap-2.5 rounded-[24px] border border-border/70 bg-card px-5 py-5 transition-all active:scale-[0.98]"
-            >
-              <Moon className="h-5 w-5 text-foreground" strokeWidth={1.75} />
-              <span>
-                <span className="block text-sm font-semibold text-foreground">M'apaiser</span>
-                <span className="mt-0.5 block text-xs text-muted-foreground">3 minutes, maintenant</span>
-              </span>
-            </Link>
-            <Link
-              to="/autonomie/studio"
-              className="flex flex-col gap-2.5 rounded-[24px] border border-border/70 bg-card px-5 py-5 transition-all active:scale-[0.98]"
-            >
-              <Sprout className="h-5 w-5 text-foreground" strokeWidth={1.75} />
-              <span>
-                <span className="block text-sm font-semibold text-foreground">Créer un support</span>
-                <span className="mt-0.5 block text-xs text-muted-foreground">Routine, histoire, cartes</span>
-              </span>
-            </Link>
-          </div>
-          <div className="mt-3 grid grid-cols-2 gap-3">
-            <Link
-              to="/lies-autrement/journal"
-              className="flex items-center gap-2.5 rounded-[20px] border border-border/70 bg-card/60 px-4 py-3.5 text-sm text-foreground transition-all active:scale-[0.98]"
-            >
-              <PenLine className="h-4 w-4 text-muted-foreground" strokeWidth={1.75} />
-              Journal
-            </Link>
-            <Link
-              to="/moi/chemin"
-              className="flex items-center gap-2.5 rounded-[20px] border border-border/70 bg-card/60 px-4 py-3.5 text-sm text-foreground transition-all active:scale-[0.98]"
-            >
-              <Heart className="h-4 w-4 text-muted-foreground" strokeWidth={1.75} />
-              Mon chemin
-            </Link>
           </div>
         </motion.section>
 
         {/* 5 — Enfants concernés aujourd'hui uniquement */}
         {feed.kids.length > 0 && (
-          <motion.section {...fade(4)} className="mt-8">
+          <motion.section {...fade(4)} className="mt-6">
             <p className="pb-3 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
               Mes enfants aujourd'hui
             </p>

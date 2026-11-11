@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { celebrate } from "@/lib/gentleBadges";
 import {
   Users, Plus, Syringe, FileText, Heart, AlertTriangle, Pill, Stethoscope,
-  Trash2, Pencil, ChevronRight, Calendar, Phone, PlusCircle, ExternalLink,
+  Trash2, Pencil, ChevronRight, Calendar, Phone, PlusCircle, ExternalLink, HeartPulse,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -107,6 +107,16 @@ export default function Famille() {
     // eslint-disable-next-line
   }, [user?.id]);
 
+  // Depuis le « + » : « Ajouter un membre » ouvre directement le formulaire.
+  const [params, setParams] = useSearchParams();
+  useEffect(() => {
+    if (params.get("nouveau") === "1") {
+      setNewProfileOpen(true);
+      params.delete("nouveau");
+      setParams(params, { replace: true });
+    }
+  }, [params, setParams]);
+
   // Rappels vaccinaux à venir
   const upcomingVaccines = useMemo(() => {
     const today = new Date();
@@ -125,22 +135,19 @@ export default function Famille() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
-      <div className="mx-auto max-w-5xl px-4 py-8 pb-24">
-        <motion.header initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
-          <h1 className="font-playfair text-3xl md:text-4xl text-foreground flex items-center gap-3">
-            <Users className="h-8 w-8 text-primary" />
-            Famille
-          </h1>
-          <p className="mt-2 text-muted-foreground">
-            Tous les profils de ta famille — santé, allergies, vaccins, documents et notes — au même endroit.
+    <div className="min-h-screen bg-background">
+      <div className="mx-auto w-full max-w-lg px-6 pb-10 pt-10">
+        <motion.header initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mb-7">
+          <h1 className="font-serif text-3xl text-foreground">Ma famille</h1>
+          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+            Tous les profils de ton foyer. Touche un prénom pour ouvrir sa fiche.
           </p>
         </motion.header>
 
         {/* Alertes vaccins */}
         {upcomingVaccines.length > 0 && (
-          <div className="mb-4 flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-3 dark:border-amber-900/40 dark:bg-amber-950/30">
-            <Syringe className="h-5 w-5 shrink-0 text-amber-600" />
+          <div className="mb-4 flex items-start gap-3 rounded-[20px] border border-amber-200 bg-amber-50 px-4 py-3 dark:border-amber-900/40 dark:bg-amber-950/30">
+            <Syringe className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
             <div className="text-sm">
               <p className="font-semibold text-amber-900 dark:text-amber-200">
                 {upcomingVaccines.length} rappel{upcomingVaccines.length > 1 ? "s" : ""} de vaccin à prévoir
@@ -156,104 +163,114 @@ export default function Famille() {
           </div>
         )}
 
-        {/* Actions */}
-        <div className="flex flex-wrap gap-2 mb-6">
-          <Button onClick={() => setNewProfileOpen(true)}>
-            <Plus className="h-4 w-4 mr-2" /> Nouveau profil
-          </Button>
-          <Button variant="outline" asChild>
-            <Link to="/sante/profils-familiaux">
-              <FileText className="h-4 w-4 mr-2" /> Gérer les documents
-            </Link>
-          </Button>
-        </div>
+        {/* Santé de la famille : un seul centre, rattaché à chaque membre */}
+        <section className="rounded-[20px] border border-border/70 bg-card px-5 py-4">
+          <Link to="/sante" className="group flex items-center gap-4">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-secondary/60 text-foreground">
+              <HeartPulse className="h-[18px] w-[18px]" strokeWidth={1.75} />
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-sm font-semibold text-foreground">Santé de la famille</span>
+              <span className="mt-0.5 block text-xs leading-relaxed text-muted-foreground">
+                Rendez-vous, traitements, fiche d'urgence, ressources.
+              </span>
+            </span>
+            <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" strokeWidth={1.75} />
+          </Link>
+          <div className="mt-3 flex flex-wrap gap-2 pl-[60px]">
+            {[
+              ["Rendez-vous", "/sante/rendez-vous"],
+              ["Traitements", "/sante/medicaments"],
+              ["Fiche d'urgence", "/sante/fiche-medicale"],
+            ].map(([label, to]) => (
+              <Link
+                key={to}
+                to={to}
+                className="rounded-full border border-border/70 bg-background px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:border-primary/40"
+              >
+                {label}
+              </Link>
+            ))}
+          </div>
+        </section>
 
-        {/* Grille des profils */}
+        <p className="pb-2 pt-7 text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+          Les membres{profiles.length > 0 ? ` · ${profiles.length}` : ""}
+        </p>
+
         {loading ? (
           <p className="text-sm text-muted-foreground">Chargement…</p>
         ) : profiles.length === 0 ? (
-          <Card>
-            <CardContent className="py-16 text-center text-muted-foreground">
-              <Users className="h-12 w-12 mx-auto mb-3 opacity-30" />
-              <p>Ta famille n'est pas encore arrivée ici.</p>
-              <p className="text-sm mt-1">Ajoute les membres de ta famille pour centraliser leurs infos santé.</p>
-            </CardContent>
-          </Card>
+          <div className="rounded-[20px] border border-dashed border-border bg-card/50 px-5 py-10 text-center">
+            <Users className="mx-auto mb-3 h-10 w-10 text-muted-foreground/40" strokeWidth={1.5} />
+            <p className="text-sm text-foreground">Ta famille n'est pas encore arrivée ici.</p>
+            <p className="mt-1 text-xs text-muted-foreground">Ajoute les membres de ton foyer pour tout retrouver au même endroit.</p>
+          </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <ul className="space-y-2">
             {profiles.map((p) => {
               const age = p.birth_date ? differenceInYears(new Date(), new Date(p.birth_date)) : null;
               const nbVaccines = vaccinations.filter((v) => v.profile_id === p.id).length;
               const nbDocs = documents.filter((d) => d.profile_id === p.id).length;
-              const hasAllergies = p.allergies.trim().length > 0;
-              const hasTreatment = p.current_treatments.trim().length > 0;
+              const facts = [
+                p.allergies.trim() ? "Allergies" : null,
+                p.current_treatments.trim() ? "Traitement" : null,
+                `${nbVaccines} vaccin${nbVaccines > 1 ? "s" : ""}`,
+                `${nbDocs} document${nbDocs > 1 ? "s" : ""}`,
+              ].filter(Boolean);
               return (
-                <Card key={p.id} className="transition-all hover:shadow-md cursor-pointer" onClick={() => setDetailFor(p)}>
-                  <CardContent className="p-4">
-                    <div className="flex items-start gap-3">
-                      <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center text-lg font-semibold text-primary shrink-0">
-                        {p.first_name.charAt(0).toUpperCase() || "?"}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <p className="font-semibold truncate">{p.first_name || "Sans nom"}</p>
-                          {p.blood_type && (
-                            <span className="text-[10px] font-semibold rounded-full bg-rose-100 text-rose-700 px-2 py-0.5 dark:bg-rose-950/40 dark:text-rose-300">
-                              {p.blood_type}
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-xs text-muted-foreground">
-                          {p.relation || "Membre"}{age !== null ? ` · ${age} an${age > 1 ? "s" : ""}` : ""}
-                        </p>
-                        <div className="mt-2 flex flex-wrap gap-1.5">
-                          {hasAllergies && <Chip icon={AlertTriangle} tone="rose" label="Allergies" />}
-                          {hasTreatment && <Chip icon={Pill} tone="sky" label="Traitement" />}
-                          <Chip icon={Syringe} tone="sage" label={`${nbVaccines} vaccin${nbVaccines > 1 ? "s" : ""}`} />
-                          <Chip icon={FileText} tone="sand" label={`${nbDocs} doc${nbDocs > 1 ? "s" : ""}`} />
-                        </div>
-                        <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1">
-                          <Link
-                            to={`/famille/${p.id}/carnet`}
-                            onClick={(e) => e.stopPropagation()}
-                            className="inline-flex items-center gap-1 text-[11px] font-medium text-primary hover:underline"
-                          >
-                            <Stethoscope className="h-3 w-3" /> Carnet médical
-                          </Link>
-                          <Link
-                            to={`/famille/${p.id}/documents`}
-                            onClick={(e) => e.stopPropagation()}
-                            className="inline-flex items-center gap-1 text-[11px] font-medium text-primary hover:underline"
-                          >
-                            <FileText className="h-3 w-3" /> Documents
-                          </Link>
-                          <Link
-                            to={`/famille/${p.id}/ordonnances`}
-                            onClick={(e) => e.stopPropagation()}
-                            className="inline-flex items-center gap-1 text-[11px] font-medium text-primary hover:underline"
-                          >
-                            <Pill className="h-3 w-3" /> Ordonnances
-                          </Link>
-                        </div>
-
-                      </div>
-                      <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0 mt-1" />
-                    </div>
-                  </CardContent>
-                </Card>
+                <li key={p.id} className="flex items-center gap-2 rounded-[20px] border border-border/70 bg-card pr-2 transition-colors hover:border-primary/40">
+                  <Link to={`/famille/${p.id}`} className="flex min-w-0 flex-1 items-center gap-3.5 py-3.5 pl-4">
+                    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-secondary/70 text-base font-semibold text-foreground">
+                      {p.first_name.charAt(0).toUpperCase() || "?"}
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="flex items-center gap-2">
+                        <span className="truncate text-sm font-semibold text-foreground">{p.first_name || "Sans nom"}</span>
+                        {p.blood_type && (
+                          <span className="shrink-0 rounded-full bg-secondary/60 px-2 py-0.5 text-[10px] font-semibold text-muted-foreground">
+                            {p.blood_type}
+                          </span>
+                        )}
+                      </span>
+                      <span className="block truncate text-xs text-muted-foreground">
+                        {p.relation || "Membre"}{age !== null ? ` · ${age} an${age > 1 ? "s" : ""}` : ""}
+                      </span>
+                      <span className="mt-0.5 block truncate text-[11px] text-muted-foreground/80">{facts.join(" · ")}</span>
+                    </span>
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => setDetailFor(p)}
+                    aria-label={`Résumé santé de ${p.first_name}`}
+                    title="Résumé santé, vaccins, modifier"
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-secondary/60 hover:text-foreground"
+                  >
+                    <Stethoscope className="h-4 w-4" strokeWidth={1.75} />
+                  </button>
+                  <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" strokeWidth={1.75} />
+                </li>
               );
             })}
-          </div>
+          </ul>
         )}
+
+        <button
+          type="button"
+          onClick={() => setNewProfileOpen(true)}
+          className="mt-3 flex min-h-[52px] w-full items-center justify-center gap-2 rounded-[20px] border border-dashed border-border bg-card/50 px-5 text-sm font-semibold text-foreground transition-colors hover:border-primary/40"
+        >
+          <Plus className="h-4 w-4 text-primary" /> Ajouter un membre
+        </button>
 
         {/* Profils partagés avec moi — consultation seule */}
         {sharedProfiles.length > 0 && (
           <section className="mt-8">
-            <h2 className="font-playfair text-xl text-foreground">Partagés avec moi</h2>
+            <h2 className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">Partagés avec moi</h2>
             <p className="mt-1 mb-3 text-sm text-muted-foreground">
               Ces fiches vous sont partagées par un proche. Vous pouvez les consulter, pas les modifier.
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-2">
               {sharedProfiles.map((p) => {
                 const age = p.birth_date ? differenceInYears(new Date(), new Date(p.birth_date)) : null;
                 return (
@@ -318,20 +335,6 @@ export default function Famille() {
         userId={user?.id}
       />
     </div>
-  );
-}
-
-function Chip({ icon: Icon, tone, label }: { icon: any; tone: "rose" | "sage" | "sky" | "sand"; label: string }) {
-  const cls: Record<string, string> = {
-    rose: "bg-rose-500/10 text-rose-700 dark:text-rose-300",
-    sage: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
-    sky: "bg-sky-500/10 text-sky-700 dark:text-sky-300",
-    sand: "bg-amber-500/10 text-amber-700 dark:text-amber-300",
-  };
-  return (
-    <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium ${cls[tone]}`}>
-      <Icon className="h-3 w-3" /> {label}
-    </span>
   );
 }
 
@@ -614,7 +617,7 @@ function ProfileDetail({
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm flex items-center gap-2"><FileText className="h-4 w-4" /> Documents</CardTitle>
               <Button size="sm" variant="ghost" asChild>
-                <Link to="/sante/profils-familiaux">
+                <Link to={`/famille/${profile.id}/documents`}>
                   <ExternalLink className="h-3.5 w-3.5 mr-1" /> Gérer
                 </Link>
               </Button>
