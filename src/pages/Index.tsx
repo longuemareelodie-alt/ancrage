@@ -5,11 +5,11 @@ import { useMolliePayment } from "@/hooks/useMolliePayment";
 import { track } from "@/lib/landingAnalytics";
 import Nav from "@/components/landing/v5/Nav";
 import MobileStickyCTA from "@/components/landing/v3/MobileStickyCTA";
-import { Features, Final, Hero, Histoire, Prix, Questions } from "@/components/landing/v5/Sections";
+import { Features, Final, Hero, Histoire, Prix, Questions, Reconnais } from "@/components/landing/v5/Sections";
 
 /**
  * Page de vente Éclosia (V5) — courte et percutante.
- * Hero → 4 blocs numérotés → histoire → tarif → questions → appel final.
+ * Hero → Tu te reconnais ? → 4 blocs numérotés → histoire → tarif → questions → appel final.
  * Aucun chiffre, témoignage ou compte à rebours inventé : le tarif vient de la base.
  */
 
@@ -27,6 +27,7 @@ const Index = () => {
       <Nav onCTA={onCTA} loading={loading} />
       <main className="pb-14 md:pb-0">
         <Hero onCTA={onCTA} loading={loading} />
+        <Reconnais />
         <Features />
         <Histoire />
         <Prix onCTA={onCTA} loading={loading} />

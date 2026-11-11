@@ -95,7 +95,7 @@ const OUTILS = [
 const DIFF = [
   { title: "Une seule action à la fois", text: "Pas un tableau de 40 tâches. Tu dis comment va ta tête, Éclosia te montre une seule chose à faire, à ta mesure." },
   { title: "Paiement unique", text: "Pas d'abonnement qui s'ajoute aux autres. Tu paies une fois, c'est à toi." },
-  { title: "Sans IA", text: "Des règles simples et claires. Rien n'est décidé à ta place." },
+  { title: "Rien n'est décidé à ta place", text: "La prochaine action et le tri suivent des règles simples et claires. Tu gardes la main." },
   { title: "Tes données restent chez toi", text: "Chaque compte est séparé. Ta famille reste ta famille." },
 ];
 

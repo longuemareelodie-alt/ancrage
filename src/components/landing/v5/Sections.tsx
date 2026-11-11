@@ -70,7 +70,7 @@ export const Hero = (p: CTA) => (
       </p>
       <div className="mt-8 flex flex-col items-center gap-2.5">
         <PillCTA {...p} from="hero" />
-        <p className="text-[13px] text-night-foreground/60">Paiement unique · Sans abonnement</p>
+        <p className="text-[13px] text-night-foreground/60">Paiement unique · Accès à vie · Sans abonnement</p>
       </div>
     </div>
 
@@ -88,6 +88,40 @@ export const Hero = (p: CTA) => (
   </section>
 );
 
+/* ---------- Tu te reconnais ? ---------- */
+const SITUATIONS = [
+  "Tu penses à tout, pour tout le monde.",
+  "Tu oublies un rendez-vous malgré tous tes efforts.",
+  "Les infos de tes enfants sont éparpillées partout.",
+  "Certains jours, tu n'as l'énergie pour rien.",
+  "Tu n'as plus un moment rien qu'à toi.",
+];
+
+export const Reconnais = () => (
+  <section id="tu-te-reconnais" className="px-5 pt-20 md:pt-28">
+    <div className="mx-auto max-w-xl text-center">
+      <h2 className="font-wide text-[clamp(1.7rem,4.6vw,3rem)] font-bold uppercase leading-[1.02]">
+        Tu te <span className="text-primary">reconnais ?</span>
+      </h2>
+      <ul className="mt-7 space-y-2.5 text-left">
+        {SITUATIONS.map((t) => (
+          <li
+            key={t}
+            className="flex items-start gap-3 rounded-2xl border border-night-foreground/15 px-4 py-3 text-[15.5px] text-night-foreground/85"
+          >
+            <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" aria-hidden="true" />
+            {t}
+          </li>
+        ))}
+      </ul>
+      <p className="mt-7 text-[17px] leading-relaxed text-night-foreground md:text-[19px]">
+        Tu n'as pas besoin d'en faire plus.{" "}
+        <strong className="font-semibold text-primary">Tu as besoin d'être mieux accompagnée.</strong>
+      </p>
+    </div>
+  </section>
+);
+
 /* ---------- Blocs numérotés ---------- */
 const FEATURES = [
   {
@@ -95,6 +129,7 @@ const FEATURES = [
     label: "Aujourd'hui",
     title: "Une seule chose à faire.",
     text: "Tu dis comment va ta tête. Éclosia sort une seule prochaine action, à ta mesure. Le reste attend sans te peser.",
+    gain: "Tu sais quoi faire, même les jours sans énergie.",
     chips: ["GO · Moyen · Saturé · KO", "Reporter", "M'apaiser", "Dictée"],
     screen: <ScreenTodayKO />,
   },
@@ -103,7 +138,8 @@ const FEATURES = [
     label: "Tes enfants",
     title: "L'appli s'adapte à ton enfant.",
     text: "Pictogrammes, photos à lui, questions une par une, lecture à voix haute. Chaque enfant a son profil, ses situations, son évolution.",
-    chips: ["Pictogrammes", "Ses photos", "Situations", "Évolution"],
+    gain: "Un support adapté à ton enfant en quelques minutes, prêt à imprimer.",
+    chips: ["Pictogrammes", "Ses photos", "Situations", "Supports à imprimer"],
     screen: <ScreenChild />,
   },
   {
@@ -111,6 +147,7 @@ const FEATURES = [
     label: "Vider ma tête",
     title: "Tu déposes. Elle range.",
     text: "Écris ou dicte tout en vrac. Éclosia trie : rendez-vous, tâches, relances, observations sur tes enfants.",
+    gain: "Ta tête se vide, et rien ne se perd.",
     chips: ["Écrire ou dicter", "Tri en un geste", "M'aide maintenant"],
     screen: <ScreenDump />,
   },
@@ -119,6 +156,7 @@ const FEATURES = [
     label: "Business",
     title: "Ton activité, sans charge mentale.",
     text: "Contacts, relances, clientes, équipe. Les relances du jour remontent toutes seules dans ta prochaine action.",
+    gain: "Plus aucune relance oubliée.",
     chips: ["Pipeline", "Relances", "Clientes", "Équipe"],
     screen: <ScreenBusiness />,
   },
@@ -149,6 +187,9 @@ export const Features = () => (
             <p className="mx-auto mt-4 max-w-md text-[16px] leading-relaxed text-night-foreground/75 md:mx-0">
               {f.text}
             </p>
+            <p className="mx-auto mt-3 max-w-md text-[15.5px] font-semibold text-night-foreground md:mx-0">
+              <span className="text-primary">Ce que ça change :</span> {f.gain}
+            </p>
             <ul className="mt-5 flex flex-wrap justify-center gap-2 md:justify-start">
               {f.chips.map((c) => (
                 <Chip key={c}>{c}</Chip>
@@ -163,14 +204,14 @@ export const Features = () => (
         <p className="font-wide text-[12px] font-bold uppercase tracking-[0.2em] text-primary">Et aussi</p>
         <ul className="mt-4 flex flex-wrap justify-center gap-2">
           {[
-            "Santé de toute la famille",
-            "Fiche d'urgence par QR",
-            "Budget mois par mois",
-            "Documents rangés",
-            "Habitudes",
-            "Objectifs",
-            "Routines visuelles",
-            "Six compagnons",
+            "La santé de chacun, sans fouiller",
+            "Une fiche d'urgence par QR",
+            "Le budget du mois sans casse-tête",
+            "Tes papiers au même endroit",
+            "Routines visuelles pour les enfants",
+            "Un espace rien qu'à toi",
+            "Partager avec le papa ou un proche",
+            "Six compagnons doux",
           ].map((c) => (
             <Chip key={c}>{c}</Chip>
           ))}
@@ -242,10 +283,11 @@ export const Histoire = () => {
 
 /* ---------- Tarif ---------- */
 const AVANTAGES = [
-  "Toutes les fonctionnalités",
-  "Toutes les mises à jour",
-  "Badge Famille Fondatrice",
-  "Accès anticipé à certaines nouveautés",
+  "Tous les espaces : Aujourd'hui, Famille, Autonomie, Santé, Organisation, Moi, Business",
+  "Une fiche complète par enfant, avec pictogrammes et situations",
+  "Des supports visuels à imprimer, adaptés à chaque enfant",
+  "La fiche d'urgence par QR et le dossier santé de la famille",
+  "Toutes les mises à jour, sans abonnement",
 ];
 
 export const Prix = ({ onCTA, loading }: CTA) => {
@@ -279,8 +321,11 @@ export const Prix = ({ onCTA, loading }: CTA) => {
           </p>
           <p className="mt-1.5 text-[14px] text-muted-foreground">Un seul paiement. Accès à vie.</p>
 
-          <ul className="mx-auto mt-5 grid gap-1.5 text-left">
-            {AVANTAGES.map((a) => (
+          <p className="mt-5 text-left text-[12px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+            Dès l'achat, tu as :
+          </p>
+          <ul className="mx-auto mt-2 grid gap-1.5 text-left">
+            {[...AVANTAGES, ...(tier.badgeLabel ? [`Ton badge ${tier.badgeLabel}, à vie`] : [])].map((a) => (
               <li key={a} className="flex items-start gap-2 text-[14.5px] text-foreground/85">
                 <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary-dark" aria-hidden="true" />
                 {a}
@@ -288,9 +333,16 @@ export const Prix = ({ onCTA, loading }: CTA) => {
             ))}
           </ul>
 
-          <p className="mt-4 text-[12.5px] text-muted-foreground">
-            Tarif fondateur évolutif :{" "}
-            {FOUNDING_TIERS.map((t) => formatEurAmount(t.priceCents / 100)).join(" → ")}
+          <p className="mt-4 text-[12.5px] leading-relaxed text-muted-foreground">
+            Le prix monte par paliers à mesure que les familles rejoignent :{" "}
+            {FOUNDING_TIERS.map((t) => formatEurAmount(t.priceCents / 100)).join(" → ")}.
+            Le prix affiché est celui que tu paies aujourd'hui, une seule fois.
+            {offer?.isLimited && offer.remainingAtThisPrice !== null && offer.remainingAtThisPrice > 0 && (
+              <>
+                {" "}Encore {offer.remainingAtThisPrice}{" "}
+                {offer.remainingAtThisPrice > 1 ? "places" : "place"} à ce prix.
+              </>
+            )}
           </p>
 
           <label className="mx-auto mt-4 block max-w-xs text-left">
@@ -328,6 +380,10 @@ export const Prix = ({ onCTA, loading }: CTA) => {
 type Item = { q: string; text: string; a?: React.ReactNode };
 const ITEMS: Item[] = [
   { q: "C'est pour qui ?", text: "Pour les mamans dont la tête est pleine : famille, rendez-vous, enfants, activité. Particulièrement utile quand un enfant a des besoins spécifiques." },
+  { q: "C'est réservé aux enfants avec des besoins spécifiques ?", text: "Non. Éclosia sert à toutes les familles. Les outils pour les enfants (pictogrammes, situations, supports) sont là si tu en as besoin, et restent cachés sinon." },
+  { q: "Je peux partager avec le papa ou un proche ?", text: "Oui. Tu invites qui tu veux par e-mail (papa, grand-parent, professionnel…) en choisissant son rôle. Tu peux annuler une invitation à tout moment." },
+  { q: "Ça marche sur téléphone et ordinateur ?", text: "Oui. Éclosia s'ouvre dans le navigateur, sur téléphone, tablette ou ordinateur. Tu peux l'ajouter à ton écran d'accueil comme une appli." },
+  { q: "Il y a de l'intelligence artificielle ?", text: "La prochaine action, le tri de « Vider ma tête » et les situations suivent des règles simples : rien n'est décidé à ta place. L'IA sert seulement à quelques outils précis : la dictée, la lecture à voix haute, la création de supports dans l'Assistant, et la relecture douce de ton journal et de ton portrait du mois." },
   { q: "C'est compliqué ?", text: "Non. Quelques questions au début, une par écran, et Éclosia ne te montre que les espaces dont tu as besoin." },
   { q: "Que se passe-t-il après l'achat ?", text: "Tu reçois un e-mail pour créer ton mot de passe, puis tu entres tout de suite dans Éclosia, sur téléphone, tablette ou ordinateur." },
   { q: "« À vie », ça veut dire quoi ?", text: "Tu paies une seule fois, sans abonnement, et tu gardes l'accès et les mises à jour incluses tant que le service existe. Klarna permet de payer en plusieurs fois si c'est disponible pour toi." },

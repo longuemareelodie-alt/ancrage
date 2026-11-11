@@ -210,6 +210,14 @@ const Confidentialite = () => (
                 déploiement de l'application.
               </li>
               <li>
+                <strong>Lovable AB</strong> (passerelle d'IA, modèles Google)
+                — pour quelques outils précis&nbsp;: transcription de la
+                dictée vocale, lecture à voix haute, création de supports
+                dans l'Assistant, relecture du journal et portrait du mois.
+                Seul le texte ou l'audio nécessaire est transmis, le temps
+                du traitement.
+              </li>
+              <li>
                 <strong>Mollie B.V.</strong> (Pays-Bas) — traitement des
                 paiements en ligne.
               </li>
