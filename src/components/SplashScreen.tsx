@@ -1,23 +1,30 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { shouldDisableDecorativeMotion } from "@/lib/motionPrefs";
+import { useAuth } from "@/contexts/AuthContext";
 
 const SEEN_KEY = "eclosia_splash_seen";
 
 /**
  * Première ouverture émotionnelle : un souffle, le nom, puis l'app.
- * Affichée une seule fois par appareil (et jamais en reduced-motion).
+ * Affichée une seule fois par appareil (et jamais en reduced-motion), et
+ * uniquement pour une membre connectée : une visiteuse qui arrive depuis
+ * Google ou qui scanne une fiche d'urgence voit la page tout de suite.
  */
 const SplashScreen = () => {
-  const [visible, setVisible] = useState(() => {
-    if (typeof window === "undefined") return false;
-    if (shouldDisableDecorativeMotion()) return false;
+  const { user } = useAuth();
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    if (!user || typeof window === "undefined") return;
+    if (shouldDisableDecorativeMotion()) return;
     try {
-      return localStorage.getItem(SEEN_KEY) !== "1";
+      if (localStorage.getItem(SEEN_KEY) === "1") return;
     } catch {
-      return false;
+      return;
     }
-  });
+    setVisible(true);
+  }, [user]);
 
   useEffect(() => {
     if (!visible) return;
@@ -58,7 +65,8 @@ const SplashScreen = () => {
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.9, duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-        className="mt-8 font-serif text-3xl text-foreground"
+        className="mt-8 font-sans text-3xl font-semibold tracking-tight text-foreground"
+        style={{ fontFamily: '-apple-system, "SF Pro Display", Inter, system-ui, sans-serif' }}
       >
         Éclosia
       </motion.p>

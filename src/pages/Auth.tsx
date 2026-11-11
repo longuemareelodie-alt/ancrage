@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { motion } from "framer-motion";
 import { PREMIUM_SCOPE_LABEL } from "@/lib/premiumOffer";
+import { authErrorFr } from "@/lib/authErrorFr";
 import {
   fetchInvitationByToken,
   rememberPendingInvitation,
@@ -61,7 +62,7 @@ const Auth = () => {
       if (error) throw error;
       setInfo(t("auth.reset_sent"));
     } catch (err: any) {
-      setError(err.message || t("auth.generic_error"));
+      setError(authErrorFr(err, t("auth.generic_error")));
     } finally { setLoading(false); }
   };
 
@@ -72,7 +73,7 @@ const Auth = () => {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
     } catch (err: any) {
-      setError(err.message || t("auth.generic_error"));
+      setError(authErrorFr(err, t("auth.generic_error")));
     } finally { setLoading(false); }
   };
 
@@ -80,7 +81,7 @@ const Auth = () => {
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-sm space-y-6">
         <div className="text-center">
-          <h1 className="text-2xl font-bold">{isForgot ? t("auth.title_forgot") : t("auth.title_login")}</h1>
+          <h1 className="font-sans text-2xl font-bold tracking-tight" style={{ fontFamily: '-apple-system, "SF Pro Display", Inter, system-ui, sans-serif' }}>{isForgot ? t("auth.title_forgot") : t("auth.title_login")}</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             {isForgot ? t("auth.subtitle_forgot") : t("auth.subtitle_login")}
           </p>

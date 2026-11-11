@@ -14,6 +14,7 @@
  */
 
 import { useEffect, useMemo, useState } from "react";
+import { authErrorFr } from "@/lib/authErrorFr";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
@@ -76,7 +77,7 @@ const SetPassword = () => {
     if (errorCode) {
       const mapped = SUPABASE_ERROR_TO_PHASE[errorCode] ?? "invalid";
       setPhase(mapped);
-      setErrorDetail(errorDescription?.replace(/\+/g, " ") ?? errorCode);
+      setErrorDetail(authErrorFr(`${errorCode ?? ""} ${errorDescription ?? ""}`, "Ce lien n'est plus valide. Demande un nouveau lien."));
       return;
     }
 
@@ -161,7 +162,7 @@ const SetPassword = () => {
         //  - "New password should be different..." → just show as form error.
         if (/session missing|jwt expired|token has expired/i.test(error.message)) {
           setPhase("expired");
-          setErrorDetail(error.message);
+          setErrorDetail(authErrorFr(error));
           return;
         }
         throw error;
@@ -169,7 +170,7 @@ const SetPassword = () => {
       setPhase("success");
       window.setTimeout(() => navigate("/dashboard", { replace: true }), 1500);
     } catch (err: any) {
-      setFormError(err.message || "Une erreur est survenue. Réessaie.");
+      setFormError(authErrorFr(err));
     } finally {
       setSubmitting(false);
     }
@@ -197,7 +198,7 @@ const SetPassword = () => {
       setResendInfo("Si cette adresse correspond à un compte, un nouveau lien vient d'être envoyé. Vérifie ta boîte (et tes spams).");
       setResendEmail("");
     } catch (err: any) {
-      setResendError(err.message || "Impossible d'envoyer le lien. Réessaie dans un instant.");
+      setResendError(authErrorFr(err, "Impossible d'envoyer le lien. Réessaie dans un instant."));
     } finally {
       setResending(false);
     }

@@ -120,7 +120,7 @@ const PaymentSuccess = () => {
         transition={{ duration: 0.6, ease: "easeOut" }}
         className="w-full max-w-md space-y-8 text-center"
       >
-        <img src={logo} alt="Eclosia" className="mx-auto h-14 w-auto" />
+        <img src={logo} alt="Éclosia" className="mx-auto h-14 w-auto" />
 
         <motion.div
           initial={{ scale: 0 }}
@@ -136,7 +136,7 @@ const PaymentSuccess = () => {
             {firstName ? `Bienvenue, ${firstName} 💛` : "Bienvenue 💛"}
           </h1>
           <p className="text-muted-foreground">
-            Ton accès Eclosia est actif. Voici par où commencer.
+            Ton accès Éclosia est actif. Voici par où commencer.
           </p>
         </div>
 

@@ -49,7 +49,7 @@ const Invitation = () => {
         className="w-full max-w-md rounded-[2rem] border border-border/60 bg-card p-8 text-center shadow-sm"
       >
         <p className="text-xs uppercase tracking-[0.28em] text-muted-foreground">
-          Eclosia
+          Éclosia
         </p>
 
         {invalid ? (
@@ -68,7 +68,7 @@ const Invitation = () => {
         ) : preview.status === "accepted" ? (
           <>
             <h1 className="mt-6 font-serif text-2xl leading-snug text-night">
-              Tu as déjà rejoint Eclosia 🌸
+              Tu as déjà rejoint Éclosia 🌸
             </h1>
             <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
               Connecte-toi pour retrouver ton espace.
@@ -87,7 +87,7 @@ const Invitation = () => {
               {preview.inviter_first_name
                 ? `${preview.inviter_first_name} t'invite`
                 : "Tu es invité·e"}{" "}
-              à rejoindre Eclosia
+              à rejoindre Éclosia
             </h1>
             <p className="mt-3 text-sm text-muted-foreground">
               En tant que{" "}
@@ -103,7 +103,7 @@ const Invitation = () => {
             )}
 
             <p className="mt-6 text-sm leading-relaxed text-muted-foreground">
-              Eclosia est un espace doux pour alléger le quotidien : organisation,
+              Éclosia est un espace doux pour alléger le quotidien : organisation,
               santé, documents, supports pour les enfants — tout au même endroit.
             </p>
 
@@ -113,7 +113,7 @@ const Invitation = () => {
               className="mt-8 inline-flex items-center justify-center gap-2 rounded-full bg-primary px-7 py-3 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90"
             >
               <Sparkles className="h-4 w-4" />
-              Découvrir Eclosia
+              Découvrir Éclosia
             </Link>
             <p className="mt-4 text-[11px] leading-relaxed text-muted-foreground">
               Ce lien est personnel et reste valable 30 jours. Ton invitation
@@ -124,7 +124,7 @@ const Invitation = () => {
               onClick={() => rememberPendingInvitation(token)}
               className="mt-5 inline-block text-xs font-medium text-primary hover:underline"
             >
-              J'ai déjà un compte Eclosia
+              J'ai déjà un compte Éclosia
             </Link>
           </>
         )}
@@ -134,7 +134,7 @@ const Invitation = () => {
             to="/"
             className="mt-8 inline-flex items-center justify-center rounded-full border border-border px-7 py-3 text-sm font-medium text-foreground"
           >
-            Découvrir Eclosia
+            Découvrir Éclosia
           </Link>
         )}
       </motion.div>

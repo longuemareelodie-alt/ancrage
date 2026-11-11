@@ -53,15 +53,20 @@ const items: NavItem[] = [
   },
 ];
 
-const STORAGE_KEY = "ancrage_sidebar_open";
+// Nouvelle clé : l'ancienne mémorisait « ouvert » par défaut, ce qui cachait
+// le formulaire de connexion sur téléphone. Le menu démarre désormais fermé.
+const STORAGE_KEY = "eclosia_sidebar_open_v2";
 
 const TopNav = () => {
   const location = useLocation();
   const { t } = useTranslation();
   const [open, setOpen] = useState<boolean>(() => {
-    if (typeof window === "undefined") return true;
-    const v = window.localStorage.getItem(STORAGE_KEY);
-    return v === null ? true : v === "1";
+    if (typeof window === "undefined") return false;
+    try {
+      return window.localStorage.getItem(STORAGE_KEY) === "1";
+    } catch {
+      return false;
+    }
   });
 
   useEffect(() => {
@@ -71,6 +76,11 @@ const TopNav = () => {
       /* noop */
     }
   }, [open]);
+
+  // Changement de page : on referme le menu pour ne jamais recouvrir le contenu.
+  useEffect(() => {
+    setOpen(false);
+  }, [location.pathname, location.hash]);
 
   if (!PUBLIC_PATHS.has(location.pathname)) return null;
 
@@ -92,6 +102,16 @@ const TopNav = () => {
         )}
       </button>
 
+      {open && (
+        <button
+          type="button"
+          aria-label={t("nav.menu")}
+          tabIndex={-1}
+          onClick={() => setOpen(false)}
+          className="fixed inset-0 z-30 bg-background/40 backdrop-blur-[2px] md:hidden"
+        />
+      )}
+
       <aside
         id="ancrage-side-nav"
         aria-label={t("nav.main")}
@@ -106,7 +126,7 @@ const TopNav = () => {
           className="text-base font-semibold tracking-tight"
           aria-label={t("nav.back_home")}
         >
-          Eclosia
+          Éclosia
         </Link>
 
         <nav aria-label={t("nav.main")}>

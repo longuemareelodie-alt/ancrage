@@ -74,7 +74,7 @@ const getVerdict = (pct: number): Verdict => {
       badge: "Priorité haute",
       headline: "Tu es en mode survie.",
       message:
-        "Ton système est en alerte constante. Ta tête tourne, tu portes trop, tu tiens à bout de bras. Ce n'est pas une faiblesse — c'est un signal. Eclosia a été créé exactement pour ce moment. Pas dans 6 mois. Maintenant.",
+        "Ton système est en alerte constante. Ta tête tourne, tu portes trop, tu tiens à bout de bras. Ce n'est pas une faiblesse — c'est un signal. Éclosia a été créé exactement pour ce moment. Pas dans 6 mois. Maintenant.",
       moduleKeys: ["ancrage", "charge", "coffre", "budget"],
       urgency: "high",
     };
@@ -83,7 +83,7 @@ const getVerdict = (pct: number): Verdict => {
       badge: "Ancrage recommandé",
       headline: "Tu portes trop, seule.",
       message:
-        "Tu tiens — mais à bout de bras. Ta charge mentale déborde et rien ne tient dans le temps. Eclosia va déposer ce que tu portes dans un seul endroit calme. Tu vas respirer, et voir clair.",
+        "Tu tiens — mais à bout de bras. Ta charge mentale déborde et rien ne tient dans le temps. Éclosia va déposer ce que tu portes dans un seul endroit calme. Tu vas respirer, et voir clair.",
       moduleKeys: ["charge", "journal", "budget", "frise"],
       urgency: "mid",
     };
@@ -91,7 +91,7 @@ const getVerdict = (pct: number): Verdict => {
     badge: "Étape idéale",
     headline: "Tu veux ancrer ce que tu as reconstruit.",
     message:
-      "Tu vas mieux — et tu veux que ça tienne. Eclosia est fait pour ancrer ton chemin, mois après mois, à vie. Ton Portrait, ta Frise, ton Livre : le chemin devient visible.",
+      "Tu vas mieux — et tu veux que ça tienne. Éclosia est fait pour ancrer ton chemin, mois après mois, à vie. Ton Portrait, ta Frise, ton Livre : le chemin devient visible.",
     moduleKeys: ["frise", "journal", "ancrage", "coffre"],
     urgency: "low",
   };
@@ -209,7 +209,7 @@ const QuizResultat = () => {
               ))}
             </ul>
             <p className="mt-6 text-center text-sm italic text-foreground/60">
-              + les 5 autres espaces d'Eclosia inclus dans ton accès à vie.
+              + les 5 autres espaces d'Éclosia inclus dans ton accès à vie.
             </p>
           </div>
 
@@ -237,7 +237,7 @@ const QuizResultat = () => {
 
             <ul className="mx-auto mt-7 max-w-md space-y-2.5">
               {[
-                "Les 9 espaces d'Eclosia, débloqués immédiatement",
+                "Les 9 espaces d'Éclosia, débloqués immédiatement",
                 "Toutes les mises à jour futures incluses",
                 "14 jours pour changer d'avis",
                 "Paiement sécurisé via Mollie",

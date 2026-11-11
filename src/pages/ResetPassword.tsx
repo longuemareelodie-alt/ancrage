@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { authErrorFr } from "@/lib/authErrorFr";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -41,7 +42,7 @@ const ResetPassword = () => {
       setSuccess(true);
       setTimeout(() => navigate("/profil"), 2000);
     } catch (err: any) {
-      setError(err.message || "Une erreur est survenue");
+      setError(authErrorFr(err));
     } finally {
       setLoading(false);
     }

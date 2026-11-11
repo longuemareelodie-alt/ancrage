@@ -431,7 +431,7 @@ const Profil = () => {
                     onClick={() => {
                       if (isIOS) {
                         // Can't programmatically install on iOS, show instructions
-                        alert("Pour installer Eclosia :\n\n1. Appuie sur l'icône de partage en bas de Safari\n2. Choisis « Sur l'écran d'accueil »");
+                        alert("Pour installer Éclosia :\n\n1. Appuie sur l'icône de partage en bas de Safari\n2. Choisis « Sur l'écran d'accueil »");
                       } else if (deferredPrompt) {
                         deferredPrompt.prompt();
                         deferredPrompt.userChoice.then(() => setDeferredPrompt(null));
@@ -447,7 +447,7 @@ const Profil = () => {
                       <Download className="h-5 w-5 text-primary" />
                     )}
                     <div className="text-left">
-                      <p className="text-sm font-semibold">Installer Eclosia</p>
+                      <p className="text-sm font-semibold">Installer Éclosia</p>
                       <p className="text-xs text-muted-foreground">
                         Ajoute l'app sur ton écran d'accueil pour les rappels
                       </p>
@@ -500,7 +500,7 @@ const Profil = () => {
                           Aucun accès premium activé
                         </p>
                         <p className="text-xs text-muted-foreground leading-relaxed">
-                          Ton compte est créé, mais l'{PREMIUM_FULL_ACCESS_LABEL} à Eclosia n'est pas encore débloqué.
+                          Ton compte est créé, mais l'{PREMIUM_FULL_ACCESS_LABEL} à Éclosia n'est pas encore débloqué.
                           Active ton {PREMIUM_LIFETIME_LABEL} en un paiement unique pour profiter de tout le parcours,
                           des notes et du contenu premium.
                         </p>
@@ -523,7 +523,7 @@ const Profil = () => {
                         <p className="text-sm font-semibold">Accès à vie actif</p>
                       </div>
                       <p className="mt-1 text-xs text-muted-foreground">
-                        Tu as accès à tout le contenu d'Eclosia. Aucun abonnement, rien à renouveler.
+                        Tu as accès à tout le contenu d'Éclosia. Aucun abonnement, rien à renouveler.
                       </p>
                     </div>
 
