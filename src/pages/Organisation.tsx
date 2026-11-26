@@ -11,13 +11,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import {
-  Bell, Calendar, CheckSquare, ChevronDown, Clock, MapPin, Pin, Plus, ShoppingCart, StickyNote, Trash2,
+  Bell, Calendar, CheckSquare, ChevronDown, Clock, MapPin, Pin, Plus, ShoppingCart, Sun, StickyNote, Trash2,
   type LucideIcon,
 } from "lucide-react";
 import { format, parseISO, isToday, isTomorrow, isPast } from "date-fns";
 import { fr } from "date-fns/locale";
 import MascotPicker from "@/components/pulse/MascotPicker";
 import VoiceDictationButton from "@/components/VoiceDictationButton";
+import DayPlanner from "@/components/organisation/DayPlanner";
 import { guessDomain, mascotOf, type PulseDomain } from "@/data/pulseMascots";
 
 type AgendaEvent = { id: string; title: string; description: string | null; event_date: string; event_time: string | null; location: string | null; category: string; reminder_offset_hours: number };
@@ -25,7 +26,7 @@ type Todo = { id: string; title: string; done: boolean; priority: string; due_da
 type FamilyMember = { id: string; first_name: string };
 type ShopItem = { id: string; name: string; quantity: string | null; category: string; checked: boolean; list_name: string };
 type Note = { id: string; title: string | null; content: string; color: string; pinned: boolean; updated_at: string };
-type TabKey = "agenda" | "todo" | "courses" | "notes";
+type TabKey = "jour" | "agenda" | "todo" | "courses" | "notes";
 
 const AGENDA_OFFSETS: { value: number; label: string }[] = [
   { value: 1, label: "1h avant" },
@@ -100,7 +101,7 @@ const MoreToggle = ({ open, onClick }: { open: boolean; onClick: () => void }) =
 /* ---------------- PAGE ---------------- */
 export default function Organisation() {
   const { user } = useAuth();
-  const [tab, setTab] = useState<TabKey>("agenda");
+  const [tab, setTab] = useState<TabKey>("jour");
   const [stats, setStats] = useState<{ today: number; todo: number; courses: number; next: AgendaEvent | null } | null>(null);
 
   const refresh = useCallback(async () => {
@@ -183,8 +184,9 @@ export default function Organisation() {
         <RemindersToggle userId={user.id} />
 
         <Tabs value={tab} onValueChange={(v) => setTab(v as TabKey)} className="w-full">
-          <TabsList className="mb-5 grid h-auto w-full grid-cols-4 rounded-full bg-muted p-1">
+          <TabsList className="mb-5 grid h-auto w-full grid-cols-5 rounded-full bg-muted p-1">
             {([
+              ["jour", Sun, "Ma journée"],
               ["agenda", Calendar, "Agenda"],
               ["todo", CheckSquare, "À faire"],
               ["courses", ShoppingCart, "Courses"],
@@ -201,6 +203,7 @@ export default function Organisation() {
             ))}
           </TabsList>
 
+          <TabsContent value="jour"><DayPlanner userId={user.id} onChange={refresh} /></TabsContent>
           <TabsContent value="agenda"><AgendaTab userId={user.id} onChange={refresh} /></TabsContent>
           <TabsContent value="todo"><TodoTab userId={user.id} onChange={refresh} /></TabsContent>
           <TabsContent value="courses"><CoursesTab userId={user.id} onChange={refresh} /></TabsContent>

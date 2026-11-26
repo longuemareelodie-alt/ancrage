@@ -1008,6 +1008,51 @@ export type Database = {
         }
         Relationships: []
       }
+      daily_planner: {
+        Row: {
+          created_at: string
+          day: string
+          id: string
+          intensity: number | null
+          light_day: boolean
+          meal_dinner: string | null
+          meal_lunch: string | null
+          mood: string | null
+          note: string | null
+          priorities: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          day: string
+          id?: string
+          intensity?: number | null
+          light_day?: boolean
+          meal_dinner?: string | null
+          meal_lunch?: string | null
+          mood?: string | null
+          note?: string | null
+          priorities?: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          day?: string
+          id?: string
+          intensity?: number | null
+          light_day?: boolean
+          meal_dinner?: string | null
+          meal_lunch?: string | null
+          mood?: string | null
+          note?: string | null
+          priorities?: Json
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       email_send_log: {
         Row: {
           created_at: string
