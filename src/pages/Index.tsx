@@ -5,7 +5,7 @@ import { useMolliePayment } from "@/hooks/useMolliePayment";
 import { track } from "@/lib/landingAnalytics";
 import Nav from "@/components/landing/v5/Nav";
 import MobileStickyCTA from "@/components/landing/v3/MobileStickyCTA";
-import { Features, Final, Hero, Histoire, Prix, Questions, Reconnais } from "@/components/landing/v5/Sections";
+import { Features, Final, Hero, Histoire, Mecanisme, Prix, Questions, RappelOffre, Reconnais } from "@/components/landing/v5/Sections";
 
 /**
  * Page de vente Éclosia (V5) — courte et percutante.
@@ -28,7 +28,9 @@ const Index = () => {
       <main className="pb-14 md:pb-0">
         <Hero onCTA={onCTA} loading={loading} />
         <Reconnais />
+        <Mecanisme onCTA={onCTA} loading={loading} />
         <Features />
+        <RappelOffre onCTA={onCTA} loading={loading} />
         <Histoire />
         <Prix onCTA={onCTA} loading={loading} />
         <Questions />

@@ -65,7 +65,7 @@ export const Hero = (p: CTA) => (
         <span className="block text-primary">Éclosia fait le tri.</span>
       </h1>
       <p className="mx-auto mt-6 max-w-xl text-[16px] leading-relaxed text-night-foreground/75 md:text-[18px]">
-        Ta famille, tes enfants, tes rendez-vous, ton business.{" "}
+        Ta famille, tes enfants, ta santé, ta maison, ton budget, ton business et toi.{" "}
         <strong className="font-semibold text-night-foreground">Une seule prochaine action</strong>, au bon moment.
       </p>
       <div className="mt-8 flex flex-col items-center gap-2.5">
@@ -122,6 +122,53 @@ export const Reconnais = () => (
   </section>
 );
 
+/* ---------- Mécanisme : 4 états ---------- */
+const ETATS = [
+  { e: "🟢", n: "GO", t: "Tu as de l'énergie : ta prochaine action, et deux autres si tu veux." },
+  { e: "🟡", n: "Moyen", t: "Une action de 20 minutes maximum." },
+  { e: "🟠", n: "Saturé", t: "Une action de 10 minutes maximum. Le reste attend." },
+  { e: "🔴", n: "KO", t: "5 minutes maximum, « M'apaiser » et « Vider ma tête »." },
+];
+
+export const Mecanisme = (p: CTA) => (
+  <section id="mecanisme" className="px-5 pt-24 md:pt-32">
+    <div className="mx-auto max-w-[900px] text-center">
+      <p className="font-wide text-[12px] font-bold uppercase tracking-[0.2em] text-primary">Le cœur d'Éclosia</p>
+      <h2 className="mt-3 font-wide text-[clamp(1.7rem,4.6vw,3rem)] font-bold uppercase leading-[1.02]">
+        Même quand tu n'as plus d'énergie, <span className="text-primary">Éclosia sait simplifier.</span>
+      </h2>
+      <p className="mx-auto mt-4 max-w-lg text-[16px] leading-relaxed text-night-foreground/75">
+        Tu dis comment va ta tête. Éclosia te donne <strong className="font-semibold text-night-foreground">une seule prochaine action</strong>, à ta mesure. Tu peux la reporter d'un geste.
+      </p>
+      <ul className="mt-8 grid gap-3 text-left sm:grid-cols-2">
+        {ETATS.map((x) => (
+          <li key={x.n} className="rounded-2xl border border-night-foreground/15 px-4 py-4">
+            <p className="font-wide text-[15px] font-bold uppercase">{x.e} {x.n}</p>
+            <p className="mt-1 text-[14.5px] text-night-foreground/75">{x.t}</p>
+          </li>
+        ))}
+      </ul>
+      <p className="mx-auto mt-6 max-w-lg text-[15.5px] text-night-foreground/80">
+        Et quand tout déborde : <strong className="text-night-foreground">« Vider ma tête »</strong>. Tu écris ou dictes en vrac, Éclosia trie en rendez-vous, tâches et relances.
+      </p>
+    </div>
+  </section>
+);
+
+/* ---------- Rappel de l'offre ---------- */
+export const RappelOffre = (p: CTA) => (
+  <section className="px-5 pt-20 text-center md:pt-28">
+    <p className="mx-auto max-w-lg text-[17px] leading-relaxed text-night-foreground md:text-[19px]">
+      Tu n'as pas besoin de multiplier les applications.{" "}
+      <strong className="font-semibold text-primary">Éclosia rassemble ton quotidien et t'aide à avancer une chose à la fois.</strong>
+    </p>
+    <div className="mt-6 flex flex-col items-center gap-2.5">
+      <PillCTA {...p} from="rappel" />
+      <p className="text-[13px] text-night-foreground/60">Paiement unique · Accès à vie · Sans abonnement</p>
+    </div>
+  </section>
+);
+
 /* ---------- Blocs numérotés ---------- */
 const FEATURES = [
   {
@@ -147,7 +194,7 @@ const FEATURES = [
     label: "Vider ma tête",
     title: "Tu déposes. Elle range.",
     text: "Écris ou dicte tout en vrac. Éclosia trie : rendez-vous, tâches, relances, observations sur tes enfants.",
-    gain: "Ta tête se vide, et rien ne se perd.",
+    gain: "Tu déposes tes pensées, Éclosia les organise.",
     chips: ["Écrire ou dicter", "Tri en un geste", "M'aide maintenant"],
     screen: <ScreenDump />,
   },
@@ -156,7 +203,7 @@ const FEATURES = [
     label: "Business",
     title: "Ton activité, sans charge mentale.",
     text: "Contacts, relances, clientes, équipe. Les relances du jour remontent toutes seules dans ta prochaine action.",
-    gain: "Plus aucune relance oubliée.",
+    gain: "Tes relances à suivre remontent dans ta prochaine action.",
     chips: ["Pipeline", "Relances", "Clientes", "Équipe"],
     screen: <ScreenBusiness />,
   },
@@ -287,7 +334,8 @@ const AVANTAGES = [
   "Une fiche complète par enfant, avec pictogrammes et situations",
   "Des supports visuels à imprimer, adaptés à chaque enfant",
   "La fiche d'urgence par QR et le dossier santé de la famille",
-  "Toutes les mises à jour, sans abonnement",
+  "Toutes les futures mises à jour incluses, sans supplément",
+  "Aucun abonnement, aucun renouvellement automatique",
 ];
 
 export const Prix = ({ onCTA, loading }: CTA) => {
@@ -308,7 +356,7 @@ export const Prix = ({ onCTA, loading }: CTA) => {
           <ul className="mx-auto mt-6 max-w-lg space-y-2 text-[16px] text-night-foreground/80">
             <li><strong className="text-night-foreground">Un seul paiement :</strong> {price ?? "le tarif fondateur"}</li>
             <li><strong className="text-night-foreground">Accès à vie :</strong> l'appli et ses mises à jour</li>
-            <li><strong className="text-night-foreground">Aucun abonnement,</strong> aucune surprise</li>
+            <li><strong className="text-night-foreground">Aucun abonnement,</strong> aucun renouvellement automatique</li>
           </ul>
         </div>
 
@@ -319,7 +367,7 @@ export const Prix = ({ onCTA, loading }: CTA) => {
           <p className="mt-3 font-wide text-[clamp(2.6rem,9vw,3.6rem)] font-bold leading-none text-night">
             {promoOk ? "4,50\u00A0€" : price ?? "Accès à vie"}
           </p>
-          <p className="mt-1.5 text-[14px] text-muted-foreground">Un seul paiement. Accès à vie.</p>
+          <p className="mt-1.5 text-[14px] text-muted-foreground">Un seul paiement. Éclosia évolue, ton accès reste acquis.</p>
 
           <p className="mt-5 text-left text-[12px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
             Dès l'achat, tu as :
@@ -381,19 +429,21 @@ type Item = { q: string; text: string; a?: React.ReactNode };
 const ITEMS: Item[] = [
   { q: "C'est pour qui ?", text: "Pour les mamans dont la tête est pleine : famille, rendez-vous, enfants, activité. Particulièrement utile quand un enfant a des besoins spécifiques." },
   { q: "C'est réservé aux enfants avec des besoins spécifiques ?", text: "Non. Éclosia sert à toutes les familles. Les outils pour les enfants (pictogrammes, situations, supports) sont là si tu en as besoin, et restent cachés sinon." },
-  { q: "Je peux partager avec le papa ou un proche ?", text: "Oui. Tu invites qui tu veux par e-mail (papa, grand-parent, professionnel…) en choisissant son rôle. Tu peux annuler une invitation à tout moment." },
+  { q: "Je peux partager avec le papa ou un proche ?", text: "Oui. Tu invites qui tu veux par e-mail (papa, grand-parent, professionnel…). La personne voit seulement ce que tu partages, après avoir accepté l'invitation. Pour la santé, les proches invités peuvent lire mais rien modifier. Tu peux retirer l'accès à tout moment." },
   { q: "Ça marche sur téléphone et ordinateur ?", text: "Oui. Éclosia s'ouvre dans le navigateur, sur téléphone, tablette ou ordinateur. Tu peux l'ajouter à ton écran d'accueil comme une appli." },
   { q: "Il y a de l'intelligence artificielle ?", text: "La prochaine action, le tri de « Vider ma tête » et les situations suivent des règles simples : rien n'est décidé à ta place. L'IA sert seulement à quelques outils précis : la dictée, la lecture à voix haute, la création de supports dans l'Assistant, et la relecture douce de ton journal et de ton portrait du mois." },
   { q: "C'est compliqué ?", text: "Non. Quelques questions au début, une par écran, et Éclosia ne te montre que les espaces dont tu as besoin." },
-  { q: "Que se passe-t-il après l'achat ?", text: "Tu reçois un e-mail pour créer ton mot de passe, puis tu entres tout de suite dans Éclosia, sur téléphone, tablette ou ordinateur." },
-  { q: "« À vie », ça veut dire quoi ?", text: "Tu paies une seule fois, sans abonnement, et tu gardes l'accès et les mises à jour incluses tant que le service existe. Klarna permet de payer en plusieurs fois si c'est disponible pour toi." },
+  { q: "Que se passe-t-il après l'achat ?", text: "1. Tu paies une fois. 2. Tu reçois un e-mail pour créer ton mot de passe. 3. Quelques questions, une par écran, pour choisir ce qu'Éclosia te propose. 4. Ta première prochaine action s'affiche. Tout est prêt en quelques minutes, sur téléphone, tablette ou ordinateur." },
+  { q: "« À vie », ça veut dire quoi ?", text: "Tu paies une seule fois. Aucun abonnement, aucun renouvellement automatique. Toutes les fonctionnalités actuelles et les futures mises à jour sont incluses sans supplément, tant que le service existe. Klarna permet de payer en plusieurs fois si c'est disponible pour toi." },
   {
     q: "Mes données sont protégées ?",
-    text: "Tes données sont rattachées à ton compte, chiffrées pendant les échanges, et jamais vendues. Aucun système n'est infaillible : la politique de confidentialité détaille les mesures.",
+    text: "Tes données sont rattachées à ton compte, chiffrées pendant les échanges, et jamais vendues. Les infos médicales et celles de tes enfants ne sont visibles que par toi et les proches que tu invites. La fiche d'urgence n'affiche que ce que tu choisis. Aucun système n'est infaillible : la politique de confidentialité détaille les mesures.",
     a: (
       <>
         Tes données sont rattachées à ton compte, chiffrées pendant les échanges,
-        et jamais vendues. Aucun système n'est infaillible :{" "}
+        et jamais vendues. Les infos médicales et celles de tes enfants ne sont
+        visibles que par toi et les proches que tu invites. La fiche d'urgence
+        n'affiche que ce que tu choisis. Aucun système n'est infaillible :{" "}
         <Link to="/confidentialite" className="underline">la politique de confidentialité</Link> détaille les mesures.
       </>
     ),
